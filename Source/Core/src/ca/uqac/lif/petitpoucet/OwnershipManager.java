@@ -17,21 +17,12 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-import java.util.HashMap;
-
-public class OwnershipManager extends HashMap<String,Object>
+public interface OwnershipManager
 {
 	/**
-	 * Dummy UID
+	 * Gets the object associated with a given ID
+	 * @param id The ID
+	 * @return The object, or {@code null} if the object does not exist
 	 */
-	private static final long serialVersionUID = 1L;
-
-	public Object getObjectWithId(String id)
-	{
-		if (containsKey(id))
-		{
-			return get(id);
-		}
-		return null;
-	}
+	public Object getObjectWithId(String id);
 }

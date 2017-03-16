@@ -36,13 +36,13 @@
   <mainclass>ca.uqac.lif.petitpoucet.Main</mainclass>
   
   <!-- Installation folders -->
-  <srcdir>Core/src</srcdir>
-  <bindir>Core/bin</bindir>
+  <srcdir>Source/Core/src</srcdir>
+  <bindir>Source/Core/bin</bindir>
   <docdir>doc</docdir>
-  <depdir>dep</depdir>
+  <depdir>Source/dep</depdir>
   <test>
-    <srcdir>CoreTest/src</srcdir>
-    <bindir>CoreTest/bin</bindir>
+    <srcdir>Source/CoreTest/src</srcdir>
+    <bindir>Source/CoreTest/bin</bindir>
   </test>
   
   <!-- Output jar -->
