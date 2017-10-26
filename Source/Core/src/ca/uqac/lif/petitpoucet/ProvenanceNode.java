@@ -34,6 +34,11 @@ public class ProvenanceNode
 	protected final List<ProvenanceNode> m_parents;
 	
 	/**
+	 * A set of points that depend on this data point
+	 */
+	protected final List<ProvenanceNode> m_children;
+	
+	/**
 	 * Creates a new provenance node
 	 * @param datapoint_id The ID of the data point
 	 * @param owner The owner of the data point
@@ -43,15 +48,27 @@ public class ProvenanceNode
 		super();
 		m_nodeFunction = node;
 		m_parents = new ArrayList<ProvenanceNode>();
+		m_children = new ArrayList<ProvenanceNode>();
 	}
 	
 	/**
-	 * Adds a parent to this node
+	 * Adds a parent to this node. Note that this does <strong>not</strong> add the
+	 * current node as a child in {@code p}.
 	 * @param p The parent
 	 */
 	public void addParent(ProvenanceNode p)
 	{
 		m_parents.add(p);
+	}
+	
+	/**
+	 * Adds a parent to this node. Note that this does <strong>not</strong> add the
+	 * current node as a parent in {@code p}.
+	 * @param p The parent
+	 */
+	public void addChild(ProvenanceNode p)
+	{
+		m_children.add(p);
 	}
 	
 	/**
@@ -62,6 +79,7 @@ public class ProvenanceNode
 	 */
 	public void replaceParent(int position, ProvenanceNode p)
 	{
+		
 		m_parents.set(position, p);
 	}
 	
@@ -73,6 +91,11 @@ public class ProvenanceNode
 	public List<ProvenanceNode> getParents()
 	{
 		return m_parents;
+	}
+	
+	public List<ProvenanceNode> getChildren()
+	{
+		return m_children;
 	}
 	
 	@Override

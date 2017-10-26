@@ -21,6 +21,8 @@ import java.util.Collection;
 
 public class DirectValue extends AggregateFunction 
 {
+	public static final transient DirectValue instance = new DirectValue();
+	
 	public DirectValue(Collection<NodeFunction> nodes)
 	{
 		super(getCaption(nodes.size()), nodes);
