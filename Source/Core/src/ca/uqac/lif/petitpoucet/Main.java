@@ -19,9 +19,19 @@ package ca.uqac.lif.petitpoucet;
 
 public class Main 
 {
+	/**
+	 * Version string
+	 */
+	protected static final String s_versionString = "0.1";
+	
+	public static String getVersionString()
+	{
+		return s_versionString;
+	}
+	
 	public static void main(String[] args)
 	{
-		System.out.println("Petit Poucet - Trace data elements back to their sources");
+		System.out.println("Petit Poucet v" + s_versionString + " - Trace data elements back to their sources");
 		System.out.println("(C) 2017 Laboratoire d'informatique formelle\nUniversité du Québec à Chicoutimi, Canada");
 		System.out.println("This jar file is not meant to be run stand-alone");
 	}
