@@ -52,6 +52,23 @@ public abstract class StringDesignator implements Designator
 		{
 			return o != null && o instanceof String;
 		}
+		
+    @Override
+    public int hashCode()
+    {
+      return 5 * m_index;
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+      if (o == null || !(o instanceof NthLine))
+      {
+        return false;
+      }
+      NthLine cd = (NthLine) o;
+      return cd.m_index == m_index;
+    }
 	}
 	
 	/**
@@ -103,5 +120,22 @@ public abstract class StringDesignator implements Designator
 		{
 			return "From " + m_startIndex + " to " + m_endIndex;
 		}
+		
+    @Override
+    public int hashCode()
+    {
+      return 11 * m_startIndex * 7 * m_endIndex;
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+      if (o == null || !(o instanceof Range))
+      {
+        return false;
+      }
+      Range cd = (Range) o;
+      return cd.m_startIndex == m_startIndex && cd.m_endIndex == m_endIndex;
+    }
 	}
 }

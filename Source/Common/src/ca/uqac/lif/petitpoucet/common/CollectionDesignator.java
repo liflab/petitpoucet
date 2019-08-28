@@ -29,5 +29,22 @@ public abstract class CollectionDesignator
 		{
 			return o != null && o instanceof List;
 		}
+		
+		@Override
+		public int hashCode()
+		{
+		  return 3 * m_index;
+		}
+		
+		@Override
+		public boolean equals(Object o)
+		{
+		  if (o == null || !(o instanceof NthElement))
+	    {
+	      return false;
+	    }
+		  NthElement cd = (NthElement) o;
+		  return cd.m_index == m_index;
+		}
 	}
 }

@@ -36,14 +36,34 @@ public class TraceabilityNode
 	protected List<QualityLink> m_links;
 	
 	/**
+	 * A unique ID for the node
+	 */
+	protected int m_id;
+	
+	/**
+	 * A counter for unique IDs
+	 */
+	private static int s_idCounter = 0; 
+	
+	/**
 	 * Creates a new traceability node with no children
 	 * @param dob The designated object represented by this node
 	 */
 	public TraceabilityNode(DesignatedObject dob)
 	{
 		super();
+		m_id = s_idCounter++;
 		m_object = dob;
 		m_links = new ArrayList<QualityLink>();
+	}
+	
+	/**
+	 * Gets the node's unique ID
+	 * @return The ID
+	 */
+	public int getId()
+	{
+	  return m_id;
 	}
 	
 	/**

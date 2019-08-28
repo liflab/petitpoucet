@@ -36,6 +36,23 @@ public abstract class CircuitDesignator implements Designator
 		{
 			return o != null && o instanceof CircuitElement;
 		}
+		
+		@Override
+    public int hashCode()
+    {
+      return 13 * m_index;
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+      if (o == null || !(o instanceof NthInput))
+      {
+        return false;
+      }
+      NthInput cd = (NthInput) o;
+      return cd.m_index == m_index;
+    }
 	}
 	
 	/**
@@ -63,5 +80,22 @@ public abstract class CircuitDesignator implements Designator
 		{
 			return o != null && o instanceof CircuitElement;
 		}
+		
+		@Override
+    public int hashCode()
+    {
+      return 17 * m_index;
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+      if (o == null || !(o instanceof NthOutput))
+      {
+        return false;
+      }
+      NthOutput cd = (NthOutput) o;
+      return cd.m_index == m_index;
+    }
 	}
 }

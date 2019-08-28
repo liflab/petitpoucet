@@ -3,14 +3,21 @@ package examples.functions;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.DesignatorLink;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.ProvenanceQuery;
 import ca.uqac.lif.petitpoucet.Trackable;
+import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitConnection;
+import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
+import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
+import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.circuit.CircuitElement;
+import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
+import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
 public abstract class CircuitFunction implements CircuitElement, Trackable
 {
@@ -35,6 +42,11 @@ public abstract class CircuitFunction implements CircuitElement, Trackable
 	protected FunctionConnection[] m_outputConnections;
 	
 	/**
+	 * The inputs given to the function when it was evaluated
+	 */
+	protected Object[] m_inputs;
+	
+	/**
 	 * The value returned by the function the last time it was called
 	 */
 	protected Object[] m_returnedValue;
@@ -56,6 +68,7 @@ public abstract class CircuitFunction implements CircuitElement, Trackable
 		m_outArity = out_arity;
 		m_inputConnections = new FunctionConnection[in_arity];
 		m_outputConnections = new FunctionConnection[out_arity];
+		m_inputs = new Object[in_arity];
 		m_returnedValue = new Object[out_arity];
 	}
 
@@ -70,21 +83,29 @@ public abstract class CircuitFunction implements CircuitElement, Trackable
 		{
 			return m_returnedValue;
 		}
-		Object[] inputs = new Object[m_inArity];
 		for (int i = 0; i < m_inArity; i++)
 		{
 			FunctionConnection fc = m_inputConnections[i];
 			if (fc == null)
 			{
-				inputs[i] = null;
+				m_inputs[i] = null;
 			}
 			else
 			{
-				inputs[i] = fc.pullValue();
+				m_inputs[i] = fc.pullValue();
 			}
 		}
-		getValue(inputs, m_returnedValue);
+		getValue(m_inputs, m_returnedValue);
+		m_evaluated = true;
 		return m_returnedValue;
+	}
+	
+	/**
+	 * Puts the function back into an unevaluated state
+	 */
+	public void reset()
+	{
+		m_evaluated = false;
 	}
 
 	@Override
@@ -121,13 +142,48 @@ public abstract class CircuitFunction implements CircuitElement, Trackable
 	public List<DesignatorLink> query(TraceabilityQuery q, Designator d)
 	{
 		List<DesignatorLink> list = new ArrayList<DesignatorLink>();
-		if (q instanceof ProvenanceQuery)
+		if (d instanceof ComposedDesignator)
 		{
-			provenanceQuery(d, list);
+		  ComposedDesignator cd = (ComposedDesignator) d;
+		  Designator top = cd.peek();
+		  if (!(top instanceof CircuitDesignator))
+	    {
+	      // Can't answer queries that are not about inputs or outputs
+	      list.add(DesignatorLink.UnknownLink.instance);
+	    }
 		}
-		if (q instanceof CausalityQuery)
+		Designator top = d, to_pass = d;
+		if (d instanceof ComposedDesignator)
 		{
-			causalityQuery(d, list);
+		  top = ((ComposedDesignator) d).peek();
+		  to_pass = ((ComposedDesignator) d).pop();
+		}
+		if (!(top instanceof CircuitDesignator))
+		{
+			// Can't answer queries that are not about inputs or outputs
+			list.add(DesignatorLink.UnknownLink.instance);
+		}
+		else if (top instanceof NthOutput)
+		{
+			// Ask for an output
+			if (q instanceof ProvenanceQuery)
+			{
+				provenanceQuery(d, list);
+			}
+			if (q instanceof CausalityQuery)
+			{
+				causalityQuery(d, list);
+			}
+		}
+		if (top instanceof NthInput)
+		{
+			// Ask for an input: find the output to which it is connected
+			NthInput ni = (NthInput) d;
+			FunctionConnection conn = m_inputConnections[ni.getIndex()];
+			
+			ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new NthOutput(conn.getIndex()), conn.getObject());
+			ConcreteDesignatorLink dl = new ConcreteDesignatorLink(dob, Quality.EXACT);
+			list.add(dl);
 		}
 		return list;
 	}
@@ -139,7 +195,7 @@ public abstract class CircuitFunction implements CircuitElement, Trackable
 	 */
 	public abstract void getValue(Object[] inputs, Object[] outputs);
 	
-	public abstract void provenanceQuery(Designator d, List<DesignatorLink> links);
+	public abstract void provenanceQuery(NthOutput d, List<DesignatorLink> links);
 	
-	public abstract void causalityQuery(Designator d, List<DesignatorLink> links);;
+	public abstract void causalityQuery(NthOutput d, List<DesignatorLink> links);;
 }
