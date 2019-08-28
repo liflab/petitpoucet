@@ -38,20 +38,13 @@ public class Parameter implements Designator
 	protected Designator m_parameterPart;
 	
 	/**
-	 * The object that is the target of this designator
-	 */
-	protected Object m_object;
-	
-	/**
 	 * Creates a new instance of this designator.
-	 * @param target The object that is the target of this designator
 	 * @param name The name of the parameter
 	 * @param part The part of the parameter that is the subject of this designator
 	 */
-	public Parameter(Object target, String name, Designator part)
+	public Parameter(String name, Designator part)
 	{
 		super();
-		m_object = target;
 		m_name = name;
 		m_parameterPart = part;
 	}
@@ -59,12 +52,12 @@ public class Parameter implements Designator
 	@Override
 	public boolean appliesTo(Object o)
 	{
-		return o == m_object;
+		return true;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return m_parameterPart + " of " + m_name + " in " + m_object;
+		return m_parameterPart + " of " + m_name;
 	}
 }
