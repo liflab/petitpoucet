@@ -15,15 +15,23 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package ca.uqac.lif.petitpoucet;
 
 /**
- * Core interfaces for traceability management.
- * <p>
- * This package should try to reach the following design goals:
- * <ul>
- * <li>Top-level elements should be interfaces</li>
- * <li>Classes should be limited in number, represent generic concepts,
- * and if possible be abstract</li>
- * </ul>
+ * Represents the part of a specific object. 
+ * @author Sylvain Hallé
  */
-package ca.uqac.lif.petitpoucet;
+public interface DesignatedObject 
+{
+	/**
+	 * Gets the object that is designated
+	 * @return The object
+	 */
+	/*@ null @*/ public Object getObject();
+	
+	/**
+	 * Gets the part of the object that is designated
+	 * @return The designator representing the part of the object
+	 */
+	/*@ non_null @*/ public Designator getDesignator();
+}

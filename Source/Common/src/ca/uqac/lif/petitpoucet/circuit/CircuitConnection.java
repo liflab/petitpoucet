@@ -15,15 +15,23 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package ca.uqac.lif.petitpoucet.circuit;
 
 /**
- * Core interfaces for traceability management.
- * <p>
- * This package should try to reach the following design goals:
- * <ul>
- * <li>Top-level elements should be interfaces</li>
- * <li>Classes should be limited in number, represent generic concepts,
- * and if possible be abstract</li>
- * </ul>
+ * A link to an object's input or output. 
+ * @author Sylvain Hallé
  */
-package ca.uqac.lif.petitpoucet;
+public interface CircuitConnection
+{
+	/**
+	 * Gets the index of the object's input or output
+	 * @return The index
+	 */
+	public int getIndex();
+	
+	/**
+	 * Gets the object which is the source or target of this link
+	 * @return The object; may be null
+	 */
+	/*@ null @*/ public CircuitElement getObject();
+}
