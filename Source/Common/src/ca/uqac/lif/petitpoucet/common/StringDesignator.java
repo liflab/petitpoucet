@@ -69,6 +69,18 @@ public abstract class StringDesignator implements Designator
       NthLine cd = (NthLine) o;
       return cd.m_index == m_index;
     }
+    
+    @Override
+    public Designator peek()
+    {
+      return this;
+    }
+    
+    @Override
+    public Designator tail()
+    {
+      return null;
+    }
 	}
 	
 	/**
@@ -136,6 +148,18 @@ public abstract class StringDesignator implements Designator
       }
       Range cd = (Range) o;
       return cd.m_startIndex == m_startIndex && cd.m_endIndex == m_endIndex;
+    }
+    
+    @Override
+    public Designator peek()
+    {
+      return this;
+    }
+    
+    @Override
+    public Designator tail()
+    {
+      return null;
     }
 	}
 }

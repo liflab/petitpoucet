@@ -28,7 +28,7 @@ public abstract class CircuitDesignator implements Designator
 		@Override
 		public String toString()
 		{
-			return super.toString() + " input";
+		  return "Input " + super.toString();
 		}
 
 		@Override
@@ -53,6 +53,18 @@ public abstract class CircuitDesignator implements Designator
       NthInput cd = (NthInput) o;
       return cd.m_index == m_index;
     }
+    
+    @Override
+    public Designator peek()
+    {
+      return this;
+    }
+    
+    @Override
+    public Designator tail()
+    {
+      return null;
+    }
 	}
 	
 	/**
@@ -72,7 +84,7 @@ public abstract class CircuitDesignator implements Designator
 		@Override
 		public String toString()
 		{
-			return super.toString() + " output";
+			return "Output " + super.toString();
 		}
 
 		@Override
@@ -96,6 +108,18 @@ public abstract class CircuitDesignator implements Designator
       }
       NthOutput cd = (NthOutput) o;
       return cd.m_index == m_index;
+    }
+    
+    @Override
+    public Designator peek()
+    {
+      return this;
+    }
+    
+    @Override
+    public Designator tail()
+    {
+      return null;
     }
 	}
 }

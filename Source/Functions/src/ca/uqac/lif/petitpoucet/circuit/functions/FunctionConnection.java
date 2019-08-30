@@ -15,43 +15,46 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.common;
+package ca.uqac.lif.petitpoucet.circuit.functions;
 
-import ca.uqac.lif.petitpoucet.Designator;
+import ca.uqac.lif.petitpoucet.circuit.CircuitConnection;
 
-/**
- * Designator pointing to the n-th element of some compound object.
- * @author Sylvain Hallé
- */
-public abstract class NthOf implements Designator
+public class FunctionConnection implements CircuitConnection
 {
-	/**
-	 * The line index
-	 */
 	protected int m_index;
 	
-	/**
-	 * Creates a new instance of the designator
-	 * @param index The number of the line to designate
-	 */
-	public NthOf(int index)
+	protected CircuitFunction m_element;
+	
+	protected Object m_value;
+	
+	public FunctionConnection(int index, CircuitFunction element)
 	{
 		super();
 		m_index = index;
-	}
-	
-	/**
-	 * Gets the line index
-	 * @return The index
-	 */
-	public int getIndex()
-	{
-		return m_index;
+		m_element = element;
+		m_value = null;
 	}
 	
 	@Override
-	public String toString()
+	public int getIndex() 
 	{
-		return "" + m_index;
+		return m_index;
+	}
+
+	@Override
+	public CircuitFunction getObject() 
+	{
+		return m_element;
+	}
+	
+	public Object pullValue()
+	{
+		if (m_value != null)
+		{
+			return m_value;
+		}
+		Object[] outs = m_element.evaluate();
+		m_value = outs[m_index];
+		return m_value;
 	}
 }

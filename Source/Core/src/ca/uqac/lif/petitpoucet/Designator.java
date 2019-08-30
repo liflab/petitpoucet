@@ -33,6 +33,18 @@ public interface Designator
 	public boolean appliesTo(/*@ null @*/ Object o);
 	
 	/**
+	 * Returns the first designator to be evaluated
+	 * @return The designator
+	 */
+	public Designator peek();
+	
+	/**
+	 * Returns a designator from which the first operation is removed
+	 * @return The designator
+	 */
+	public Designator tail();
+	
+	/**
 	 * An instance of the "identity" designator
 	 */
 	public static Identity identity = new Identity();
@@ -66,8 +78,32 @@ public interface Designator
 		@Override
 		public String toString()
 		{
-			return "The value of ";
+			return "";
 		}
+		
+    @Override
+    public Designator peek()
+    {
+      return this;
+    }
+    
+    @Override
+    public Designator tail()
+    {
+      return null;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+      return 321;
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+      return o != null && o instanceof Identity;
+    }
 	}
 	
 	/**
@@ -93,6 +129,30 @@ public interface Designator
 		{
 			return "Nothing";
 		}
+		
+		@Override
+		public Designator peek()
+		{
+		  return this;
+		}
+		
+		@Override
+		public Designator tail()
+		{
+		  return null;
+		}
+		
+		@Override
+    public int hashCode()
+    {
+      return 4567;
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+      return o != null && o instanceof Nothing;
+    }
 	}
 	
 	/**
@@ -116,5 +176,29 @@ public interface Designator
 		{
 			return "Unknown";
 		}
+		
+    @Override
+    public Designator peek()
+    {
+      return this;
+    }
+    
+    @Override
+    public Designator tail()
+    {
+      return null;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+      return 321;
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+      return o != null && o instanceof Unknown;
+    }
 	}
 }

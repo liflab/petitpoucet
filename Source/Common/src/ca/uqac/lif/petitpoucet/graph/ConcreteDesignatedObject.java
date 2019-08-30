@@ -61,6 +61,12 @@ public class ConcreteDesignatedObject implements DesignatedObject
 	}
 	
 	@Override
+	public String toString()
+	{
+	  return m_designator + " of " + m_object;
+	}
+	
+	@Override
 	public int hashCode()
 	{
 		if (m_object == null)

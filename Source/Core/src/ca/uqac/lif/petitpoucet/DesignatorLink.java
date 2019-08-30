@@ -17,6 +17,8 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import java.util.List;
+
 /**
  * A link between a designator, and one or more other designators.
  * This interface can be used, for example, to represent a causality
@@ -46,7 +48,7 @@ public interface DesignatorLink
 	 * Gets the designated objects involved in this link
 	 * @return An ordered collection of designated objects
 	 */
-	/*@ non_null @*/ public DesignatedObject getDesignatedObject();
+	/*@ non_null @*/ public List<DesignatedObject> getDesignatedObjects();
 
 	/**
 	 * Object representing an unknown traceability link.
@@ -74,9 +76,15 @@ public interface DesignatorLink
 		}
 
 		@Override
-		public final DesignatedObject getDesignatedObject() 
+		public final List<DesignatedObject> getDesignatedObjects() 
 		{
 			return null;
+		}
+		
+		@Override
+		public String toString()
+		{
+		  return "Unknown link";
 		}
 	}
 }

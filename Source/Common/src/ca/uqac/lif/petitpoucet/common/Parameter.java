@@ -58,6 +58,22 @@ public class Parameter implements Designator
 	@Override
 	public String toString()
 	{
+	  if (m_parameterPart instanceof Identity)
+	  {
+	    return m_name;
+	  }
 		return m_parameterPart + " of " + m_name;
 	}
+	
+  @Override
+  public Designator peek()
+  {
+    return this;
+  }
+  
+  @Override
+  public Designator tail()
+  {
+    return null;
+  }
 }

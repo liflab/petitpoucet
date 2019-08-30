@@ -39,7 +39,8 @@ public interface Trackable
 	 * Answers a traceability query.
 	 * @param q The query
 	 * @param d The part of the object that is the subject of the query
-	 * @return A list of links
+	 * @return A list of list of links
 	 */
-	/*@ non_null @*/ public List<DesignatorLink> query(/*@ non_null @*/ TraceabilityQuery q, /*@ non_null @*/ Designator d);
+	/*@ non_null @*/ public List<List<DesignatorLink>> query(/*@ non_null @*/ TraceabilityQuery q, 
+	    /*@ non_null @*/ Designator d);
 }

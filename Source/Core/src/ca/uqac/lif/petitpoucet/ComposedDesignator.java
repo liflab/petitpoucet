@@ -26,11 +26,15 @@ public class ComposedDesignator implements Designator
 
 	/**
 	 * Adds a new designator to the composition
-	 * @param d The designator to add
+	 * @param d The designator to add. If null, the operation is simply ignored.
 	 * @return This composed designator
 	 */
-	public ComposedDesignator add(Designator d)
+	public ComposedDesignator add(/*@ null @*/ Designator d)
 	{
+	  if (d == null)
+	  {
+	    return this;
+	  }
 		if (d instanceof ComposedDesignator)
 		{
 			// Don't unnecessarily nest composed designators
@@ -47,7 +51,7 @@ public class ComposedDesignator implements Designator
 	 * Creates a new designator by removing the first element of the composition
 	 * @return A new designator with the first element of the composition removed
 	 */
-	public Designator pop()
+	public Designator tail()
 	{
 		switch (m_designators.size())
 		{
@@ -83,13 +87,15 @@ public class ComposedDesignator implements Designator
 	/*@ pure @*/ public String toString()
 	{
 	  StringBuilder out = new StringBuilder();
+	  Designator previous = null;
 	  for (int i = 0; i < m_designators.size(); i++)
 	  {
-	    if (i > 0)
+	    if (i > 0 && (previous != null && !(previous instanceof Identity)))
 	    {
 	      out.append(" ");
 	    }
-	    out.append(m_designators.get(i));
+	    previous = m_designators.get(i);
+	    out.append(previous);
 	  }
 	  return out.toString();
 	}

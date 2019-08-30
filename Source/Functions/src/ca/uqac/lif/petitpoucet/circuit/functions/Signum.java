@@ -15,43 +15,41 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.common;
+package ca.uqac.lif.petitpoucet.circuit.functions;
 
-import ca.uqac.lif.petitpoucet.Designator;
-
-/**
- * Designator pointing to the n-th element of some compound object.
- * @author Sylvain Hallé
- */
-public abstract class NthOf implements Designator
+public class Signum extends NaryFunction
 {
-	/**
-	 * The line index
-	 */
-	protected int m_index;
-	
-	/**
-	 * Creates a new instance of the designator
-	 * @param index The number of the line to designate
-	 */
-	public NthOf(int index)
-	{
-		super();
-		m_index = index;
-	}
-	
-	/**
-	 * Gets the line index
-	 * @return The index
-	 */
-	public int getIndex()
-	{
-		return m_index;
-	}
-	
-	@Override
-	public String toString()
-	{
-		return "" + m_index;
-	}
+  public Signum()
+  {
+    super(1);
+  }
+
+  @Override
+  public void getValue(Object[] inputs, Object[] outputs)
+  {
+    if (inputs[0] instanceof Number)
+    {
+      float out = ((Number) inputs[0]).floatValue();
+      if (out == 0)
+      {
+        outputs[0] = 0;
+      }
+      else if (out < 0)
+      {
+        outputs[0] = -1;
+      }
+      else if (out > 0)
+      {
+        outputs[0] = 1;
+      }
+      return;
+    }
+    outputs[0] = 0;
+  }
+
+  @Override
+  public String toString()
+  {
+    return "SIG";
+  }
 }

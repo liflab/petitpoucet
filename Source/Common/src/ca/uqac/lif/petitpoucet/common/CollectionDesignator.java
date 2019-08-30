@@ -2,6 +2,8 @@ package ca.uqac.lif.petitpoucet.common;
 
 import java.util.List;
 
+import ca.uqac.lif.petitpoucet.Designator;
+
 public abstract class CollectionDesignator
 {
 	/**
@@ -46,5 +48,17 @@ public abstract class CollectionDesignator
 		  NthElement cd = (NthElement) o;
 		  return cd.m_index == m_index;
 		}
+		
+    @Override
+    public Designator peek()
+    {
+      return this;
+    }
+    
+    @Override
+    public Designator tail()
+    {
+      return null;
+    }
 	}
 }
