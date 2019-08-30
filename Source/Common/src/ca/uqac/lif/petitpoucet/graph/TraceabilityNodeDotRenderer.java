@@ -40,7 +40,7 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
       if (n instanceof ObjectNode)
       {
         DesignatedObject dob = ((ObjectNode) n).getDesignatedObject();
-        out.append(s_id).append(" [label=\"").append(dob).append("\",shape=\"rectangle\",fillcolor=\"lightgrey\"];\n"); 
+        out.append(s_id).append(" [label=\"").append(dob).append("\",shape=\"rectangle\",fillcolor=\"AliceBlue\"];\n"); 
       }
       else
       {

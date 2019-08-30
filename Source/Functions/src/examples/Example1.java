@@ -30,7 +30,7 @@ public class Example1
     System.out.println(output[0]);
     Designator d = new CircuitDesignator.NthOutput(0);
     Tracer t = new Tracer();
-    ObjectNode root = t.getTree(CausalityQuery.instance, d, mul);
+    ObjectNode root = t.getTree(ProvenanceQuery.instance, d, mul);
     TraceabilityNodeDotRenderer rend = new TraceabilityNodeDotRenderer();
     String s = rend.render(root);
     System.out.println(s);

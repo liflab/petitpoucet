@@ -33,11 +33,28 @@ import ca.uqac.lif.petitpoucet.graph.TraceabilityNode.LabeledEdge;
 public class Tracer
 {
   /**
+   * Determines whether degenerate and/or nodes are removed from the tree
+   * (default: true)
+   */
+  protected boolean m_simplify = true;
+  
+  /**
    * Creates a new tracer with default settings
    */
   public Tracer()
   {
     super();
+  }
+  
+  /**
+   * Sets whether degenerate and/or nodes are removed from the tree
+   * @param b <tt>true</tt> to simplify (default), <tt>false</tt> otherwise
+   * @return This tracer
+   */
+  public Tracer setSimplify(boolean b)
+  {
+    m_simplify = b;
+    return this;
   }
 
   /**
@@ -112,12 +129,26 @@ public class Tracer
         }
         if (and_added)
         {
-          or_root.addChildren(new LabeledEdge(and, Quality.EXACT));
+          if (m_simplify && and.getChildren().size() == 1)
+          {
+            or_root.addChildren(and.getChildren().get(0));
+          }
+          else
+          {
+            or_root.addChildren(new LabeledEdge(and, Quality.EXACT));
+          }
         }
       }
       if (or_root.getChildren().size() > 0)
       {
-        out_list.add(new LabeledEdge(or_root, Quality.EXACT));
+        if (m_simplify && or_root.getChildren().size() == 1)
+        {
+          out_list.add(or_root.getChildren().get(0));
+        }
+        else
+        {
+          out_list.add(new LabeledEdge(or_root, Quality.EXACT));
+        }
       }
     }
     else
