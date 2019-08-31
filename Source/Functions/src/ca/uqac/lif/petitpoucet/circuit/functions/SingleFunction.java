@@ -32,82 +32,85 @@ import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
 
 public abstract class SingleFunction extends Function
 {
-  public SingleFunction(int in_arity, int out_arity)
-  {
-    super(in_arity, out_arity);
-  }
+	public SingleFunction(int in_arity, int out_arity)
+	{
+		super(in_arity, out_arity);
+	}
 
-  /**
-   * Evaluates the function with concrete values. Note that this implementation is
-   * not very efficient, as a function that is involved as the input of 
-   * @return outputs An array of output arguments
-   */
-  @Override
-  public final Object[] evaluate()
-  {
-    if (m_evaluated)
-    {
-      return m_returnedValue;
-    }
-    for (int i = 0; i < m_inArity; i++)
-    {
-      FunctionConnection fc = m_inputConnections[i];
-      if (fc == null)
-      {
-        m_inputs[i] = null;
-      }
-      else
-      {
-        m_inputs[i] = fc.pullValue();
-      }
-    }
-    getValue(m_inputs, m_returnedValue);
-    m_evaluated = true;
-    return m_returnedValue;
-  }
+	/**
+	 * Evaluates the function with concrete values. Note that this implementation is
+	 * not very efficient, as a function that is involved as the input of 
+	 * @return outputs An array of output arguments
+	 */
+	@Override
+	public final Object[] evaluate()
+	{
+		if (m_evaluated)
+		{
+			return m_returnedValue;
+		}
+		for (int i = 0; i < m_inArity; i++)
+		{
+			FunctionConnection fc = m_inputConnections[i];
+			if (fc == null)
+			{
+				m_inputs[i] = null;
+			}
+			else
+			{
+				m_inputs[i] = fc.pullValue();
+			}
+		}
+		getValue(m_inputs, m_returnedValue);
+		m_evaluated = true;
+		return m_returnedValue;
+	}
 
-  @Override
-  public List<TraceabilityNode> query(TraceabilityQuery q, Designator d, TraceabilityNode root, NodeFactory factory)
-  {
-    List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
-    Designator top = d.peek();
-    if (!(top instanceof NthInput) && !(top instanceof NthOutput))
-    {
-      // Can't answer queries that are not about inputs or outputs
-      leaves.add(factory.getUnknownNode());
-    }
-    if (top instanceof NthInput)
-    {
-      // Ask for an input: find the output to which it is connected
-      NthInput ni = (NthInput) top;
-      FunctionConnection conn = m_inputConnections[ni.getIndex()];
-      Designator tail = d.tail();
-      if (tail == null)
-      {
-        tail = Designator.identity;
-      }
-      ComposedDesignator new_cd = new ComposedDesignator(tail, new NthOutput(conn.getIndex()));
-      ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new_cd, conn.getObject());
-      TraceabilityNode tn = factory.getObjectNode(dob);
-      leaves.add(tn);
-      root.addChild(tn, Quality.EXACT);
-    }
-    else if (top instanceof NthOutput)
-    {
-      // Ask for an output: delegate whether it is a provenance or causality query
-      int output_nb = ((NthOutput) top).getIndex();
-      Designator tail = d.tail();
-      if (tail != null)
-      {
-        answerQuery(q, output_nb, tail, root, factory, leaves);
-      }
-      else
-      {
-        answerQuery(q, output_nb, Designator.identity, root, factory, leaves);
-      }
-    }
-    return leaves;
-  }
+	@Override
+	public List<TraceabilityNode> query(TraceabilityQuery q, Designator d, TraceabilityNode root, NodeFactory factory)
+	{
+		List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
+		Designator top = d.peek();
+		if (!(top instanceof NthInput) && !(top instanceof NthOutput))
+		{
+			// Can't answer queries that are not about inputs or outputs
+			leaves.add(factory.getUnknownNode());
+		}
+		if (top instanceof NthInput)
+		{
+			// Ask for an input: find the output to which it is connected
+			NthInput ni = (NthInput) top;
+			FunctionConnection conn = m_inputConnections[ni.getIndex()];
+			Designator tail = d.tail();
+			if (tail == null)
+			{
+				tail = Designator.identity;
+			}
+			if (conn != null)
+			{
+				ComposedDesignator new_cd = new ComposedDesignator(tail, new NthOutput(conn.getIndex()));
+				ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new_cd, conn.getObject());
+				TraceabilityNode tn = factory.getObjectNode(dob);
+				leaves.add(tn);
+				root.addChild(tn, Quality.EXACT);
+			}
+		}
+		else if (top instanceof NthOutput)
+		{
+			// Ask for an output: delegate whether it is a provenance or causality query
+			int output_nb = ((NthOutput) top).getIndex();
+			Designator tail = d.tail();
+			if (tail != null)
+			{
+				answerQuery(q, output_nb, tail, root, factory, leaves);
+			}
+			else
+			{
+				answerQuery(q, output_nb, Designator.identity, root, factory, leaves);
+			}
+		}
+		return leaves;
+	}
 
-  protected abstract void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves);
+	protected abstract void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves);
 }

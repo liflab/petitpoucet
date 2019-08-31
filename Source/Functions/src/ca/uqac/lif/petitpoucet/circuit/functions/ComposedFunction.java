@@ -26,6 +26,11 @@ public class ComposedFunction extends Function
 
 	protected OutputPlaceholder[] m_outputPlaceholders;
 
+	/**
+	 * An optional textual name for the function
+	 */
+	protected String m_name = null;
+
 	public ComposedFunction(int in_arity, int out_arity)
 	{
 		super(in_arity, out_arity);
@@ -39,6 +44,25 @@ public class ComposedFunction extends Function
 		for (int i = 0; i < in_arity; i++)
 		{
 			m_outputPlaceholders[i] = new OutputPlaceholder(i);
+		}
+	}
+
+	/**
+	 * Set a textual name for the function
+	 * @param name The name
+	 * @return This function
+	 */
+	public ComposedFunction setName(String name)
+	{
+		m_name = name;
+		return this;
+	}
+
+	public void add(Function ... functions)
+	{
+		for (Function f : functions)
+		{
+			m_innerFunctions.add(f);
 		}
 	}
 
@@ -74,11 +98,14 @@ public class ComposedFunction extends Function
 		{
 			NthInput ni = (NthInput) top;
 			FunctionConnection conn = m_inputConnections[ni.getIndex()];
-			ComposedDesignator new_cd = new ComposedDesignator(tail, new NthOutput(conn.getIndex()));
-			ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new_cd, conn.getObject());
-			TraceabilityNode tn = factory.getObjectNode(dob);
-			leaves.add(tn);
-			root.addChild(tn, Quality.EXACT);
+			if (conn != null)
+			{
+				ComposedDesignator new_cd = new ComposedDesignator(tail, new NthOutput(conn.getIndex()));
+				ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new_cd, conn.getObject());
+				TraceabilityNode tn = factory.getObjectNode(dob);
+				leaves.add(tn);
+				root.addChild(tn, Quality.EXACT);
+			}
 		}
 		else if (top instanceof NthOutput)
 		{
@@ -98,6 +125,16 @@ public class ComposedFunction extends Function
 		// Do nothing
 	}
 
+	@Override
+	public String toString()
+	{
+		if (m_name == null)
+		{
+			return super.toString();
+		}
+		return m_name;
+	}
+
 	public abstract class Placeholder extends Function
 	{
 		protected int m_index;
@@ -111,7 +148,7 @@ public class ComposedFunction extends Function
 		@Override
 		public void getValue(Object[] inputs, Object[] outputs)
 		{
-			outputs[0] = inputs[1];
+			outputs[0] = inputs[0];
 		}
 	}
 
@@ -161,6 +198,12 @@ public class ComposedFunction extends Function
 			m_inputs[0] = conn.pullValue();
 			getValue(m_inputs, m_returnedValue);
 			return m_returnedValue;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "Input placeholder " + m_index + " of " + ComposedFunction.this.toString();
 		}
 	}
 
@@ -212,6 +255,12 @@ public class ComposedFunction extends Function
 			m_inputs[0] = conn.pullValue();
 			getValue(m_inputs, m_returnedValue);
 			return m_returnedValue;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "Output placeholder " + m_index + " of " + ComposedFunction.this.toString();
 		}
 	}
 
