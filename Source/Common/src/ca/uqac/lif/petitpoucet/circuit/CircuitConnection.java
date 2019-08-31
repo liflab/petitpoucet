@@ -34,4 +34,9 @@ public interface CircuitConnection
 	 * @return The object; may be null
 	 */
 	/*@ null @*/ public CircuitElement getObject();
+	
+	/**
+	 * Resets the state of this connection
+	 */
+	public void reset();
 }

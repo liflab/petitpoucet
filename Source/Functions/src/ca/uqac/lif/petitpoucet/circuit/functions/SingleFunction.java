@@ -47,7 +47,7 @@ public abstract class SingleFunction extends Function
 	{
 		if (m_evaluated)
 		{
-			return m_returnedValue;
+			return copyArray(m_returnedValue);
 		}
 		for (int i = 0; i < m_inArity; i++)
 		{
@@ -63,7 +63,7 @@ public abstract class SingleFunction extends Function
 		}
 		getValue(m_inputs, m_returnedValue);
 		m_evaluated = true;
-		return m_returnedValue;
+		return copyArray(m_returnedValue);
 	}
 
 	@Override

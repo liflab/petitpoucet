@@ -80,6 +80,20 @@ public abstract class Function implements CircuitElement, Trackable
   public void reset()
   {
     m_evaluated = false;
+    for (FunctionConnection fc : m_inputConnections)
+    {
+      if (fc != null)
+      {
+        fc.reset();
+      }
+    }
+    for (FunctionConnection fc : m_outputConnections)
+    {
+      if (fc != null)
+      {
+        fc.reset();
+      }
+    }
   }
 
   @Override
@@ -124,4 +138,19 @@ public abstract class Function implements CircuitElement, Trackable
    * @return The function's values
    */
   public abstract Object[] evaluate();
+  
+  /**
+   * Creates a copy of an array
+   * @param objects The objects to copy
+   * @return A new array
+   */
+  public static Object[] copyArray(Object ... objects)
+  {
+    Object[] out = new Object[objects.length];
+    for (int i = 0; i < objects.length; i++)
+    {
+      out[i] = objects[i];
+    }
+    return out;
+  }
 }

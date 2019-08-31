@@ -35,6 +35,11 @@ public class FunctionConnection implements CircuitConnection
 		m_value = null;
 	}
 	
+	public void reset()
+	{
+	  m_value = null;
+	}
+	
 	@Override
 	public int getIndex() 
 	{
