@@ -37,14 +37,14 @@ import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
  * Applies a function to all the elements of input lists,
  * producing output lists.
  */
-public class ApplyToAll extends CircuitFunction
+public class ApplyToAll extends SingleFunction
 {
   /**
    * The function to apply
    */
-  protected CircuitFunction m_function;
+  protected Function m_function;
 
-  public ApplyToAll(CircuitFunction f)
+  public ApplyToAll(Function f)
   {
     super(f.getInputArity(), f.getOutputArity());
     m_function = f;
@@ -147,7 +147,12 @@ public class ApplyToAll extends CircuitFunction
   {
     ComposedDesignator cd = new ComposedDesignator(d, new NthOutput(output_nb));
     // Replace the function in the context when it evaluated this input
-    evaluateInnerFunctionAt(elem_index, (List[]) m_inputs);
+    List<?>[] lists = new List<?>[m_inputs.length];
+    for (int i = 0; i < m_inputs.length; i++)
+    {
+      lists[i] = (List<?>) m_inputs[i];
+    }
+    evaluateInnerFunctionAt(elem_index, lists);
     return m_function.query(q, cd);
   }
 }

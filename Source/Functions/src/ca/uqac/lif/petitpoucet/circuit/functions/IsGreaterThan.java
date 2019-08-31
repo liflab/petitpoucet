@@ -17,44 +17,24 @@
  */
 package ca.uqac.lif.petitpoucet.circuit.functions;
 
-import ca.uqac.lif.petitpoucet.circuit.CircuitConnection;
-
-public class FunctionConnection implements CircuitConnection
+public class IsGreaterThan extends NaryFunction
 {
-	protected int m_index;
-	
-	protected Function m_element;
-	
-	protected Object m_value;
-	
-	public FunctionConnection(int index, Function element)
-	{
-		super();
-		m_index = index;
-		m_element = element;
-		m_value = null;
-	}
-	
-	@Override
-	public int getIndex() 
-	{
-		return m_index;
-	}
-
-	@Override
-	public Function getObject() 
-	{
-		return m_element;
-	}
-	
-	public Object pullValue()
-	{
-		if (m_value != null)
-		{
-			return m_value;
-		}
-		Object[] outs = m_element.evaluate();
-		m_value = outs[m_index];
-		return m_value;
-	}
+  public IsGreaterThan()
+  {
+    super(2);
+  }
+  
+  @Override
+  public void getValue(Object[] inputs, Object[] outputs)
+  {
+    m_inputs[0] = inputs[0];
+    m_inputs[1] = inputs[1];
+    boolean b = false;
+    if (inputs[0] instanceof Number && inputs[1] instanceof Number)
+    {
+      b = ((Number) inputs[0]).floatValue() > ((Number) inputs[1]).floatValue();
+    }
+    m_returnedValue[0] = b;
+    outputs[0] = b;
+  }
 }

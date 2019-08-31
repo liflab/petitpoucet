@@ -27,7 +27,7 @@ import ca.uqac.lif.petitpoucet.common.Parameter;
 import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
 import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
-public class Constant extends CircuitFunction
+public class Constant extends SingleFunction
 {
 	/**
 	 * The value of this constant object

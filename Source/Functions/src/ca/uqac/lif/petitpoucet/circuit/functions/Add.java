@@ -39,13 +39,16 @@ public class Add extends NaryFunction
   public void getValue(Object[] inputs, Object[] outputs)
   {
     float out = 0;
-    for (Object o : inputs)
+    for (int i = 0; i < inputs.length; i++)
     {
+      Object o = inputs[i];
+      m_inputs[i] = o;
       if (o instanceof Number)
       {
         out += ((Number) o).floatValue();
       }
     }
+    m_returnedValue[0] = out;
     outputs[0] = out;
   }
 }

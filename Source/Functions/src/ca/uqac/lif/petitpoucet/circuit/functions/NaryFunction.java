@@ -28,7 +28,7 @@ import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
 import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
 
-public abstract class NaryFunction extends CircuitFunction
+public abstract class NaryFunction extends SingleFunction
 {
   public NaryFunction(int in_arity)
   {

@@ -19,74 +19,84 @@ package ca.uqac.lif.petitpoucet.circuit.functions;
 
 import java.util.List;
 
+import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.DesignatorLink;
+import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
+import ca.uqac.lif.petitpoucet.common.CollectionDesignator;
 import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
 import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
-public class Multiply extends NaryFunction
+public abstract class Quantifier extends NaryFunction
 {
-  public Multiply()
-  {
-    this(2);
-  }
+  /**
+   * The condition to evaluate on the set
+   */
+  protected Function m_function;
 
-  public Multiply(int in_arity)
+  protected boolean[] m_conditions;
+
+  public Quantifier(Function phi)
   {
-    super(in_arity);
+    super(1);
+    m_function = phi;
   }
 
   @Override
   public void getValue(Object[] inputs, Object[] outputs)
   {
-    float out = 1;
-    for (int i = 0; i < inputs.length; i++)
+    m_inputs[0] = inputs[0];
+    boolean b = getStartValue();
+    if (m_inputs[0] instanceof List)
     {
-      Object o = inputs[i];
-      m_inputs[i] = o;
-      if (o instanceof Number)
+      List<?> list = (List<?>) m_inputs[0];
+      m_conditions = new boolean[list.size()];
+      int i = 0;
+      for (Object o : list)
       {
-        out *= ((Number) o).floatValue();
+        Object[] f_in = new Object[1];
+        Object[] f_out = new Object[1];
+        f_in[0] = o;
+        m_function.getValue(f_in, f_out);
+        if (f_out[0] instanceof Boolean)
+        {
+          b = update(b, (Boolean) f_out[0]);
+          m_conditions[i] = (Boolean) f_out[0];
+        }
+        i++;
       }
     }
-    m_returnedValue[0] = out;
-    outputs[0] = out;
-  }
-  
-  @Override
-  public String toString()
-  {
-    return "×";
+    outputs[0] = b;
+    m_returnedValue[0] = b;
   }
 
   @Override
-  protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      List<List<DesignatorLink>> links)
+  protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d, List<List<DesignatorLink>> links)
   {
     if (!(q instanceof CausalityQuery))
     {
       super.answerQuery(q, output_nb, d, links);
-      return;
     }
-    if (((Number) m_returnedValue[0]).floatValue() != 0f)
+    if ((Boolean) m_returnedValue[0] == getStartValue() || m_conditions == null)
     {
       super.answerQuery(q, output_nb, d, links);
-      return;
     }
-    // Multiplication has a special definition of causality if the output is 0
-    for (int i = 0; i < m_inArity; i++)
+    for (int i = 0; i < m_conditions.length; i++)
     {
-      // Cause for output = 0 is any occurrence of 0 in inputs
-      if (((Number) m_inputs[i]).floatValue() == 0f)
+      if (m_conditions[i] == !getStartValue())
       {
-        ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(new CircuitDesignator.NthInput(i), this);
+        ComposedDesignator cd = new ComposedDesignator(new CollectionDesignator.NthElement(i), new CircuitDesignator.NthInput(0), d);
+        ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(cd, this);
         ConcreteDesignatorLink cdl = new ConcreteDesignatorLink(Quality.EXACT, cdo);
         links.add(putIntoList(cdl));
       }
     }
   }
+
+  protected abstract boolean getStartValue();
+
+  protected abstract boolean update(boolean b1, boolean b2);
 }

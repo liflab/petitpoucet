@@ -27,7 +27,7 @@ import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
 import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
 import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
-public class Fork extends CircuitFunction
+public class Fork extends SingleFunction
 {
   public Fork(int out_arity)
   {

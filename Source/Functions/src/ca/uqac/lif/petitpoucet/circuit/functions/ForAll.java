@@ -17,44 +17,29 @@
  */
 package ca.uqac.lif.petitpoucet.circuit.functions;
 
-import ca.uqac.lif.petitpoucet.circuit.CircuitConnection;
-
-public class FunctionConnection implements CircuitConnection
+public class ForAll extends Quantifier
 {
-	protected int m_index;
-	
-	protected Function m_element;
-	
-	protected Object m_value;
-	
-	public FunctionConnection(int index, Function element)
-	{
-		super();
-		m_index = index;
-		m_element = element;
-		m_value = null;
-	}
-	
-	@Override
-	public int getIndex() 
-	{
-		return m_index;
-	}
+  
+  public ForAll(Function phi)
+  {
+    super(phi);
+  }
 
-	@Override
-	public Function getObject() 
-	{
-		return m_element;
-	}
-	
-	public Object pullValue()
-	{
-		if (m_value != null)
-		{
-			return m_value;
-		}
-		Object[] outs = m_element.evaluate();
-		m_value = outs[m_index];
-		return m_value;
-	}
+  @Override
+  protected boolean getStartValue()
+  {
+    return true;
+  }
+
+  @Override
+  protected boolean update(boolean b1, boolean b2)
+  {
+    return b1 && b2;
+  }
+  
+  @Override
+  public String toString()
+  {
+    return "forall x : " + m_function;
+  }
 }
