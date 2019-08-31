@@ -21,14 +21,13 @@ import java.util.List;
 
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.TraceabilityNode;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
 public abstract class Quantifier extends NaryFunction
 {
@@ -74,25 +73,28 @@ public abstract class Quantifier extends NaryFunction
   }
 
   @Override
-  protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d, List<List<DesignatorLink>> links)
+  protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
+      TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves)
   {
     if (!(q instanceof CausalityQuery))
     {
-      super.answerQuery(q, output_nb, d, links);
+      super.answerQuery(q, output_nb, d, root, factory, leaves);
     }
     if ((Boolean) m_returnedValue[0] == getStartValue() || m_conditions == null)
     {
-      super.answerQuery(q, output_nb, d, links);
+      super.answerQuery(q, output_nb, d, root, factory, leaves);
     }
     for (int i = 0; i < m_conditions.length; i++)
     {
+      TraceabilityNode or = factory.getOrNode();
       if (m_conditions[i] == !getStartValue())
       {
         ComposedDesignator cd = new ComposedDesignator(new CollectionDesignator.NthElement(i), new CircuitDesignator.NthInput(0), d);
-        ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(cd, this);
-        ConcreteDesignatorLink cdl = new ConcreteDesignatorLink(Quality.EXACT, cdo);
-        links.add(putIntoList(cdl));
+        TraceabilityNode child = factory.getObjectNode(cd, this);
+        or.addChild(child, Quality.EXACT);
       }
+      leaves.add(or);
+      root.addChild(or, Quality.EXACT);
     }
   }
 

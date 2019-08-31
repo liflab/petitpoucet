@@ -23,15 +23,15 @@ import java.util.List;
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.ObjectNode;
+import ca.uqac.lif.petitpoucet.TraceabilityNode;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
 /**
  * Applies a function to all the elements of input lists,
@@ -49,7 +49,7 @@ public class ApplyToAll extends SingleFunction
     super(f.getInputArity(), f.getOutputArity());
     m_function = f;
   }
-  
+
   @Override
   public String toString()
   {
@@ -95,55 +95,53 @@ public class ApplyToAll extends SingleFunction
   }
 
   @Override
-  protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d, List<List<DesignatorLink>> links)
+  protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
+      TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves)
   {
     Designator top = d.peek();
     if (!(top instanceof NthElement))
     {
       // Can't do anything with this query; at best, say that
       // output depends on all input
-      ArrayList<DesignatorLink> in_list = new ArrayList<DesignatorLink>(m_inArity);
+      TraceabilityNode and = factory.getAndNode();
       for (int i = 0; i < m_inArity; i++)
       {
-        ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new CircuitDesignator.NthInput(i), this);
-        ConcreteDesignatorLink dl = new ConcreteDesignatorLink(Quality.OVER, dob);
-        in_list.add(dl);
+        TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(i), this);
+        leaves.add(child);
+        and.addChild(child, Quality.EXACT);
       }
-      links.add(in_list);
+      root.addChild(and, Quality.OVER);
     }
     else
     {
       int elem_index = ((NthElement) top).getIndex();
       Designator tail = d.tail();
-      List<List<DesignatorLink>> l_f_links = getFunctionLinks(q, tail, output_nb, elem_index);
-      for (List<DesignatorLink> f_links : l_f_links)
+      List<TraceabilityNode> l_f_links = getFunctionLinks(q, tail, output_nb, elem_index, root, factory);
+      for (TraceabilityNode f_links : l_f_links)
       {
-        List<DesignatorLink> o_links = new ArrayList<DesignatorLink>(f_links.size());
-        for (DesignatorLink f_dl : f_links)
+        if (!(f_links instanceof ObjectNode))
         {
-          List<DesignatedObject> l_f_dob = f_dl.getDesignatedObjects();
-          for (DesignatedObject f_dob : l_f_dob)
-          {
-            Designator f_dob_d = f_dob.getDesignator().peek();
-            if (f_dob_d instanceof NthInput)
-            {
-              // Convert the inner function's input into ApplyToAll's input
-              int index = ((NthInput) f_dob_d).getIndex();
-              // Input <index> of the inner function is the <elem_index>-th element
-              // of input <index> of ApplyToAll
-              ComposedDesignator cd = new ComposedDesignator(f_dob_d.tail(), new NthElement(elem_index), new NthInput(index));
-              ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(cd, this);
-              ConcreteDesignatorLink cdl = new ConcreteDesignatorLink(f_dl.getQuality(), cdo);
-              o_links.add(cdl);
-            }          
-          }
+          leaves.add(f_links);
+          continue;
         }
-        links.add(o_links);
+        DesignatedObject f_dob = ((ObjectNode) f_links).getDesignatedObject();
+        Designator f_dob_d = f_dob.getDesignator().peek();
+        if (f_dob_d instanceof NthInput)
+        {
+          // Convert the inner function's input into ApplyToAll's input
+          int index = ((NthInput) f_dob_d).getIndex();
+          // Input <index> of the inner function is the <elem_index>-th element
+          // of input <index> of ApplyToAll
+          ComposedDesignator cd = new ComposedDesignator(f_dob_d.tail(), new NthElement(elem_index), new NthInput(index));
+          TraceabilityNode tn = factory.getObjectNode(cd, this);
+          leaves.add(tn);
+          f_links.addChild(tn, Quality.EXACT);
+        }
       }
     }
   }
-  
-  protected List<List<DesignatorLink>> getFunctionLinks(TraceabilityQuery q, Designator d, int output_nb, int elem_index)
+
+  protected List<TraceabilityNode> getFunctionLinks(TraceabilityQuery q, Designator d, int output_nb, int elem_index, TraceabilityNode root, NodeFactory factory)
   {
     ComposedDesignator cd = new ComposedDesignator(d, new NthOutput(output_nb));
     // Replace the function in the context when it evaluated this input
@@ -153,6 +151,6 @@ public class ApplyToAll extends SingleFunction
       lists[i] = (List<?>) m_inputs[i];
     }
     evaluateInnerFunctionAt(elem_index, lists);
-    return m_function.query(q, cd);
+    return m_function.query(q, cd, root, factory);
   }
 }

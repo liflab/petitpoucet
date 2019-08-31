@@ -20,12 +20,11 @@ package ca.uqac.lif.petitpoucet.circuit.functions;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
 public class Fork extends SingleFunction
 {
@@ -56,10 +55,10 @@ public class Fork extends SingleFunction
 
   @Override
   protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      List<List<DesignatorLink>> links)
+      TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves)
   {
-    ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(new CircuitDesignator.NthInput(0), this);
-    ConcreteDesignatorLink cdl = new ConcreteDesignatorLink(Quality.EXACT, cdo);
-    links.add(putIntoList(cdl));
+    TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(0), this);
+    leaves.add(child);
+    root.addChild(child, Quality.EXACT);
   }
 }

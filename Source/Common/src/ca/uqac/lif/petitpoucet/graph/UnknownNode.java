@@ -1,8 +1,8 @@
 package ca.uqac.lif.petitpoucet.graph;
 
-public class AndNode extends ConcreteTraceabilityNode
+public class UnknownNode extends ConcreteTraceabilityNode
 {
-  public AndNode()
+  public UnknownNode()
   {
     super();
   }
@@ -10,6 +10,6 @@ public class AndNode extends ConcreteTraceabilityNode
   @Override
   public String toString()
   {
-    return "∧";
+    return "?";
   }
 }

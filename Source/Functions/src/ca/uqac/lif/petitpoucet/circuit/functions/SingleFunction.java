@@ -22,13 +22,13 @@ import java.util.List;
 
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
 public abstract class SingleFunction extends Function
 {
@@ -67,14 +67,14 @@ public abstract class SingleFunction extends Function
   }
 
   @Override
-  public List<List<DesignatorLink>> query(TraceabilityQuery q, Designator d)
+  public List<TraceabilityNode> query(TraceabilityQuery q, Designator d, TraceabilityNode root, NodeFactory factory)
   {
-    List<List<DesignatorLink>> list = new ArrayList<List<DesignatorLink>>();
+    List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
     Designator top = d.peek();
     if (!(top instanceof NthInput) && !(top instanceof NthOutput))
     {
       // Can't answer queries that are not about inputs or outputs
-      list.add(putIntoList(DesignatorLink.UnknownLink.instance));
+      leaves.add(factory.getUnknownNode());
     }
     if (top instanceof NthInput)
     {
@@ -88,8 +88,9 @@ public abstract class SingleFunction extends Function
       }
       ComposedDesignator new_cd = new ComposedDesignator(tail, new NthOutput(conn.getIndex()));
       ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new_cd, conn.getObject());
-      ConcreteDesignatorLink dl = new ConcreteDesignatorLink(Quality.EXACT, dob);
-      list.add(putIntoList(dl));
+      TraceabilityNode tn = factory.getObjectNode(dob);
+      leaves.add(tn);
+      root.addChild(tn, Quality.EXACT);
     }
     else if (top instanceof NthOutput)
     {
@@ -98,25 +99,15 @@ public abstract class SingleFunction extends Function
       Designator tail = d.tail();
       if (tail != null)
       {
-        answerQuery(q, output_nb, tail, list);
+        answerQuery(q, output_nb, tail, root, factory, leaves);
       }
       else
       {
-        answerQuery(q, output_nb, Designator.identity, list);
+        answerQuery(q, output_nb, Designator.identity, root, factory, leaves);
       }
     }
-    return list;
-  }
-  
-  /*@ pure non_null @*/ protected static List<DesignatorLink> putIntoList(DesignatorLink ... links)
-  {
-    List<DesignatorLink> new_list = new ArrayList<DesignatorLink>(links.length);
-    for (DesignatorLink dl : links)
-    {
-      new_list.add(dl);
-    }
-    return new_list;
+    return leaves;
   }
 
-  protected abstract void answerQuery(TraceabilityQuery q, int output_nb, Designator d, List<List<DesignatorLink>> links);
+  protected abstract void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves);
 }

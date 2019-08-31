@@ -20,13 +20,12 @@ package ca.uqac.lif.petitpoucet.circuit.functions;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
 public class Multiply extends NaryFunction
 {
@@ -65,28 +64,30 @@ public class Multiply extends NaryFunction
 
   @Override
   protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      List<List<DesignatorLink>> links)
+      TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves)
   {
     if (!(q instanceof CausalityQuery))
     {
-      super.answerQuery(q, output_nb, d, links);
+      super.answerQuery(q, output_nb, d, root, factory, leaves);
       return;
     }
     if (((Number) m_returnedValue[0]).floatValue() != 0f)
     {
-      super.answerQuery(q, output_nb, d, links);
+      super.answerQuery(q, output_nb, d, root, factory, leaves);
       return;
     }
     // Multiplication has a special definition of causality if the output is 0
+    TraceabilityNode or = factory.getOrNode();
     for (int i = 0; i < m_inArity; i++)
     {
       // Cause for output = 0 is any occurrence of 0 in inputs
       if (((Number) m_inputs[i]).floatValue() == 0f)
       {
-        ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(new CircuitDesignator.NthInput(i), this);
-        ConcreteDesignatorLink cdl = new ConcreteDesignatorLink(Quality.EXACT, cdo);
-        links.add(putIntoList(cdl));
+        TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(i), this);
+        leaves.add(child);
+        or.addChild(child, Quality.EXACT);
       }
     }
+    root.addChild(or, Quality.EXACT);
   }
 }

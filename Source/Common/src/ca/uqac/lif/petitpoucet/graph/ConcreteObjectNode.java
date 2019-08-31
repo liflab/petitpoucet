@@ -17,59 +17,39 @@
  */
 package ca.uqac.lif.petitpoucet.graph;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ca.uqac.lif.petitpoucet.DesignatedObject;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
+import ca.uqac.lif.petitpoucet.ObjectNode;
 
-/**
- * Concrete implementation of the {@link DesignatorLink} interface
- * @author Sylvain Hallé
- */
-public class ConcreteDesignatorLink implements DesignatorLink
+public class ConcreteObjectNode extends ConcreteTraceabilityNode implements ObjectNode
 {
 	/**
-	 * The quality of the link
+	 * The designated object
 	 */
-	protected Quality m_quality;
+	protected DesignatedObject m_object;
 	
 	/**
-	 * The object designated by this link
+	 * Creates a new traceability node with no children
+	 * @param dob The designated object represented by this node
 	 */
-	protected List<DesignatedObject> m_dobs;
-	
-	/**
-	 * Creates a new concrete designator link
-	 * @param q The quality of the link
-	 * @param dob The object designated by this link
-	 */
-	public ConcreteDesignatorLink(Quality q, DesignatedObject ... dobs)
+	public ConcreteObjectNode(DesignatedObject dob)
 	{
 		super();
-		m_quality = q;
-		m_dobs = new ArrayList<DesignatedObject>(dobs.length);
-		for (DesignatedObject dob : dobs)
-		{
-		  m_dobs.add(dob);
-		}
+		m_object = dob;
 	}
 	
+	/**
+	 * Gets the designated object contained in this node
+	 * @return The designated object
+	 */
 	@Override
-	public Quality getQuality() 
+	public DesignatedObject getDesignatedObject()
 	{
-		return m_quality;
+	  return m_object;
 	}
-
-	@Override
-	public List<DesignatedObject> getDesignatedObjects()
-	{
-		return m_dobs;
-	}
-
+	
 	@Override
 	public String toString()
 	{
-	  return m_dobs + ":" + m_quality;
+	  return m_object.toString();
 	}
 }

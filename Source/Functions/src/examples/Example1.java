@@ -8,9 +8,9 @@ import ca.uqac.lif.petitpoucet.circuit.functions.Add;
 import ca.uqac.lif.petitpoucet.circuit.functions.Connector;
 import ca.uqac.lif.petitpoucet.circuit.functions.Constant;
 import ca.uqac.lif.petitpoucet.circuit.functions.Multiply;
-import ca.uqac.lif.petitpoucet.graph.ObjectNode;
-import ca.uqac.lif.petitpoucet.graph.TraceabilityNodeDotRenderer;
+import ca.uqac.lif.petitpoucet.graph.ConcreteObjectNode;
 import ca.uqac.lif.petitpoucet.graph.Tracer;
+import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
 
 public class Example1
 {
@@ -30,7 +30,7 @@ public class Example1
     System.out.println(output[0]);
     Designator d = new CircuitDesignator.NthOutput(0);
     Tracer t = new Tracer();
-    ObjectNode root = t.getTree(ProvenanceQuery.instance, d, mul);
+    ConcreteObjectNode root = t.getTree(ProvenanceQuery.instance, d, mul);
     TraceabilityNodeDotRenderer rend = new TraceabilityNodeDotRenderer();
     String s = rend.render(root);
     System.out.println(s);

@@ -17,16 +17,14 @@
  */
 package ca.uqac.lif.petitpoucet.circuit.functions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.TraceabilityNode;
 
 public abstract class NaryFunction extends SingleFunction
 {
@@ -37,16 +35,16 @@ public abstract class NaryFunction extends SingleFunction
   
   @Override
   protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      List<List<DesignatorLink>> links)
+      TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves)
   {
     // Default behaviour: a function's (single) output is linked to all its inputs
-    List<DesignatorLink> in_links = new ArrayList<DesignatorLink>(m_inArity);
+    TraceabilityNode and = factory.getAndNode();
     for (int i = 0; i < m_inArity; i++)
     {
-      ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(new CircuitDesignator.NthInput(i), this);
-      ConcreteDesignatorLink cdl = new ConcreteDesignatorLink(Quality.EXACT, cdo);
-      in_links.add(cdl);
+      TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(i), this);
+      and.addChild(child, Quality.EXACT);
+      leaves.add(child);
     }
-    links.add(in_links);
+    root.addChild(and, Quality.EXACT);
   }
 }

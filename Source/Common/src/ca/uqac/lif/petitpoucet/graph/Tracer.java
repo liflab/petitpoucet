@@ -17,20 +17,21 @@
  */
 package ca.uqac.lif.petitpoucet.graph;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.Trackable;
-import ca.uqac.lif.petitpoucet.graph.TraceabilityNode.LabeledEdge;
 
-public class Tracer
+public class Tracer implements NodeFactory
 {
   /**
    * Determines whether degenerate and/or nodes are removed from the tree
@@ -39,11 +40,17 @@ public class Tracer
   protected boolean m_simplify = true;
   
   /**
+   * A map keeping track of which designated objects already have nodes
+   */
+  protected Map<DesignatedObject,ConcreteTraceabilityNode> m_nodes;
+  
+  /**
    * Creates a new tracer with default settings
    */
   public Tracer()
   {
     super();
+    m_nodes = new HashMap<DesignatedObject,ConcreteTraceabilityNode>();
   }
   
   /**
@@ -64,116 +71,90 @@ public class Tracer
    * @param o The target object
    * @return A node representing the root of the traceability tree
    */
-  /*@ non_null @*/ public ObjectNode getTree(TraceabilityQuery q, /*@ non_null @*/ Designator d, /*@ non_null @*/ Object o)
+  /*@ non_null @*/ public ConcreteObjectNode getTree(TraceabilityQuery q, /*@ non_null @*/ Designator d, /*@ non_null @*/ Object o)
   {
-    Map<DesignatedObject,ObjectNode> map = new HashMap<DesignatedObject,ObjectNode>();
+    Set<ConcreteTraceabilityNode> visited = new HashSet<ConcreteTraceabilityNode>();
     DesignatedObject dob = new ConcreteDesignatedObject(d, o);
-    ObjectNode tn = new ObjectNode(dob);
-    List<LabeledEdge> children = getChildren(q, tn, map);
-    tn.addChildren(children);
+    ConcreteObjectNode tn = getObjectNode(dob);
+    getChildren(q, tn, visited);
     return tn;
   }
 
-  /*@ non_null @*/ protected List<LabeledEdge> getChildren(TraceabilityQuery q, /*@ non_null @*/ ObjectNode tn, /*@ non_null @*/ Map<DesignatedObject,ObjectNode> nodes)
+  /*@ non_null @*/ protected void getChildren(TraceabilityQuery q, /*@ non_null @*/ ConcreteTraceabilityNode root, /*@ non_null @*/ Set<ConcreteTraceabilityNode> visited)
   {
-    List<LabeledEdge> out_list = new ArrayList<LabeledEdge>();
-    DesignatedObject dob = tn.m_object;
-    if (dob == null || nodes.containsKey(dob))
+    if (visited.contains(root))
     {
       // This node has already been expanded
-      return out_list;
+      return;
     }
+    visited.add(root);
+    if (!(root instanceof ConcreteObjectNode))
+    {
+      // Nothing to expand
+      return;
+    }
+    DesignatedObject dob = ((ConcreteObjectNode) root).m_object;
     Object o = dob.getObject();
     Designator d = dob.getDesignator();
     if (d instanceof Designator.Identity || d instanceof Designator.Nothing 
         || d instanceof Designator.Unknown)
     {
       // Trivial designator: nothing to expand
-      return out_list;
+      return;
     }
     if (o instanceof Trackable)
     {
       // Object is trackable: send the query and create nodes from its result
       Trackable to = (Trackable) o;
-      List<List<DesignatorLink>> o_links = to.query(q, d);
-      OrNode or_root = new OrNode();
-      for (List<DesignatorLink> links : o_links)
+      List<TraceabilityNode> leaves = to.query(q, d, root, this);
+      for (TraceabilityNode leaf : leaves)
       {
-        AndNode and = new AndNode();
-        boolean and_added = false;
-        for (DesignatorLink dl : links)
-        {
-          List<DesignatedObject> list_dob = dl.getDesignatedObjects();
-          if (list_dob != null)
-          {
-            for (DesignatedObject l_dob : list_dob)
-            {
-              Quality l_quality = dl.getQuality();
-              ObjectNode tn_child = null;
-              if (nodes.containsKey(l_dob))
-              {
-                tn_child = nodes.get(l_dob);
-              }
-              else
-              {
-                tn_child = new ObjectNode(l_dob);
-                List<LabeledEdge> l_ql = getChildren(q, tn_child, nodes);
-                nodes.put(l_dob, tn_child);
-                tn_child.addChildren(l_ql);
-              }
-              LabeledEdge ql = new LabeledEdge(tn_child, l_quality);
-              and.addChildren(ql);
-              and_added = true;
-            }
-          }
-        }
-        if (and_added)
-        {
-          if (m_simplify && and.getChildren().size() == 1)
-          {
-            or_root.addChildren(and.getChildren().get(0));
-          }
-          else
-          {
-            or_root.addChildren(new LabeledEdge(and, Quality.EXACT));
-          }
-        }
-      }
-      if (or_root.getChildren().size() > 0)
-      {
-        if (m_simplify && or_root.getChildren().size() == 1)
-        {
-          out_list.add(or_root.getChildren().get(0));
-        }
-        else
-        {
-          out_list.add(new LabeledEdge(or_root, Quality.EXACT));
-        }
+        getChildren(q, (ConcreteTraceabilityNode) leaf, visited);
       }
     }
     else
     {
       // Query is non-trivial, and object is not trackable: nothing to do
-      ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(Designator.unknown, o);
-      ObjectNode tn_child = getNode(cdo, nodes);
-      LabeledEdge ql = new LabeledEdge(tn_child, Quality.EXACT);
-      out_list.add(ql);
+      ConcreteTraceabilityNode n = (ConcreteTraceabilityNode) getObjectNode(Designator.unknown, o);
+      root.addChild(n, Quality.EXACT);
     }
-    return out_list;
+    return;
   }
 
-  /*@ non_null @*/ protected static ObjectNode getNode(DesignatedObject dob, /*@ non_null @*/ Map<DesignatedObject,ObjectNode> nodes)
+  @Override
+  public ConcreteObjectNode getObjectNode(DesignatedObject dob)
   {
-    ObjectNode tn_child = null;
-    if (nodes.containsKey(dob))
+    if (m_nodes.containsKey(dob))
     {
-      tn_child = nodes.get(dob);
+      return (ConcreteObjectNode) m_nodes.get(dob);
+    }
+    ConcreteObjectNode on = new ConcreteObjectNode(dob);
+    m_nodes.put(dob, on);
+    return on;
+  }
+  
+  @Override
+  public ConcreteObjectNode getObjectNode(Designator d, Object o)
+  {
+    ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(d, o);
+    return getObjectNode(cdo);
+  }
 
-    }
-    else
-    {
-      tn_child = new ObjectNode(dob);
-    }
-    return tn_child;
+  @Override
+  public AndNode getAndNode()
+  {
+    return new AndNode();
+  }
+
+  @Override
+  public OrNode getOrNode()
+  {
+    return new OrNode();
+  }
+
+  @Override
+  public UnknownNode getUnknownNode()
+  {
+    return new UnknownNode();
   }
 }

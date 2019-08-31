@@ -1,4 +1,4 @@
-package ca.uqac.lif.petitpoucet.graph;
+package ca.uqac.lif.petitpoucet.graph.render;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -6,17 +6,20 @@ import java.util.Queue;
 import java.util.Set;
 
 import ca.uqac.lif.petitpoucet.DesignatedObject;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
-import ca.uqac.lif.petitpoucet.graph.TraceabilityNode.LabeledEdge;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
+import ca.uqac.lif.petitpoucet.graph.AndNode;
+import ca.uqac.lif.petitpoucet.graph.ConcreteObjectNode;
+import ca.uqac.lif.petitpoucet.graph.ConcreteTraceabilityNode;
+import ca.uqac.lif.petitpoucet.LabeledEdge;
 
 public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<String>
 {
 
   @Override
-  public String render(ObjectNode root)
+  public String render(ConcreteTraceabilityNode root)
   {
-    Set<TraceabilityNode> visited = new HashSet<TraceabilityNode>();
-    Queue<TraceabilityNode> to_visit = new ArrayDeque<TraceabilityNode>();
+    Set<ConcreteTraceabilityNode> visited = new HashSet<ConcreteTraceabilityNode>();
+    Queue<ConcreteTraceabilityNode> to_visit = new ArrayDeque<ConcreteTraceabilityNode>();
     to_visit.add(root);
     StringBuilder out = new StringBuilder();
     out.append("digraph G {\n");
@@ -26,20 +29,20 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
     return out.toString();
   }
 
-  protected void visit(StringBuilder out, Queue<TraceabilityNode> to_visit, Set<TraceabilityNode> visited)
+  protected void visit(StringBuilder out, Queue<ConcreteTraceabilityNode> to_visit, Set<ConcreteTraceabilityNode> visited)
   {
     while (!to_visit.isEmpty())
     {
-      TraceabilityNode n = to_visit.remove();
+      ConcreteTraceabilityNode n = to_visit.remove();
       if (visited.contains(n))
       {
         continue;
       }
       visited.add(n);
       int s_id = n.getId();
-      if (n instanceof ObjectNode)
+      if (n instanceof ConcreteObjectNode)
       {
-        DesignatedObject dob = ((ObjectNode) n).getDesignatedObject();
+        DesignatedObject dob = ((ConcreteObjectNode) n).getDesignatedObject();
         out.append(s_id).append(" [label=\"").append(dob).append("\",shape=\"rectangle\",fillcolor=\"AliceBlue\"];\n"); 
       }
       else
@@ -55,18 +58,19 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
       String link_color = "black";
       for (LabeledEdge ql : n.getChildren())
       {
-        if (ql.m_quality == Quality.OVER)
+        if (ql.getQuality() == Quality.OVER)
         {
           link_color = "red";
         }
-        if (ql.m_quality == Quality.UNDER)
+        if (ql.getQuality() == Quality.UNDER)
         {
           link_color = "blue";
         }
-        out.append(s_id).append(" -> ").append(ql.m_node.getId()).append(" [color=\"").append(link_color).append("\"];\n");
-        if (!visited.contains(ql.m_node))
+        ConcreteTraceabilityNode child_node = (ConcreteTraceabilityNode) ql.getNode();
+        out.append(s_id).append(" -> ").append(child_node.getId()).append(" [color=\"").append(link_color).append("\"];\n");
+        if (!visited.contains(child_node))
         {
-          to_visit.add(ql.m_node);
+          to_visit.add(child_node);
         }
       }
     }

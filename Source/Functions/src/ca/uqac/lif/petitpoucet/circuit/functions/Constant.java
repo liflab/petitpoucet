@@ -20,12 +20,11 @@ package ca.uqac.lif.petitpoucet.circuit.functions;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.DesignatorLink;
-import ca.uqac.lif.petitpoucet.DesignatorLink.Quality;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.common.Parameter;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatedObject;
-import ca.uqac.lif.petitpoucet.graph.ConcreteDesignatorLink;
 
 public class Constant extends SingleFunction
 {
@@ -70,10 +69,10 @@ public class Constant extends SingleFunction
 	}
 
 	@Override
-	public void answerQuery(TraceabilityQuery q, int output_nb, Designator d, List<List<DesignatorLink>> links) 
+	public void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves) 
 	{
-		ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new Parameter("Parameter 'value' in constructor", d), this);
-		ConcreteDesignatorLink dl = new ConcreteDesignatorLink(Quality.EXACT, dob);
-		links.add(putIntoList(dl));
+		TraceabilityNode tn = factory.getObjectNode(new Parameter("Parameter 'value' in constructor", d), this);
+		root.addChild(tn, Quality.EXACT);
+		leaves.add(tn);
 	}
 }
