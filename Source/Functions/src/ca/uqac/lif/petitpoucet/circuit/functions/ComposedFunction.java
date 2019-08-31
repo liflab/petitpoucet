@@ -7,7 +7,7 @@ import java.util.Set;
 
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
@@ -80,7 +80,7 @@ public class ComposedFunction extends Function
 
   @Override
   public List<TraceabilityNode> query(TraceabilityQuery q, Designator d,
-      TraceabilityNode root, NodeFactory factory) 
+      TraceabilityNode root, Tracer factory) 
   {
     List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
     Designator top = d.peek();
@@ -110,7 +110,7 @@ public class ComposedFunction extends Function
     else if (top instanceof NthOutput)
     {
       NthOutput no = (NthOutput) top;
-      ComposedDesignator new_cd = new ComposedDesignator(tail, new NthInput(0));
+      ComposedDesignator new_cd = new ComposedDesignator(tail, new NthOutput(0));
       ConcreteDesignatedObject dob = new ConcreteDesignatedObject(new_cd, m_outputPlaceholders[no.getIndex()]);
       TraceabilityNode tn = factory.getObjectNode(dob);
       leaves.add(tn);
@@ -200,7 +200,7 @@ public class ComposedFunction extends Function
 
     @Override
     public List<TraceabilityNode> query(TraceabilityQuery q, Designator d,
-        TraceabilityNode root, NodeFactory factory) 
+        TraceabilityNode root, Tracer factory) 
     {
       List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
       Designator top = d.peek();
@@ -269,7 +269,7 @@ public class ComposedFunction extends Function
     
     @Override
     public List<TraceabilityNode> query(TraceabilityQuery q, Designator d,
-        TraceabilityNode root, NodeFactory factory) 
+        TraceabilityNode root, Tracer factory) 
     {
       List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
       Designator top = d.peek();

@@ -24,7 +24,7 @@ import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
-import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
@@ -67,7 +67,7 @@ public abstract class SingleFunction extends Function
 	}
 
 	@Override
-	public List<TraceabilityNode> query(TraceabilityQuery q, Designator d, TraceabilityNode root, NodeFactory factory)
+	public List<TraceabilityNode> query(TraceabilityQuery q, Designator d, TraceabilityNode root, Tracer factory)
 	{
 		List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
 		Designator top = d.peek();
@@ -112,5 +112,5 @@ public abstract class SingleFunction extends Function
 		return leaves;
 	}
 
-	protected abstract void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves);
+	protected abstract void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves);
 }

@@ -1,6 +1,6 @@
 package ca.uqac.lif.petitpoucet;
 
-public interface NodeFactory
+public interface Tracer
 {
   public TraceabilityNode getObjectNode(DesignatedObject dob);
   
@@ -11,4 +11,8 @@ public interface NodeFactory
   public TraceabilityNode getOrNode();
   
   public TraceabilityNode getUnknownNode();
+  
+  public Tracer getSubTracer();
+  
+  public TraceabilityTree trace(TraceabilityQuery q, Designator d, Object o);
 }

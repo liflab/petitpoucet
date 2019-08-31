@@ -21,7 +21,7 @@ import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
-import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.common.Parameter;
@@ -69,7 +69,7 @@ public class Constant extends SingleFunction
 	}
 
 	@Override
-	public void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves) 
+	public void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves) 
 	{
 		TraceabilityNode tn = factory.getObjectNode(new Parameter("Parameter 'value' in constructor", d), this);
 		root.addChild(tn, Quality.EXACT);

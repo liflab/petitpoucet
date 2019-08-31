@@ -12,7 +12,7 @@ import ca.uqac.lif.petitpoucet.circuit.functions.Connector;
 import ca.uqac.lif.petitpoucet.circuit.functions.Constant;
 import ca.uqac.lif.petitpoucet.circuit.functions.Fork;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTraceabilityNode;
-import ca.uqac.lif.petitpoucet.graph.Tracer;
+import ca.uqac.lif.petitpoucet.graph.ConcreteTracer;
 import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
 
 @SuppressWarnings("unused")
@@ -33,7 +33,7 @@ public class Example4
 		Connector.connect(x, ata);
 		Object[] out = ata.evaluate();
 		System.out.println(out[0]);
-		Tracer tracer = new Tracer();
+		ConcreteTracer tracer = new ConcreteTracer();
 		ComposedDesignator cd = new ComposedDesignator(new NthElement(1), new NthOutput(0));
 		ConcreteTraceabilityNode root = tracer.getTree(ProvenanceQuery.instance, cd, ata);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();

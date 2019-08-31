@@ -46,5 +46,5 @@ public interface Trackable
 	 */
 	/*@ non_null @*/ public List<TraceabilityNode> query(/*@ non_null @*/ TraceabilityQuery q, 
 	    /*@ non_null @*/ Designator d, /*@ non_null @*/ TraceabilityNode root,
-	    /*@ non_null @*/ NodeFactory factory);
+	    /*@ non_null @*/ Tracer factory);
 }

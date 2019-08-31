@@ -20,7 +20,7 @@ package ca.uqac.lif.petitpoucet.circuit.functions;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
@@ -55,7 +55,7 @@ public class Fork extends SingleFunction
 
   @Override
   protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves)
+      TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
   {
     TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(0), this);
     leaves.add(child);

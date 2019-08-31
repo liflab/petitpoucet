@@ -23,11 +23,12 @@ import java.util.List;
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.ObjectNode;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
+import ca.uqac.lif.petitpoucet.TraceabilityTree;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
@@ -96,7 +97,7 @@ public class ApplyToAll extends SingleFunction
 
   @Override
   protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves)
+      TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
   {
     Designator top = d.peek();
     if (!(top instanceof NthElement))
@@ -137,11 +138,16 @@ public class ApplyToAll extends SingleFunction
           leaves.add(tn);
           f_links.addChild(tn, Quality.EXACT);
         }
+        else
+        {
+          leaves.add(f_links);
+          continue;
+        }
       }
     }
   }
 
-  protected List<TraceabilityNode> getFunctionLinks(TraceabilityQuery q, Designator d, int output_nb, int elem_index, TraceabilityNode root, NodeFactory factory)
+  protected List<TraceabilityNode> getFunctionLinks(TraceabilityQuery q, Designator d, int output_nb, int elem_index, TraceabilityNode root, Tracer factory)
   {
     ComposedDesignator cd = new ComposedDesignator(d, new NthOutput(output_nb));
     // Replace the function in the context when it evaluated this input
@@ -151,6 +157,9 @@ public class ApplyToAll extends SingleFunction
       lists[i] = (List<?>) m_inputs[i];
     }
     evaluateInnerFunctionAt(elem_index, lists);
-    return m_function.query(q, cd, root, factory);
+    Tracer sub_f = factory.getSubTracer();
+    TraceabilityTree tt = sub_f.trace(q, cd, m_function);
+    root.addChild(tt.getRoot(), Quality.EXACT);
+    return tt.getLeaves();
   }
 }

@@ -26,12 +26,12 @@ import java.util.Set;
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
-import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.Trackable;
 
-public class Tracer implements NodeFactory
+public class ConcreteTracer implements Tracer
 {
   /**
    * Determines whether degenerate and/or nodes are removed from the tree
@@ -47,7 +47,7 @@ public class Tracer implements NodeFactory
   /**
    * Creates a new tracer with default settings
    */
-  public Tracer()
+  public ConcreteTracer()
   {
     super();
     m_nodes = new HashMap<DesignatedObject,ConcreteTraceabilityNode>();
@@ -58,7 +58,7 @@ public class Tracer implements NodeFactory
    * @param b <tt>true</tt> to simplify (default), <tt>false</tt> otherwise
    * @return This tracer
    */
-  public Tracer setSimplify(boolean b)
+  public ConcreteTracer setSimplify(boolean b)
   {
     m_simplify = b;
     return this;
@@ -156,5 +156,19 @@ public class Tracer implements NodeFactory
   public UnknownNode getUnknownNode()
   {
     return new UnknownNode();
+  }
+
+  @Override
+  public ConcreteTracer getSubTracer()
+  {
+    return new ConcreteTracer();
+  }
+
+  @Override
+  public ConcreteTraceabilityTree trace(TraceabilityQuery q, Designator d, Object o)
+  {
+    TraceabilityNode root = getTree(q, d, o);
+    ConcreteTraceabilityTree ctt = new ConcreteTraceabilityTree(root);
+    return ctt;
   }
 }

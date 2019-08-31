@@ -9,7 +9,7 @@ import ca.uqac.lif.petitpoucet.circuit.functions.Connector;
 import ca.uqac.lif.petitpoucet.circuit.functions.Constant;
 import ca.uqac.lif.petitpoucet.circuit.functions.Multiply;
 import ca.uqac.lif.petitpoucet.graph.ConcreteObjectNode;
-import ca.uqac.lif.petitpoucet.graph.Tracer;
+import ca.uqac.lif.petitpoucet.graph.ConcreteTracer;
 import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
 
 @SuppressWarnings("unused")
@@ -30,7 +30,7 @@ public class Example1
     Object[] output = mul.evaluate();
     System.out.println(output[0]);
     Designator d = new CircuitDesignator.NthOutput(0);
-    Tracer t = new Tracer();
+    ConcreteTracer t = new ConcreteTracer();
     ConcreteObjectNode root = t.getTree(ProvenanceQuery.instance, d, mul);
     TraceabilityNodeDotRenderer rend = new TraceabilityNodeDotRenderer();
     String s = rend.render(root);

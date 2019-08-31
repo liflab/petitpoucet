@@ -21,7 +21,7 @@ import java.util.List;
 
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
@@ -74,7 +74,7 @@ public abstract class Quantifier extends NaryFunction
 
   @Override
   protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      TraceabilityNode root, NodeFactory factory, List<TraceabilityNode> leaves)
+      TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
   {
     if (!(q instanceof CausalityQuery))
     {
