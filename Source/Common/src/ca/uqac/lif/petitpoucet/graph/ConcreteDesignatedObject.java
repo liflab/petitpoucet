@@ -22,6 +22,7 @@ import ca.uqac.lif.petitpoucet.Designator;
 
 /**
  * Concrete implementation of the {@link DesignatedObject} interface
+ * 
  * @author Sylvain Hallé
  */
 public class ConcreteDesignatedObject implements DesignatedObject
@@ -30,16 +31,19 @@ public class ConcreteDesignatedObject implements DesignatedObject
 	 * The object that is designated
 	 */
 	protected Object m_object;
-	
+
 	/**
 	 * The part of the object that is designated
 	 */
 	protected Designator m_designator;
-	
+
 	/**
 	 * Creates a new concrete designated object
-	 * @param d The part of the object that is designated
-	 * @param o The object that is designated
+	 * 
+	 * @param d
+	 *          The part of the object that is designated
+	 * @param o
+	 *          The object that is designated
 	 */
 	public ConcreteDesignatedObject(Designator d, Object o)
 	{
@@ -47,7 +51,7 @@ public class ConcreteDesignatedObject implements DesignatedObject
 		m_object = o;
 		m_designator = d;
 	}
-	
+
 	@Override
 	public Object getObject()
 	{
@@ -55,17 +59,17 @@ public class ConcreteDesignatedObject implements DesignatedObject
 	}
 
 	@Override
-	public Designator getDesignator() 
+	public Designator getDesignator()
 	{
 		return m_designator;
 	}
-	
+
 	@Override
 	public String toString()
 	{
-	  return m_designator + " of " + m_object;
+		return m_designator + " of " + m_object;
 	}
-	
+
 	@Override
 	public int hashCode()
 	{
@@ -84,7 +88,8 @@ public class ConcreteDesignatedObject implements DesignatedObject
 			return false;
 		}
 		ConcreteDesignatedObject cdo = (ConcreteDesignatedObject) o;
-		return (m_object == null && cdo.m_object == null) || (m_object != null && m_object.equals(cdo.m_object))
-				&& m_designator.equals(cdo.m_designator);
+		return (m_object == null && cdo.m_object == null)
+				|| (m_object != null && m_object.equals(cdo.m_object))
+						&& m_designator.equals(cdo.m_designator);
 	}
 }

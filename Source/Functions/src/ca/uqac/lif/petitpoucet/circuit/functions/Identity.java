@@ -16,15 +16,16 @@ public class Identity extends SingleFunction
 	{
 		super(arity, arity);
 	}
-	
+
 	public Identity()
 	{
 		this(1);
 	}
-	
+
 	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root,
-			Tracer factory, List<TraceabilityNode> leaves) {
+	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
+			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
+	{
 		ComposedDesignator cd = new ComposedDesignator(d, new NthInput(output_nb));
 		TraceabilityNode child = factory.getObjectNode(cd, this);
 		root.addChild(child, Quality.EXACT);

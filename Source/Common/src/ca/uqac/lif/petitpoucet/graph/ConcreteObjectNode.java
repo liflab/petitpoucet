@@ -26,30 +26,33 @@ public class ConcreteObjectNode extends ConcreteTraceabilityNode implements Obje
 	 * The designated object
 	 */
 	protected DesignatedObject m_object;
-	
+
 	/**
 	 * Creates a new traceability node with no children
-	 * @param dob The designated object represented by this node
+	 * 
+	 * @param dob
+	 *          The designated object represented by this node
 	 */
 	public ConcreteObjectNode(DesignatedObject dob)
 	{
 		super();
 		m_object = dob;
 	}
-	
+
 	/**
 	 * Gets the designated object contained in this node
+	 * 
 	 * @return The designated object
 	 */
 	@Override
 	public DesignatedObject getDesignatedObject()
 	{
-	  return m_object;
+		return m_object;
 	}
-	
+
 	@Override
 	public String toString()
 	{
-	  return m_object.toString();
+		return m_object.toString();
 	}
 }

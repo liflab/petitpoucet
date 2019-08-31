@@ -22,11 +22,11 @@ import ca.uqac.lif.petitpoucet.circuit.CircuitConnection;
 public class FunctionConnection implements CircuitConnection
 {
 	protected int m_index;
-	
+
 	protected Function m_element;
-	
+
 	protected Object m_value;
-	
+
 	public FunctionConnection(int index, Function element)
 	{
 		super();
@@ -34,24 +34,24 @@ public class FunctionConnection implements CircuitConnection
 		m_element = element;
 		m_value = null;
 	}
-	
+
 	public void reset()
 	{
-	  m_value = null;
+		m_value = null;
 	}
-	
+
 	@Override
-	public int getIndex() 
+	public int getIndex()
 	{
 		return m_index;
 	}
 
 	@Override
-	public Function getObject() 
+	public Function getObject()
 	{
 		return m_element;
 	}
-	
+
 	public Object pullValue()
 	{
 		if (m_value != null)

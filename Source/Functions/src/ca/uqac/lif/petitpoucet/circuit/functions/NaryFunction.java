@@ -28,23 +28,23 @@ import ca.uqac.lif.petitpoucet.TraceabilityNode;
 
 public abstract class NaryFunction extends SingleFunction
 {
-  public NaryFunction(int in_arity)
-  {
-    super(in_arity, 1);
-  }
-  
-  @Override
-  protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
-  {
-    // Default behaviour: a function's (single) output is linked to all its inputs
-    TraceabilityNode and = factory.getAndNode();
-    for (int i = 0; i < m_inArity; i++)
-    {
-      TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(i), this);
-      and.addChild(child, Quality.EXACT);
-      leaves.add(child);
-    }
-    root.addChild(and, Quality.EXACT);
-  }
+	public NaryFunction(int in_arity)
+	{
+		super(in_arity, 1);
+	}
+
+	@Override
+	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
+			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
+	{
+		// Default behaviour: a function's (single) output is linked to all its inputs
+		TraceabilityNode and = factory.getAndNode();
+		for (int i = 0; i < m_inArity; i++)
+		{
+			TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(i), this);
+			and.addChild(child, Quality.EXACT);
+			leaves.add(child);
+		}
+		root.addChild(and, Quality.EXACT);
+	}
 }

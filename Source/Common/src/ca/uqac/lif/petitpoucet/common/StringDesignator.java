@@ -19,14 +19,14 @@ package ca.uqac.lif.petitpoucet.common;
 
 import ca.uqac.lif.petitpoucet.Designator;
 
-public abstract class StringDesignator implements Designator 
+public abstract class StringDesignator implements Designator
 {
 	@Override
 	public final boolean appliesTo(Object o)
 	{
 		return o != null && o instanceof String;
 	}
-	
+
 	/**
 	 * Designates the n-th line of a character string.
 	 */
@@ -34,13 +34,15 @@ public abstract class StringDesignator implements Designator
 	{
 		/**
 		 * Creates a new instance of the designator
-		 * @param index The number of the line to designate
+		 * 
+		 * @param index
+		 *          The number of the line to designate
 		 */
 		public NthLine(int index)
 		{
 			super(index);
 		}
-		
+
 		@Override
 		public String toString()
 		{
@@ -48,41 +50,41 @@ public abstract class StringDesignator implements Designator
 		}
 
 		@Override
-		public boolean appliesTo(Object o) 
+		public boolean appliesTo(Object o)
 		{
 			return o != null && o instanceof String;
 		}
-		
-    @Override
-    public int hashCode()
-    {
-      return 5 * m_index;
-    }
-    
-    @Override
-    public boolean equals(Object o)
-    {
-      if (o == null || !(o instanceof NthLine))
-      {
-        return false;
-      }
-      NthLine cd = (NthLine) o;
-      return cd.m_index == m_index;
-    }
-    
-    @Override
-    public Designator peek()
-    {
-      return this;
-    }
-    
-    @Override
-    public Designator tail()
-    {
-      return null;
-    }
+
+		@Override
+		public int hashCode()
+		{
+			return 5 * m_index;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			if (o == null || !(o instanceof NthLine))
+			{
+				return false;
+			}
+			NthLine cd = (NthLine) o;
+			return cd.m_index == m_index;
+		}
+
+		@Override
+		public Designator peek()
+		{
+			return this;
+		}
+
+		@Override
+		public Designator tail()
+		{
+			return null;
+		}
 	}
-	
+
 	/**
 	 * Designates a contiguous range of characters in a string.
 	 */
@@ -92,15 +94,17 @@ public abstract class StringDesignator implements Designator
 		 * The start index
 		 */
 		protected int m_startIndex;
-		
+
 		/**
 		 * The end index
 		 */
 		protected int m_endIndex;
-		
+
 		/**
 		 * Creates a new instance of the designator
-		 * @param index The number of the line to designate
+		 * 
+		 * @param index
+		 *          The number of the line to designate
 		 */
 		public Range(int start, int end)
 		{
@@ -108,58 +112,60 @@ public abstract class StringDesignator implements Designator
 			m_startIndex = start;
 			m_endIndex = end;
 		}
-		
+
 		/**
 		 * Gets the start index
+		 * 
 		 * @return The index
 		 */
 		public int getStartIndex()
 		{
 			return m_startIndex;
 		}
-		
+
 		/**
 		 * Gets the end index
+		 * 
 		 * @return The index
 		 */
 		public int getEndIndex()
 		{
 			return m_endIndex;
 		}
-		
+
 		@Override
 		public String toString()
 		{
 			return "From " + m_startIndex + " to " + m_endIndex;
 		}
-		
-    @Override
-    public int hashCode()
-    {
-      return 11 * m_startIndex * 7 * m_endIndex;
-    }
-    
-    @Override
-    public boolean equals(Object o)
-    {
-      if (o == null || !(o instanceof Range))
-      {
-        return false;
-      }
-      Range cd = (Range) o;
-      return cd.m_startIndex == m_startIndex && cd.m_endIndex == m_endIndex;
-    }
-    
-    @Override
-    public Designator peek()
-    {
-      return this;
-    }
-    
-    @Override
-    public Designator tail()
-    {
-      return null;
-    }
+
+		@Override
+		public int hashCode()
+		{
+			return 11 * m_startIndex * 7 * m_endIndex;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			if (o == null || !(o instanceof Range))
+			{
+				return false;
+			}
+			Range cd = (Range) o;
+			return cd.m_startIndex == m_startIndex && cd.m_endIndex == m_endIndex;
+		}
+
+		@Override
+		public Designator peek()
+		{
+			return this;
+		}
+
+		@Override
+		public Designator tail()
+		{
+			return null;
+		}
 	}
 }

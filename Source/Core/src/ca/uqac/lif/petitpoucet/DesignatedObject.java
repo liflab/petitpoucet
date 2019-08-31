@@ -18,20 +18,23 @@
 package ca.uqac.lif.petitpoucet;
 
 /**
- * Represents the part of a specific object. 
+ * Represents the part of a specific object.
+ * 
  * @author Sylvain Hallé
  */
-public interface DesignatedObject 
+public interface DesignatedObject
 {
 	/**
 	 * Gets the object that is designated
+	 * 
 	 * @return The object
 	 */
-	/*@ null @*/ public Object getObject();
-	
+	/* @ null @ */ public Object getObject();
+
 	/**
 	 * Gets the part of the object that is designated
+	 * 
 	 * @return The designator representing the part of the object
 	 */
-	/*@ non_null @*/ public Designator getDesignator();
+	/* @ non_null @ */ public Designator getDesignator();
 }

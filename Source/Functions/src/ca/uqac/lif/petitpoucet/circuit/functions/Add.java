@@ -19,36 +19,36 @@ package ca.uqac.lif.petitpoucet.circuit.functions;
 
 public class Add extends NaryFunction
 {
-  public Add()
-  {
-    this(2);
-  }
-  
-  public Add(int in_arity)
-  {
-    super(in_arity);
-  }
-  
-  @Override
-  public String toString()
-  {
-    return "+";
-  }
+	public Add()
+	{
+		this(2);
+	}
 
-  @Override
-  public void getValue(Object[] inputs, Object[] outputs)
-  {
-    float out = 0;
-    for (int i = 0; i < inputs.length; i++)
-    {
-      Object o = inputs[i];
-      m_inputs[i] = o;
-      if (o instanceof Number)
-      {
-        out += ((Number) o).floatValue();
-      }
-    }
-    m_returnedValue[0] = out;
-    outputs[0] = out;
-  }
+	public Add(int in_arity)
+	{
+		super(in_arity);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "+";
+	}
+
+	@Override
+	public void getValue(Object[] inputs, Object[] outputs)
+	{
+		float out = 0;
+		for (int i = 0; i < inputs.length; i++)
+		{
+			Object o = inputs[i];
+			m_inputs[i] = o;
+			if (o instanceof Number)
+			{
+				out += ((Number) o).floatValue();
+			}
+		}
+		m_returnedValue[0] = out;
+		outputs[0] = out;
+	}
 }

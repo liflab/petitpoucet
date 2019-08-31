@@ -32,20 +32,24 @@ public class Constant extends SingleFunction
 	 * The value of this constant object
 	 */
 	protected Object m_value;
-	
+
 	/**
 	 * Creates a new constant
-	 * @param value The value of this constant object
+	 * 
+	 * @param value
+	 *          The value of this constant object
 	 */
 	public Constant(Object value)
 	{
 		super(0, 1);
 		m_value = value;
 	}
-	
+
 	/**
 	 * Sets the value of this constant object
-	 * @param value The value
+	 * 
+	 * @param value
+	 *          The value
 	 */
 	public void setValue(Object value)
 	{
@@ -53,25 +57,27 @@ public class Constant extends SingleFunction
 	}
 
 	@Override
-	public void getValue(Object[] inputs, Object[] outputs) 
+	public void getValue(Object[] inputs, Object[] outputs)
 	{
 		outputs[0] = m_value;
 	}
-	
+
 	@Override
 	public String toString()
 	{
-	  if (m_value != null)
-	  {
-	    return "Constant " +  m_value.toString();
-	  }
-	  return "null";
+		if (m_value != null)
+		{
+			return "Constant " + m_value.toString();
+		}
+		return "null";
 	}
 
 	@Override
-	public void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves) 
+	public void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root,
+			Tracer factory, List<TraceabilityNode> leaves)
 	{
-		TraceabilityNode tn = factory.getObjectNode(new Parameter("Parameter 'value' in constructor", d), this);
+		TraceabilityNode tn = factory
+				.getObjectNode(new Parameter("Parameter 'value' in constructor", d), this);
 		root.addChild(tn, Quality.EXACT);
 		leaves.add(tn);
 	}

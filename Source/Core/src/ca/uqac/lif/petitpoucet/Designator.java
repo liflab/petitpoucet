@@ -19,6 +19,7 @@ package ca.uqac.lif.petitpoucet;
 
 /**
  * An object that designates a part of another object
+ * 
  * @author Sylvain Hallé
  */
 public interface Designator
@@ -26,39 +27,43 @@ public interface Designator
 	/**
 	 * Determines if this designator applies (i.e. makes sense) for a particular
 	 * object.
-	 * @param o The object; can be <tt>null</tt>
+	 * 
+	 * @param o
+	 *          The object; can be <tt>null</tt>
 	 * @return <tt>true</tt> if this designator applies to this object,
-	 * <tt>false</tt> otherwise
+	 *         <tt>false</tt> otherwise
 	 */
-	public boolean appliesTo(/*@ null @*/ Object o);
-	
+	public boolean appliesTo(/* @ null @ */ Object o);
+
 	/**
 	 * Returns the first designator to be evaluated
+	 * 
 	 * @return The designator
 	 */
 	public Designator peek();
-	
+
 	/**
 	 * Returns a designator from which the first operation is removed
+	 * 
 	 * @return The designator
 	 */
 	public Designator tail();
-	
+
 	/**
 	 * An instance of the "identity" designator
 	 */
 	public static Identity identity = new Identity();
-	
+
 	/**
 	 * An instance of the "nothing" designator
 	 */
 	public static Nothing nothing = new Nothing();
-	
+
 	/**
 	 * An instance of the "unknown" designator
 	 */
 	public static Unknown unknown = new Unknown();
-	
+
 	/**
 	 * Designator that designates an entire object.
 	 */
@@ -68,48 +73,48 @@ public interface Designator
 		{
 			super();
 		}
-		
+
 		@Override
 		public boolean appliesTo(Object o)
 		{
 			return o != null;
 		}
-		
+
 		@Override
 		public String toString()
 		{
 			return "";
 		}
-		
-    @Override
-    public Designator peek()
-    {
-      return this;
-    }
-    
-    @Override
-    public Designator tail()
-    {
-      return null;
-    }
-    
-    @Override
-    public int hashCode()
-    {
-      return 321;
-    }
-    
-    @Override
-    public boolean equals(Object o)
-    {
-      return o != null && o instanceof Identity;
-    }
+
+		@Override
+		public Designator peek()
+		{
+			return this;
+		}
+
+		@Override
+		public Designator tail()
+		{
+			return null;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return 321;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			return o != null && o instanceof Identity;
+		}
 	}
-	
+
 	/**
-	 * Designator that designates nothing. When used in a causality or
-	 * provenance chain, this means that a value (or part of a value) does
-	 * not come from any source --that is, it is created "out of thin air".
+	 * Designator that designates nothing. When used in a causality or provenance
+	 * chain, this means that a value (or part of a value) does not come from any
+	 * source --that is, it is created "out of thin air".
 	 */
 	public static final class Nothing implements Designator
 	{
@@ -117,44 +122,44 @@ public interface Designator
 		{
 			super();
 		}
-		
+
 		@Override
 		public boolean appliesTo(Object o)
 		{
 			return true;
 		}
-		
+
 		@Override
 		public String toString()
 		{
 			return "Nothing";
 		}
-		
+
 		@Override
 		public Designator peek()
 		{
-		  return this;
+			return this;
 		}
-		
+
 		@Override
 		public Designator tail()
 		{
-		  return null;
+			return null;
 		}
-		
+
 		@Override
-    public int hashCode()
-    {
-      return 4567;
-    }
-    
-    @Override
-    public boolean equals(Object o)
-    {
-      return o != null && o instanceof Nothing;
-    }
+		public int hashCode()
+		{
+			return 4567;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			return o != null && o instanceof Nothing;
+		}
 	}
-	
+
 	/**
 	 * Designator that represents an unknown designation.
 	 */
@@ -164,41 +169,41 @@ public interface Designator
 		{
 			super();
 		}
-		
+
 		@Override
 		public boolean appliesTo(Object o)
 		{
 			return true;
 		}
-		
+
 		@Override
 		public String toString()
 		{
 			return "Unknown";
 		}
-		
-    @Override
-    public Designator peek()
-    {
-      return this;
-    }
-    
-    @Override
-    public Designator tail()
-    {
-      return null;
-    }
-    
-    @Override
-    public int hashCode()
-    {
-      return 321;
-    }
-    
-    @Override
-    public boolean equals(Object o)
-    {
-      return o != null && o instanceof Unknown;
-    }
+
+		@Override
+		public Designator peek()
+		{
+			return this;
+		}
+
+		@Override
+		public Designator tail()
+		{
+			return null;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return 321;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			return o != null && o instanceof Unknown;
+		}
 	}
 }

@@ -22,8 +22,8 @@
  * This package should try to reach the following design goals:
  * <ul>
  * <li>Top-level elements should be interfaces</li>
- * <li>Classes should be limited in number, represent generic concepts,
- * and if possible be abstract</li>
+ * <li>Classes should be limited in number, represent generic concepts, and if
+ * possible be abstract</li>
  * </ul>
  */
 package ca.uqac.lif.petitpoucet;

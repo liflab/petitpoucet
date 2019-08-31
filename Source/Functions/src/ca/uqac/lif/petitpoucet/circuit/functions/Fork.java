@@ -28,37 +28,37 @@ import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
 
 public class Fork extends SingleFunction
 {
-  public Fork(int out_arity)
-  {
-    super(1, out_arity);
-  }
-  
-  public Fork()
-  {
-    this(2);
-  }
-  
-  @Override
-  public String toString()
-  {
-    return "Fork";
-  }
-  
-  @Override
-  public void getValue(Object[] inputs, Object[] outputs)
-  {
-    for (int i = 0; i < outputs.length; i++)
-    {
-      outputs[i] = inputs[0];
-    }
-  }
+	public Fork(int out_arity)
+	{
+		super(1, out_arity);
+	}
 
-  @Override
-  protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-      TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
-  {
-    TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(0), this);
-    leaves.add(child);
-    root.addChild(child, Quality.EXACT);
-  }
+	public Fork()
+	{
+		this(2);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Fork";
+	}
+
+	@Override
+	public void getValue(Object[] inputs, Object[] outputs)
+	{
+		for (int i = 0; i < outputs.length; i++)
+		{
+			outputs[i] = inputs[0];
+		}
+	}
+
+	@Override
+	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
+			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
+	{
+		TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(0), this);
+		leaves.add(child);
+		root.addChild(child, Quality.EXACT);
+	}
 }

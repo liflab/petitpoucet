@@ -18,23 +18,26 @@
 package ca.uqac.lif.petitpoucet.circuit;
 
 /**
- * A link to an object's input or output. 
+ * A link to an object's input or output.
+ * 
  * @author Sylvain Hallé
  */
 public interface CircuitConnection
 {
 	/**
 	 * Gets the index of the object's input or output
+	 * 
 	 * @return The index
 	 */
 	public int getIndex();
-	
+
 	/**
 	 * Gets the object which is the source or target of this link
+	 * 
 	 * @return The object; may be null
 	 */
-	/*@ null @*/ public CircuitElement getObject();
-	
+	/* @ null @ */ public CircuitElement getObject();
+
 	/**
 	 * Resets the state of this connection
 	 */

@@ -4,5 +4,5 @@ import ca.uqac.lif.petitpoucet.graph.ConcreteTraceabilityNode;
 
 public interface TraceabilityNodeRenderer<T>
 {
-  public T render(ConcreteTraceabilityNode root);
+	public T render(ConcreteTraceabilityNode root);
 }

@@ -39,7 +39,8 @@ public abstract class SingleFunction extends Function
 
 	/**
 	 * Evaluates the function with concrete values. Note that this implementation is
-	 * not very efficient, as a function that is involved as the input of 
+	 * not very efficient, as a function that is involved as the input of
+	 * 
 	 * @return outputs An array of output arguments
 	 */
 	@Override
@@ -67,7 +68,8 @@ public abstract class SingleFunction extends Function
 	}
 
 	@Override
-	public List<TraceabilityNode> query(TraceabilityQuery q, Designator d, TraceabilityNode root, Tracer factory)
+	public List<TraceabilityNode> query(TraceabilityQuery q, Designator d, TraceabilityNode root,
+			Tracer factory)
 	{
 		List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
 		Designator top = d.peek();
@@ -112,5 +114,6 @@ public abstract class SingleFunction extends Function
 		return leaves;
 	}
 
-	protected abstract void answerQuery(TraceabilityQuery q, int output_nb, Designator d, TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves);
+	protected abstract void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
+			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves);
 }

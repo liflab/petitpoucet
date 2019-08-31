@@ -18,39 +18,44 @@
 package ca.uqac.lif.petitpoucet.circuit;
 
 /**
- * Object that has inputs and outputs that can be associated to inputs
- * and outputs of other objects.
+ * Object that has inputs and outputs that can be associated to inputs and
+ * outputs of other objects.
+ * 
  * @author Sylvain Hallé
  */
 public interface CircuitElement
 {
 	/**
-	 * Associates an input of the object to the output of another
-	 * object
-	 * @param index The index of the object's input
-	 * @param connection A connection representing the link to another
-	 * object's output
+	 * Associates an input of the object to the output of another object
+	 * 
+	 * @param index
+	 *          The index of the object's input
+	 * @param connection
+	 *          A connection representing the link to another object's output
 	 */
 	public void setToInput(int index, CircuitConnection connection);
-	
+
 	/**
-	 * Associates an output of the object to the input of another
-	 * object
-	 * @param index The index of the object's input
-	 * @param connection A connection representing the link to another
-	 * object's output
+	 * Associates an output of the object to the input of another object
+	 * 
+	 * @param index
+	 *          The index of the object's input
+	 * @param connection
+	 *          A connection representing the link to another object's output
 	 */
 	public void setToOutput(int index, CircuitConnection connection);
-	
+
 	/**
 	 * Gets the input arity of the object, i.e. the number of inputs it has
+	 * 
 	 * @return The arity
 	 */
 	public int getInputArity();
-	
+
 	/**
 	 * Gets the output arity of the object, i.e. the number of outputs it has
+	 * 
 	 * @return The arity
 	 */
-	public int getOutputArity();	
+	public int getOutputArity();
 }

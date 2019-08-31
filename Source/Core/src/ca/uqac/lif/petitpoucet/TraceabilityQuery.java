@@ -18,21 +18,23 @@
 package ca.uqac.lif.petitpoucet;
 
 /**
- * An interface indicating that an object represents a type of
- * traceability query.
+ * An interface indicating that an object represents a type of traceability
+ * query.
  * 
  * @author Sylvain Hallé
  */
-public interface TraceabilityQuery 
+public interface TraceabilityQuery
 {
 	/**
 	 * Gets the name of this query
+	 * 
 	 * @return The name
 	 */
 	public String getName();
-	
+
 	/**
 	 * Traceability query that asks for a causality link.
+	 * 
 	 * @author Sylvain Hallé
 	 */
 	public static class CausalityQuery implements TraceabilityQuery
@@ -41,21 +43,22 @@ public interface TraceabilityQuery
 		 * A single publicly visible instance of this object
 		 */
 		public static final transient CausalityQuery instance = new CausalityQuery();
-		
+
 		protected CausalityQuery()
 		{
 			super();
 		}
-		
+
 		@Override
 		public String getName()
 		{
 			return "Causality";
 		}
 	}
-	
+
 	/**
 	 * Traceability query that asks for a provenance link.
+	 * 
 	 * @author Sylvain Hallé
 	 */
 	public static class ProvenanceQuery implements TraceabilityQuery
@@ -64,12 +67,12 @@ public interface TraceabilityQuery
 		 * A single publicly visible instance of this object
 		 */
 		public static final transient ProvenanceQuery instance = new ProvenanceQuery();
-		
+
 		protected ProvenanceQuery()
 		{
 			super();
 		}
-		
+
 		@Override
 		public String getName()
 		{

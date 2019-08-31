@@ -19,22 +19,22 @@ package ca.uqac.lif.petitpoucet.circuit.functions;
 
 public class IsGreaterThan extends NaryFunction
 {
-  public IsGreaterThan()
-  {
-    super(2);
-  }
-  
-  @Override
-  public void getValue(Object[] inputs, Object[] outputs)
-  {
-    m_inputs[0] = inputs[0];
-    m_inputs[1] = inputs[1];
-    boolean b = false;
-    if (inputs[0] instanceof Number && inputs[1] instanceof Number)
-    {
-      b = ((Number) inputs[0]).floatValue() > ((Number) inputs[1]).floatValue();
-    }
-    m_returnedValue[0] = b;
-    outputs[0] = b;
-  }
+	public IsGreaterThan()
+	{
+		super(2);
+	}
+
+	@Override
+	public void getValue(Object[] inputs, Object[] outputs)
+	{
+		m_inputs[0] = inputs[0];
+		m_inputs[1] = inputs[1];
+		boolean b = false;
+		if (inputs[0] instanceof Number && inputs[1] instanceof Number)
+		{
+			b = ((Number) inputs[0]).floatValue() > ((Number) inputs[1]).floatValue();
+		}
+		m_returnedValue[0] = b;
+		outputs[0] = b;
+	}
 }

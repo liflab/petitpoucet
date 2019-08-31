@@ -13,13 +13,15 @@ public abstract class CollectionDesignator
 	{
 		/**
 		 * Creates a new instance of the designator
-		 * @param index The number of the line to designate
+		 * 
+		 * @param index
+		 *          The number of the line to designate
 		 */
 		public NthElement(int index)
 		{
 			super(index);
 		}
-		
+
 		@Override
 		public String toString()
 		{
@@ -27,38 +29,38 @@ public abstract class CollectionDesignator
 		}
 
 		@Override
-		public boolean appliesTo(Object o) 
+		public boolean appliesTo(Object o)
 		{
 			return o != null && o instanceof List;
 		}
-		
+
 		@Override
 		public int hashCode()
 		{
-		  return 3 * m_index;
+			return 3 * m_index;
 		}
-		
+
 		@Override
 		public boolean equals(Object o)
 		{
-		  if (o == null || !(o instanceof NthElement))
-	    {
-	      return false;
-	    }
-		  NthElement cd = (NthElement) o;
-		  return cd.m_index == m_index;
+			if (o == null || !(o instanceof NthElement))
+			{
+				return false;
+			}
+			NthElement cd = (NthElement) o;
+			return cd.m_index == m_index;
 		}
-		
-    @Override
-    public Designator peek()
-    {
-      return this;
-    }
-    
-    @Override
-    public Designator tail()
-    {
-      return null;
-    }
+
+		@Override
+		public Designator peek()
+		{
+			return this;
+		}
+
+		@Override
+		public Designator tail()
+		{
+			return null;
+		}
 	}
 }

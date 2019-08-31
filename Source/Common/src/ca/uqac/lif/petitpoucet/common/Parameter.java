@@ -21,8 +21,9 @@ import ca.uqac.lif.petitpoucet.Designator;
 
 /**
  * Designator that represents a part of a parameter passed to an object.
- * Depending on the context, a parameter could, for example, represent
- * an argument passed to the object's constructor.
+ * Depending on the context, a parameter could, for example, represent an
+ * argument passed to the object's constructor.
+ * 
  * @author Sylvain Hallé
  */
 public class Parameter implements Designator
@@ -31,16 +32,19 @@ public class Parameter implements Designator
 	 * The name of the parameter
 	 */
 	protected String m_name;
-	
+
 	/**
 	 * The part of the parameter that is the subject of this designator
 	 */
 	protected Designator m_parameterPart;
-	
+
 	/**
 	 * Creates a new instance of this designator.
-	 * @param name The name of the parameter
-	 * @param part The part of the parameter that is the subject of this designator
+	 * 
+	 * @param name
+	 *          The name of the parameter
+	 * @param part
+	 *          The part of the parameter that is the subject of this designator
 	 */
 	public Parameter(String name, Designator part)
 	{
@@ -54,26 +58,26 @@ public class Parameter implements Designator
 	{
 		return true;
 	}
-	
+
 	@Override
 	public String toString()
 	{
-	  if (m_parameterPart instanceof Identity)
-	  {
-	    return m_name;
-	  }
+		if (m_parameterPart instanceof Identity)
+		{
+			return m_name;
+		}
 		return m_parameterPart + " of " + m_name;
 	}
-	
-  @Override
-  public Designator peek()
-  {
-    return this;
-  }
-  
-  @Override
-  public Designator tail()
-  {
-    return null;
-  }
+
+	@Override
+	public Designator peek()
+	{
+		return this;
+	}
+
+	@Override
+	public Designator tail()
+	{
+		return null;
+	}
 }

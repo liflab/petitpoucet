@@ -19,27 +19,27 @@ package ca.uqac.lif.petitpoucet.circuit.functions;
 
 public class ForAll extends Quantifier
 {
-  
-  public ForAll(Function phi)
-  {
-    super(phi);
-  }
 
-  @Override
-  protected boolean getStartValue()
-  {
-    return true;
-  }
+	public ForAll(Function phi)
+	{
+		super(phi);
+	}
 
-  @Override
-  protected boolean update(boolean b1, boolean b2)
-  {
-    return b1 && b2;
-  }
-  
-  @Override
-  public String toString()
-  {
-    return "forall x : " + m_function;
-  }
+	@Override
+	protected boolean getStartValue()
+	{
+		return true;
+	}
+
+	@Override
+	protected boolean update(boolean b1, boolean b2)
+	{
+		return b1 && b2;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "forall x : " + m_function;
+	}
 }
