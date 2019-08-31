@@ -119,5 +119,9 @@ public abstract class Function implements CircuitElement, Trackable
    */
   public abstract void getValue(Object[] inputs, Object[] outputs);
   
+  /**
+   * Evaluates the function
+   * @return The function's values
+   */
   public abstract Object[] evaluate();
 }
