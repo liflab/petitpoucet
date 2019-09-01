@@ -15,40 +15,36 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions.numbers;
 
-public class Add extends NaryFunction
+import ca.uqac.lif.petitpoucet.functions.NaryFunction;
+
+/**
+ * Determines if a number is greater than another number
+ * @author Sylvain Hallé
+ *
+ */
+public class IsGreaterThan extends NaryFunction
 {
-	public Add()
+	/**
+	 * Creates a new instance of the function
+	 */
+	public IsGreaterThan()
 	{
-		this(2);
-	}
-
-	public Add(int in_arity)
-	{
-		super(in_arity);
-	}
-
-	@Override
-	public String toString()
-	{
-		return "+";
+		super(2);
 	}
 
 	@Override
 	public void getValue(Object[] inputs, Object[] outputs)
 	{
-		float out = 0;
-		for (int i = 0; i < inputs.length; i++)
+		m_inputs[0] = inputs[0];
+		m_inputs[1] = inputs[1];
+		boolean b = false;
+		if (inputs[0] instanceof Number && inputs[1] instanceof Number)
 		{
-			Object o = inputs[i];
-			m_inputs[i] = o;
-			if (o instanceof Number)
-			{
-				out += ((Number) o).floatValue();
-			}
+			b = ((Number) inputs[0]).floatValue() > ((Number) inputs[1]).floatValue();
 		}
-		m_returnedValue[0] = out;
-		outputs[0] = out;
+		m_returnedValue[0] = b;
+		outputs[0] = b;
 	}
 }

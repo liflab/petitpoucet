@@ -15,12 +15,18 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions.logic;
 
-public class ForAll extends Quantifier
+import ca.uqac.lif.petitpoucet.functions.Function;
+
+/**
+ * Existential quantifier
+ * @author Sylvain Hallé
+ */
+public class Exists extends Quantifier
 {
 
-	public ForAll(Function phi)
+	public Exists(Function phi)
 	{
 		super(phi);
 	}
@@ -28,18 +34,18 @@ public class ForAll extends Quantifier
 	@Override
 	protected boolean getStartValue()
 	{
-		return true;
+		return false;
 	}
 
 	@Override
 	protected boolean update(boolean b1, boolean b2)
 	{
-		return b1 && b2;
+		return b1 || b2;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "forall x : " + m_function;
+		return "exists x : " + m_function;
 	}
 }

@@ -1,41 +1,38 @@
 package examples;
 
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
-import ca.uqac.lif.petitpoucet.TraceabilityNode;
+import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.ProvenanceQuery;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
-import ca.uqac.lif.petitpoucet.functions.ComposedFunction;
 import ca.uqac.lif.petitpoucet.functions.Connector;
 import ca.uqac.lif.petitpoucet.functions.Constant;
 import ca.uqac.lif.petitpoucet.functions.Fork;
 import ca.uqac.lif.petitpoucet.functions.lists.ApplyToAll;
-import ca.uqac.lif.petitpoucet.functions.numbers.Add;
+import ca.uqac.lif.petitpoucet.functions.lists.Filter;
+import ca.uqac.lif.petitpoucet.functions.strings.RegexMatches;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTraceabilityNode;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTracer;
 import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
 
-@SuppressWarnings("unused")
-public class Example4
+public class Example7
 {
+
 	public static void main(String[] args)
 	{
-		ComposedFunction comp = new ComposedFunction(1, 1).setName("Double");
-		Fork fork = new Fork();
-		Add add = new Add();
-		Connector.connect(fork, 0, add, 0);
-		Connector.connect(fork, 1, add, 1);
-		comp.add(fork, add);
-		comp.associateInput(0, fork, 0);
-		comp.associateOutput(0, add, 0);
-		Constant x = new Constant(Example2.createList(3, 1, 4, 1, 5, 9, 2));
-		ApplyToAll ata = new ApplyToAll(comp);
-		Connector.connect(x, ata);
-		Object[] out = ata.evaluate();
-		System.out.println(out[0]);
+		Constant list = new Constant(Example2.createList("Mary", "had", "a", "little", "lamb"));
+		Fork f = new Fork();
+		Connector.connect(list, f);
+		ApplyToAll ata = new ApplyToAll(new RegexMatches("[Mm]"));
+		Connector.connect(f, 1, ata, 0);
+		Filter fil = new Filter();
+		Connector.connect(f, 0, fil, 0);
+		Connector.connect(ata, 0, fil, 1);
+		Object[] values = fil.evaluate();
+		System.out.println(values[0]);
 		ConcreteTracer tracer = new ConcreteTracer();
 		ComposedDesignator cd = new ComposedDesignator(new NthElement(1), new NthOutput(0));
-		ConcreteTraceabilityNode root = tracer.getTree(ProvenanceQuery.instance, cd, ata);
+		ConcreteTraceabilityNode root = tracer.getTree(CausalityQuery.instance, cd, fil);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		String dot_code = renderer.render(root);
 		System.out.println(dot_code);

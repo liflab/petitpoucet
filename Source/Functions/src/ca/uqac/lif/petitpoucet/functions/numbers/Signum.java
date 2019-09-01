@@ -15,26 +15,55 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions.numbers;
 
-public class IsGreaterThan extends NaryFunction
+import ca.uqac.lif.petitpoucet.functions.NaryFunction;
+
+/**
+ * Calculates the signum of a number <i>n</i>. The signum is defined as:
+ * <ul>
+ * <li>-1 if <i>n</i> is negative</li>
+ * <li>1 if <i>n</i> is positive</li>
+ * <li>0 otherwise</li>
+ * </ul>
+ * @author Sylvain Hallé
+ */
+public class Signum extends NaryFunction
 {
-	public IsGreaterThan()
+	/**
+	 * Creates a new instance of the function
+	 */
+	public Signum()
 	{
-		super(2);
+		super(1);
 	}
 
 	@Override
 	public void getValue(Object[] inputs, Object[] outputs)
 	{
-		m_inputs[0] = inputs[0];
-		m_inputs[1] = inputs[1];
-		boolean b = false;
-		if (inputs[0] instanceof Number && inputs[1] instanceof Number)
+		if (inputs[0] instanceof Number)
 		{
-			b = ((Number) inputs[0]).floatValue() > ((Number) inputs[1]).floatValue();
+			float out = ((Number) inputs[0]).floatValue();
+			if (out == 0)
+			{
+				outputs[0] = 0;
+			}
+			else if (out < 0)
+			{
+				outputs[0] = -1;
+			}
+			else if (out > 0)
+			{
+				outputs[0] = 1;
+			}
+			return;
 		}
-		m_returnedValue[0] = b;
-		outputs[0] = b;
+		outputs[0] = 0;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "SIG";
 	}
 }

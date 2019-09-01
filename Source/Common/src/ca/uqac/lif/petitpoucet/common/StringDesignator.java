@@ -103,14 +103,27 @@ public abstract class StringDesignator implements Designator
 		/**
 		 * Creates a new instance of the designator
 		 * 
-		 * @param index
-		 *          The number of the line to designate
+		 * @param start
+		 *          The start position in the string
+		 * @param end
+		 *          The end position in the string (including this character)
 		 */
 		public Range(int start, int end)
 		{
 			super();
 			m_startIndex = start;
 			m_endIndex = end;
+		}
+		
+		/**
+		 * Creates a new instance of the designator for a single character
+		 * 
+		 * @param pos
+		 *          The position in the string
+		 */
+		public Range(int pos)
+		{
+			this(pos, pos);
 		}
 
 		/**
@@ -132,11 +145,24 @@ public abstract class StringDesignator implements Designator
 		{
 			return m_endIndex;
 		}
+		
+		/**
+		 * Gets the length of the range
+		 * @return The length
+		 */
+		public int getLength()
+		{
+			return m_endIndex - m_startIndex + 1;
+		}
 
 		@Override
 		public String toString()
 		{
-			return "From " + m_startIndex + " to " + m_endIndex;
+			if (m_startIndex == m_endIndex)
+			{
+				return "Character " + m_startIndex;
+			}
+			return "Characters " + m_startIndex + "-" + m_endIndex;
 		}
 
 		@Override

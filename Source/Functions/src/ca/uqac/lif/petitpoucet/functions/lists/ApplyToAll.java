@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions.lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,8 @@ import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
+import ca.uqac.lif.petitpoucet.functions.Function;
+import ca.uqac.lif.petitpoucet.functions.SingleFunction;
 
 /**
  * Applies a function to all the elements of input lists, producing output
@@ -134,7 +136,7 @@ public class ApplyToAll extends SingleFunction
 					int index = ((NthInput) f_dob_d).getIndex();
 					// Input <index> of the inner function is the <elem_index>-th element
 					// of input <index> of ApplyToAll
-					ComposedDesignator cd = new ComposedDesignator(f_dob_d.tail(), new NthElement(elem_index),
+					ComposedDesignator cd = new ComposedDesignator(f_dob.getDesignator().tail(), new NthElement(elem_index),
 							new NthInput(index));
 					TraceabilityNode tn = factory.getObjectNode(cd, this);
 					leaves.add(tn);

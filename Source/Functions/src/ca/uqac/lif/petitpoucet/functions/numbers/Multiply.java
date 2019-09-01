@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions.numbers;
 
 import java.util.List;
 
@@ -26,14 +26,26 @@ import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
+import ca.uqac.lif.petitpoucet.functions.NaryFunction;
 
+/**
+ * Multiplies <i>n</i> numbers together
+ * @author Sylvain Hallé
+ */
 public class Multiply extends NaryFunction
 {
+	/**
+	 * Creates a new instance of the function with input arity 2
+	 */
 	public Multiply()
 	{
 		this(2);
 	}
 
+	/**
+	 * Creates a new instance of the function
+	 * @param in_arity The function's input arity
+	 */
 	public Multiply(int in_arity)
 	{
 		super(in_arity);

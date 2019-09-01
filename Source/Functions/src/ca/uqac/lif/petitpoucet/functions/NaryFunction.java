@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions;
 
 import java.util.List;
 
@@ -26,8 +26,16 @@ import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 
+/**
+ * Generic function of <i>n</i> inputs and 1 output.
+ * @author Sylvain Hallé
+ */
 public abstract class NaryFunction extends SingleFunction
 {
+	/**
+	 * Creates a new instance of the function
+	 * @param in_arity The input arity of the function
+	 */
 	public NaryFunction(int in_arity)
 	{
 		super(in_arity, 1);
@@ -37,14 +45,31 @@ public abstract class NaryFunction extends SingleFunction
 	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
 			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
 	{
+		answerQueryDefault(q, output_nb, d, root, factory, leaves, Quality.EXACT);
+	}
+
+	/**
+	 * Provides a "default" answer to a traceability query. Typically, thse
+	 * answer links the function's single output to all its inputs.
+	 * @param q The type of traceability query
+	 * @param output_nb
+	 * @param d
+	 * @param root
+	 * @param factory
+	 * @param leaves
+	 * @param quality
+	 */
+	protected void answerQueryDefault(TraceabilityQuery q, int output_nb, Designator d,
+			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves, Quality quality)
+	{
 		// Default behaviour: a function's (single) output is linked to all its inputs
 		TraceabilityNode and = factory.getAndNode();
 		for (int i = 0; i < m_inArity; i++)
 		{
 			TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(i), this);
-			and.addChild(child, Quality.EXACT);
+			and.addChild(child, quality);
 			leaves.add(child);
 		}
-		root.addChild(and, Quality.EXACT);
+		root.addChild(and, quality);
 	}
 }

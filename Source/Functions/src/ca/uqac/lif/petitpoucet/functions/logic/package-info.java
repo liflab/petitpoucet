@@ -15,41 +15,9 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
 
-public class Signum extends NaryFunction
-{
-	public Signum()
-	{
-		super(1);
-	}
-
-	@Override
-	public void getValue(Object[] inputs, Object[] outputs)
-	{
-		if (inputs[0] instanceof Number)
-		{
-			float out = ((Number) inputs[0]).floatValue();
-			if (out == 0)
-			{
-				outputs[0] = 0;
-			}
-			else if (out < 0)
-			{
-				outputs[0] = -1;
-			}
-			else if (out > 0)
-			{
-				outputs[0] = 1;
-			}
-			return;
-		}
-		outputs[0] = 0;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "SIG";
-	}
-}
+/**
+ * @author sylvain
+ *
+ */
+package ca.uqac.lif.petitpoucet.functions.logic;

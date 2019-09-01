@@ -97,7 +97,7 @@ public class ComposedDesignator implements Designator
 		{
 			if (i > 0 && (previous != null && !(previous instanceof Identity)))
 			{
-				out.append(" ");
+				out.append(" of ");
 			}
 			previous = m_designators.get(i);
 			out.append(previous);

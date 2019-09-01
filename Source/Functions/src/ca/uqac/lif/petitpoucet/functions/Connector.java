@@ -1,4 +1,4 @@
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions;
 
 public class Connector
 {

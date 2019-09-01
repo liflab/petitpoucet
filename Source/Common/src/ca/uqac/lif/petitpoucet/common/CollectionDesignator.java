@@ -25,7 +25,7 @@ public abstract class CollectionDesignator
 		@Override
 		public String toString()
 		{
-			return super.toString() + " element";
+			return "Element " + super.toString();
 		}
 
 		@Override

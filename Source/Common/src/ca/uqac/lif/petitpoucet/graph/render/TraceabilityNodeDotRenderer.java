@@ -23,7 +23,7 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 		to_visit.add(root);
 		StringBuilder out = new StringBuilder();
 		out.append("digraph G {\n");
-		out.append("node [style=\"filled\"];\n");
+		out.append(" node [style=\"filled\"];\n");
 		visit(out, to_visit, visited);
 		out.append("}");
 		return out.toString();
@@ -44,7 +44,7 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 			if (n instanceof ConcreteObjectNode)
 			{
 				DesignatedObject dob = ((ConcreteObjectNode) n).getDesignatedObject();
-				out.append(s_id).append(" [label=\"").append(dob)
+				out.append(" ").append(s_id).append(" [label=\"").append(dob)
 						.append("\",shape=\"rectangle\",fillcolor=\"AliceBlue\"];\n");
 			}
 			else
@@ -55,7 +55,7 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 				{
 					fill_color = "green";
 				}
-				out.append(s_id).append(" [label=\"").append(n)
+				out.append(" ").append(s_id).append(" [label=\"").append(n)
 						.append("\",shape=\"circle\",color=\"orange\",fillcolor=\"").append(fill_color)
 						.append("\",width=.3,fixedsize=\"true\"];\n");
 			}
@@ -71,7 +71,7 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 					link_color = "blue";
 				}
 				ConcreteTraceabilityNode child_node = (ConcreteTraceabilityNode) ql.getNode();
-				out.append(s_id).append(" -> ").append(child_node.getId()).append(" [color=\"")
+				out.append(" ").append(s_id).append(" -> ").append(child_node.getId()).append(" [color=\"")
 						.append(link_color).append("\"];\n");
 				if (!visited.contains(child_node))
 				{

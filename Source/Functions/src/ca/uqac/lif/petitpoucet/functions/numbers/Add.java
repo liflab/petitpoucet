@@ -15,50 +15,53 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions.numbers;
 
-import java.util.List;
+import ca.uqac.lif.petitpoucet.functions.NaryFunction;
 
-import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.Tracer;
-import ca.uqac.lif.petitpoucet.TraceabilityNode;
-import ca.uqac.lif.petitpoucet.TraceabilityQuery;
-import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
-import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
-
-public class Fork extends SingleFunction
+/**
+ * Adds <i>n</i> numbers together
+ * @author Sylvain Hallé
+ */
+public class Add extends NaryFunction
 {
-	public Fork(int out_arity)
-	{
-		super(1, out_arity);
-	}
-
-	public Fork()
+	/**
+	 * Creates a new instance of the function with input arity 2
+	 */
+	public Add()
 	{
 		this(2);
+	}
+
+	/**
+	 * Creates a new instance of the function
+	 * @param in_arity The function's input arity
+	 */
+	public Add(int in_arity)
+	{
+		super(in_arity);
 	}
 
 	@Override
 	public String toString()
 	{
-		return "Fork";
+		return "+";
 	}
 
 	@Override
 	public void getValue(Object[] inputs, Object[] outputs)
 	{
-		for (int i = 0; i < outputs.length; i++)
+		float out = 0;
+		for (int i = 0; i < inputs.length; i++)
 		{
-			outputs[i] = inputs[0];
+			Object o = inputs[i];
+			m_inputs[i] = o;
+			if (o instanceof Number)
+			{
+				out += ((Number) o).floatValue();
+			}
 		}
-	}
-
-	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
-	{
-		TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(0), this);
-		leaves.add(child);
-		root.addChild(child, Quality.EXACT);
+		m_returnedValue[0] = out;
+		outputs[0] = out;
 	}
 }

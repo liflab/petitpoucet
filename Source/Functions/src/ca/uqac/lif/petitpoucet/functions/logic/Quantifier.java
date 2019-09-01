@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit.functions;
+package ca.uqac.lif.petitpoucet.functions.logic;
 
 import java.util.List;
 
@@ -28,7 +28,14 @@ import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator;
+import ca.uqac.lif.petitpoucet.functions.Function;
+import ca.uqac.lif.petitpoucet.functions.NaryFunction;
 
+/**
+ * Generic first-order quantifier
+ * @author Sylvain HalléS
+ *
+ */
 public abstract class Quantifier extends NaryFunction
 {
 	/**
