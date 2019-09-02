@@ -46,7 +46,7 @@ public abstract class StringDesignator implements Designator
 		@Override
 		public String toString()
 		{
-			return super.toString() + " line";
+			return "Line " + super.toString();
 		}
 
 		@Override
