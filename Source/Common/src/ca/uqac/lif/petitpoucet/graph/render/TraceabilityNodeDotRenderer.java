@@ -14,7 +14,14 @@ import ca.uqac.lif.petitpoucet.LabeledEdge;
 
 public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<String>
 {
-
+	boolean m_flatten = false;
+	
+	@Override
+	public void setFlatten(boolean b)
+	{
+		m_flatten = b;
+	}
+	
 	@Override
 	public String render(ConcreteTraceabilityNode root)
 	{

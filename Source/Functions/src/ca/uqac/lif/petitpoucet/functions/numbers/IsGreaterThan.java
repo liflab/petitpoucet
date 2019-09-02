@@ -47,4 +47,10 @@ public class IsGreaterThan extends NaryFunction
 		m_returnedValue[0] = b;
 		outputs[0] = b;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "GT";
+	}
 }
