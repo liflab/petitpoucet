@@ -13,7 +13,7 @@ public interface LabeledEdge
 	 */
 	public enum Quality
 	{
-		EXACT, OVER, UNDER
+		EXACT, OVER, UNDER, NONE
 	}
 
 	public Quality getQuality();

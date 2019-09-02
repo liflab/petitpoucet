@@ -8,13 +8,14 @@ import java.util.Set;
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.graph.AndNode;
+import ca.uqac.lif.petitpoucet.graph.ConcreteLabeledEdge;
 import ca.uqac.lif.petitpoucet.graph.ConcreteObjectNode;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTraceabilityNode;
 import ca.uqac.lif.petitpoucet.LabeledEdge;
 
 public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<String>
 {
-	boolean m_flatten = false;
+	boolean m_flatten = true;
 	
 	@Override
 	public void setFlatten(boolean b)
@@ -69,6 +70,14 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 			String link_color = "black";
 			for (LabeledEdge ql : n.getChildren())
 			{
+				Quality qual = ql.getQuality();
+				ConcreteTraceabilityNode child_node = (ConcreteTraceabilityNode) ql.getNode();
+				if (m_flatten)
+				{
+					LabeledEdge le = getNextSpecialChild(child_node);
+					qual = merge(qual, le.getQuality());
+					child_node = (ConcreteTraceabilityNode) le.getNode();
+				}
 				if (ql.getQuality() == Quality.OVER)
 				{
 					link_color = "red";
@@ -77,7 +86,7 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 				{
 					link_color = "blue";
 				}
-				ConcreteTraceabilityNode child_node = (ConcreteTraceabilityNode) ql.getNode();
+				
 				out.append(" ").append(s_id).append(" -> ").append(child_node.getId()).append(" [color=\"")
 						.append(link_color).append("\"];\n");
 				if (!visited.contains(child_node))
@@ -86,5 +95,34 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 				}
 			}
 		}
+	}
+	
+	protected static ConcreteLabeledEdge getNextSpecialChild(ConcreteTraceabilityNode n)
+	{
+		Quality q = Quality.EXACT;
+		while (n.getChildren().size() == 1)
+		{
+			LabeledEdge le = n.getChildren().get(0);
+			q = merge(q, le.getQuality());
+			n = (ConcreteTraceabilityNode) le.getNode();
+		}
+		return new ConcreteLabeledEdge(n, q);
+	}
+	
+	protected static Quality merge(Quality q1, Quality q2)
+	{
+		if (q1 == Quality.EXACT)
+		{
+			return q2;
+		}
+		if (q2 == Quality.EXACT)
+		{
+			return q1;
+		}
+		if (q1 == q2)
+		{
+			return q1;
+		}
+		return Quality.NONE;
 	}
 }

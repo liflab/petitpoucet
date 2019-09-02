@@ -45,7 +45,6 @@ public class Example8
 		ConcreteTracer tracer = new ConcreteTracer();
 		ConcreteTraceabilityNode root = tracer.getTree(CausalityQuery.instance, new NthOutput(0), g);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
-		renderer.setFlatten(true);
 		String dot_code = renderer.render(root);
 		System.out.println(dot_code);
 	}
