@@ -20,11 +20,14 @@ public abstract class UnaryOperator extends NaryFunction
 	
 	protected boolean m_startValue;
 	
+	protected int m_inputLength;
+	
 	public UnaryOperator(boolean start_value)
 	{
 		super(1);
 		m_positions = new ArrayList<Integer>();
 		m_startValue = start_value;
+		m_inputLength = 0;
 	}
 	
 	@Override
@@ -34,6 +37,7 @@ public abstract class UnaryOperator extends NaryFunction
 		m_inputs = inputs;
 		m_positions.clear();
 		List<?> list = (List<?>) inputs[0];
+		m_inputLength = list.size();
 		boolean value = m_startValue;
 		int pos = 0;
 		for (Object o : list)
@@ -61,10 +65,12 @@ public abstract class UnaryOperator extends NaryFunction
 		if (!(q instanceof CausalityQuery))
 		{
 			answerQueryDefault(q, output_nb, d, root, factory, leaves, Quality.EXACT);
+			return;
 		}
 		if (m_positions.isEmpty())
 		{
 			answerQueryDefault(q, output_nb, d, root, factory, leaves, Quality.EXACT);
+			return;
 		}
 		TraceabilityNode or = factory.getOrNode();
 		for (int p : m_positions)
@@ -75,5 +81,20 @@ public abstract class UnaryOperator extends NaryFunction
 			leaves.add(child);
 		}
 		root.addChild(or, Quality.EXACT);
+	}
+	
+	@Override
+	protected void answerQueryDefault(TraceabilityQuery q, int output_nb, Designator d,
+			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves, Quality quality)
+	{
+		TraceabilityNode and = factory.getAndNode();
+		for (int i = 0; i < m_inputLength; i++)
+		{
+			ComposedDesignator cd = new ComposedDesignator(d, new NthElement(i), new NthInput(0));
+			TraceabilityNode child = factory.getObjectNode(cd, this);
+			and.addChild(child, quality);
+			leaves.add(child);
+		}
+		root.addChild(and, quality);
 	}
 }

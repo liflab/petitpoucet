@@ -43,7 +43,7 @@ public class Example8
 		ComposedFunction gt2 = new ComposedFunction(1, 1).setName("GT 3?");
 		{
 			IsGreaterThan igt = new IsGreaterThan();
-			Constant two = new Constant(3);
+			Constant two = new Constant(30);
 			Connector.connect(two, 0, igt, 1);
 			gt2.add(igt, two);
 			gt2.associateInput(0, igt, 0);
@@ -58,6 +58,7 @@ public class Example8
 		ConcreteTracer tracer = new ConcreteTracer();
 		ConcreteTraceabilityNode root = tracer.getTree(CausalityQuery.instance, new NthOutput(0), g);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
+		renderer.setFlatten(true);
 		String dot_code = renderer.render(root);
 		System.out.println(dot_code);
 	}
