@@ -26,10 +26,10 @@ import java.util.Set;
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
+import ca.uqac.lif.petitpoucet.Queryable;
 import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
-import ca.uqac.lif.petitpoucet.Trackable;
 
 public class ConcreteTracer implements Tracer
 {
@@ -111,10 +111,10 @@ public class ConcreteTracer implements Tracer
 			// Trivial designator: nothing to expand
 			return;
 		}
-		if (o instanceof Trackable)
+		if (o instanceof Queryable)
 		{
-			// Object is trackable: send the query and create nodes from its result
-			Trackable to = (Trackable) o;
+			// Object is queryable: send the query and create nodes from its result
+			Queryable to = (Queryable) o;
 			List<TraceabilityNode> leaves = to.query(q, d, root, this);
 			for (TraceabilityNode leaf : leaves)
 			{

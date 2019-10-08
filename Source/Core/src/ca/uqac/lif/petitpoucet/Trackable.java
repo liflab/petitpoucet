@@ -17,41 +17,22 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-import java.util.List;
-
 /**
- * Object that can answer traceability queries about some of its parts.
+ * Object that can delegate traceability queries about some of its parts.
  * 
  * @author Sylvain Hallé
  */
 public interface Trackable
 {
 	/**
-	 * Gets an instance of a trackable object that can answer queries on this
-	 * object's behalf. This method can return the called object itself, or any
-	 * other object that implements the {@link Trackable} interface. The latter case
-	 * can happen if traceability questions need to be answered beyond the original
-	 * object's lifespan (i.e. after its destruction).
+	 * Gets an instance of a queryable object that can answer queries on this
+	 * object's behalf. This method can return the called object itself (if it
+	 * also implements {@link Queryable}, or any other object that implements the
+	 * {@link Queryable} interface. The latter case can happen if traceability
+	 * questions need to be answered beyond the original object's lifespan (i.e.
+	 * after its destruction).
 	 * 
-	 * @return A trackable object
+	 * @return A queryable object
 	 */
-	/* @ null @ */ public Trackable getTrackable();
-
-	/**
-	 * Answers a traceability query.
-	 * 
-	 * @param q
-	 *          The query
-	 * @param d
-	 *          The part of the object that is the subject of the query
-	 * @param root
-	 *          The node to which the results of the query should be appended as
-	 *          children
-	 * @param factory
-	 *          A factory to produce traceability nodes
-	 * @return The list of terminal traceability nodes produced by this query
-	 */
-	/* @ non_null @ */ public List<TraceabilityNode> query(/* @ non_null @ */ TraceabilityQuery q,
-			/* @ non_null @ */ Designator d, /* @ non_null @ */ TraceabilityNode root,
-			/* @ non_null @ */ Tracer factory);
+	/* @ null @ */ public Queryable getQueryable();
 }

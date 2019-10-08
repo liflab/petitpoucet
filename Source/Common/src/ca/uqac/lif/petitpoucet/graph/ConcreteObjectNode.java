@@ -18,6 +18,7 @@
 package ca.uqac.lif.petitpoucet.graph;
 
 import ca.uqac.lif.petitpoucet.DesignatedObject;
+import ca.uqac.lif.petitpoucet.LabeledEdge;
 import ca.uqac.lif.petitpoucet.ObjectNode;
 
 public class ConcreteObjectNode extends ConcreteTraceabilityNode implements ObjectNode
@@ -53,6 +54,19 @@ public class ConcreteObjectNode extends ConcreteTraceabilityNode implements Obje
 	@Override
 	public String toString()
 	{
-		return m_object.toString();
+		return toString("");
+	}
+	
+	@Override
+	protected String toString(String indent)
+	{
+		StringBuilder out = new StringBuilder();
+		out.append(indent).append(m_object.toString()).append("\n");
+		for (LabeledEdge le : m_children)
+		{
+			out.append(indent).append(le.getQuality());
+			out.append(((ConcreteTraceabilityNode) le.getNode()).toString(indent + " "));
+		}
+		return out.toString();
 	}
 }

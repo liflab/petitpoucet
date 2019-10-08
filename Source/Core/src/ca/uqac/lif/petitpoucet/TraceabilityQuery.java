@@ -31,13 +31,23 @@ public interface TraceabilityQuery
 	 * @return The name
 	 */
 	public String getName();
+	
+	public interface UpstreamQuery extends TraceabilityQuery
+	{
+		
+	}
+	
+	public interface DownstreamQuery extends TraceabilityQuery
+	{
+		
+	}
 
 	/**
 	 * Traceability query that asks for a causality link.
 	 * 
 	 * @author Sylvain Hallé
 	 */
-	public static class CausalityQuery implements TraceabilityQuery
+	public static class CausalityQuery implements UpstreamQuery
 	{
 		/**
 		 * A single publicly visible instance of this object
@@ -61,7 +71,7 @@ public interface TraceabilityQuery
 	 * 
 	 * @author Sylvain Hallé
 	 */
-	public static class ProvenanceQuery implements TraceabilityQuery
+	public static class ProvenanceQuery implements UpstreamQuery
 	{
 		/**
 		 * A single publicly visible instance of this object
@@ -77,6 +87,30 @@ public interface TraceabilityQuery
 		public String getName()
 		{
 			return "Provenance";
+		}
+	}
+	
+	/**
+	 * Traceability query that asks for a causality link.
+	 * 
+	 * @author Sylvain Hallé
+	 */
+	public static class TaintQuery implements DownstreamQuery
+	{
+		/**
+		 * A single publicly visible instance of this object
+		 */
+		public static final transient TaintQuery instance = new TaintQuery();
+
+		protected TaintQuery()
+		{
+			super();
+		}
+
+		@Override
+		public String getName()
+		{
+			return "Taint";
 		}
 	}
 }

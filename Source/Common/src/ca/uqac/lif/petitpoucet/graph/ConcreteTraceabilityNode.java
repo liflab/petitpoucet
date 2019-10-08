@@ -67,4 +67,9 @@ public class ConcreteTraceabilityNode implements TraceabilityNode
 		}
 		return m_id == ((ConcreteTraceabilityNode) o).m_id;
 	}
+	
+	protected String toString(String indent)
+	{
+		return indent;
+	}
 }

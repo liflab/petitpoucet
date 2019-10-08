@@ -58,4 +58,8 @@ public interface CircuitElement
 	 * @return The arity
 	 */
 	public int getOutputArity();
+	
+	public CircuitConnection getInputConnection(int index);
+	
+	public CircuitConnection getOutputConnection(int index);
 }

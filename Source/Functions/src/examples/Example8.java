@@ -40,7 +40,7 @@ public class Example8
 		Connector.connect(fl, tonum);
 		SlidingWindow avg_win = new SlidingWindow(3, new Average());
 		Connector.connect(tonum, avg_win);
-		ComposedFunction gt2 = new ComposedFunction(1, 1).setName("GT 3?");
+		ComposedFunction gt2 = new ComposedFunction(1, 1).setName("GT 30?");
 		{
 			IsGreaterThan igt = new IsGreaterThan();
 			Constant two = new Constant(30);
