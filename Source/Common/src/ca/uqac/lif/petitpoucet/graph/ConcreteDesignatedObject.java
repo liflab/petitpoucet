@@ -17,6 +17,8 @@
  */
 package ca.uqac.lif.petitpoucet.graph;
 
+import java.util.Stack;
+
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
 
@@ -36,6 +38,11 @@ public class ConcreteDesignatedObject implements DesignatedObject
 	 * The part of the object that is designated
 	 */
 	protected Designator m_designator;
+	
+	/**
+	 * The context of the designated object
+	 */
+	protected Stack<Object> m_context;
 
 	/**
 	 * Creates a new concrete designated object
@@ -50,6 +57,25 @@ public class ConcreteDesignatedObject implements DesignatedObject
 		super();
 		m_object = o;
 		m_designator = d;
+		m_context = new Stack<Object>();
+	}
+	
+	/**
+	 * Creates a new concrete designated object
+	 * 
+	 * @param d
+	 *          The part of the object that is designated
+	 * @param o
+	 *          The object that is designated
+	 * @param c
+	 * 			The object's context
+	 */
+	public ConcreteDesignatedObject(Designator d, Object o, Stack<Object> c)
+	{
+		super();
+		m_object = o;
+		m_designator = d;
+		m_context = c;
 	}
 
 	@Override
@@ -67,7 +93,7 @@ public class ConcreteDesignatedObject implements DesignatedObject
 	@Override
 	public String toString()
 	{
-		return m_designator + " of " + m_object;
+		return m_designator + " of " + m_object + "(" + m_context + ")";
 	}
 
 	@Override
@@ -90,6 +116,35 @@ public class ConcreteDesignatedObject implements DesignatedObject
 		ConcreteDesignatedObject cdo = (ConcreteDesignatedObject) o;
 		return (m_object == null && cdo.m_object == null)
 				|| (m_object != null && m_object.equals(cdo.m_object))
-						&& m_designator.equals(cdo.m_designator);
+						&& m_designator.equals(cdo.m_designator) && sameContext(cdo);
+	}
+	
+	@Override
+	public Stack<Object> getObjectContext()
+	{
+		return m_context;
+	}
+	
+	/**
+	 * Checks if two designated objects have the same context.
+	 * @param cdo The designated object to compare to
+	 * @return <tt>true</tt> if both objects have the same context,
+	 * <tt>false</tt> otherwise
+	 */
+	protected boolean sameContext(ConcreteDesignatedObject cdo)
+	{
+		Stack<Object> cdo_s = cdo.m_context;
+		if (m_context.size() != cdo_s.size())
+		{
+			return false;
+		}
+		for (int i = 0; i < m_context.size(); i++)
+		{
+			if (!m_context.get(i).equals(cdo_s.get(i)))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 }

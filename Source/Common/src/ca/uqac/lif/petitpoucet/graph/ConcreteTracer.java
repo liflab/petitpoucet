@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
@@ -42,7 +43,12 @@ public class ConcreteTracer implements Tracer
 	/**
 	 * A map keeping track of which designated objects already have nodes
 	 */
-	protected Map<DesignatedObject, ConcreteTraceabilityNode> m_nodes;
+	/*@ non_null @*/ protected Map<DesignatedObject, ConcreteTraceabilityNode> m_nodes;
+	
+	/**
+	 * The context in which the tracer operates
+	 */
+	/*@ non_null @*/ protected Stack<Object> m_tracerContext;
 
 	/**
 	 * Creates a new tracer with default settings
@@ -51,6 +57,18 @@ public class ConcreteTracer implements Tracer
 	{
 		super();
 		m_nodes = new HashMap<DesignatedObject, ConcreteTraceabilityNode>();
+		m_tracerContext = new Stack<Object>();
+	}
+	
+	/**
+	 * Creates a new tracer with given context
+	 * @param c The context in which the tracer operates
+	 */
+	public ConcreteTracer(/*@ non_null @*/ Stack<Object> c)
+	{
+		super();
+		m_nodes = new HashMap<DesignatedObject, ConcreteTraceabilityNode>();
+		m_tracerContext = c;
 	}
 
 	/**
@@ -129,15 +147,15 @@ public class ConcreteTracer implements Tracer
 		}
 		return;
 	}
-
-	@Override
-	public ConcreteObjectNode getObjectNode(DesignatedObject dob)
+	
+	protected ConcreteObjectNode getObjectNode(DesignatedObject dob)
 	{
 		if (m_nodes.containsKey(dob))
 		{
 			return (ConcreteObjectNode) m_nodes.get(dob);
 		}
 		ConcreteObjectNode on = new ConcreteObjectNode(dob);
+		
 		m_nodes.put(dob, on);
 		return on;
 	}
@@ -146,6 +164,7 @@ public class ConcreteTracer implements Tracer
 	public ConcreteObjectNode getObjectNode(Designator d, Object o)
 	{
 		ConcreteDesignatedObject cdo = new ConcreteDesignatedObject(d, o);
+		cdo.m_context = m_tracerContext;
 		return getObjectNode(cdo);
 	}
 
@@ -168,9 +187,12 @@ public class ConcreteTracer implements Tracer
 	}
 
 	@Override
-	public ConcreteTracer getSubTracer()
+	public ConcreteTracer getSubTracer(Object context)
 	{
-		return new ConcreteTracer();
+		Stack<Object> con = new Stack<Object>();
+		con.addAll(m_tracerContext);
+		con.add(context);
+		return new ConcreteTracer(con);
 	}
 
 	@Override

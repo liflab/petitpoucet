@@ -2,8 +2,6 @@ package ca.uqac.lif.petitpoucet;
 
 public interface Tracer
 {
-	public TraceabilityNode getObjectNode(DesignatedObject dob);
-
 	public TraceabilityNode getObjectNode(Designator d, Object o);
 
 	public TraceabilityNode getAndNode();
@@ -12,7 +10,7 @@ public interface Tracer
 
 	public TraceabilityNode getUnknownNode();
 
-	public Tracer getSubTracer();
+	public Tracer getSubTracer(Object context);
 
 	public TraceabilityTree trace(TraceabilityQuery q, Designator d, Object o);
 }

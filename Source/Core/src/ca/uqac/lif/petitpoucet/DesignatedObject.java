@@ -37,4 +37,11 @@ public interface DesignatedObject
 	 * @return The designator representing the part of the object
 	 */
 	/* @ non_null @ */ public Designator getDesignator();
+	
+	/**
+	 * Gets the context in which the object is designated
+	 * 
+	 * @return The object
+	 */
+	/* @ null @ */ public Object getObjectContext();
 }

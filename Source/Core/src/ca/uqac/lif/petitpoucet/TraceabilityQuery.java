@@ -113,4 +113,28 @@ public interface TraceabilityQuery
 			return "Taint";
 		}
 	}
+	
+	/**
+	 * Traceability query that asks for a causality link.
+	 * 
+	 * @author Sylvain Hallé
+	 */
+	public static class ConsequenceQuery implements DownstreamQuery
+	{
+		/**
+		 * A single publicly visible instance of this object
+		 */
+		public static final transient TaintQuery instance = new TaintQuery();
+
+		protected ConsequenceQuery()
+		{
+			super();
+		}
+
+		@Override
+		public String getName()
+		{
+			return "Consequence";
+		}
+	}
 }
