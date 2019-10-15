@@ -19,6 +19,7 @@ import ca.uqac.lif.petitpoucet.graph.ConcreteTraceabilityNode;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTracer;
 import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
 
+@SuppressWarnings("unused")
 public class Example8
 {
 	public static void main(String[] args)

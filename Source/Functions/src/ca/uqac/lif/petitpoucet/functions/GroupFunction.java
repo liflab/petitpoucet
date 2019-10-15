@@ -501,7 +501,6 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 			return duplicate(false);
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public GroupFunctionQueryable duplicate(boolean with_state)
 		{

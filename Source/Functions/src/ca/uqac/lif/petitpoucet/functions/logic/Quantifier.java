@@ -18,10 +18,7 @@
 package ca.uqac.lif.petitpoucet.functions.logic;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.DesignatedObject;
@@ -35,15 +32,11 @@ import ca.uqac.lif.petitpoucet.StateDuplicable;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityTree;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
-import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
-import ca.uqac.lif.petitpoucet.circuit.CircuitQueryable;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
-import ca.uqac.lif.petitpoucet.common.CollectionDesignator;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
 import ca.uqac.lif.petitpoucet.common.Context;
 import ca.uqac.lif.petitpoucet.functions.CircuitFunction;
-import ca.uqac.lif.petitpoucet.functions.ContextVariable;
 import ca.uqac.lif.petitpoucet.functions.ContextVariable.ContextDesignator;
 import ca.uqac.lif.petitpoucet.functions.ContextVariable.ContextVariableQueryable;
 import ca.uqac.lif.petitpoucet.functions.Function;

@@ -8,7 +8,6 @@ import ca.uqac.lif.azrael.ObjectReader;
 import ca.uqac.lif.azrael.PrintException;
 import ca.uqac.lif.azrael.ReadException;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.Queryable;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.Tracer;
@@ -31,15 +30,20 @@ public class ContextVariable implements Function
 	}
 	
 	@Override
-	public Object print(ObjectPrinter<?> printer) throws PrintException {
-		// TODO Auto-generated method stub
-		return null;
+	public Object print(ObjectPrinter<?> printer) throws PrintException
+	{
+		return printer.print(m_name);
 	}
 
 	@Override
-	public Object read(ObjectReader<?> reader, Object o) throws ReadException {
-		// TODO Auto-generated method stub
-		return null;
+	public ContextVariable read(ObjectReader<?> reader, Object o) throws ReadException 
+	{
+		Object r_o = reader.read(o);
+		if (!(r_o instanceof String))
+		{
+			throw new ReadException("Unexpected object format");
+		}
+		return new ContextVariable((String) r_o);
 	}
 
 	@Override
@@ -138,8 +142,7 @@ public class ContextVariable implements Function
 		@Override
 		public boolean appliesTo(Object o) 
 		{
-			// TODO Auto-generated method stub
-			return false;
+			return o instanceof ContextVariable;
 		}
 
 		@Override
@@ -149,8 +152,8 @@ public class ContextVariable implements Function
 		}
 
 		@Override
-		public Designator tail() {
-			// TODO Auto-generated method stub
+		public Designator tail()
+		{
 			return null;
 		}
 		
@@ -159,7 +162,5 @@ public class ContextVariable implements Function
 		{
 			return "Context";
 		}
-		
 	}
-
 }
