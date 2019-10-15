@@ -19,52 +19,134 @@ package ca.uqac.lif.petitpoucet.functions;
 
 import java.util.List;
 
-import ca.uqac.lif.petitpoucet.ComposedDesignator;
+import ca.uqac.lif.azrael.ObjectPrinter;
+import ca.uqac.lif.azrael.ObjectReader;
+import ca.uqac.lif.azrael.PrintException;
+import ca.uqac.lif.azrael.ReadException;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
-import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
-import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
+import ca.uqac.lif.petitpoucet.Tracer;
+import ca.uqac.lif.petitpoucet.common.Context;
 
-/**
- * Duplicates a function's input to multiple outputs
- * @author Sylvain Hallé
- */
-public class Fork extends SingleFunction
+public class Fork implements Function
 {
-	public Fork(int out_arity)
+	/*@ non_null @*/ protected Class<?> m_class;
+	
+	/*@ non_null @*/ protected transient ForkQueryable m_forkQueryable;
+	
+	protected int m_outArity;
+	
+	public Fork(Class<?> clazz, int out_arity)
 	{
-		super(1, out_arity);
+		super();
+		m_class = clazz;
+		m_outArity = out_arity;
+		m_forkQueryable = new ForkQueryable(out_arity);
+	}
+	
+	@Override
+	public Object print(ObjectPrinter<?> printer) throws PrintException 
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public Fork()
+	@Override
+	public Object read(ObjectReader<?> reader, Object o) throws ReadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Fork duplicate(boolean with_state) 
 	{
-		this(2);
+		return this;
+	}
+
+	@Override
+	public Fork duplicate()
+	{
+		return duplicate(false);
+	}
+
+	@Override
+	public ForkQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+	{
+		for (int i = 0; i < m_outArity; i++)
+		{
+			outputs[i] = inputs[0];
+		}
+		return m_forkQueryable;
+	}
+
+	@Override
+	public ForkQueryable evaluate(Object[] inputs, Object[] outputs)
+	{
+		return evaluate(inputs, outputs, null);
+	}
+
+	@Override
+	public Class<?> getInputType(int index) 
+	{
+		return m_class;
+	}
+
+	@Override
+	public Class<?> getOutputType(int index) 
+	{
+		return m_class;
+	}
+
+	@Override
+	public int getInputArity() 
+	{
+		return 1;
+	}
+
+	@Override
+	public int getOutputArity() 
+	{
+		return m_outArity;
+	}
+
+	@Override
+	public void reset() 
+	{
+		// Nothing to do
 	}
 
 	@Override
 	public String toString()
 	{
-		return "Fork";
+		return "fork " + m_outArity;
 	}
-
-	@Override
-	public void getValue(Object[] inputs, Object[] outputs)
+	
+	public static class ForkQueryable extends FunctionQueryable
 	{
-		for (int i = 0; i < outputs.length; i++)
+		protected ForkQueryable(int out_arity)
 		{
-			outputs[i] = inputs[0];
+			super("fork", 1, out_arity);
 		}
-	}
-
-	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
-	{
-		ComposedDesignator cd = new ComposedDesignator(d, new CircuitDesignator.NthInput(0));
-		TraceabilityNode child = factory.getObjectNode(cd, this);
-		leaves.add(child);
-		root.addChild(child, Quality.EXACT);
+		
+		@Override
+		protected List<TraceabilityNode> queryInput(TraceabilityQuery q, int in_index, 
+				Designator tail, TraceabilityNode root, Tracer factory)
+		{
+			return allOutputsLink(in_index, tail, root, factory);
+		}
+		
+		@Override
+		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int out_index, 
+				Designator tail, TraceabilityNode root, Tracer factory)
+		{
+			return allInputsLink(out_index, tail, root, factory);
+		}
+		
+		@Override
+		public ForkQueryable duplicate(boolean with_state)
+		{
+			return this;
+		}
 	}
 }

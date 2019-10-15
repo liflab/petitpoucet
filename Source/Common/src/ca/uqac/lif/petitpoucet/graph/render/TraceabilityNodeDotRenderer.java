@@ -17,10 +17,18 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 {
 	boolean m_flatten = true;
 	
+	boolean m_showCaptions = true;
+	
 	@Override
 	public void setFlatten(boolean b)
 	{
 		m_flatten = b;
+	}
+	
+	@Override
+	public void setShowCaptions(boolean b)
+	{
+		m_showCaptions = b;
 	}
 	
 	@Override
@@ -52,7 +60,12 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 			if (n instanceof ConcreteObjectNode)
 			{
 				DesignatedObject dob = ((ConcreteObjectNode) n).getDesignatedObject();
-				out.append(" ").append(s_id).append(" [label=\"").append(dob)
+				String caption = "";
+				if (m_showCaptions)
+				{
+					caption = dob.toString();
+				}
+				out.append(" ").append(s_id).append(" [label=\"").append(caption)
 						.append("\",shape=\"rectangle\",fillcolor=\"AliceBlue\"];\n");
 			}
 			else

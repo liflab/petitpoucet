@@ -20,6 +20,10 @@ package ca.uqac.lif.petitpoucet.functions.lists;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uqac.lif.azrael.ObjectPrinter;
+import ca.uqac.lif.azrael.ObjectReader;
+import ca.uqac.lif.azrael.PrintException;
+import ca.uqac.lif.azrael.ReadException;
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
@@ -29,8 +33,10 @@ import ca.uqac.lif.petitpoucet.TraceabilityQuery.ProvenanceQuery;
 import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
-import ca.uqac.lif.petitpoucet.functions.NaryFunction;
+import ca.uqac.lif.petitpoucet.functions.BinaryFunction;
+import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
+import ca.uqac.lif.petitpoucet.common.Context;
 
 /**
  * Filters the elements of a list based on the Boolean values of
@@ -38,30 +44,25 @@ import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
  * @author Sylvain Hallé
  *
  */
-public class Filter extends NaryFunction
+@SuppressWarnings("rawtypes")
+public class Filter extends BinaryFunction<List,List,List>
 {
-	/**
-	 * Records which events of the last list have been included
-	 */
-	protected List<Boolean> m_included;
-	
 	/**
 	 * Creates a new instance of the function
 	 */
 	public Filter()
 	{
-		super(2);
+		super(List.class, List.class, List.class);
 	}
 
 	@Override
-	public void getValue(Object[] inputs, Object[] outputs)
+	public FilterQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
 	{
-		m_evaluated = true;
 		List<?> list1 = (List<?>) inputs[0];
 		List<?> list2 = (List<?>) inputs[1];
 		List<Object> list_out = new ArrayList<Object>();
 		int len = Math.min(list1.size(), list2.size());
-		m_included = new ArrayList<Boolean>(len);
+		List<Boolean> included = new ArrayList<Boolean>(len);
 		for (int i = 0; i < len; i++)
 		{
 			Object o2 = list2.get(i);
@@ -71,82 +72,102 @@ public class Filter extends NaryFunction
 				put = true;
 				list_out.add(list1.get(i));
 			}
-			m_included.add(put);
+			included.add(put);
 		}
 		outputs[0] = list_out;
-		m_returnedValue[0] = list_out;
+		return new FilterQueryable(toString(), included);
 	}
 	
-	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
+	public static class FilterQueryable extends FunctionQueryable
 	{
-		Designator top = d.peek();
-		Designator tail = d.tail();
-		if (tail == null)
+		/**
+		 * Records which events of the last list have been included
+		 */
+		protected List<Boolean> m_included;
+
+		public FilterQueryable(String reference, List<Boolean> m_included)
 		{
-			tail = Designator.identity;
+			super(reference, 2, 1);
 		}
-		if (!m_evaluated || !(top instanceof NthElement))
+		
+		@Override
+		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
+				TraceabilityNode root, Tracer factory)
 		{
-			// We did not evaluate the function; the best we can say is that the output depends on
-			// the whole input list, but this is an over-approximation
-			ComposedDesignator cd = new ComposedDesignator(tail, new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			root.addChild(child, Quality.OVER);
-			leaves.add(child);
-			return;
-		}
-		if (top instanceof NthElement)
-		{
-			// Find position of nth element in the input list
-			int required_pos = ((NthElement) top).getIndex();
-			if (required_pos >= m_included.size())
+			Designator top = d.peek();
+			Designator tail = d.tail();
+			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
+			if (top instanceof NthElement)
 			{
-				TraceabilityNode child = factory.getUnknownNode();
-				root.addChild(child, Quality.EXACT);
-				leaves.add(child);
-				return;
-			}
-			int cur_pos = 0;
-			for (int i = 0; i < m_included.size(); i++)
-			{
-				if (m_included.get(i) == true)
+				// Find position of nth element in the input list
+				int required_pos = ((NthElement) top).getIndex();
+				if (required_pos >= m_included.size())
 				{
-					if (cur_pos == required_pos)
+					TraceabilityNode child = factory.getUnknownNode();
+					root.addChild(child, Quality.EXACT);
+					leaves.add(child);
+					return leaves;
+				}
+				int cur_pos = 0;
+				for (int i = 0; i < m_included.size(); i++)
+				{
+					if (m_included.get(i) == true)
 					{
-						// That's the one
-						if (q instanceof ProvenanceQuery)
+						if (cur_pos == required_pos)
 						{
-							ComposedDesignator cd = new ComposedDesignator(tail, new NthElement(i), new NthInput(0));
-							TraceabilityNode child = factory.getObjectNode(cd, this);
-							root.addChild(child, Quality.EXACT);
-							leaves.add(child);
+							// That's the one
+							if (q instanceof ProvenanceQuery)
+							{
+								ComposedDesignator cd = new ComposedDesignator(tail, new NthElement(i), new NthInput(0));
+								TraceabilityNode child = factory.getObjectNode(cd, this);
+								root.addChild(child, Quality.EXACT);
+								leaves.add(child);
+							}
+							if (q instanceof CausalityQuery)
+							{
+								TraceabilityNode and = factory.getAndNode();
+								ComposedDesignator cd1 = new ComposedDesignator(tail, new NthElement(i), new NthInput(0));
+								TraceabilityNode child1 = factory.getObjectNode(cd1, this);
+								and.addChild(child1, Quality.EXACT);
+								ComposedDesignator cd2 = new ComposedDesignator(tail, new NthElement(i), new NthInput(1));
+								TraceabilityNode child2 = factory.getObjectNode(cd2, this);
+								and.addChild(child2, Quality.EXACT);
+								root.addChild(and, Quality.EXACT);
+								leaves.add(child1);
+								leaves.add(child2);
+							}
+							break;
 						}
-						if (q instanceof CausalityQuery)
-						{
-							TraceabilityNode and = factory.getAndNode();
-							ComposedDesignator cd1 = new ComposedDesignator(tail, new NthElement(i), new NthInput(0));
-							TraceabilityNode child1 = factory.getObjectNode(cd1, this);
-							and.addChild(child1, Quality.EXACT);
-							ComposedDesignator cd2 = new ComposedDesignator(tail, new NthElement(i), new NthInput(1));
-							TraceabilityNode child2 = factory.getObjectNode(cd2, this);
-							and.addChild(child2, Quality.EXACT);
-							root.addChild(and, Quality.EXACT);
-							leaves.add(child1);
-							leaves.add(child2);
-						}
-						break;
+						cur_pos++;
 					}
-					cur_pos++;
 				}
 			}
+			return leaves;
 		}
+		
 	}
 	
 	@Override
 	public String toString()
 	{
 		return "Filter";
+	}
+
+	@Override
+	public Object print(ObjectPrinter<?> printer) throws PrintException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object read(ObjectReader<?> reader, Object o) throws ReadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Filter duplicate(boolean with_state) 
+	{
+		return new Filter();
 	}
 }

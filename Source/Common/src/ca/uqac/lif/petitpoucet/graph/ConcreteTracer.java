@@ -17,6 +17,7 @@
  */
 package ca.uqac.lif.petitpoucet.graph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -201,5 +202,15 @@ public class ConcreteTracer implements Tracer
 		TraceabilityNode root = getTree(q, d, o);
 		ConcreteTraceabilityTree ctt = new ConcreteTraceabilityTree(root);
 		return ctt;
+	}
+
+	@Override
+	public List<TraceabilityNode> unknownLink(TraceabilityNode root)
+	{
+		List<TraceabilityNode> list = new ArrayList<TraceabilityNode>(1);
+		TraceabilityNode node = getUnknownNode();
+		root.addChild(node, Quality.NONE);
+		list.add(node);
+		return list;
 	}
 }

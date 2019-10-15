@@ -17,6 +17,11 @@
  */
 package ca.uqac.lif.petitpoucet.functions.logic;
 
+import ca.uqac.lif.azrael.ObjectPrinter;
+import ca.uqac.lif.azrael.ObjectReader;
+import ca.uqac.lif.azrael.PrintException;
+import ca.uqac.lif.azrael.ReadException;
+import ca.uqac.lif.petitpoucet.functions.CircuitFunction;
 import ca.uqac.lif.petitpoucet.functions.Function;
 
 /**
@@ -27,9 +32,9 @@ import ca.uqac.lif.petitpoucet.functions.Function;
 public class ForAll extends Quantifier
 {
 
-	public ForAll(Function phi)
+	public ForAll(String variable, Function domain, CircuitFunction phi)
 	{
-		super(phi);
+		super(variable, domain, phi);
 	}
 
 	@Override
@@ -47,6 +52,24 @@ public class ForAll extends Quantifier
 	@Override
 	public String toString()
 	{
-		return "forall x : " + m_function;
+		return "forall " + m_variable + " in " + m_domain + " : " + m_function;
+	}
+
+	@Override
+	public Object print(ObjectPrinter<?> printer) throws PrintException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object read(ObjectReader<?> reader, Object o) throws ReadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ForAll duplicate(boolean with_state) 
+	{
+		return new ForAll(m_variable, m_domain, m_function);
 	}
 }

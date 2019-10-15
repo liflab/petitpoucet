@@ -49,7 +49,7 @@ public class CircuitQueryable implements CircuitElement, Queryable
 				return out_list;
 			}
 			CircuitConnection cc = m_inputConnections[index];
-			if (cc != null)
+			if (cc != null && cc.getObject() != null)
 			{
 				ComposedDesignator cd = new ComposedDesignator(tail, new NthOutput(cc.getIndex()));
 				TraceabilityNode node = factory.getObjectNode(cd, cc.getObject());
@@ -69,7 +69,7 @@ public class CircuitQueryable implements CircuitElement, Queryable
 				return out_list;
 			}
 			CircuitConnection cc = m_outputConnections[index];
-			if (cc != null)
+			if (cc != null && cc.getObject() != null)
 			{
 				ComposedDesignator cd = new ComposedDesignator(tail, new NthInput(cc.getIndex()));
 				TraceabilityNode node = factory.getObjectNode(cd, cc.getObject());

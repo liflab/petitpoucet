@@ -17,10 +17,15 @@
  */
 package ca.uqac.lif.petitpoucet.functions.strings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ca.uqac.lif.azrael.ObjectPrinter;
+import ca.uqac.lif.azrael.ObjectReader;
+import ca.uqac.lif.azrael.PrintException;
+import ca.uqac.lif.azrael.ReadException;
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
@@ -28,34 +33,24 @@ import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
+import ca.uqac.lif.petitpoucet.common.Context;
 import ca.uqac.lif.petitpoucet.common.StringDesignator;
-import ca.uqac.lif.petitpoucet.functions.NaryFunction;
+import ca.uqac.lif.petitpoucet.functions.Function;
+import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
+import ca.uqac.lif.petitpoucet.functions.UnaryFunction;
 
 /**
  * Extracts part of a string based on a regular expression.
  * @author Sylvain Hallé
  */
-public class RegexFind extends NaryFunction
+public class RegexFind extends UnaryFunction<String,String>
 {
 	/**
 	 * The pattern to find
 	 */
 	protected transient Pattern m_pattern;
 	
-	/**
-	 * The start index of the pattern on the last string that was processed
-	 */
-	protected int m_startIndex = -1;
-	
-	/**
-	 * The end index of the pattern on the last string that was processed
-	 */
-	protected int m_endIndex = -1;
-	
-	/**
-	 * The length of the last evaluated string
-	 */
-	protected int m_length;
+	protected transient RegexNotFoundQueryable m_notFoundQueryable;
 	
 	/**
 	 * Creates a new instance of the function
@@ -63,74 +58,107 @@ public class RegexFind extends NaryFunction
 	 */
 	public RegexFind(String regex)
 	{
-		super(1);
+		super(String.class, String.class);
 		m_pattern = Pattern.compile(regex);
-		m_length = 0;
+		m_notFoundQueryable = new RegexNotFoundQueryable(toString());
 	}
 
 	@Override
-	public void getValue(Object[] inputs, Object[] outputs)
+	public RegexFindQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
 	{
-		m_evaluated = true;
 		String s = inputs[0].toString();
-		m_length = s.length();
+		int length = s.length();
 		Matcher mat = m_pattern.matcher(s);
 		if (mat.find())
 		{
 			outputs[0] = mat.group();
-			m_returnedValue[0] = outputs[0];
-			m_startIndex = mat.start();
-			m_endIndex = mat.end() - 1;
+			int start_index = mat.start();
+			int end_index = mat.end() - 1;
+			return new RegexFoundQueryable(toString(), start_index, end_index, length);
 		}
 		else
 		{
 			outputs[0] = "";
-			m_returnedValue[0] = "";
+			return m_notFoundQueryable;
 		}
 	}
 	
-	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
+	public static abstract class RegexFindQueryable extends FunctionQueryable
 	{
-		Designator top = d.peek();
-		Designator tail = d.tail();
-		if (tail == null)
+		public RegexFindQueryable(String reference)
 		{
-			tail = Designator.identity;
+			super(reference, 1, 1);
 		}
-		if (!m_evaluated)
+	}
+	
+	public static class RegexFoundQueryable extends RegexFindQueryable
+	{
+		/**
+		 * The start index of the pattern on the last string that was processed
+		 */
+		protected int m_startIndex = -1;
+		
+		/**
+		 * The end index of the pattern on the last string that was processed
+		 */
+		protected int m_endIndex = -1;
+		
+		/**
+		 * The length of the last evaluated string
+		 */
+		protected int m_length;
+		
+		public RegexFoundQueryable(String reference, int start_index, int end_index, int length)
 		{
-			// We did not evaluate the function; the best we can say is that the output depends on
-			// the whole input string, but this is an over-approximation
-			ComposedDesignator cd = new ComposedDesignator(tail, new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			root.addChild(child, Quality.OVER);
-			leaves.add(child);
-			return;
+			super(reference);
+			m_startIndex = start_index;
+			m_endIndex = end_index;
+			m_length = length;
 		}
-		if (top instanceof StringDesignator.Range)
+		
+		@Override
+		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
+				TraceabilityNode root, Tracer factory)
 		{
-			StringDesignator.Range sdr = (StringDesignator.Range) top;
-			int offset = Math.min(m_startIndex, m_length);
-			int len = Math.min(sdr.getLength(), m_length);
-			int start = sdr.getStartIndex() + offset;
-			int end = offset + len;
-			ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			root.addChild(child, Quality.OVER);
-			leaves.add(child);
-			return;
+			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>(1);
+			Designator top = d.peek();
+			Designator tail = d.tail();
+			if (top instanceof StringDesignator.Range)
+			{
+				StringDesignator.Range sdr = (StringDesignator.Range) top;
+				int offset = Math.min(m_startIndex, m_length);
+				int len = Math.min(sdr.getLength(), m_length);
+				int start = sdr.getStartIndex() + offset;
+				int end = offset + len;
+				ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
+				TraceabilityNode child = factory.getObjectNode(cd, this);
+				root.addChild(child, Quality.OVER);
+				leaves.add(child);
+			}
+			else if (top instanceof Designator.Identity)
+			{
+				int start = Math.min(m_startIndex, m_length);
+				int end = Math.min(m_endIndex, m_length);
+				ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
+				TraceabilityNode child = factory.getObjectNode(cd, this);
+				root.addChild(child, Quality.OVER);
+				leaves.add(child);
+			}
+			return leaves;
 		}
-		if (top instanceof Designator.Identity)
+		
+		@Override
+		public RegexFoundQueryable duplicate(boolean with_state)
 		{
-			int start = Math.min(m_startIndex, m_length);
-			int end = Math.min(m_endIndex, m_length);
-			ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			root.addChild(child, Quality.OVER);
-			leaves.add(child);
-			return;
+			return new RegexFoundQueryable(m_reference, m_startIndex, m_endIndex, m_length);
+		}
+	}
+	
+	public static class RegexNotFoundQueryable extends RegexFindQueryable
+	{
+		public RegexNotFoundQueryable(String reference)
+		{
+			super(reference);
 		}
 	}
 	
@@ -138,5 +166,28 @@ public class RegexFind extends NaryFunction
 	public String toString()
 	{
 		return "Find /" + m_pattern.pattern() + "/";
+	}
+
+	@Override
+	public Object print(ObjectPrinter<?> printer) throws PrintException
+	{
+		return printer.print(m_pattern.pattern());
+	}
+
+	@Override
+	public RegexFind read(ObjectReader<?> reader, Object o) throws ReadException 
+	{
+		Object r_o = reader.read(o);
+		if (!(r_o instanceof String))
+		{
+			throw new ReadException("Unexpected object format");
+		}
+		return new RegexFind((String) r_o);
+	}
+
+	@Override
+	public Function duplicate(boolean with_state) 
+	{
+		return new RegexFind(m_pattern.pattern());
 	}
 }

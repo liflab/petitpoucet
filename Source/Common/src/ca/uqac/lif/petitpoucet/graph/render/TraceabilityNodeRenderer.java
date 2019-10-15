@@ -7,4 +7,6 @@ public interface TraceabilityNodeRenderer<T>
 	public T render(ConcreteTraceabilityNode root);
 	
 	public void setFlatten(boolean b);
+	
+	public void setShowCaptions(boolean b);
 }

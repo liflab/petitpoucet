@@ -1,5 +1,7 @@
 package ca.uqac.lif.petitpoucet;
 
+import java.util.List;
+
 public interface Tracer
 {
 	public TraceabilityNode getObjectNode(Designator d, Object o);
@@ -9,6 +11,8 @@ public interface Tracer
 	public TraceabilityNode getOrNode();
 
 	public TraceabilityNode getUnknownNode();
+	
+	public List<TraceabilityNode> unknownLink(TraceabilityNode root);
 
 	public Tracer getSubTracer(Object context);
 

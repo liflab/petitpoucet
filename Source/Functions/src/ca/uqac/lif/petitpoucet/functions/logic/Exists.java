@@ -17,18 +17,24 @@
  */
 package ca.uqac.lif.petitpoucet.functions.logic;
 
+import ca.uqac.lif.azrael.ObjectPrinter;
+import ca.uqac.lif.azrael.ObjectReader;
+import ca.uqac.lif.azrael.PrintException;
+import ca.uqac.lif.azrael.ReadException;
+import ca.uqac.lif.petitpoucet.functions.CircuitFunction;
 import ca.uqac.lif.petitpoucet.functions.Function;
 
 /**
- * Existential quantifier
+ * Universal quantifier
  * @author Sylvain Hallé
+ *
  */
 public class Exists extends Quantifier
 {
 
-	public Exists(Function phi)
+	public Exists(String variable, Function domain, CircuitFunction phi)
 	{
-		super(phi);
+		super(variable, domain, phi);
 	}
 
 	@Override
@@ -46,6 +52,24 @@ public class Exists extends Quantifier
 	@Override
 	public String toString()
 	{
-		return "exists x : " + m_function;
+		return "exists " + m_variable + " in " + m_domain + " : " + m_function;
+	}
+
+	@Override
+	public Object print(ObjectPrinter<?> printer) throws PrintException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object read(ObjectReader<?> reader, Object o) throws ReadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Exists duplicate(boolean with_state) 
+	{
+		return new Exists(m_variable, m_domain, m_function);
 	}
 }

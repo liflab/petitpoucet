@@ -17,8 +17,13 @@
  */
 package ca.uqac.lif.petitpoucet.functions.strings;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import ca.uqac.lif.azrael.ObjectPrinter;
+import ca.uqac.lif.azrael.ObjectReader;
+import ca.uqac.lif.azrael.PrintException;
+import ca.uqac.lif.azrael.ReadException;
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
@@ -26,12 +31,13 @@ import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
+import ca.uqac.lif.petitpoucet.common.Context;
 import ca.uqac.lif.petitpoucet.common.StringDesignator;
-import ca.uqac.lif.petitpoucet.functions.NaryFunction;
+import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
+import ca.uqac.lif.petitpoucet.functions.UnaryFunction;
 
-public class Substring extends NaryFunction
-{
-
+public class Substring extends UnaryFunction<String,String>
+{	
 	/**
 	 * The start index of the substring
 	 */
@@ -43,81 +49,128 @@ public class Substring extends NaryFunction
 	protected int m_endIndex;
 	
 	/**
-	 * The length of the last evaluated string
-	 */
-	protected int m_length;
-	
-	/**
 	 * Creates a new instance of the substring function.
 	 * @param start The start index of the substring
 	 * @param end The end index of the substring
 	 */
 	public Substring(int start, int end)
 	{
-		super(1);
+		super(String.class, String.class);
 		m_startIndex = start;
 		m_endIndex = end;
-		m_length = 0;
 	}
 		
 	@Override
-	public void getValue(Object[] inputs, Object[] outputs)
+	public SubstringQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
 	{
 		String s = inputs[0].toString();
-		m_length = s.length();
-		int start = Math.min(m_startIndex, m_length);
-		int end = Math.min(m_endIndex, m_length);
+		int length = s.length();
+		int start = Math.min(m_startIndex, length);
+		int end = Math.min(m_endIndex, length);
 		outputs[0] = s.substring(start, end);
+		return new SubstringQueryable(toString(), m_startIndex, m_endIndex, length);
 	}
 	
-	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
+	public static class SubstringQueryable extends FunctionQueryable
 	{
-		Designator top = d.peek();
-		Designator tail = d.tail();
-		if (tail == null)
+		/**
+		 * The start index of the substring
+		 */
+		protected int m_startIndex;
+		
+		/**
+		 * The end index of the substring
+		 */
+		protected int m_endIndex;
+		
+		/**
+		 * The length of the last evaluated string
+		 */
+		protected int m_length;
+		
+		public SubstringQueryable(String reference, int start, int end, int length)
 		{
-			tail = Designator.identity;
+			super(reference, 1, 1);
+			m_startIndex = start;
+			m_endIndex = end;
+			m_length = length;
 		}
-		if (!m_evaluated)
+		
+		@Override
+		public SubstringQueryable duplicate(boolean with_state)
 		{
-			// We did not evaluate the function; the best we can say is that the output depends on
-			// the whole input string, but this is an over-approximation
-			ComposedDesignator cd = new ComposedDesignator(tail, new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			root.addChild(child, Quality.OVER);
-			leaves.add(child);
-			return;
+			return new SubstringQueryable(m_reference, m_startIndex, m_endIndex, m_length);
 		}
-		if (top instanceof StringDesignator.Range)
+		
+		@Override
+		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
+				TraceabilityNode root, Tracer factory)
 		{
-			StringDesignator.Range sdr = (StringDesignator.Range) top;
-			int offset = Math.min(m_startIndex, m_length);
-			int len = Math.min(sdr.getLength(), m_length);
-			int start = sdr.getStartIndex() + offset;
-			int end = offset + len;
-			ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			root.addChild(child, Quality.OVER);
-			leaves.add(child);
-			return;
+			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>(1);
+			Designator top = d.peek();
+			Designator tail = d.tail();
+			if (top instanceof StringDesignator.Range)
+			{
+				StringDesignator.Range sdr = (StringDesignator.Range) top;
+				int offset = Math.min(m_startIndex, m_length);
+				int len = Math.min(sdr.getLength(), m_length);
+				int start = sdr.getStartIndex() + offset;
+				int end = offset + len;
+				ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
+				TraceabilityNode child = factory.getObjectNode(cd, this);
+				root.addChild(child, Quality.OVER);
+				leaves.add(child);
+				return leaves;
+			}
+			if (top instanceof Designator.Identity)
+			{
+				int start = Math.min(m_startIndex, m_length);
+				int end = Math.min(m_endIndex, m_length);
+				ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
+				TraceabilityNode child = factory.getObjectNode(cd, this);
+				root.addChild(child, Quality.OVER);
+				leaves.add(child);
+				return leaves;
+			}
+			return leaves;
 		}
-		if (top instanceof Designator.Identity)
-		{
-			int start = Math.min(m_startIndex, m_length);
-			int end = Math.min(m_endIndex, m_length);
-			ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			root.addChild(child, Quality.OVER);
-			leaves.add(child);
-			return;
-		}
+
 	}
-	
+		
 	@Override
 	public String toString()
 	{
 		return "Subtring " + m_startIndex + "-" + m_endIndex;
+	}
+
+	@Override
+	public Object print(ObjectPrinter<?> printer) throws PrintException 
+	{
+		List<Integer> list = new ArrayList<Integer>(2);
+		list.add(m_startIndex);
+		list.add(m_endIndex);
+		return printer.print(list);
+	}
+
+	@Override
+	public Substring read(ObjectReader<?> reader, Object o) throws ReadException 
+	{
+		Object r_o = reader.read(o);
+		if (r_o == null || !(r_o instanceof List))
+		{
+			throw new ReadException("Unexpected object format");
+		}
+		List<?> list = (List<?>) o;
+		if (list.size() != 2 || !(list.get(0) instanceof Integer) || !(list.get(0) instanceof Integer))
+		{
+			throw new ReadException("Unexpected object format");
+		}
+		return new Substring((Integer) list.get(0), (Integer) list.get(1));
+	}
+
+	@Override
+	public Substring duplicate(boolean with_state) 
+	{
+		return new Substring(m_startIndex, m_endIndex);
 	}
 }

@@ -124,7 +124,7 @@ public interface TraceabilityQuery
 		/**
 		 * A single publicly visible instance of this object
 		 */
-		public static final transient TaintQuery instance = new TaintQuery();
+		public static final transient ConsequenceQuery instance = new ConsequenceQuery();
 
 		protected ConsequenceQuery()
 		{

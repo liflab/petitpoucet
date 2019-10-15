@@ -11,33 +11,27 @@ import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
 import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
+import ca.uqac.lif.petitpoucet.common.Context;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
-import ca.uqac.lif.petitpoucet.functions.NaryFunction;
+import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
+import ca.uqac.lif.petitpoucet.functions.UnaryFunction;
 
-public abstract class UnaryOperator extends NaryFunction
+@SuppressWarnings("rawtypes")
+public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 {
-	protected List<Integer> m_positions;
-	
 	protected boolean m_startValue;
-	
-	protected int m_inputLength;
 	
 	public UnaryOperator(boolean start_value)
 	{
-		super(1);
-		m_positions = new ArrayList<Integer>();
+		super(List.class, Boolean.class);
 		m_startValue = start_value;
-		m_inputLength = 0;
 	}
 	
 	@Override
-	public void getValue(Object[] inputs, Object[] outputs)
+	public LtlQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
 	{
-		m_evaluated = true;
-		m_inputs = inputs;
-		m_positions.clear();
+		List<Integer> positions = new ArrayList<Integer>();
 		List<?> list = (List<?>) inputs[0];
-		m_inputLength = list.size();
 		boolean value = m_startValue;
 		int pos = 0;
 		for (Object o : list)
@@ -50,51 +44,73 @@ public abstract class UnaryOperator extends NaryFunction
 			if (b == !m_startValue)
 			{
 				value = !m_startValue;
-				m_positions.add(pos);
+				positions.add(pos);
 			}
 			pos++;
 		}
 		outputs[0] = value;
-		m_returnedValue[0] = value;
+		return new LtlQueryable(toString(), list.size(), positions);
 	}
 	
-	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
+	public static class LtlQueryable extends FunctionQueryable
 	{
-		if (!(q instanceof CausalityQuery))
+		protected List<Integer> m_positions;
+		
+		protected int m_inputLength;
+		
+		public LtlQueryable(String reference, int input_length, List<Integer> positions)
 		{
-			answerQueryDefault(q, output_nb, d, root, factory, leaves, Quality.EXACT);
-			return;
+			super(reference, 1, 1);
+			m_positions = positions;
+			m_inputLength = input_length;
 		}
-		if (m_positions.isEmpty())
+		
+		@Override
+		public LtlQueryable duplicate(boolean with_state)
 		{
-			answerQueryDefault(q, output_nb, d, root, factory, leaves, Quality.EXACT);
-			return;
+			LtlQueryable ltlq = new LtlQueryable(m_reference, m_inputLength, m_positions);
+			return ltlq;
 		}
-		TraceabilityNode or = factory.getOrNode();
-		for (int p : m_positions)
+		
+		@Override
+		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
+				TraceabilityNode root, Tracer factory)
 		{
-			ComposedDesignator cd = new ComposedDesignator(new NthElement(p), new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			or.addChild(child, Quality.EXACT);
-			leaves.add(child);
+			if (!(q instanceof CausalityQuery))
+			{
+				return answerQueryDefault(q, output_nb, d, root, factory, Quality.EXACT);
+			}
+			if (m_positions.isEmpty())
+			{
+				return answerQueryDefault(q, output_nb, d, root, factory, Quality.EXACT);
+			}
+			TraceabilityNode or = factory.getOrNode();
+			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
+			for (int p : m_positions)
+			{
+				ComposedDesignator cd = new ComposedDesignator(d, new NthElement(p), new NthInput(0));
+				TraceabilityNode child = factory.getObjectNode(cd, this);
+				or.addChild(child, Quality.EXACT);
+				leaves.add(child);
+			}
+			root.addChild(or, Quality.EXACT);
+			return leaves;
 		}
-		root.addChild(or, Quality.EXACT);
-	}
-	
-	@Override
-	protected void answerQueryDefault(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves, Quality quality)
-	{
-		TraceabilityNode and = factory.getAndNode();
-		for (int i = 0; i < m_inputLength; i++)
+		
+		protected List<TraceabilityNode> answerQueryDefault(TraceabilityQuery q, int output_nb, Designator d,
+				TraceabilityNode root, Tracer factory, Quality quality)
 		{
-			ComposedDesignator cd = new ComposedDesignator(d, new NthElement(i), new NthInput(0));
-			TraceabilityNode child = factory.getObjectNode(cd, this);
-			and.addChild(child, quality);
-			leaves.add(child);
+			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
+			TraceabilityNode and = factory.getAndNode();
+			for (int i = 0; i < m_inputLength; i++)
+			{
+				ComposedDesignator cd = new ComposedDesignator(d, new NthElement(i), new NthInput(0));
+				TraceabilityNode child = factory.getObjectNode(cd, this);
+				and.addChild(child, quality);
+				leaves.add(child);
+			}
+			root.addChild(and, quality);
+			return leaves;
 		}
-		root.addChild(and, quality);
 	}
 }

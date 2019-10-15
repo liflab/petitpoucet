@@ -17,45 +17,46 @@
  */
 package ca.uqac.lif.petitpoucet.functions;
 
-import java.util.List;
+import ca.uqac.lif.azrael.ObjectPrinter;
+import ca.uqac.lif.azrael.ObjectReader;
+import ca.uqac.lif.azrael.PrintException;
+import ca.uqac.lif.azrael.ReadException;
 
-import ca.uqac.lif.petitpoucet.ComposedDesignator;
-import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.Tracer;
-import ca.uqac.lif.petitpoucet.TraceabilityNode;
-import ca.uqac.lif.petitpoucet.TraceabilityQuery;
-import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
-import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
-
-/**
- * Identity function
- * @author Sylvain Hallé
- */
-public class Identity extends SingleFunction
+public class Identity extends Fork
 {
-	public Identity(int arity)
+	public Identity(Class<?> clazz)
 	{
-		super(arity, arity);
+		super(clazz, 1);
 	}
-
-	public Identity()
+	
+	@Override
+	public Object print(ObjectPrinter<?> printer) throws PrintException 
 	{
-		this(1);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
-	{
-		ComposedDesignator cd = new ComposedDesignator(d, new NthInput(output_nb));
-		TraceabilityNode child = factory.getObjectNode(cd, this);
-		root.addChild(child, Quality.EXACT);
-		leaves.add(child);
+	public Object read(ObjectReader<?> reader, Object o) throws ReadException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public void getValue(Object[] inputs, Object[] outputs)
+	public Identity duplicate(boolean with_state) 
 	{
-		outputs[0] = inputs[0];
+		return this;
+	}
+
+	@Override
+	public Identity duplicate()
+	{
+		return duplicate(false);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "id";
 	}
 }

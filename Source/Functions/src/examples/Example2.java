@@ -5,15 +5,16 @@ import java.util.List;
 
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
+import ca.uqac.lif.petitpoucet.Queryable;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.ProvenanceQuery;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator;
-import ca.uqac.lif.petitpoucet.functions.Connector;
+import ca.uqac.lif.petitpoucet.functions.CircuitFunction;
 import ca.uqac.lif.petitpoucet.functions.Constant;
+import ca.uqac.lif.petitpoucet.functions.GroupFunction;
 import ca.uqac.lif.petitpoucet.functions.lists.ApplyToAll;
-import ca.uqac.lif.petitpoucet.functions.numbers.Add;
-import ca.uqac.lif.petitpoucet.functions.numbers.Multiply;
+import ca.uqac.lif.petitpoucet.functions.numbers.Numbers;
 import ca.uqac.lif.petitpoucet.graph.ConcreteObjectNode;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTracer;
 import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
@@ -25,17 +26,14 @@ public class Example2
 	{
 		List<Object> list1 = createList(3, 1, 4, 1, 5, 9, 2);
 		List<Object> list2 = createList(2, 0, 1, 8, 2, 8, 1);
-		Constant c_l1 = new Constant(list1);
-		Constant c_l2 = new Constant(list2);
-		ApplyToAll ata = new ApplyToAll(new Multiply());
-		Connector.connect(c_l1, 0, ata, 0);
-		Connector.connect(c_l2, 0, ata, 1);
-		Object[] output = ata.evaluate();
+		ApplyToAll ata = new ApplyToAll(Numbers.multiplication);
+		Object[] output = new Object[1];
+		Queryable q = ata.evaluate(new Object[] {list1, list2}, output);
 		System.out.println(output[0]);
 		Designator d = new ComposedDesignator(new CollectionDesignator.NthElement(1),
 				new CircuitDesignator.NthOutput(0));
 		ConcreteTracer t = new ConcreteTracer();
-		ConcreteObjectNode root = t.getTree(CausalityQuery.instance, d, ata);
+		ConcreteObjectNode root = t.getTree(CausalityQuery.instance, d, q);
 		TraceabilityNodeDotRenderer rend = new TraceabilityNodeDotRenderer();
 		String s = rend.render(root);
 		System.out.println(s);

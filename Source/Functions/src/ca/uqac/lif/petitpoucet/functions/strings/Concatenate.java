@@ -17,55 +17,97 @@
  */
 package ca.uqac.lif.petitpoucet.functions.strings;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import ca.uqac.lif.azrael.ObjectPrinter;
+import ca.uqac.lif.azrael.ObjectReader;
+import ca.uqac.lif.azrael.PrintException;
+import ca.uqac.lif.azrael.ReadException;
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
 import ca.uqac.lif.petitpoucet.Tracer;
+import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
+import ca.uqac.lif.petitpoucet.common.Context;
 import ca.uqac.lif.petitpoucet.common.StringDesignator;
-import ca.uqac.lif.petitpoucet.functions.NaryFunction;
+import ca.uqac.lif.petitpoucet.functions.Function;
+import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
 
-public class Concatenate extends NaryFunction
-{
-	protected int[] m_borders;
-	
-	protected int[] m_lengths;
-	
+public class Concatenate implements Function
+{	
+	protected int m_arity;
+
 	public Concatenate(int in_arity)
 	{
-		super(in_arity);
-		m_borders = new int[in_arity];
-		m_lengths = new int[in_arity];
+		super();
+		m_arity = in_arity;
 	}
-	
+
 	public Concatenate()
 	{
 		this(2);
 	}
 
 	@Override
-	protected void answerQuery(TraceabilityQuery q, int output_nb, Designator d,
-			TraceabilityNode root, Tracer factory, List<TraceabilityNode> leaves)
+	public ConcatenateQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
 	{
-		Designator top = d.peek();
-		Designator tail = d.tail();
-		if (tail == null)
+		int[] borders = new int[inputs.length];
+		int[] lengths = new int[inputs.length];
+		String out = "";
+		int len = 0;
+		for (int i = 0; i < inputs.length; i++)
 		{
-			tail = Designator.identity;
+			String s = "";
+			if (inputs[i] != null)
+			{
+				s = inputs[i].toString();
+			}
+			out += s;
+			len += s.length();
+			borders[i] = len;
+			lengths[i] = s.length();
 		}
-		if (!m_evaluated)
+		outputs[0] = out;
+		return new ConcatenateQueryable(toString(), borders, lengths);
+	}
+
+	@Override
+	public String toString()
+	{
+		return ".";
+	}
+
+	public static class ConcatenateQueryable extends FunctionQueryable
+	{
+		protected int[] m_borders;
+
+		protected int[] m_lengths;
+
+		public ConcatenateQueryable(String reference, int[] borders, int[] lengths)
 		{
-			// We did not evaluate the function; the best we can say is that the output depends on
-			// all the inputs, but this is an over-approximation
-			answerQueryDefault(q, output_nb, d, root, factory, leaves, Quality.OVER);
-			return;
+			super(reference, borders.length, 1);
 		}
-		if (top instanceof StringDesignator.Range)
+
+		@Override
+		public ConcatenateQueryable duplicate(boolean with_state)
 		{
+			return new ConcatenateQueryable(m_reference, m_borders, m_lengths);
+		}
+
+		@Override
+		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
+				TraceabilityNode root, Tracer factory)
+		{
+			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
+			Designator top = d.peek();
+			Designator tail = d.tail();
+			if (!(top instanceof StringDesignator.Range))
+			{
+				return allInputsLink(output_nb, d, root, factory);
+			}
 			int start = ((StringDesignator.Range) top).getStartIndex();
 			int end = ((StringDesignator.Range) top).getEndIndex();
 			int last = 0;
@@ -85,37 +127,76 @@ public class Concatenate extends NaryFunction
 				last = cur;
 			}
 			root.addChild(and, Quality.EXACT);
-		}
-		else
-		{
-			super.answerQuery(q, output_nb, d, root, factory, leaves);
+			return leaves;
 		}
 	}
 
 	@Override
-	public void getValue(Object[] inputs, Object[] outputs)
+	public Object print(ObjectPrinter<?> printer) throws PrintException 
 	{
-		m_evaluated = true;
-		String out = "";
-		int len = 0;
-		for (int i = 0; i < inputs.length; i++)
-		{
-			String s = "";
-			if (inputs[i] != null)
-			{
-				s = inputs[i].toString();
-			}
-			out += s;
-			len += s.length();
-			m_borders[i] = len;
-			m_lengths[i] = s.length();
-		}
-		outputs[0] = out;
+		return printer.print(m_arity);
 	}
-	
+
 	@Override
-	public String toString()
+	public Concatenate read(ObjectReader<?> reader, Object o) throws ReadException 
 	{
-		return ".";
+		Object r_o = reader.read(o);
+		if (!(r_o instanceof Integer))
+		{
+			throw new ReadException("Unexpected object format");
+		}
+		return new Concatenate((Integer) r_o);
+	}
+
+	@Override
+	public Function duplicate(boolean with_state) 
+	{
+		return this;
+	}
+
+	@Override
+	public Function duplicate() 
+	{
+		return duplicate(false);
+	}
+
+	@Override
+	public ConcatenateQueryable evaluate(Object[] inputs, Object[] outputs) 
+	{
+		return evaluate(inputs, outputs, null);
+	}
+
+	@Override
+	public Class<?> getInputType(int index)
+	{
+		return String.class;
+	}
+
+	@Override
+	public Class<?> getOutputType(int index)
+	{
+		if (index == 0)
+		{
+			return String.class;
+		}
+		return null;
+	}
+
+	@Override
+	public int getInputArity() 
+	{
+		return m_arity;
+	}
+
+	@Override
+	public int getOutputArity() 
+	{
+		return 1;
+	}
+
+	@Override
+	public void reset() 
+	{
+		// Nothing to do
 	}
 }
