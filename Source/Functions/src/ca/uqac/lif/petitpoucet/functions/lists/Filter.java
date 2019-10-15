@@ -83,11 +83,20 @@ public class Filter extends BinaryFunction<List,List,List>
 		/**
 		 * Records which events of the last list have been included
 		 */
-		protected List<Boolean> m_included;
+		/*@ non_null @*/ protected List<Boolean> m_included;
 
-		public FilterQueryable(String reference, List<Boolean> m_included)
+		public FilterQueryable(/*@ non_null @*/ String reference, /*@ non_null @*/ List<Boolean> included)
 		{
 			super(reference, 2, 1);
+			m_included = included;
+		}
+		
+		@Override
+		public FilterQueryable duplicate(boolean with_state)
+		{
+			List<Boolean> included = new ArrayList<Boolean>(m_included.size());
+			included.addAll(m_included);
+			return new FilterQueryable(m_reference, included);
 		}
 		
 		@Override

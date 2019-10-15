@@ -82,19 +82,31 @@ public class Concatenate implements Function
 
 	public static class ConcatenateQueryable extends FunctionQueryable
 	{
-		protected int[] m_borders;
+		/*@ non_null @*/ protected int[] m_borders;
 
-		protected int[] m_lengths;
+		/*@ non_null @*/ protected int[] m_lengths;
 
-		public ConcatenateQueryable(String reference, int[] borders, int[] lengths)
+		public ConcatenateQueryable(/*@ non_null @*/ String reference, /*@ non_null @*/ int[] borders, /*@ non_null @*/ int[] lengths)
 		{
 			super(reference, borders.length, 1);
+			m_borders = borders;
+			m_lengths = lengths;
 		}
 
 		@Override
 		public ConcatenateQueryable duplicate(boolean with_state)
 		{
-			return new ConcatenateQueryable(m_reference, m_borders, m_lengths);
+			int[] borders = new int[m_borders.length];
+			for (int i = 0; i < m_borders.length; i++)
+			{
+				borders[i] = m_borders[i];
+			}
+			int[] lengths = new int[m_lengths.length];
+			for (int i = 0; i < m_lengths.length; i++)
+			{
+				lengths[i] = m_lengths[i];
+			}
+			return new ConcatenateQueryable(m_reference, borders, lengths);
 		}
 
 		@Override
