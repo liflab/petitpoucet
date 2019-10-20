@@ -39,7 +39,8 @@
   <srcdir>Source/Core/src</srcdir>
   <bindir>Source/Core/bin</bindir>
   <docdir>doc</docdir>
-  <depdir>Source/dep</depdir>
+  <depdir>Source/Core/dep</depdir>
+  <libdir>Source/Core/lib</libdir>
   <test>
     <srcdir>Source/CoreTest/src</srcdir>
     <bindir>Source/CoreTest/bin</bindir>
@@ -56,5 +57,16 @@
     Write JAR dependencies here.
   -->
   <dependencies>
+  <dependency>
+      <!--
+      Azrael Core
+      -->
+      <name>Azrael Core</name>
+      <classname>ca.uqac.lif.azrael.Printable</classname>
+      <bundle>false</bundle>
+      <files>
+        <jar>https://github.com/sylvainhalle/Azrael/releases/download/v2.0/azrael-core.jar</jar>
+      </files>
+    </dependency>
   </dependencies>
 </build>
