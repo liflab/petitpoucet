@@ -3,9 +3,11 @@ package examples;
 import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Queryable;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
+import ca.uqac.lif.petitpoucet.TraceabilityQuery.ProvenanceQuery;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
 import ca.uqac.lif.petitpoucet.functions.GroupFunction;
+import ca.uqac.lif.petitpoucet.functions.TreeDrawer;
 import ca.uqac.lif.petitpoucet.functions.CircuitFunction;
 import ca.uqac.lif.petitpoucet.functions.Constant;
 import ca.uqac.lif.petitpoucet.functions.io.FileLines;
@@ -18,6 +20,7 @@ import ca.uqac.lif.petitpoucet.functions.strings.Split;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTraceabilityNode;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTracer;
 import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
+import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeRenderer.CaptionStyle;
 
 @SuppressWarnings("unused")
 public class Example8
@@ -55,15 +58,21 @@ public class Example8
 		CircuitFunction g = new CircuitFunction(Ltl.globally);
 		global.connect(igt2, 0, g, 0);
 		global.associateOutput(0, g, 0);
+		
+		// Use the shortcut from TreeDrawer to evaluate function and answer query
+		TreeDrawer.drawTree(ProvenanceQuery.instance, new NthOutput(0), CaptionStyle.NONE, false, "/tmp/out.png", global);
+		
+		/*
+		// Alternate syntax: evaluate, query and draw directly
 		Object[] out = new Object[1];
 		Queryable q = global.evaluate(new Object[] {}, out);
-		//System.out.println(out[0]);
 		ConcreteTracer tracer = new ConcreteTracer();
-		ConcreteTraceabilityNode root = tracer.getTree(CausalityQuery.instance, new NthOutput(0), q);
+		ConcreteTraceabilityNode root = tracer.getTree(ProvenanceQuery.instance, new NthOutput(0), q);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		renderer.setFlatten(true);
 		renderer.setShowCaptions(true);
 		String dot_code = renderer.render(root);
 		System.out.println(dot_code);
+		*/
 	}
 }

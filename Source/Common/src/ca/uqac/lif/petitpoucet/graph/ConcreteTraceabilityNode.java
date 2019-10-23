@@ -2,6 +2,8 @@ package ca.uqac.lif.petitpoucet.graph;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ca.uqac.lif.petitpoucet.LabeledEdge;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
@@ -36,6 +38,10 @@ public class ConcreteTraceabilityNode implements TraceabilityNode
 	@Override
 	public void addChild(TraceabilityNode n, Quality q)
 	{
+		if (n == this)
+		{
+			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.WARNING, "Attempting to connect a node to itself");
+		}
 		LabeledEdge le = new ConcreteLabeledEdge(n, q);
 		m_children.add(le);
 	}

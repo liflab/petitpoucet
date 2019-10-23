@@ -6,7 +6,10 @@ import java.util.Queue;
 import java.util.Set;
 
 import ca.uqac.lif.petitpoucet.DesignatedObject;
+import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
+import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
+import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.graph.AndNode;
 import ca.uqac.lif.petitpoucet.graph.ConcreteLabeledEdge;
 import ca.uqac.lif.petitpoucet.graph.ConcreteObjectNode;
@@ -17,7 +20,7 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 {
 	boolean m_flatten = true;
 	
-	boolean m_showCaptions = true;
+	CaptionStyle m_showCaptions = CaptionStyle.FULL;
 	
 	@Override
 	public void setFlatten(boolean b)
@@ -26,9 +29,9 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 	}
 	
 	@Override
-	public void setShowCaptions(boolean b)
+	public void setShowCaptions(CaptionStyle s)
 	{
-		m_showCaptions = b;
+		m_showCaptions = s;
 	}
 	
 	@Override
@@ -43,6 +46,40 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 		visit(out, to_visit, visited);
 		out.append("}");
 		return out.toString();
+	}
+	
+	protected String formatCaption(DesignatedObject dob, CaptionStyle style)
+	{
+		if (style == CaptionStyle.NONE)
+		{
+			return "";
+		}
+		if (style == CaptionStyle.FULL)
+		{
+			return dob.toString();
+		}
+		// Short
+		Designator d = dob.getDesignator().peek();
+		if (d instanceof NthInput || d instanceof NthOutput)
+		{
+			return dob.getObject().toString();
+		}
+		return dob.toString();
+	}
+	
+	protected String formatColor(DesignatedObject dob)
+	{
+		String color = "AliceBlue";
+		Designator d = dob.getDesignator().peek();
+		if (d instanceof NthInput)
+		{
+			color = "Tomato";
+		}
+		if (d instanceof NthOutput)
+		{
+			color = "GreenYellow";
+		}
+		return color;
 	}
 
 	protected void visit(StringBuilder out, Queue<ConcreteTraceabilityNode> to_visit,
@@ -60,13 +97,15 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 			if (n instanceof ConcreteObjectNode)
 			{
 				DesignatedObject dob = ((ConcreteObjectNode) n).getDesignatedObject();
-				String caption = "";
-				if (m_showCaptions)
+				String caption = formatCaption(dob, m_showCaptions);
+				String fillcolor = formatColor(dob);
+				String shape = "shape=\"rectangle\"";
+				if (m_showCaptions == CaptionStyle.NONE)
 				{
-					caption = dob.toString();
+					shape = "shape=\"circle\",width=.3,fixedsize=\"true\"";
 				}
 				out.append(" ").append(s_id).append(" [label=\"").append(caption)
-						.append("\",shape=\"rectangle\",fillcolor=\"AliceBlue\"];\n");
+						.append("\",").append(shape).append(",fillcolor=\"").append(fillcolor).append("\"];\n");
 			}
 			else
 			{

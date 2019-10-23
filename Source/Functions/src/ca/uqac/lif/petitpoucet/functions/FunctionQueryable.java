@@ -128,8 +128,8 @@ public class FunctionQueryable implements Queryable, StateDuplicable<FunctionQue
 		if (m_inputArity > 1)
 		{
 			and = factory.getAndNode();
+			root.addChild(and, Quality.EXACT);
 		}
-		root.addChild(and, Quality.EXACT);
 		for (int i = 0; i < m_inputArity; i++)
 		{
 			ComposedDesignator cd = new ComposedDesignator(t_tail, new NthInput(i));

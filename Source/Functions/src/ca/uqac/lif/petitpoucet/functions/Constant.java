@@ -27,7 +27,7 @@ public class Constant implements Function
 	@Override
 	public Constant duplicate(boolean with_state) 
 	{
-		return new Constant(m_value);
+		return this;
 	}
 	
 	@Override
@@ -89,7 +89,11 @@ public class Constant implements Function
 	@Override
 	public String toString()
 	{
-		return "Constant " + m_value;
+		if (m_value == null)
+		{
+			return "null";
+		}
+		return m_value.toString();
 	}
 	
 	@Override

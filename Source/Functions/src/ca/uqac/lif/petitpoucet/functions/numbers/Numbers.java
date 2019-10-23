@@ -165,6 +165,12 @@ public class Numbers
 			{
 				return new AverageListQueryable(m_reference, m_length);
 			}
+			
+			@Override
+			public String toString()
+			{
+				return "AVG";
+			}
 		}
 	}
 
@@ -537,6 +543,12 @@ public class Numbers
 		public Object read(ObjectReader<?> reader, Object o) throws ReadException
 		{
 			return this;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "GT";
 		}
 	}
 

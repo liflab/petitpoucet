@@ -14,6 +14,7 @@ import ca.uqac.lif.petitpoucet.functions.strings.Split;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTraceabilityNode;
 import ca.uqac.lif.petitpoucet.graph.ConcreteTracer;
 import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
+import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeRenderer.CaptionStyle;
 
 public class Example9 {
 
@@ -42,7 +43,7 @@ public class Example9 {
 		ConcreteTraceabilityNode root = tracer.getTree(CausalityQuery.instance, new NthOutput(0), q);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		renderer.setFlatten(true);
-		renderer.setShowCaptions(true);
+		renderer.setShowCaptions(CaptionStyle.FULL);
 		String dot_code = renderer.render(root);
 		System.out.println(dot_code);
 	}
