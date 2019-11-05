@@ -1,7 +1,9 @@
 package ca.uqac.lif.petitpoucet.functions.numbers;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.uqac.lif.azrael.ObjectPrinter;
 import ca.uqac.lif.azrael.ObjectReader;
@@ -89,6 +91,8 @@ public class Numbers
 	@SuppressWarnings("rawtypes")
 	public static class AverageList extends UnaryFunction<List,Number>
 	{
+		protected static final transient Map<Integer,AverageListQueryable> s_queryablePool = new LinkedHashMap<Integer,AverageListQueryable>();
+		
 		protected AverageList()
 		{
 			super(List.class, Number.class);
@@ -130,7 +134,13 @@ public class Numbers
 			{
 				outputs[0] = total / num_values;
 			}
-			return new AverageListQueryable(toString(), (int) num_values);
+			AverageListQueryable geq = s_queryablePool.get((int) num_values);
+			if (geq == null)
+			{
+				geq = new AverageListQueryable(toString(), (int) num_values);
+				s_queryablePool.put((int) num_values, geq);
+			}
+			return geq;
 		}
 		
 		public static class AverageListQueryable extends FunctionQueryable

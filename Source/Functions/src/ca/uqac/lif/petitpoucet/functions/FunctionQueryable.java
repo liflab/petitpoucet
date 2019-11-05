@@ -216,7 +216,9 @@ public class FunctionQueryable implements Queryable, StateDuplicable<FunctionQue
 	@Override
 	public FunctionQueryable duplicate(boolean with_state) 
 	{
-		return new FunctionQueryable(m_reference, m_inputArity, m_outputArity);
+		// FunctionQueryables are immutable; descendents must override
+		// this method if they are not
+		return this;
 	}
 
 	protected Object printState() throws PrintException

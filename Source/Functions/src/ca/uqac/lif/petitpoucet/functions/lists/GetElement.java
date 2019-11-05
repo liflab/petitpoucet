@@ -1,7 +1,9 @@
 package ca.uqac.lif.petitpoucet.functions.lists;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.uqac.lif.azrael.ObjectPrinter;
 import ca.uqac.lif.azrael.ObjectReader;
@@ -26,13 +28,12 @@ public class GetElement extends UnaryFunction<List,Object>
 {
 	protected int m_index;
 
-	protected GetElementQueryable m_queryable;
+	protected static final transient Map<Integer,GetElementQueryable> s_queryablePool = new LinkedHashMap<Integer,GetElementQueryable>();
 
 	public GetElement(int index)
 	{
 		super(List.class, Object.class);
 		m_index = index;
-		m_queryable = new GetElementQueryable(toString(), index);
 	}
 
 	@Override
@@ -41,7 +42,13 @@ public class GetElement extends UnaryFunction<List,Object>
 		List<?> list = (List<?>) inputs[0];
 		Object elem = list.get(m_index);
 		outputs[0] = elem;
-		return m_queryable;
+		GetElementQueryable geq = s_queryablePool.get(m_index);
+		if (geq == null)
+		{
+			geq = new GetElementQueryable(toString(), m_index);
+			s_queryablePool.put(m_index, geq);
+		}
+		return geq;
 	}
 
 	@Override
@@ -102,7 +109,7 @@ public class GetElement extends UnaryFunction<List,Object>
 		@Override
 		public GetElementQueryable duplicate(boolean with_state)
 		{
-			return new GetElementQueryable(m_reference, m_index);
+			return this;
 		}
 	}
 
@@ -123,6 +130,6 @@ public class GetElement extends UnaryFunction<List,Object>
 	@Override
 	public Function duplicate(boolean with_state) 
 	{
-		return new GetElement(m_index);
+		return this;
 	}
 }
