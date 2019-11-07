@@ -7,7 +7,7 @@ import ca.uqac.lif.petitpoucet.ComposedDesignator;
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.TraceabilityQuery;
-import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
+import ca.uqac.lif.petitpoucet.TraceabilityQuery.ProvenanceQuery;
 import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
@@ -32,10 +32,11 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 	{
 		List<Integer> positions = new ArrayList<Integer>();
 		List<?> list = (List<?>) inputs[0];
+		List<Boolean> out_list = new ArrayList<Boolean>(list.size());
 		boolean value = m_startValue;
-		int pos = 0;
-		for (Object o : list)
+		for (int i = list.size() - 1; i >= 0; i--)
 		{
+			Object o = list.get(i);
 			boolean b = false;
 			if (o instanceof Boolean)
 			{
@@ -44,11 +45,11 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 			if (b == !m_startValue)
 			{
 				value = !m_startValue;
-				positions.add(pos);
+				positions.add(0, i);
 			}
-			pos++;
+			out_list.add(0, value);
 		}
-		outputs[0] = value;
+		outputs[0] = out_list;
 		return new LtlQueryable(toString(), list.size(), positions);
 	}
 	
@@ -76,19 +77,37 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
 				TraceabilityNode root, Tracer factory)
 		{
-			if (!(q instanceof CausalityQuery))
+			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
+			Designator d_head = d.peek();
+			if (!(d_head instanceof NthElement))
 			{
 				return answerQueryDefault(q, output_nb, d, root, factory, Quality.EXACT);
+			}
+			int elem_pos = ((NthElement) d_head).getIndex();
+			if (q instanceof ProvenanceQuery)
+			{
+				TraceabilityNode and = factory.getAndNode();
+				for (int p = elem_pos; p <  m_inputLength; p++)
+				{
+					ComposedDesignator cd = new ComposedDesignator(d, NthElement.get(p), NthInput.get(0));
+					TraceabilityNode child = factory.getObjectNode(cd, this);
+					and.addChild(child, Quality.EXACT);
+					leaves.add(child);
+				}
+				return leaves;
 			}
 			if (m_positions.isEmpty())
 			{
 				return answerQueryDefault(q, output_nb, d, root, factory, Quality.EXACT);
 			}
 			TraceabilityNode or = factory.getOrNode();
-			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
 			for (int p : m_positions)
 			{
-				ComposedDesignator cd = new ComposedDesignator(d, new NthElement(p), NthInput.get(0));
+				if (p < elem_pos)
+				{
+					continue;
+				}
+				ComposedDesignator cd = new ComposedDesignator(d, NthElement.get(p), NthInput.get(0));
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				or.addChild(child, Quality.EXACT);
 				leaves.add(child);
@@ -104,7 +123,7 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 			TraceabilityNode and = factory.getAndNode();
 			for (int i = 0; i < m_inputLength; i++)
 			{
-				ComposedDesignator cd = new ComposedDesignator(d, new NthElement(i), NthInput.get(0));
+				ComposedDesignator cd = new ComposedDesignator(d, NthElement.get(i), NthInput.get(0));
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				and.addChild(child, quality);
 				leaves.add(child);

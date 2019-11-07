@@ -25,7 +25,7 @@ public class Example7
 	public static void main(String[] args)
 	{
 		GroupFunction gf = new GroupFunction(1, 1).setName("all");
-		List<Object> list = Example2.createList("Mary", "had", "a", "little", "lamb");
+		List<Object> list = Utilities.createList("Mary", "had", "a", "little", "lamb");
 		CircuitFunction f = new CircuitFunction(new Fork(String.class, 2));
 		gf.associateInput(0, f, 0);
 		CircuitFunction ata = new CircuitFunction(new ApplyToAll(new RegexMatches("[Mm]")));
@@ -38,7 +38,7 @@ public class Example7
 		Queryable q = gf.evaluate(new Object[] {list}, values);
 		System.out.println(values[0]);
 		ConcreteTracer tracer = new ConcreteTracer();
-		ComposedDesignator cd = new ComposedDesignator(new NthElement(1), NthOutput.get(0));
+		ComposedDesignator cd = new ComposedDesignator(NthElement.get(1), NthOutput.get(0));
 		ConcreteTraceabilityNode root = tracer.getTree(CausalityQuery.instance, cd, q);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		String dot_code = renderer.render(root);

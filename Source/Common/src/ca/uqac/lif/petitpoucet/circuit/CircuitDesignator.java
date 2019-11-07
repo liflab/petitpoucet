@@ -31,7 +31,7 @@ public abstract class CircuitDesignator implements Designator
 			NthInput ni = s_pool.get(index);
 			if (ni == null)
 			{
-				ni = NthInput.get(index);
+				ni = new NthInput(index);
 				s_pool.put(index, ni);
 			}
 			return ni;
@@ -107,7 +107,7 @@ public abstract class CircuitDesignator implements Designator
 			NthOutput ni = s_pool.get(index);
 			if (ni == null)
 			{
-				ni = NthOutput.get(index);
+				ni = new NthOutput(index);
 				s_pool.put(index, ni);
 			}
 			return ni;

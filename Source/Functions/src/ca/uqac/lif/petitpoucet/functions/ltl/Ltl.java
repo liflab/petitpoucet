@@ -19,8 +19,12 @@ import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthInput;
 import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.common.CollectionDesignator.NthElement;
 import ca.uqac.lif.petitpoucet.common.Context;
+import ca.uqac.lif.petitpoucet.functions.BinaryFunction;
+import ca.uqac.lif.petitpoucet.functions.Function;
 import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
 import ca.uqac.lif.petitpoucet.functions.UnaryFunction;
+import ca.uqac.lif.petitpoucet.functions.BinaryFunction.BinaryFunctionQueryable;
+import ca.uqac.lif.petitpoucet.functions.BinaryFunction.BinaryFunctionQueryable.Inputs;
 
 public class Ltl 
 {
@@ -33,6 +37,84 @@ public class Ltl
 	private Ltl()
 	{
 		super();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static class And extends BinaryFunction<List,List,List>
+	{
+		protected static BinaryFunctionQueryable s_queryableBoth = new BinaryFunctionQueryable("Ltl.And", Inputs.BOTH);
+
+		protected static BinaryFunctionQueryable s_queryableAny = new BinaryFunctionQueryable("Ltl.And", Inputs.ANY);
+
+		protected static BinaryFunctionQueryable s_queryableLeft = new BinaryFunctionQueryable("Ltl.And", Inputs.LEFT);
+
+		protected static BinaryFunctionQueryable s_queryableRight = new BinaryFunctionQueryable("Ltl.And", Inputs.RIGHT);
+		
+		protected And()
+		{
+			super(List.class, List.class, List.class);
+		}
+
+		@Override
+		public Object print(ObjectPrinter<?> printer) throws PrintException
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object read(ObjectReader<?> reader, Object o) throws ReadException 
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public And duplicate(boolean with_state)
+		{
+			return this;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+		{
+			List<Boolean> left = (List<Boolean>) inputs[0];
+			List<Boolean> right = (List<Boolean>) inputs[1];
+			int len = Math.max(left.size(), right.size());
+			List<Boolean> out = new ArrayList<Boolean>(len);
+			List<BinaryFunctionQueryable> out_queryables = new ArrayList<BinaryFunctionQueryable>(len);
+			for (int i = 0; i < len; i++)
+			{
+				boolean b_left = left.get(i);
+				boolean b_right = right.get(i);
+				if (b_left == false)
+				{
+					if (b_right == false)
+					{
+						out_queryables.add(s_queryableAny);
+					}
+					else
+					{
+						out_queryables.add(s_queryableLeft);
+					}
+				}
+				else
+				{
+					if (b_right == false)
+					{
+						out_queryables.add(s_queryableRight);
+					}
+					else
+					{
+						out_queryables.add(s_queryableBoth);
+					}
+				}
+				out.add(b_left && b_right);
+			}
+			outputs[0] = out;
+			return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.And", out_queryables);
+		}
 	}
 	
 	public static class Globally extends UnaryOperator
@@ -184,7 +266,7 @@ public class Ltl
 					}
 					else
 					{
-						TraceabilityNode n = factory.getObjectNode(new ComposedDesignator(new NthElement(index + 1), NthInput.get(0)), this);
+						TraceabilityNode n = factory.getObjectNode(new ComposedDesignator(NthElement.get(index + 1), NthInput.get(0)), this);
 						root.addChild(n, Quality.EXACT);
 						list.add(n);
 					}
@@ -216,7 +298,7 @@ public class Ltl
 					}
 					else
 					{
-						TraceabilityNode n = factory.getObjectNode(new ComposedDesignator(new NthElement(index - 1), NthOutput.get(0)), this);
+						TraceabilityNode n = factory.getObjectNode(new ComposedDesignator(NthElement.get(index - 1), NthOutput.get(0)), this);
 						root.addChild(n, Quality.EXACT);
 						list.add(n);
 					}

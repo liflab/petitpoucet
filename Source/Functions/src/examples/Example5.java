@@ -24,8 +24,8 @@ public class Example5
 {
 	public static void main(String[] args)
 	{
-		List<Object> list1 = Example2.createList("Mary", "had", "a", "little", "lamb");
-		List<Object> list2 = Example2.createList("Inny", "minny", "miney", "mo", "!");
+		List<Object> list1 = Utilities.createList("Mary", "had", "a", "little", "lamb");
+		List<Object> list2 = Utilities.createList("Inny", "minny", "miney", "mo", "!");
 		GroupFunction cf = new GroupFunction(2, 1).setName("ConcTrim");
 		{
 			CircuitFunction conc = new CircuitFunction(new Concatenate());
@@ -41,7 +41,7 @@ public class Example5
 		Queryable q = ata.evaluate(new Object[] {list1, list2}, out);
 		System.out.println(out[0]);
 		ConcreteTracer tracer = new ConcreteTracer();
-		ComposedDesignator cd = new ComposedDesignator(new NthElement(2), NthOutput.get(0));
+		ComposedDesignator cd = new ComposedDesignator(NthElement.get(2), NthOutput.get(0));
 		ConcreteTraceabilityNode root = tracer.getTree(ProvenanceQuery.instance, cd, q);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		String dot_code = renderer.render(root);

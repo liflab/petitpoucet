@@ -188,7 +188,7 @@ public abstract class Quantifier extends UnaryFunction<Object,Boolean>
 							continue;
 						}
 						Tracer sub_sub_factory = sub_factory.getSubTracer("Context");
-						ComposedDesignator c_cd = new ComposedDesignator(new NthElement(i), NthOutput.get(0));
+						ComposedDesignator c_cd = new ComposedDesignator(NthElement.get(i), NthOutput.get(0));
 						TraceabilityTree c_tree = sub_sub_factory.trace(q, c_cd, m_domainQueryable);
 						on.addChild(c_tree.getRoot(), Quality.EXACT);
 						List<TraceabilityNode> context_leaves = c_tree.getLeaves();

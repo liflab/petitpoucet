@@ -24,13 +24,13 @@ public class Example6
 {
 	public static void main(String[] args)
 	{
-		List<Object> list = Example2.createList(3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 9);
+		List<Object> list = Utilities.createList(3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 9);
 		SlidingWindow ata = new SlidingWindow(3, Numbers.avg);
 		Object[] out = new Object[1];
 		Queryable q = ata.evaluate(new Object[] {list}, out);
 		System.out.println(out[0]);
 		ConcreteTracer tracer = new ConcreteTracer();
-		ComposedDesignator cd = new ComposedDesignator(new NthElement(3), NthOutput.get(0));
+		ComposedDesignator cd = new ComposedDesignator(NthElement.get(3), NthOutput.get(0));
 		ConcreteTraceabilityNode root = tracer.getTree(ProvenanceQuery.instance, cd, q);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		String dot_code = renderer.render(root);

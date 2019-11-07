@@ -1,6 +1,8 @@
 package ca.uqac.lif.petitpoucet.common;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.uqac.lif.petitpoucet.Designator;
 
@@ -11,13 +13,26 @@ public abstract class CollectionDesignator
 	 */
 	public static class NthElement extends NthOf
 	{
+		protected static final transient Map<Integer,NthElement> s_pool = new LinkedHashMap<Integer,NthElement>();
+		
+		public static NthElement get(int index)
+		{
+			NthElement ne = s_pool.get(index);
+			if (ne == null)
+			{
+				ne = new NthElement(index);
+				s_pool.put(index, ne);
+			}
+			return ne;
+		}
+		
 		/**
 		 * Creates a new instance of the designator
 		 * 
 		 * @param index
 		 *          The number of the line to designate
 		 */
-		public NthElement(int index)
+		protected NthElement(int index)
 		{
 			super(index);
 		}

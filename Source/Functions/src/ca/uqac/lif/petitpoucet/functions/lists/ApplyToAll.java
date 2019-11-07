@@ -182,7 +182,7 @@ public class ApplyToAll implements Function
 						int index = ((NthInput) f_dob_d).getIndex();
 						// Input <index> of the inner function is the <elem_index>-th element
 						// of input <index> of ApplyToAll
-						ComposedDesignator cd2 = new ComposedDesignator(f_dob.getDesignator().tail(), new NthElement(elem_index),
+						ComposedDesignator cd2 = new ComposedDesignator(f_dob.getDesignator().tail(), NthElement.get(elem_index),
 								NthInput.get(index));
 						TraceabilityNode tn = factory.getObjectNode(cd2, this);
 						leaves.add(tn);

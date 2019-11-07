@@ -170,7 +170,7 @@ public class SlidingWindow implements Function
 					if (d_tail_elem instanceof NthElement)
 					{
 						// Offset elements by window's offset
-						NthElement ne = new NthElement(((NthElement) d_tail_elem).getIndex() + elem_index);
+						NthElement ne = NthElement.get(((NthElement) d_tail_elem).getIndex() + elem_index);
 						Designator new_tail = d_tail.tail();
 						if (new_tail == null)
 						{
@@ -180,7 +180,7 @@ public class SlidingWindow implements Function
 					}
 					else
 					{
-						cd = new ComposedDesignator(f_dob.getDesignator().tail(), new NthElement(elem_index),
+						cd = new ComposedDesignator(f_dob.getDesignator().tail(), NthElement.get(elem_index),
 								NthInput.get(index));
 					}
 					TraceabilityNode tn = factory.getObjectNode(cd, this);

@@ -24,13 +24,13 @@ public class Example2
 {
 	public static void main(String[] args)
 	{
-		List<Object> list1 = createList(3, 1, 4, 1, 5, 9, 2);
-		List<Object> list2 = createList(2, 0, 1, 8, 2, 8, 1);
+		List<Object> list1 = Utilities.createList(3, 1, 4, 1, 5, 9, 2);
+		List<Object> list2 = Utilities.createList(2, 0, 1, 8, 2, 8, 1);
 		ApplyToAll ata = new ApplyToAll(Numbers.multiplication);
 		Object[] output = new Object[1];
 		Queryable q = ata.evaluate(new Object[] {list1, list2}, output);
 		System.out.println(output[0]);
-		Designator d = new ComposedDesignator(new CollectionDesignator.NthElement(1),
+		Designator d = new ComposedDesignator(CollectionDesignator.NthElement.get(1),
 				CircuitDesignator.NthOutput.get(0));
 		ConcreteTracer t = new ConcreteTracer();
 		ConcreteObjectNode root = t.getTree(CausalityQuery.instance, d, q);
@@ -39,13 +39,5 @@ public class Example2
 		System.out.println(s);
 	}
 
-	protected static List<Object> createList(Object... objects)
-	{
-		List<Object> out_list = new ArrayList<Object>(objects.length);
-		for (Object o : objects)
-		{
-			out_list.add(o);
-		}
-		return out_list;
-	}
+
 }

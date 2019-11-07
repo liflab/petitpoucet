@@ -161,7 +161,7 @@ public class Numbers
 				TraceabilityNode and = factory.getAndNode();
 				for (int i = 0; i < m_length; i++)
 				{
-					ComposedDesignator cd = new ComposedDesignator(tail, new NthElement(i), NthInput.get(0));
+					ComposedDesignator cd = new ComposedDesignator(tail, NthElement.get(i), NthInput.get(0));
 					TraceabilityNode node = factory.getObjectNode(cd, this);
 					and.addChild(node, Quality.EXACT);
 					leaves.add(node);

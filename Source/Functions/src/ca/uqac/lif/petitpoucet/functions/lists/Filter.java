@@ -127,7 +127,7 @@ public class Filter extends BinaryFunction<List,List,List>
 							// That's the one
 							if (q instanceof ProvenanceQuery)
 							{
-								ComposedDesignator cd = new ComposedDesignator(tail, new NthElement(i), NthInput.get(0));
+								ComposedDesignator cd = new ComposedDesignator(tail, NthElement.get(i), NthInput.get(0));
 								TraceabilityNode child = factory.getObjectNode(cd, this);
 								root.addChild(child, Quality.EXACT);
 								leaves.add(child);
@@ -135,10 +135,10 @@ public class Filter extends BinaryFunction<List,List,List>
 							if (q instanceof CausalityQuery)
 							{
 								TraceabilityNode and = factory.getAndNode();
-								ComposedDesignator cd1 = new ComposedDesignator(tail, new NthElement(i), NthInput.get(0));
+								ComposedDesignator cd1 = new ComposedDesignator(tail, NthElement.get(i), NthInput.get(0));
 								TraceabilityNode child1 = factory.getObjectNode(cd1, this);
 								and.addChild(child1, Quality.EXACT);
-								ComposedDesignator cd2 = new ComposedDesignator(tail, new NthElement(i), NthInput.get(1));
+								ComposedDesignator cd2 = new ComposedDesignator(tail, NthElement.get(i), NthInput.get(1));
 								TraceabilityNode child2 = factory.getObjectNode(cd2, this);
 								and.addChild(child2, Quality.EXACT);
 								root.addChild(and, Quality.EXACT);

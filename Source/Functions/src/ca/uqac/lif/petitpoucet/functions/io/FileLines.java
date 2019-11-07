@@ -192,7 +192,7 @@ public class FileLines implements Function
 			}
 			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>(1);
 			int pos = ((StringDesignator.NthLine) top).getIndex();
-			ComposedDesignator cd = new ComposedDesignator(tail, new NthElement(pos), NthOutput.get(0));
+			ComposedDesignator cd = new ComposedDesignator(tail, NthElement.get(pos), NthOutput.get(0));
 			TraceabilityNode child = factory.getObjectNode(cd, this);
 			root.addChild(child, Quality.EXACT);
 			leaves.add(child);
