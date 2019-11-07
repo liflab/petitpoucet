@@ -131,7 +131,7 @@ public class Concatenate implements Function
 				{
 					int range_start = Math.max(0, start - last);
 					int range_end = Math.max(0, Math.min(m_lengths[i] - 1, m_lengths[i] + end - cur - 1));
-					ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(range_start, range_end), new NthInput(i));
+					ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(range_start, range_end), NthInput.get(i));
 					TraceabilityNode tn = factory.getObjectNode(cd, this);
 					and.addChild(tn, Quality.EXACT);
 					leaves.add(root);

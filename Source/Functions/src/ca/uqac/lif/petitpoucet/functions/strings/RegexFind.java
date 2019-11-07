@@ -130,7 +130,7 @@ public class RegexFind extends UnaryFunction<String,String>
 				int len = Math.min(sdr.getLength(), m_length);
 				int start = sdr.getStartIndex() + offset;
 				int end = offset + len;
-				ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
+				ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), NthInput.get(0));
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				root.addChild(child, Quality.OVER);
 				leaves.add(child);
@@ -139,7 +139,7 @@ public class RegexFind extends UnaryFunction<String,String>
 			{
 				int start = Math.min(m_startIndex, m_length);
 				int end = Math.min(m_endIndex, m_length);
-				ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), new NthInput(0));
+				ComposedDesignator cd = new ComposedDesignator(tail, new StringDesignator.Range(start, end), NthInput.get(0));
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				root.addChild(child, Quality.OVER);
 				leaves.add(child);

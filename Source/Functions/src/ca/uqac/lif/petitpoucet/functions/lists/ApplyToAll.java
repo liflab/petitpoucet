@@ -143,7 +143,7 @@ public class ApplyToAll implements Function
 				TraceabilityNode and = factory.getAndNode();
 				for (int i = 0; i < getInputArity(); i++)
 				{
-					TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(i), this);
+					TraceabilityNode child = factory.getObjectNode(CircuitDesignator.NthInput.get(i), this);
 					leaves.add(child);
 					and.addChild(child, Quality.EXACT);
 				}
@@ -163,7 +163,7 @@ public class ApplyToAll implements Function
 					tail = Designator.identity;
 				}
 				Tracer sub_factory = factory.getSubTracer(toString());
-				ComposedDesignator cd = new ComposedDesignator(tail, new NthOutput(0));
+				ComposedDesignator cd = new ComposedDesignator(tail, NthOutput.get(0));
 				TraceabilityTree tree = sub_factory.trace(q, cd, inner_q);
 				root.addChild(tree.getRoot(), Quality.EXACT);
 				List<TraceabilityNode> l_f_links = tree.getLeaves();
@@ -183,7 +183,7 @@ public class ApplyToAll implements Function
 						// Input <index> of the inner function is the <elem_index>-th element
 						// of input <index> of ApplyToAll
 						ComposedDesignator cd2 = new ComposedDesignator(f_dob.getDesignator().tail(), new NthElement(elem_index),
-								new NthInput(index));
+								NthInput.get(index));
 						TraceabilityNode tn = factory.getObjectNode(cd2, this);
 						leaves.add(tn);
 						f_links.addChild(tn, Quality.EXACT);

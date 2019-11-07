@@ -31,7 +31,7 @@ public class Example2
 		Queryable q = ata.evaluate(new Object[] {list1, list2}, output);
 		System.out.println(output[0]);
 		Designator d = new ComposedDesignator(new CollectionDesignator.NthElement(1),
-				new CircuitDesignator.NthOutput(0));
+				CircuitDesignator.NthOutput.get(0));
 		ConcreteTracer t = new ConcreteTracer();
 		ConcreteObjectNode root = t.getTree(CausalityQuery.instance, d, q);
 		TraceabilityNodeDotRenderer rend = new TraceabilityNodeDotRenderer();

@@ -1,5 +1,8 @@
 package ca.uqac.lif.petitpoucet.circuit;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import ca.uqac.lif.petitpoucet.Designator;
 import ca.uqac.lif.petitpoucet.common.NthOf;
 
@@ -16,13 +19,31 @@ public abstract class CircuitDesignator implements Designator
 	 */
 	public static class NthInput extends NthOf
 	{
+		protected static final transient Map<Integer,NthInput> s_pool = new LinkedHashMap<Integer,NthInput>();
+		
+		/**
+		 * Gets an instance of the NthInput designator
+		 * @param index The index of the input
+		 * @return The instance
+		 */
+		public static NthInput get(int index)
+		{
+			NthInput ni = s_pool.get(index);
+			if (ni == null)
+			{
+				ni = NthInput.get(index);
+				s_pool.put(index, ni);
+			}
+			return ni;
+		}
+		
 		/**
 		 * Creates a new instance of the designator
 		 * 
 		 * @param index
 		 *          The number of the line to designate
 		 */
-		public NthInput(int index)
+		private NthInput(int index)
 		{
 			super(index);
 		}
@@ -74,13 +95,31 @@ public abstract class CircuitDesignator implements Designator
 	 */
 	public static class NthOutput extends NthOf
 	{
+		protected static final transient Map<Integer,NthOutput> s_pool = new LinkedHashMap<Integer,NthOutput>();
+		
+		/**
+		 * Gets an instance of the NthOutput designator
+		 * @param index The index of the output
+		 * @return The instance
+		 */
+		public static NthOutput get(int index)
+		{
+			NthOutput ni = s_pool.get(index);
+			if (ni == null)
+			{
+				ni = NthOutput.get(index);
+				s_pool.put(index, ni);
+			}
+			return ni;
+		}
+		
 		/**
 		 * Creates a new instance of the designator
 		 * 
 		 * @param index
 		 *          The number of the line to designate
 		 */
-		public NthOutput(int index)
+		private NthOutput(int index)
 		{
 			super(index);
 		}

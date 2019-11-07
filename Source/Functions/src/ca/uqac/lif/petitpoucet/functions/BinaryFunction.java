@@ -101,7 +101,7 @@ public abstract class BinaryFunction<T,U,V> implements Function
 			{
 			case LEFT:
 			{
-				ComposedDesignator cd = new ComposedDesignator(d, new NthInput(0));
+				ComposedDesignator cd = new ComposedDesignator(d, NthInput.get(0));
 				TraceabilityNode node = factory.getObjectNode(cd, this);
 				root.addChild(node, Quality.EXACT);
 				leaves.add(node);
@@ -109,7 +109,7 @@ public abstract class BinaryFunction<T,U,V> implements Function
 			}
 			case RIGHT:
 			{
-				ComposedDesignator cd = new ComposedDesignator(d, new NthInput(1));
+				ComposedDesignator cd = new ComposedDesignator(d, NthInput.get(1));
 				TraceabilityNode node = factory.getObjectNode(cd, this);
 				root.addChild(node, Quality.EXACT);
 				leaves.add(node);
@@ -119,11 +119,11 @@ public abstract class BinaryFunction<T,U,V> implements Function
 			{
 				TraceabilityNode or = factory.getOrNode();
 				root.addChild(or, Quality.EXACT);
-				ComposedDesignator cd1 = new ComposedDesignator(d, new NthInput(0));
+				ComposedDesignator cd1 = new ComposedDesignator(d, NthInput.get(0));
 				TraceabilityNode node1 = factory.getObjectNode(cd1, this);
 				or.addChild(node1, Quality.EXACT);
 				leaves.add(node1);
-				ComposedDesignator cd2 = new ComposedDesignator(d, new NthInput(1));
+				ComposedDesignator cd2 = new ComposedDesignator(d, NthInput.get(1));
 				TraceabilityNode node2 = factory.getObjectNode(cd2, this);
 				or.addChild(node2, Quality.EXACT);
 				leaves.add(node2);
@@ -143,7 +143,7 @@ public abstract class BinaryFunction<T,U,V> implements Function
 			{
 			case LEFT:
 			{
-				Designator cd = new ComposedDesignator(d, new NthOutput(0));
+				Designator cd = new ComposedDesignator(d, NthOutput.get(0));
 				if (in_index != 0)
 				{
 					cd = Designator.nothing;
@@ -155,7 +155,7 @@ public abstract class BinaryFunction<T,U,V> implements Function
 			}
 			case RIGHT:
 			{
-				Designator cd = new ComposedDesignator(d, new NthOutput(0));
+				Designator cd = new ComposedDesignator(d, NthOutput.get(0));
 				if (in_index != 1)
 				{
 					cd = Designator.nothing;

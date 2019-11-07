@@ -106,11 +106,11 @@ public class Split extends UnaryFunction<String,String>
 				// Offset the range by the position in the input string
 				Range r = (Range) h_tail;
 				Designator t_tail = tail.tail();
-				cd = new ComposedDesignator(t_tail, new Range(r.getStartIndex() + m_offsets.get(pos), r.getEndIndex() + m_offsets.get(pos)), new NthInput(0));
+				cd = new ComposedDesignator(t_tail, new Range(r.getStartIndex() + m_offsets.get(pos), r.getEndIndex() + m_offsets.get(pos)), NthInput.get(0));
 			}
 			else
 			{
-				cd = new ComposedDesignator(tail, new Range(m_offsets.get(pos), m_offsets.get(pos + 1) - 1), new NthInput(0));
+				cd = new ComposedDesignator(tail, new Range(m_offsets.get(pos), m_offsets.get(pos + 1) - 1), NthInput.get(0));
 			}
 			TraceabilityNode child = factory.getObjectNode(cd, this);
 			root.addChild(child, Quality.EXACT);

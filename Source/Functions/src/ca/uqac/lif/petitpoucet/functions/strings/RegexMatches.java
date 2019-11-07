@@ -109,11 +109,11 @@ public class RegexMatches extends UnaryFunction<String,Boolean>
 				ComposedDesignator cd;
 				if (m_startIndex >= 0 && m_endIndex >= m_startIndex)
 				{
-					cd = new ComposedDesignator(tail, new StringDesignator.Range(m_startIndex, m_endIndex), new NthInput(0));
+					cd = new ComposedDesignator(tail, new StringDesignator.Range(m_startIndex, m_endIndex), NthInput.get(0));
 				}
 				else
 				{
-					cd =  new ComposedDesignator(tail, new NthInput(0));
+					cd =  new ComposedDesignator(tail, NthInput.get(0));
 				}
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				root.addChild(child, Quality.OVER);

@@ -576,7 +576,7 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 			// Send traceability sub-query to inner queryables
 			Tracer sub_tracer = factory.getSubTracer(toString());
 			CircuitConnection cc = m_outputConnections[out_index].m_upstreamConnection;
-			ComposedDesignator cd = new ComposedDesignator(tail, new NthOutput(cc.getIndex()));
+			ComposedDesignator cd = new ComposedDesignator(tail, NthOutput.get(cc.getIndex()));
 			Queryable fq = (Queryable) cc.getObject();
 			TraceabilityTree tree = sub_tracer.trace(q, cd, fq);
 			root.addChild(tree.getRoot(), Quality.EXACT);
@@ -596,7 +596,7 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 						int input_nb = ((NthInput) d_head).getIndex();
 						CircuitQueryable cq = (CircuitQueryable) dob.getObject();
 						CircuitConnection c_con = cq.getInputConnection(input_nb);
-						ComposedDesignator leaf_cd = new ComposedDesignator(dob.getDesignator().tail(), new NthInput(c_con.getIndex()));
+						ComposedDesignator leaf_cd = new ComposedDesignator(dob.getDesignator().tail(), NthInput.get(c_con.getIndex()));
 						TraceabilityNode new_leaf = factory.getObjectNode(leaf_cd, this);
 						tn.addChild(new_leaf, Quality.EXACT);
 						new_leaves.add(new_leaf);
@@ -611,7 +611,7 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 			// Send traceability sub-query to inner queryables
 			Tracer sub_tracer = factory.getSubTracer(toString());
 			CircuitConnection cc = m_inputConnections[in_index].m_downstreamConnection;
-			ComposedDesignator cd = new ComposedDesignator(tail, new NthInput(cc.getIndex()));
+			ComposedDesignator cd = new ComposedDesignator(tail, NthInput.get(cc.getIndex()));
 			Queryable fq = (Queryable) cc.getObject();
 			TraceabilityTree tree = sub_tracer.trace(q, cd, fq);
 			root.addChild(tree.getRoot(), Quality.EXACT);
@@ -631,7 +631,7 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 						int input_nb = ((NthOutput) d_head).getIndex();
 						CircuitQueryable cq = (CircuitQueryable) dob.getObject();
 						CircuitConnection c_con = cq.getOutputConnection(input_nb);
-						ComposedDesignator leaf_cd = new ComposedDesignator(dob.getDesignator().tail(), new NthOutput(c_con.getIndex()));
+						ComposedDesignator leaf_cd = new ComposedDesignator(dob.getDesignator().tail(), NthOutput.get(c_con.getIndex()));
 						TraceabilityNode new_leaf = factory.getObjectNode(leaf_cd, this);
 						tn.addChild(new_leaf, Quality.EXACT);
 						new_leaves.add(new_leaf);

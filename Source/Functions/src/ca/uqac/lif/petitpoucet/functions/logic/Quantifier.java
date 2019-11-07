@@ -165,7 +165,7 @@ public abstract class Quantifier extends UnaryFunction<Object,Boolean>
 					continue;
 				}
 				Tracer sub_factory = factory.getSubTracer(toString());
-				ComposedDesignator cd = new ComposedDesignator(d, new NthOutput(0));
+				ComposedDesignator cd = new ComposedDesignator(d, NthOutput.get(0));
 				TraceabilityTree tree = sub_factory.trace(q, cd, inner_q);
 				new_root.addChild(tree.getRoot(), Quality.EXACT);
 				List<TraceabilityNode> l_f_links = tree.getLeaves();
@@ -188,7 +188,7 @@ public abstract class Quantifier extends UnaryFunction<Object,Boolean>
 							continue;
 						}
 						Tracer sub_sub_factory = sub_factory.getSubTracer("Context");
-						ComposedDesignator c_cd = new ComposedDesignator(new NthElement(i), new NthOutput(0));
+						ComposedDesignator c_cd = new ComposedDesignator(new NthElement(i), NthOutput.get(0));
 						TraceabilityTree c_tree = sub_sub_factory.trace(q, c_cd, m_domainQueryable);
 						on.addChild(c_tree.getRoot(), Quality.EXACT);
 						List<TraceabilityNode> context_leaves = c_tree.getLeaves();
@@ -202,7 +202,7 @@ public abstract class Quantifier extends UnaryFunction<Object,Boolean>
 							if (((ObjectNode) context_leaf).getDesignatedObject().getDesignator().peek() instanceof NthInput)
 							{
 								Designator context_leaf_tail = ((ObjectNode) context_leaf).getDesignatedObject().getDesignator().tail();
-								ComposedDesignator new_leaf_d = new ComposedDesignator(context_leaf_tail, new NthInput(0));
+								ComposedDesignator new_leaf_d = new ComposedDesignator(context_leaf_tail, NthInput.get(0));
 								TraceabilityNode new_leaf = factory.getObjectNode(new_leaf_d, this);
 								context_leaf.addChild(new_leaf, Quality.EXACT);
 								leaves.add(new_leaf);

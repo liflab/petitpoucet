@@ -42,7 +42,7 @@ public class Example3
 		Queryable q = ex.evaluate(new Object[] {list1}, output);
 		System.out.println(output[0]);
 		ConcreteTracer t = new ConcreteTracer();
-		ConcreteObjectNode root = t.getTree(CausalityQuery.instance, new CircuitDesignator.NthOutput(0), q);
+		ConcreteObjectNode root = t.getTree(CausalityQuery.instance, CircuitDesignator.NthOutput.get(0), q);
 		TraceabilityNodeDotRenderer rend = new TraceabilityNodeDotRenderer();
 		String s = rend.render(root);
 		System.out.println(s);

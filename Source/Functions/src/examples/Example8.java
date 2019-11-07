@@ -62,14 +62,14 @@ public class Example8
 		}
 
 		// Use the shortcut from TreeDrawer to evaluate function and answer query
-		TreeDrawer.drawTree(CausalityQuery.instance, new NthOutput(0), CaptionStyle.NONE, true, "/tmp/out.png", global);
+		TreeDrawer.drawTree(CausalityQuery.instance, NthOutput.get(0), CaptionStyle.NONE, true, "/tmp/out.png", global);
 
 		/*
 		// Alternate syntax: evaluate, query and draw directly
 		Object[] out = new Object[1];
 		Queryable q = global.evaluate(new Object[] {}, out);
 		ConcreteTracer tracer = new ConcreteTracer();
-		ConcreteTraceabilityNode root = tracer.getTree(ProvenanceQuery.instance, new NthOutput(0), q);
+		ConcreteTraceabilityNode root = tracer.getTree(ProvenanceQuery.instance, NthOutput.get(0), q);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		renderer.setFlatten(true);
 		renderer.setShowCaptions(true);

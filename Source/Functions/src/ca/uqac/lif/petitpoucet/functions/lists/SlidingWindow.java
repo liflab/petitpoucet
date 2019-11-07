@@ -132,7 +132,7 @@ public class SlidingWindow implements Function
 				TraceabilityNode and = factory.getAndNode();
 				for (int i = 0; i < getInputArity(); i++)
 				{
-					TraceabilityNode child = factory.getObjectNode(new CircuitDesignator.NthInput(i), this);
+					TraceabilityNode child = factory.getObjectNode(CircuitDesignator.NthInput.get(i), this);
 					leaves.add(child);
 					and.addChild(child, Quality.EXACT);
 				}
@@ -147,7 +147,7 @@ public class SlidingWindow implements Function
 			}
 			FunctionQueryable inner_q = m_innerQueryables.get(elem_index);
 			Tracer sub_factory = factory.getSubTracer(toString());
-			ComposedDesignator cod = new ComposedDesignator(tail, new NthOutput(0));
+			ComposedDesignator cod = new ComposedDesignator(tail, NthOutput.get(0));
 			TraceabilityTree tree = sub_factory.trace(q, cod, inner_q);
 			root.addChild(tree.getRoot(), Quality.EXACT);
 			List<TraceabilityNode> l_f_links = tree.getLeaves();
@@ -176,12 +176,12 @@ public class SlidingWindow implements Function
 						{
 							new_tail = Designator.identity;
 						}
-						cd = new ComposedDesignator(new_tail, ne, new NthInput(0));
+						cd = new ComposedDesignator(new_tail, ne, NthInput.get(0));
 					}
 					else
 					{
 						cd = new ComposedDesignator(f_dob.getDesignator().tail(), new NthElement(elem_index),
-								new NthInput(index));
+								NthInput.get(index));
 					}
 					TraceabilityNode tn = factory.getObjectNode(cd, this);
 					leaves.add(tn);

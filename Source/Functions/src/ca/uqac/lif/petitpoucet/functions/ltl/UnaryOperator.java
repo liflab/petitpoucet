@@ -88,7 +88,7 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
 			for (int p : m_positions)
 			{
-				ComposedDesignator cd = new ComposedDesignator(d, new NthElement(p), new NthInput(0));
+				ComposedDesignator cd = new ComposedDesignator(d, new NthElement(p), NthInput.get(0));
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				or.addChild(child, Quality.EXACT);
 				leaves.add(child);
@@ -104,7 +104,7 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 			TraceabilityNode and = factory.getAndNode();
 			for (int i = 0; i < m_inputLength; i++)
 			{
-				ComposedDesignator cd = new ComposedDesignator(d, new NthElement(i), new NthInput(0));
+				ComposedDesignator cd = new ComposedDesignator(d, new NthElement(i), NthInput.get(0));
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				and.addChild(child, quality);
 				leaves.add(child);

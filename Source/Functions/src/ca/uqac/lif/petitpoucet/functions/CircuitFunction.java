@@ -333,7 +333,7 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 			{
 				return unknownLink(root, factory);
 			}
-			ComposedDesignator cd = new ComposedDesignator(tail, new NthOutput(out_index));
+			ComposedDesignator cd = new ComposedDesignator(tail, NthOutput.get(out_index));
 			Tracer sub_factory = factory.getSubTracer(toString());
 			TraceabilityTree tree = sub_factory.trace(q, cd, m_innerQueryable);
 			root.addChild(tree.getRoot(), Quality.EXACT);
@@ -367,7 +367,7 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 			{
 				return unknownLink(root, factory);
 			}
-			ComposedDesignator cd = new ComposedDesignator(tail, new NthInput(in_index));
+			ComposedDesignator cd = new ComposedDesignator(tail, NthInput.get(in_index));
 			List<TraceabilityNode> leaves = m_innerQueryable.query(q, cd, root, factory);
 			List<TraceabilityNode> new_leaves = new ArrayList<TraceabilityNode>(leaves.size());
 			for (TraceabilityNode leaf : leaves)

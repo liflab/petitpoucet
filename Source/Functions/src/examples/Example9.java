@@ -40,7 +40,7 @@ public class Example9 {
 		Queryable q = fa.evaluate(new Object[] {"3, 1, 4, 1, 6"}, out);
 		System.out.println(out[0]);
 		ConcreteTracer tracer = new ConcreteTracer();
-		ConcreteTraceabilityNode root = tracer.getTree(CausalityQuery.instance, new NthOutput(0), q);
+		ConcreteTraceabilityNode root = tracer.getTree(CausalityQuery.instance, NthOutput.get(0), q);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		renderer.setFlatten(true);
 		renderer.setShowCaptions(CaptionStyle.FULL);

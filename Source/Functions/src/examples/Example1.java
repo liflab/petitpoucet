@@ -32,7 +32,7 @@ public class Example1
 		Object[] outputs = new Object[1];
 		Queryable q = gf.evaluate(new Object[] {1, -1, 0}, outputs);
 		System.out.println(outputs[0]);
-		Designator d = new CircuitDesignator.NthOutput(0);
+		Designator d = CircuitDesignator.NthOutput.get(0);
 		ConcreteTracer t = new ConcreteTracer();
 		ConcreteObjectNode root = t.getTree(ProvenanceQuery.instance, d, q);
 		TraceabilityNodeDotRenderer rend = new TraceabilityNodeDotRenderer();

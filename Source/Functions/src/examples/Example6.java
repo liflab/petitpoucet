@@ -30,7 +30,7 @@ public class Example6
 		Queryable q = ata.evaluate(new Object[] {list}, out);
 		System.out.println(out[0]);
 		ConcreteTracer tracer = new ConcreteTracer();
-		ComposedDesignator cd = new ComposedDesignator(new NthElement(3), new NthOutput(0));
+		ComposedDesignator cd = new ComposedDesignator(new NthElement(3), NthOutput.get(0));
 		ConcreteTraceabilityNode root = tracer.getTree(ProvenanceQuery.instance, cd, q);
 		TraceabilityNodeDotRenderer renderer = new TraceabilityNodeDotRenderer();
 		String dot_code = renderer.render(root);

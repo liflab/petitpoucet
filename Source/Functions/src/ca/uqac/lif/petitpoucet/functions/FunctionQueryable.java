@@ -132,7 +132,7 @@ public class FunctionQueryable implements Queryable, StateDuplicable<FunctionQue
 		}
 		for (int i = 0; i < m_inputArity; i++)
 		{
-			ComposedDesignator cd = new ComposedDesignator(t_tail, new NthInput(i));
+			ComposedDesignator cd = new ComposedDesignator(t_tail, NthInput.get(i));
 			TraceabilityNode node = factory.getObjectNode(cd, this);
 			and.addChild(node, Quality.EXACT);
 			leaves.add(node);
@@ -148,7 +148,7 @@ public class FunctionQueryable implements Queryable, StateDuplicable<FunctionQue
 		root.addChild(and, Quality.EXACT);
 		for (int i = 0; i < m_outputArity; i++)
 		{
-			ComposedDesignator cd = new ComposedDesignator(t_tail, new NthOutput(i));
+			ComposedDesignator cd = new ComposedDesignator(t_tail, NthOutput.get(i));
 			TraceabilityNode node = factory.getObjectNode(cd, this);
 			and.addChild(node, Quality.EXACT);
 			leaves.add(node);

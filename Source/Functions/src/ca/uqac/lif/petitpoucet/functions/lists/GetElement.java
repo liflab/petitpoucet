@@ -72,7 +72,7 @@ public class GetElement extends UnaryFunction<List,Object>
 				TraceabilityNode root, Tracer factory)
 		{
 			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>(1);
-			ComposedDesignator cd = new ComposedDesignator(d, new NthElement(m_index), new NthInput(0));
+			ComposedDesignator cd = new ComposedDesignator(d, new NthElement(m_index), NthInput.get(0));
 			TraceabilityNode child = factory.getObjectNode(cd, this);
 			root.addChild(child, Quality.EXACT);
 			leaves.add(child);
@@ -92,7 +92,7 @@ public class GetElement extends UnaryFunction<List,Object>
 			List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>(1);
 			if (index == m_index)
 			{
-				ComposedDesignator cd = new ComposedDesignator(d, new NthOutput(m_index));
+				ComposedDesignator cd = new ComposedDesignator(d, NthOutput.get(m_index));
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				root.addChild(child, Quality.EXACT);
 				leaves.add(child);
