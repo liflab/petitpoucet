@@ -27,7 +27,9 @@ import java.util.Stack;
 
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
+import ca.uqac.lif.petitpoucet.LabeledEdge;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
+import ca.uqac.lif.petitpoucet.ObjectNode;
 import ca.uqac.lif.petitpoucet.Queryable;
 import ca.uqac.lif.petitpoucet.Tracer;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
@@ -212,5 +214,84 @@ public class ConcreteTracer implements Tracer
 		root.addChild(node, Quality.NONE);
 		list.add(node);
 		return list;
+	}
+	
+	public TraceabilityNode squash(TraceabilityNode root)
+	{
+		if (root == null)
+		{
+			return null;
+		}
+		List<LabeledEdge> edges = root.getChildren();
+		if (edges.isEmpty())
+		{
+			return getSimpleCopy(root);
+		}
+		if (edges.size() == 1)
+		{
+			// Squash itself
+			TraceabilityNode single_child = edges.get(0).getNode();
+			return squash(single_child);
+		}
+		ConcreteTraceabilityNode new_root = getSimpleCopy(root);
+		for (LabeledEdge edge : edges)
+		{
+			// Keep root and squash children
+			TraceabilityNode child = edge.getNode();
+			TraceabilityNode t_child = squash(child);
+			if (root instanceof AndNode && t_child instanceof AndNode)
+			{
+				for (LabeledEdge c_le : t_child.getChildren())
+				{
+					new_root.addChild(c_le.getNode(), c_le.getQuality(), true);
+				}
+			}
+			else if (root instanceof OrNode && t_child instanceof OrNode)
+			{
+				for (LabeledEdge c_le : t_child.getChildren())
+				{
+					new_root.addChild(c_le.getNode(), c_le.getQuality(), true);
+				}
+			}
+			else
+			{
+				new_root.addChild(t_child, edge.getQuality(), true);
+			}
+		}
+		return new_root;
+	}
+	
+	protected ConcreteTraceabilityNode getSimpleCopy(TraceabilityNode node)
+	{
+		if (node == null)
+		{
+			return null;
+		}
+		if (node instanceof AndNode)
+		{
+			return new AndNode();
+		}
+		if (node instanceof OrNode)
+		{
+			return new OrNode();
+		}
+		if (node instanceof UnknownNode)
+		{
+			return new UnknownNode();
+		}
+		if (node instanceof ObjectNode)
+		{
+			ObjectNode on = (ObjectNode) node;
+			//return getObjectNode(((ObjectNode) node).getDesignatedObject());
+			DesignatedObject dob = on.getDesignatedObject();
+			String ob_string = "";
+			if (dob.getObject() != null)
+			{
+				ob_string = dob.getObject().toString();
+			}
+			DesignatedObject dob_simple = new ConcreteDesignatedObject(dob.getDesignator(), ob_string);
+			return getObjectNode(dob_simple);
+		}
+		return null;
 	}
 }

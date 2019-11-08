@@ -38,12 +38,31 @@ public class ConcreteTraceabilityNode implements TraceabilityNode
 	@Override
 	public void addChild(TraceabilityNode n, Quality q)
 	{
+		addChild(n, q, false);
+	}
+
+	public void addChild(TraceabilityNode n, Quality q, boolean check_duplicates)
+	{
 		if (n == this)
 		{
 			Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.WARNING, "Attempting to connect a node to itself");
 		}
 		LabeledEdge le = new ConcreteLabeledEdge(n, q);
-		m_children.add(le);
+		if (check_duplicates)
+		{
+			for (LabeledEdge c_le : m_children)
+			{
+				if (n.equals(c_le.getNode()))
+				{
+					break;
+				}
+			}
+			m_children.add(le);
+		}
+		else
+		{
+			m_children.add(le);
+		}
 	}
 
 	@Override
@@ -73,7 +92,7 @@ public class ConcreteTraceabilityNode implements TraceabilityNode
 		}
 		return m_id == ((ConcreteTraceabilityNode) o).m_id;
 	}
-	
+
 	protected String toString(String indent)
 	{
 		return indent;
