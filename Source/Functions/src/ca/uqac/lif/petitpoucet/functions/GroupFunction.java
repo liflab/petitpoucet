@@ -168,6 +168,11 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 		{
 			m_queryable = null;
 		}
+		// Flush memory
+		for (CircuitFunction cf : m_innerFunctions)
+		{
+			cf.reset();
+		}
 		return m_queryable;
 	}
 

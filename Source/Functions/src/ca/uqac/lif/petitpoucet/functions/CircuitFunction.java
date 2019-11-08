@@ -175,9 +175,14 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 		}
 	}
 	
+	@Override
 	public void reset()
 	{
 		m_computed = false;
+		for (int i = 0; i < m_outputValues.length; i++)
+		{
+			m_outputValues[i] = null;
+		}
 	}
 	
 	@Override
