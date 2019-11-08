@@ -111,6 +111,26 @@ public class Ltl
 						{
 							out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
 						}
+				if (b_left == false)
+				{
+					if (b_right == false)
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+					}
+					else
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
+					}
+				}
+				else
+				{
+					if (b_right == false)
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
+					}
+					else
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
 					}
 				}
 				out.add(b_left && b_right);
@@ -123,7 +143,150 @@ public class Ltl
 			return null;
 		}
 	}
+			return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.And", out_queryables);
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static class Or extends BinaryFunction<List,List,List>
+	{
+		protected Or()
+		{
+			super(List.class, List.class, List.class);
+		}
 
+		@Override
+		public Object print(ObjectPrinter<?> printer) throws PrintException
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object read(ObjectReader<?> reader, Object o) throws ReadException 
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Or duplicate(boolean with_state)
+		{
+			return this;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+		{
+			List<Boolean> left = (List<Boolean>) inputs[0];
+			List<Boolean> right = (List<Boolean>) inputs[1];
+			int len = Math.max(left.size(), right.size());
+			List<Boolean> out = new ArrayList<Boolean>(len);
+			List<BinaryFunctionQueryable.Inputs> out_queryables = new ArrayList<BinaryFunctionQueryable.Inputs>(len);
+			for (int i = 0; i < len; i++)
+			{
+				boolean b_left = left.get(i);
+				boolean b_right = right.get(i);
+				if (b_left == true)
+				{
+					if (b_right == true)
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+					}
+					else
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
+					}
+				}
+				else
+				{
+					if (b_right == true)
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
+					}
+					else
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
+					}
+				}
+				out.add(b_left || b_right);
+			}
+			outputs[0] = out;
+			return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Or", out_queryables);
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static class Implies extends BinaryFunction<List,List,List>
+	{
+		protected Implies()
+		{
+			super(List.class, List.class, List.class);
+		}
+
+		@Override
+		public Object print(ObjectPrinter<?> printer) throws PrintException
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object read(ObjectReader<?> reader, Object o) throws ReadException 
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Implies duplicate(boolean with_state)
+		{
+			return this;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+		{
+			List<Boolean> left = (List<Boolean>) inputs[0];
+			List<Boolean> right = (List<Boolean>) inputs[1];
+			int len = Math.max(left.size(), right.size());
+			List<Boolean> out = new ArrayList<Boolean>(len);
+			List<BinaryFunctionQueryable.Inputs> out_queryables = new ArrayList<BinaryFunctionQueryable.Inputs>(len);
+			for (int i = 0; i < len; i++)
+			{
+				boolean b_left = left.get(i);
+				boolean b_right = right.get(i);
+				if (b_left == true)
+				{
+					if (b_right == true)
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+					}
+					else
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
+					}
+				}
+				else
+				{
+					if (b_right == true)
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
+					}
+					else
+					{
+						out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
+					}
+				}
+				out.add(b_left || b_right);
+			}
+			outputs[0] = out;
+			return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Or", out_queryables);
+		}
+	}
+	
 	public static class Globally extends UnaryOperator
 	{
 		protected Globally()
