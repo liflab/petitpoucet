@@ -33,6 +33,10 @@ public class Ltl
 	public static final transient Next next = new Next();
 
 	public static final transient And and = new And();
+	
+	public static final transient Or or = new Or();
+	
+	public static final transient Implies implies = new Implies();
 
 	private Ltl()
 	{
@@ -111,42 +115,42 @@ public class Ltl
 						{
 							out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
 						}
-				if (b_left == false)
-				{
-					if (b_right == false)
-					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+						if (b_left == false)
+						{
+							if (b_right == false)
+							{
+								out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+							}
+							else
+							{
+								out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
+							}
+						}
+						else
+						{
+							if (b_right == false)
+							{
+								out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
+							}
+							else
+							{
+								out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
+							}
+						}
+						out.add(b_left && b_right);
 					}
-					else
+					outputs[0] = out;
+					if (track)
 					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
+						return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.And", out_queryables);
 					}
+					return null;
 				}
-				else
-				{
-					if (b_right == false)
-					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
-					}
-					else
-					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
-					}
-				}
-				out.add(b_left && b_right);
 			}
-			outputs[0] = out;
-			if (track)
-			{
-				return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.And", out_queryables);
-			}
-			return null;
-		}
-	}
 			return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.And", out_queryables);
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static class Or extends BinaryFunction<List,List,List>
 	{
@@ -177,7 +181,7 @@ public class Ltl
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 		{
 			List<Boolean> left = (List<Boolean>) inputs[0];
 			List<Boolean> right = (List<Boolean>) inputs[1];
@@ -188,35 +192,42 @@ public class Ltl
 			{
 				boolean b_left = left.get(i);
 				boolean b_right = right.get(i);
-				if (b_left == true)
+				if (track)
 				{
-					if (b_right == true)
+					if (b_left == true)
 					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+						if (b_right == true)
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+						}
+						else
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
+						}
 					}
 					else
 					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
-					}
-				}
-				else
-				{
-					if (b_right == true)
-					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
-					}
-					else
-					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
+						if (b_right == true)
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
+						}
+						else
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
+						}
 					}
 				}
 				out.add(b_left || b_right);
 			}
 			outputs[0] = out;
-			return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Or", out_queryables);
+			if (track)
+			{
+				return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Or", out_queryables);
+			}
+			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static class Implies extends BinaryFunction<List,List,List>
 	{
@@ -247,7 +258,7 @@ public class Ltl
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 		{
 			List<Boolean> left = (List<Boolean>) inputs[0];
 			List<Boolean> right = (List<Boolean>) inputs[1];
@@ -258,35 +269,42 @@ public class Ltl
 			{
 				boolean b_left = left.get(i);
 				boolean b_right = right.get(i);
-				if (b_left == true)
+				if (track)
 				{
-					if (b_right == true)
+					if (b_left == true)
 					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+						if (b_right == true)
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+						}
+						else
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
+						}
 					}
 					else
 					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
-					}
-				}
-				else
-				{
-					if (b_right == true)
-					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
-					}
-					else
-					{
-						out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
+						if (b_right == true)
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
+						}
+						else
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
+						}
 					}
 				}
 				out.add(b_left || b_right);
 			}
 			outputs[0] = out;
-			return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Or", out_queryables);
+			if (track)
+			{
+				return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Or", out_queryables);
+			}
+			return null;
 		}
 	}
-	
+
 	public static class Globally extends UnaryOperator
 	{
 		protected Globally()

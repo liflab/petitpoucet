@@ -111,11 +111,13 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 			{
 				// "or" node or "and" node
 				String fill_color = "yellow";
+				String symbol = "∨";
 				if (n instanceof AndNode)
 				{
 					fill_color = "green";
+					symbol = "∧";
 				}
-				out.append(" ").append(s_id).append(" [label=\"").append(n)
+				out.append(" ").append(s_id).append(" [label=\"").append(symbol)
 						.append("\",shape=\"circle\",color=\"orange\",fillcolor=\"").append(fill_color)
 						.append("\",width=.3,fixedsize=\"true\"];\n");
 			}

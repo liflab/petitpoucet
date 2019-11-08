@@ -49,7 +49,10 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 			if (b == !m_startValue)
 			{
 				value = !m_startValue;
-				positions.add(0, i);
+				if (track)
+				{
+					positions.add(0, i);
+				}
 			}
 			out_list.add(0, value);
 		}

@@ -62,7 +62,7 @@ public class Example8
 		}
 
 		// Use the shortcut from TreeDrawer to evaluate function and answer query
-		TreeDrawer.drawTree(CausalityQuery.instance, NthOutput.get(0), CaptionStyle.NONE, true, "/tmp/out.png", global);
+		TreeDrawer.drawTree(CausalityQuery.instance, NthOutput.get(0), CaptionStyle.SHORT, true, "/tmp/out.png", global);
 
 		/*
 		// Alternate syntax: evaluate, query and draw directly
