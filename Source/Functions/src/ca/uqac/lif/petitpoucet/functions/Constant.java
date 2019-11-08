@@ -1,7 +1,9 @@
 package ca.uqac.lif.petitpoucet.functions;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.uqac.lif.azrael.ObjectPrinter;
 import ca.uqac.lif.azrael.ObjectReader;
@@ -31,10 +33,20 @@ public class Constant implements Function
 	}
 	
 	@Override
-	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 	{
 		outputs[0] = m_value;
-		return new ConstantQueryable(toString());
+		if (track)
+		{
+			return ConstantQueryable.get(toString());
+		}
+		return null;
+	}
+	
+	@Override
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+	{
+		return evaluate(inputs, outputs, c, true);
 	}
 
 	@Override
@@ -69,9 +81,15 @@ public class Constant implements Function
 	}
 
 	@Override
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, boolean track)
+	{
+		return evaluate(inputs, outputs, null, track);
+	}
+	
+	@Override
 	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs)
 	{
-		return evaluate(inputs, outputs, null);
+		return evaluate(inputs, outputs, null, true);
 	}
 
 	@Override
@@ -138,7 +156,20 @@ public class Constant implements Function
 	
 	static class ConstantQueryable extends FunctionQueryable
 	{
-		public ConstantQueryable(String reference)
+		protected static final transient Map<String,ConstantQueryable> s_pool = new LinkedHashMap<String,ConstantQueryable>();
+		
+		public static ConstantQueryable get(String reference)
+		{
+			ConstantQueryable cq = s_pool.get(reference);
+			if (cq == null)
+			{
+				cq = new ConstantQueryable(reference);
+				s_pool.put(reference, cq);
+			}
+			return cq;
+		}
+		
+		private ConstantQueryable(String reference)
 		{
 			super(reference, 0, 1);
 		}

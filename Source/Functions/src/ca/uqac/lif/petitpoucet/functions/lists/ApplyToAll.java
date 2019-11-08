@@ -68,7 +68,7 @@ public class ApplyToAll implements Function
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public ApplyToAllQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public ApplyToAllQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		List[] in_lists = new List[m_function.getInputArity()];
 		int num_el = Integer.MAX_VALUE;
@@ -81,21 +81,38 @@ public class ApplyToAll implements Function
 		{
 			outputs[i] = new ArrayList<Object>();
 		}
-		List<Queryable> inner_q = new ArrayList<Queryable>(num_el);
+		List<Queryable> inner_q = null;
+		if (track)
+		{
+			inner_q = new ArrayList<Queryable>(num_el);
+		}
 		for (int i = 0; i < num_el; i++)
 		{
 			Object[] outs = new Object[m_function.getOutputArity()];
-			Queryable q = evaluateInnerFunctionAt(i, c, outs, in_lists);
-			inner_q.add(((StateDuplicable<Queryable>) q).duplicate());
+			Queryable q = evaluateInnerFunctionAt(i, c, outs, track, in_lists);
+			if (track)
+			{
+				inner_q.add(((StateDuplicable<Queryable>) q).duplicate());
+			}
 			for (int j = 0; j < outputs.length; j++)
 			{
 				((List<Object>) outputs[j]).add(outs[j]);
 			}
 		}
-		return new ApplyToAllQueryable(toString(), inner_q);
+		if (track)
+		{
+			return new ApplyToAllQueryable(toString(), inner_q);
+		}
+		return null;
+	}
+	
+	@Override
+	public ApplyToAllQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	{
+		return evaluate(inputs, outputs, c, true);
 	}
 
-	protected Queryable evaluateInnerFunctionAt(int pos, Context c, Object[] outs, List<?>... lists)
+	protected Queryable evaluateInnerFunctionAt(int pos, Context c, Object[] outs, boolean track, List<?>... lists)
 	{
 		m_function.reset();
 		Object[] ins = new Object[m_function.getInputArity()];
@@ -104,7 +121,7 @@ public class ApplyToAll implements Function
 		{
 			ins[j] = lists[j].get(pos);
 		}
-		return m_function.evaluate(ins, outs, c);
+		return m_function.evaluate(ins, outs, c, track);
 	}
 	
 	public static class ApplyToAllQueryable extends FunctionQueryable
@@ -227,7 +244,13 @@ public class ApplyToAll implements Function
 	@Override
 	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs) 
 	{
-		return evaluate(inputs, outputs, null);
+		return evaluate(inputs, outputs, null, true);
+	}
+	
+	@Override
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, boolean track) 
+	{
+		return evaluate(inputs, outputs, null, track);
 	}
 
 	@Override

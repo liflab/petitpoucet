@@ -61,14 +61,18 @@ public class Substring extends UnaryFunction<String,String>
 	}
 		
 	@Override
-	public SubstringQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public SubstringQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		String s = inputs[0].toString();
 		int length = s.length();
 		int start = Math.min(m_startIndex, length);
 		int end = Math.min(m_endIndex, length);
 		outputs[0] = s.substring(start, end);
-		return new SubstringQueryable(toString(), m_startIndex, m_endIndex, length);
+		if (track)
+		{
+			return new SubstringQueryable(toString(), m_startIndex, m_endIndex, length);
+		}
+		return null;
 	}
 	
 	public static class SubstringQueryable extends FunctionQueryable

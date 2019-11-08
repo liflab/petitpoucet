@@ -54,7 +54,7 @@ public class Split extends UnaryFunction<String,String>
 	}
 
 	@Override
-	public SplitQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public SplitQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		String s = inputs[0].toString();
 		String[] parts = s.split(m_regex);
@@ -65,16 +65,23 @@ public class Split extends UnaryFunction<String,String>
 		{
 			String part = parts[i];
 			l_parts.add(part);
-			offsets.add(pos);
-			pos += part.length();
-			if (i < parts.length - 1)
+			if (track)
 			{
-				pos += m_regex.length();
+				offsets.add(pos);
+				pos += part.length();
+				if (i < parts.length - 1)
+				{
+					pos += m_regex.length();
+				}
 			}
 		}
 		offsets.add(pos);
 		outputs[0] = l_parts;
-		return new SplitQueryable(toString(), offsets);
+		if (track)
+		{
+			return new SplitQueryable(toString(), offsets);
+		}
+		return null;
 	}
 
 	public static class SplitQueryable extends FunctionQueryable

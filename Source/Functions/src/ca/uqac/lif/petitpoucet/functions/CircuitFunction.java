@@ -136,11 +136,23 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 	@Override
 	public final Object getOutput(Context c)
 	{
-		return getOutput(0, c);
+		return getOutput(0, c, true);
+	}
+	
+	@Override
+	public final Object getOutput(Context c, boolean track)
+	{
+		return getOutput(0, c, track);
 	}
 	
 	@Override
 	public final Object getOutput(int index, Context c)
+	{
+		return getOutput(index, c, true);
+	}
+	
+	@Override
+	public final Object getOutput(int index, Context c, boolean track)
 	{
 		if (!m_computed)
 		{
@@ -149,9 +161,9 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 			{
 				CircuitConnection cc = m_inputConnections[i];
 				Outputable f = (Outputable) cc.getObject();
-				inputs[i] = f.getOutput(cc.getIndex(), c);
+				inputs[i] = f.getOutput(cc.getIndex(), c, track);
 			}
-			evaluate(inputs, m_outputValues, c); 
+			evaluate(inputs, m_outputValues, c, track); 
 		}
 		try
 		{
@@ -269,18 +281,34 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 	}
 	
 	@Override
+	public final Queryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
+	{
+		Queryable q = m_function.evaluate(inputs, outputs, c, track);
+		m_computed = true;
+		if (track)
+		{
+			m_queryable.setQueryable(q);
+			return m_queryable;
+		}
+		return null;
+	}
+	
+	@Override
 	public final Queryable evaluate(Object[] inputs, Object[] outputs, Context c)
 	{
-		Queryable q = m_function.evaluate(inputs, outputs, c);
-		m_queryable.setQueryable(q);
-		m_computed = true;
-		return m_queryable;
+		return evaluate(inputs, outputs, c, true);
 	}
 	
 	@Override
 	public final Queryable evaluate(Object[] inputs, Object[] outputs) 
 	{
 		return evaluate(inputs, outputs, m_context);
+	}
+	
+	@Override
+	public final Queryable evaluate(Object[] inputs, Object[] outputs, boolean track) 
+	{
+		return evaluate(inputs, outputs, m_context, track);
 	}
 
 	@Override

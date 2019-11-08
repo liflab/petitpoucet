@@ -59,20 +59,36 @@ public class ContextVariable implements Function
 	}
 
 	@Override
-	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 	{
 		if (c == null || !c.containsKey(m_name))
 		{
 			return new UnknownQueryable(toString(), 0, 1);
 		}
 		outputs[0] = c.get(m_name);
-		return new ContextVariableQueryable(toString(), m_name);
+		if (track)
+		{
+			return new ContextVariableQueryable(toString(), m_name);
+		}
+		return null;
+	}
+	
+	@Override
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	{
+		return evaluate(inputs, outputs, c, true);
 	}
 
 	@Override
 	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs) 
 	{
-		return evaluate(inputs, outputs,  null);
+		return evaluate(inputs, outputs,  null, true);
+	}
+	
+	@Override
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, boolean track) 
+	{
+		return evaluate(inputs, outputs,  null, track);
 	}
 
 	@Override

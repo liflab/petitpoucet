@@ -8,7 +8,11 @@ import ca.uqac.lif.petitpoucet.StateDuplicable;
 
 public interface Function extends Printable, Readable, StateDuplicable<Function>
 {
+	public Queryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track);
+	
 	public Queryable evaluate(Object[] inputs, Object[] outputs, Context c);
+	
+	public Queryable evaluate(Object[] inputs, Object[] outputs, boolean track);
 	
 	public Queryable evaluate(Object[] inputs, Object[] outputs);
 	

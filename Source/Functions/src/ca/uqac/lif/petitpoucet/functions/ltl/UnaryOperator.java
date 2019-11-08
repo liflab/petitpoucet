@@ -28,9 +28,13 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 	}
 	
 	@Override
-	public LtlQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public LtlQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
-		List<Integer> positions = new ArrayList<Integer>();
+		List<Integer> positions = null;
+		if (track)
+		{
+			positions = new ArrayList<Integer>();
+		}
 		List<?> list = (List<?>) inputs[0];
 		List<Boolean> out_list = new ArrayList<Boolean>(list.size());
 		boolean value = m_startValue;
@@ -50,7 +54,11 @@ public abstract class UnaryOperator extends UnaryFunction<List,Boolean>
 			out_list.add(0, value);
 		}
 		outputs[0] = out_list;
-		return new LtlQueryable(toString(), list.size(), positions);
+		if (track)
+		{
+			return new LtlQueryable(toString(), list.size(), positions);
+		}
+		return null;
 	}
 	
 	public static class LtlQueryable extends FunctionQueryable

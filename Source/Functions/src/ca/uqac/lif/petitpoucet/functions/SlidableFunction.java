@@ -20,14 +20,24 @@ import ca.uqac.lif.petitpoucet.common.NthOf;
 public interface SlidableFunction extends Function
 {
 	@Override
+	public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context, boolean track);
+	
+	@Override
 	public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context);
 	
 	@Override
 	public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs);
 	
+	@Override
+	public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, boolean track);
+	
 	public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, Context context);
 	
+	public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, Context context, boolean track);
+	
 	public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs);
+	
+	public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, boolean track);
 	
 	public static class SlidableFunctionQueryable extends FunctionQueryable
 	{

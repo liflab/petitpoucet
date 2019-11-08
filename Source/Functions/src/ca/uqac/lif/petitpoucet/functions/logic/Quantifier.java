@@ -71,11 +71,11 @@ public abstract class Quantifier extends UnaryFunction<Object,Boolean>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public QuantifierQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public QuantifierQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		boolean b = getStartValue();
 		Object[] out = new Object[1];
-		Queryable dom_q = ((StateDuplicable<Queryable>) m_domain.evaluate(inputs, out, c)).duplicate(true);
+		Queryable dom_q = ((StateDuplicable<Queryable>) m_domain.evaluate(inputs, out, c, track)).duplicate(true);
 		List<Object> domain = (List<Object>) out[0];
 		List<Boolean> inner_values = new ArrayList<Boolean>(domain.size());
 		List<Queryable> inner_queryables = new ArrayList<Queryable>(domain.size());
@@ -97,7 +97,11 @@ public abstract class Quantifier extends UnaryFunction<Object,Boolean>
 			}
 		}
 		outputs[0] = b;
-		return new QuantifierQueryable(toString(), m_variable, getStartValue(), b, dom_q, inner_queryables, inner_values);
+		if (track)
+		{
+			return new QuantifierQueryable(toString(), m_variable, getStartValue(), b, dom_q, inner_queryables, inner_values);
+		}
+		return null;
 	}
 
 	public static class QuantifierQueryable extends FunctionQueryable

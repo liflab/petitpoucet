@@ -37,18 +37,22 @@ public class GetElement extends UnaryFunction<List,Object>
 	}
 
 	@Override
-	public GetElementQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public GetElementQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		List<?> list = (List<?>) inputs[0];
 		Object elem = list.get(m_index);
 		outputs[0] = elem;
-		GetElementQueryable geq = s_queryablePool.get(m_index);
-		if (geq == null)
+		if (track)
 		{
-			geq = new GetElementQueryable(toString(), m_index);
-			s_queryablePool.put(m_index, geq);
+			GetElementQueryable geq = s_queryablePool.get(m_index);
+			if (geq == null)
+			{
+				geq = new GetElementQueryable(toString(), m_index);
+				s_queryablePool.put(m_index, geq);
+			}
+			return geq;
 		}
-		return geq;
+		return null;
 	}
 
 	@Override
@@ -105,7 +109,7 @@ public class GetElement extends UnaryFunction<List,Object>
 			}
 			return leaves;
 		}
-		
+
 		@Override
 		public GetElementQueryable duplicate(boolean with_state)
 		{

@@ -46,7 +46,19 @@ public abstract class UnaryFunction<T,V> implements Function
 	@Override
 	public final FunctionQueryable evaluate(Object[] inputs, Object[] outputs) 
 	{
-		return evaluate(inputs, outputs, null);
+		return evaluate(inputs, outputs, null, true);
+	}
+	
+	@Override
+	public final FunctionQueryable evaluate(Object[] inputs, Object[] outputs, boolean track) 
+	{
+		return evaluate(inputs, outputs, null, track);
+	}
+	
+	@Override
+	public final FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+	{
+		return evaluate(inputs, outputs, c, true);
 	}
 	
 	@Override
@@ -63,5 +75,5 @@ public abstract class UnaryFunction<T,V> implements Function
 	}
 	
 	@Override
-	public abstract FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c);
+	public abstract FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track);
 }

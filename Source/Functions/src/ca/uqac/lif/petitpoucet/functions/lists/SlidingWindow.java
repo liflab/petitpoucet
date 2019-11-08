@@ -62,31 +62,54 @@ public class SlidingWindow implements Function
 	}
 
 	@Override
-	public SlidingWindowQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public SlidingWindowQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		List<?> list = (List<?>) inputs[0];
 		List<Object> out_list = new ArrayList<Object>();
 		int max_pos = Math.max(0, list.size() - m_width);
-		List<FunctionQueryable> queryables = new ArrayList<FunctionQueryable>();
+		List<FunctionQueryable> queryables = null;
+		if (track)
+		{
+			queryables = new ArrayList<FunctionQueryable>();
+		}
 		for (int i = 0; i < max_pos; i++)
 		{
 			Object[] in_out = new Object[1];
-			FunctionQueryable fq = evaluateWindow(i, list, in_out, c);
+			FunctionQueryable fq = evaluateWindow(i, list, in_out, track, c);
 			out_list.add(in_out[0]);
-			queryables.add(fq.duplicate());
+			if (track)
+			{
+				queryables.add(fq.duplicate());
+			}
 		}
 		outputs[0] = out_list;
-		return new SlidingWindowQueryable(toString(), m_width, queryables);
+		if (track)
+		{
+			return new SlidingWindowQueryable(toString(), m_width, queryables);
+		}
+		return null;
 	}
 	
-	protected FunctionQueryable evaluateWindow(int offset, List<?> list, Object[] outputs, Context c)
+	@Override
+	public SlidingWindowQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	{
+		return evaluate(inputs, outputs, c, true);
+	}
+	
+	@Override
+	public SlidingWindowQueryable evaluate(Object[] inputs, Object[] outputs, boolean track)
+	{
+		return evaluate(inputs, outputs, null, track);
+	}
+	
+	protected FunctionQueryable evaluateWindow(int offset, List<?> list, Object[] outputs, boolean track, Context c)
 	{
 		List<Object> lob = new ArrayList<Object>(m_width);
 		for (int i = offset; i < offset + m_width; i++)
 		{
 			lob.add(list.get(i));
 		}
-		return (FunctionQueryable) m_function.evaluate(new Object[] {lob}, outputs, c);
+		return (FunctionQueryable) m_function.evaluate(new Object[] {lob}, outputs, c, track);
 	}
 	
 	@Override

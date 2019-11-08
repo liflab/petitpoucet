@@ -41,11 +41,11 @@ public class Numbers
 	public static final transient Signum signum = new Signum();
 
 	public static final transient NumberCast cast = new NumberCast();
-	
+
 	public static final transient AverageList avg = new AverageList();
-	
+
 	public static final transient IsGreaterThan isGreaterThan = new IsGreaterThan();
-	
+
 	public static final transient IsEven isEven = new IsEven();
 
 	private Numbers()
@@ -81,18 +81,22 @@ public class Numbers
 		}
 
 		@Override
-		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			outputs[0] = Math.abs(((Number) inputs[0]).floatValue());
-			return s_queryable;
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static class AverageList extends UnaryFunction<List,Number>
 	{
 		protected static final transient Map<Integer,AverageListQueryable> s_queryablePool = new LinkedHashMap<Integer,AverageListQueryable>();
-		
+
 		protected AverageList()
 		{
 			super(List.class, Number.class);
@@ -117,7 +121,7 @@ public class Numbers
 		}
 
 		@Override
-		public AverageListQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public AverageListQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			List<?> list = (List<?>) inputs[0];
 			float total = 0f, num_values = 0f;
@@ -134,25 +138,29 @@ public class Numbers
 			{
 				outputs[0] = total / num_values;
 			}
-			AverageListQueryable geq = s_queryablePool.get((int) num_values);
-			if (geq == null)
+			if (track)
 			{
-				geq = new AverageListQueryable(toString(), (int) num_values);
-				s_queryablePool.put((int) num_values, geq);
+				AverageListQueryable geq = s_queryablePool.get((int) num_values);
+				if (geq == null)
+				{
+					geq = new AverageListQueryable(toString(), (int) num_values);
+					s_queryablePool.put((int) num_values, geq);
+				}
+				return geq;
 			}
-			return geq;
+			return null;
 		}
-		
+
 		public static class AverageListQueryable extends FunctionQueryable
 		{
 			protected int m_length;
-			
+
 			public AverageListQueryable(String reference, int length)
 			{
 				super(reference, 1, 1);
 				m_length = length;
 			}
-			
+
 			@Override
 			protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int out_index, 
 					Designator tail, TraceabilityNode root, Tracer factory)
@@ -169,13 +177,13 @@ public class Numbers
 				root.addChild(and, Quality.EXACT);
 				return leaves;
 			}
-			
+
 			@Override
 			public AverageListQueryable duplicate(boolean with_state)
 			{
 				return new AverageListQueryable(m_reference, m_length);
 			}
-			
+
 			@Override
 			public String toString()
 			{
@@ -212,7 +220,7 @@ public class Numbers
 		}
 
 		@Override
-		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			Number num;
 			if (inputs[0] instanceof Number)
@@ -224,7 +232,11 @@ public class Numbers
 				num = Float.parseFloat(inputs[0].toString());
 			}
 			outputs[0] = num;
-			return s_queryable;
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
 		}
 	}
 
@@ -256,7 +268,7 @@ public class Numbers
 		}
 
 		@Override
-		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			float f = ((Number) inputs[0]).floatValue();
 			if (f == 0)
@@ -271,10 +283,14 @@ public class Numbers
 			{
 				outputs[0] = -1;
 			}
-			return s_queryable;
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
 		}
 	}
-	
+
 	protected static class IsEven extends UnaryFunction<Number,Boolean>
 	{
 		protected static final transient FunctionQueryable s_queryable = new FunctionQueryable("Numbers.IsEven", 1, 1);
@@ -303,11 +319,15 @@ public class Numbers
 		}
 
 		@Override
-		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			float f = ((Number) inputs[0]).floatValue();
 			outputs[0] = f % 2 == 0;
-			return s_queryable;
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
 		}
 	}
 
@@ -321,10 +341,14 @@ public class Numbers
 		}
 
 		@Override
-		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			outputs[0] = ((Number) inputs[0]).floatValue() + ((Number) inputs[1]).floatValue();
-			return s_queryable;
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
 		}
 
 		@Override
@@ -362,10 +386,14 @@ public class Numbers
 		}
 
 		@Override
-		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			outputs[0] = ((Number) inputs[0]).floatValue() - ((Number) inputs[1]).floatValue();
-			return s_queryable;
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
 		}
 
 		@Override
@@ -409,10 +437,14 @@ public class Numbers
 		}
 
 		@Override
-		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			outputs[0] = ((Number) inputs[0]).floatValue() * ((Number) inputs[1]).floatValue();
-			return getDependency(((Number) inputs[0]).floatValue(), ((Number) inputs[1]).floatValue());
+			if (track)
+			{
+				return getDependency(((Number) inputs[0]).floatValue(), ((Number) inputs[1]).floatValue());
+			}
+			return null;
 		}
 
 		@Override
@@ -473,10 +505,14 @@ public class Numbers
 		}
 
 		@Override
-		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			outputs[0] = ((Number) inputs[0]).floatValue() / ((Number) inputs[1]).floatValue();
-			return getDependency(((Number) inputs[0]).floatValue(), ((Number) inputs[1]).floatValue());
+			if (track)
+			{
+				return getDependency(((Number) inputs[0]).floatValue(), ((Number) inputs[1]).floatValue());
+			}
+			return null;
 		}
 
 		@Override
@@ -520,7 +556,7 @@ public class Numbers
 			return s_queryableBoth;
 		}
 	}
-	
+
 	protected static class IsGreaterThan extends BinaryFunction<Number,Number,Boolean>
 	{
 		protected static BinaryFunctionQueryable s_queryable = new BinaryFunctionQueryable("Numbers.IsGreaterThan", Inputs.BOTH);
@@ -531,10 +567,14 @@ public class Numbers
 		}
 
 		@Override
-		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			outputs[0] = ((Number) inputs[0]).floatValue() > ((Number) inputs[1]).floatValue();
-			return s_queryable;
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
 		}
 
 		@Override
@@ -554,7 +594,7 @@ public class Numbers
 		{
 			return this;
 		}
-		
+
 		@Override
 		public String toString()
 		{
@@ -607,11 +647,23 @@ public class Numbers
 		{
 			return evaluate(inputs, outputs,  null);
 		}
+		
+		@Override
+		public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, boolean track) 
+		{
+			return evaluate(inputs, outputs,  null, track);
+		}
 
 		@Override
 		public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs) 
 		{
 			return devaluate(inputs, outputs,  null);
+		}
+		
+		@Override
+		public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, boolean track) 
+		{
+			return devaluate(inputs, outputs,  null, track);
 		}
 
 		@Override
@@ -649,21 +701,41 @@ public class Numbers
 		}
 
 		@Override
-		public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context) 
+		public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context, boolean track) 
 		{
 			m_currentValue += ((Number) inputs[0]).floatValue();
 			outputs[0] = m_currentValue;
 			m_queryable.addCallToEvaluate();
-			return m_queryable;
+			if (track)
+			{
+				return m_queryable;
+			}
+			return null;
+		}
+		
+		@Override
+		public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context)
+		{
+			return evaluate(inputs, outputs, context, true);
 		}
 
 		@Override
-		public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, Context context) 
+		public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, Context context, boolean track) 
 		{
 			m_currentValue -= ((Number) inputs[0]).floatValue();
 			outputs[0] = m_currentValue;
 			m_queryable.addCallToDevaluate();
-			return m_queryable;
+			if (track)
+			{
+				return m_queryable;
+			}
+			return null;
+		}
+		
+		@Override
+		public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, Context context)
+		{
+			return devaluate(inputs, outputs, context, true);
 		}
 
 		@Override
@@ -689,18 +761,27 @@ public class Numbers
 		}
 
 		@Override
-		public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context) 
+		public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context, boolean track) 
 		{
 			m_currentValue += ((Number) inputs[0]).floatValue();
 			m_numValues++;
 			outputs[0] = m_currentValue / m_numValues;
 			m_queryable.addCallToEvaluate();
-			return m_queryable;
-
+			if (track)
+			{
+				return m_queryable;
+			}
+			return null;
+		}
+		
+		@Override
+		public SlidableFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context)
+		{
+			return evaluate(inputs, outputs, context, true);
 		}
 
 		@Override
-		public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, Context context) 
+		public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, Context context, boolean track) 
 		{
 			m_currentValue -= ((Number) inputs[0]).floatValue();
 			m_numValues--;
@@ -713,7 +794,17 @@ public class Numbers
 				outputs[0] = 0;
 			}
 			m_queryable.addCallToDevaluate();
-			return m_queryable;
+			if (track)
+			{
+				return m_queryable;
+			}
+			return null;
+		}
+		
+		@Override
+		public SlidableFunctionQueryable devaluate(Object[] inputs, Object[] outputs, Context context)
+		{
+			return devaluate(inputs, outputs, context, true);
 		}
 
 		@Override

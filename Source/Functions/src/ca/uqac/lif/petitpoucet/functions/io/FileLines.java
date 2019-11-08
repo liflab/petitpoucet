@@ -45,9 +45,15 @@ public class FileLines implements Function
 		m_filename = filename;
 		m_queryable = new FileLinesQueryable(filename);
 	}
-
+	
 	@Override
 	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	{
+		return evaluate(inputs, outputs, c, true);
+	}
+
+	@Override
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		List<String> lines = new ArrayList<String>();
 		try
@@ -65,7 +71,11 @@ public class FileLines implements Function
 			e.printStackTrace();
 		}
 		outputs[0] = lines;
-		return m_queryable;
+		if (track)
+		{
+			return m_queryable;
+		}
+		return null;
 	}
 	
 	@Override
@@ -102,7 +112,13 @@ public class FileLines implements Function
 	@Override
 	public Queryable evaluate(Object[] inputs, Object[] outputs) 
 	{
-		return evaluate(inputs, outputs, null);
+		return evaluate(inputs, outputs, null, true);
+	}
+	
+	@Override
+	public Queryable evaluate(Object[] inputs, Object[] outputs, boolean track) 
+	{
+		return evaluate(inputs, outputs, null, track);
 	}
 
 	@Override

@@ -22,13 +22,13 @@ public class Booleans
 	
 	protected static class And extends BinaryFunction<Boolean,Boolean,Boolean> implements CumulableFunction<Boolean>
 	{
-		protected static BinaryFunctionQueryable s_queryableBoth = new BinaryFunctionQueryable("Booleans.And", Inputs.BOTH);
+		protected static final transient BinaryFunctionQueryable s_queryableBoth = new BinaryFunctionQueryable("Booleans.And", Inputs.BOTH);
 
-		protected static BinaryFunctionQueryable s_queryableAny = new BinaryFunctionQueryable("Booleans.And", Inputs.ANY);
+		protected static final transient BinaryFunctionQueryable s_queryableAny = new BinaryFunctionQueryable("Booleans.And", Inputs.ANY);
 
-		protected static BinaryFunctionQueryable s_queryableLeft = new BinaryFunctionQueryable("Booleans.And", Inputs.LEFT);
+		protected static final transient BinaryFunctionQueryable s_queryableLeft = new BinaryFunctionQueryable("Booleans.And", Inputs.LEFT);
 
-		protected static BinaryFunctionQueryable s_queryableRight = new BinaryFunctionQueryable("Booleans.And", Inputs.RIGHT);
+		protected static final transient BinaryFunctionQueryable s_queryableRight = new BinaryFunctionQueryable("Booleans.And", Inputs.RIGHT);
 
 		protected And()
 		{
@@ -36,12 +36,12 @@ public class Booleans
 		}
 
 		@Override
-		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 		{
 			boolean left = (Boolean) inputs[0];
 			boolean right = (Boolean) inputs[1];
 			outputs[0] = left && right;
-			return getDependency(left, right);
+			return getDependency(left, right, track);
 		}
 
 		@Override
@@ -56,8 +56,12 @@ public class Booleans
 			return true;
 		}
 
-		protected static BinaryFunctionQueryable getDependency(boolean x, boolean y)
+		protected static BinaryFunctionQueryable getDependency(boolean x, boolean y, boolean track)
 		{
+			if (!track)
+			{
+				return null;
+			}
 			if (x == false)
 			{
 				if (y == false)
@@ -88,13 +92,13 @@ public class Booleans
 	
 	protected static class Or extends BinaryFunction<Boolean,Boolean,Boolean> implements CumulableFunction<Boolean>
 	{
-		protected static BinaryFunctionQueryable s_queryableBoth = new BinaryFunctionQueryable("Booleans.Or", Inputs.BOTH);
+		protected static final transient BinaryFunctionQueryable s_queryableBoth = new BinaryFunctionQueryable("Booleans.Or", Inputs.BOTH);
 
-		protected static BinaryFunctionQueryable s_queryableAny = new BinaryFunctionQueryable("Booleans.Or", Inputs.ANY);
+		protected static final transient BinaryFunctionQueryable s_queryableAny = new BinaryFunctionQueryable("Booleans.Or", Inputs.ANY);
 
-		protected static BinaryFunctionQueryable s_queryableLeft = new BinaryFunctionQueryable("Booleans.Or", Inputs.LEFT);
+		protected static final transient BinaryFunctionQueryable s_queryableLeft = new BinaryFunctionQueryable("Booleans.Or", Inputs.LEFT);
 
-		protected static BinaryFunctionQueryable s_queryableRight = new BinaryFunctionQueryable("Booleans.Or", Inputs.RIGHT);
+		protected static final transient BinaryFunctionQueryable s_queryableRight = new BinaryFunctionQueryable("Booleans.Or", Inputs.RIGHT);
 
 		protected Or()
 		{
@@ -102,12 +106,12 @@ public class Booleans
 		}
 
 		@Override
-		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
 			boolean left = (Boolean) inputs[0];
 			boolean right = (Boolean) inputs[1];
 			outputs[0] = left || right;
-			return getDependency(left, right);
+			return getDependency(left, right, track);
 		}
 
 		@Override
@@ -122,8 +126,12 @@ public class Booleans
 			return true;
 		}
 
-		protected static BinaryFunctionQueryable getDependency(boolean x, boolean y)
+		protected static BinaryFunctionQueryable getDependency(boolean x, boolean y, boolean track)
 		{
+			if (!track)
+			{
+				return null;
+			}
 			if (x == true)
 			{
 				if (y == true)

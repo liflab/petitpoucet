@@ -71,13 +71,29 @@ public class Fork implements Function
 	}
 
 	@Override
-	public ForkQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+	public ForkQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 	{
 		for (int i = 0; i < m_outArity; i++)
 		{
 			outputs[i] = inputs[0];
 		}
-		return m_forkQueryable;
+		if (track)
+		{
+			return m_forkQueryable;
+		}
+		return null;
+	}
+	
+	@Override
+	public ForkQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	{
+		return evaluate(inputs, outputs, c, true);
+	}
+	
+	@Override
+	public ForkQueryable evaluate(Object[] inputs, Object[] outputs, boolean track)
+	{
+		return evaluate(inputs, outputs, null, track);
 	}
 
 	@Override

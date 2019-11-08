@@ -152,9 +152,9 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 			return m_function;
 		}
 	}
-
+	
 	@Override
-	public GroupFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public GroupFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		for (int i = 0; i < m_inputPlaceholders.length; i++)
 		{
@@ -162,9 +162,19 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 		}
 		for (int i = 0; i < m_outputPlaceholders.length; i++)
 		{
-			outputs[i] = m_outputPlaceholders[i].getOutput(c);
+			outputs[i] = m_outputPlaceholders[i].getOutput(c, track);
+		}
+		if (!track)
+		{
+			m_queryable = null;
 		}
 		return m_queryable;
+	}
+
+	@Override
+	public GroupFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	{
+		return evaluate(inputs, outputs, c, true);
 	}
 
 	@Override
@@ -182,7 +192,10 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 		{
 			f.reset();
 		}
-		m_queryable.reset();
+		if (m_queryable != null)
+		{
+			m_queryable.reset();
+		}
 	}
 
 	protected class CircuitFunctionPlaceholder implements CircuitElement, Outputable
@@ -252,23 +265,35 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 		}
 
 		@Override
-		public Object getOutput(Context c)
+		public Object getOutput(Context c, boolean track)
 		{
 			if (!m_computed)
 			{
 				if (m_upstreamConnection != null)
 				{
 					CircuitFunction cf = (CircuitFunction) m_upstreamConnection.getObject();
-					m_value = cf.getOutput(m_upstreamConnection.getIndex(), c);
+					m_value = cf.getOutput(m_upstreamConnection.getIndex(), c, track);
 				}
 			}
 			return m_value;
 		}
-
+		
+		@Override
+		public Object getOutput(Context c)
+		{
+			return getOutput(0, c, true);
+		}
+		
 		@Override
 		public Object getOutput(int index, Context c)
 		{
-			return getOutput(c);
+			return getOutput(index, c, true);
+		}
+
+		@Override
+		public Object getOutput(int index, Context c, boolean track)
+		{
+			return getOutput(c, track);
 		}
 	}
 
@@ -348,7 +373,13 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 	@Override
 	public GroupFunctionQueryable evaluate(Object[] inputs, Object[] outputs) 
 	{
-		return evaluate(inputs, outputs, m_context);
+		return evaluate(inputs, outputs, m_context, true);
+	}
+	
+	@Override
+	public GroupFunctionQueryable evaluate(Object[] inputs, Object[] outputs, boolean track) 
+	{
+		return evaluate(inputs, outputs, m_context, track);
 	}
 
 	@Override

@@ -56,13 +56,17 @@ public class Filter extends BinaryFunction<List,List,List>
 	}
 
 	@Override
-	public FilterQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public FilterQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		List<?> list1 = (List<?>) inputs[0];
 		List<?> list2 = (List<?>) inputs[1];
 		List<Object> list_out = new ArrayList<Object>();
 		int len = Math.min(list1.size(), list2.size());
-		List<Boolean> included = new ArrayList<Boolean>(len);
+		List<Boolean> included = null;
+		if (track)
+		{
+			included = new ArrayList<Boolean>(len);
+		}
 		for (int i = 0; i < len; i++)
 		{
 			Object o2 = list2.get(i);
@@ -72,12 +76,19 @@ public class Filter extends BinaryFunction<List,List,List>
 				put = true;
 				list_out.add(list1.get(i));
 			}
-			included.add(put);
+			if (track)
+			{
+				included.add(put);
+			}
 		}
 		outputs[0] = list_out;
-		return new FilterQueryable(toString(), included);
+		if (track)
+		{
+			return new FilterQueryable(toString(), included);
+		}
+		return null;
 	}
-	
+
 	public static class FilterQueryable extends FunctionQueryable
 	{
 		/**
@@ -90,7 +101,7 @@ public class Filter extends BinaryFunction<List,List,List>
 			super(reference, 2, 1);
 			m_included = included;
 		}
-		
+
 		@Override
 		public FilterQueryable duplicate(boolean with_state)
 		{
@@ -98,7 +109,7 @@ public class Filter extends BinaryFunction<List,List,List>
 			included.addAll(m_included);
 			return new FilterQueryable(m_reference, included);
 		}
-		
+
 		@Override
 		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
 				TraceabilityNode root, Tracer factory)
@@ -153,9 +164,9 @@ public class Filter extends BinaryFunction<List,List,List>
 			}
 			return leaves;
 		}
-		
+
 	}
-	
+
 	@Override
 	public String toString()
 	{

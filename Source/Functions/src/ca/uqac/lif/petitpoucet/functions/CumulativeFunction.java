@@ -37,17 +37,33 @@ public class CumulativeFunction<T> implements Function
 	@Override
 	public final FunctionQueryable evaluate(Object[] inputs, Object[] outputs) 
 	{
-		return evaluate(inputs, outputs, null);
+		return evaluate(inputs, outputs, null, true);
+	}
+	
+	@Override
+	public final FunctionQueryable evaluate(Object[] inputs, Object[] outputs, boolean track)
+	{
+		return evaluate(inputs, outputs, null, track);
+	}
+	
+	@Override
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context)
+	{
+		return evaluate(inputs, outputs, context, true);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context) 
+	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context context, boolean track) 
 	{
 		Object[] ins = new Object[] {m_currentValue, inputs[0]};
-		m_function.evaluate(ins, outputs, context);
+		m_function.evaluate(ins, outputs, context, track);
 		m_currentValue = (T) outputs[0];
-		return new FunctionQueryable(toString(), 1, 1);
+		if (track)
+		{
+			return new FunctionQueryable(toString(), 1, 1);
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

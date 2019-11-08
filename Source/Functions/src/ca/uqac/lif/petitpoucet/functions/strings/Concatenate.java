@@ -52,7 +52,7 @@ public class Concatenate implements Function
 	}
 
 	@Override
-	public ConcatenateQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public ConcatenateQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		int[] borders = new int[inputs.length];
 		int[] lengths = new int[inputs.length];
@@ -66,12 +66,19 @@ public class Concatenate implements Function
 				s = inputs[i].toString();
 			}
 			out += s;
-			len += s.length();
-			borders[i] = len;
-			lengths[i] = s.length();
+			if (track)
+			{
+				len += s.length();
+				borders[i] = len;
+				lengths[i] = s.length();
+			}
 		}
 		outputs[0] = out;
-		return new ConcatenateQueryable(toString(), borders, lengths);
+		if (track)
+		{
+			return new ConcatenateQueryable(toString(), borders, lengths);
+		}
+		return null;
 	}
 
 	@Override
@@ -175,7 +182,19 @@ public class Concatenate implements Function
 	@Override
 	public ConcatenateQueryable evaluate(Object[] inputs, Object[] outputs) 
 	{
-		return evaluate(inputs, outputs, null);
+		return (ConcatenateQueryable) evaluate(inputs, outputs, null, true);
+	}
+	
+	@Override
+	public ConcatenateQueryable evaluate(Object[] inputs, Object[] outputs, boolean track) 
+	{
+		return (ConcatenateQueryable) evaluate(inputs, outputs, null, track);
+	}
+	
+	@Override
+	public ConcatenateQueryable evaluate(Object[] inputs, Object[] outputs, Context c) 
+	{
+		return (ConcatenateQueryable) evaluate(inputs, outputs, c, true);
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public class RegexMatches extends UnaryFunction<String,Boolean>
 	 * The pattern to find
 	 */
 	protected transient Pattern m_pattern;
-	
+
 	/**
 	 * Creates a new instance of the function
 	 * @param regex The regex to find
@@ -60,43 +60,51 @@ public class RegexMatches extends UnaryFunction<String,Boolean>
 	}
 
 	@Override
-	public RegexMatchesQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public RegexMatchesQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		String s = inputs[0].toString();
 		Matcher mat = m_pattern.matcher(s);
 		if (mat.find())
 		{
 			outputs[0] = true;
-			int start_index = mat.start();
-			int end_index = mat.end() - 1;
-			return new RegexMatchesQueryable(toString(), start_index, end_index);
+			if (track)
+			{
+				int start_index = mat.start();
+				int end_index = mat.end() - 1;
+				return new RegexMatchesQueryable(toString(), start_index, end_index);
+			}
+			return null;
 		}
 		else
 		{
 			outputs[0] = false;
-			return new RegexMatchesQueryable(toString(), -1, -1);
+			if (track)
+			{
+				return new RegexMatchesQueryable(toString(), -1, -1);
+			}
+			return null;
 		}
 	}
-	
+
 	public static class RegexMatchesQueryable extends FunctionQueryable
 	{
 		/**
 		 * The start index of the pattern on the last string that was processed
 		 */
 		protected int m_startIndex = -1;
-		
+
 		/**
 		 * The end index of the pattern on the last string that was processed
 		 */
 		protected int m_endIndex = -1;
-		
+
 		public RegexMatchesQueryable(String reference, int start_index, int end_index)
 		{
 			super(reference, 1, 1);
 			m_startIndex = start_index;
 			m_endIndex = end_index;
 		}
-		
+
 		@Override
 		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
 				TraceabilityNode root, Tracer factory)
@@ -121,14 +129,14 @@ public class RegexMatches extends UnaryFunction<String,Boolean>
 			}
 			return leaves;
 		}
-		
+
 		@Override
 		public RegexMatchesQueryable duplicate(boolean with_state)
 		{
 			return new RegexMatchesQueryable(m_reference, m_startIndex, m_endIndex);
 		}
 	}
-	
+
 	@Override
 	public String toString()
 	{

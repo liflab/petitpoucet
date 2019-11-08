@@ -49,9 +49,9 @@ public class RegexFind extends UnaryFunction<String,String>
 	 * The pattern to find
 	 */
 	protected transient Pattern m_pattern;
-	
+
 	protected transient RegexNotFoundQueryable m_notFoundQueryable;
-	
+
 	/**
 	 * Creates a new instance of the function
 	 * @param regex The regex to find
@@ -64,7 +64,7 @@ public class RegexFind extends UnaryFunction<String,String>
 	}
 
 	@Override
-	public RegexFindQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
+	public RegexFindQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		String s = inputs[0].toString();
 		int length = s.length();
@@ -72,17 +72,25 @@ public class RegexFind extends UnaryFunction<String,String>
 		if (mat.find())
 		{
 			outputs[0] = mat.group();
-			int start_index = mat.start();
-			int end_index = mat.end() - 1;
-			return new RegexFoundQueryable(toString(), start_index, end_index, length);
+			if (track)
+			{
+				int start_index = mat.start();
+				int end_index = mat.end() - 1;
+				return new RegexFoundQueryable(toString(), start_index, end_index, length);
+			}
+			return null;
 		}
 		else
 		{
 			outputs[0] = "";
-			return m_notFoundQueryable;
+			if (track)
+			{
+				return m_notFoundQueryable;
+			}
+			return null;
 		}
 	}
-	
+
 	public static abstract class RegexFindQueryable extends FunctionQueryable
 	{
 		public RegexFindQueryable(String reference)
@@ -90,24 +98,24 @@ public class RegexFind extends UnaryFunction<String,String>
 			super(reference, 1, 1);
 		}
 	}
-	
+
 	public static class RegexFoundQueryable extends RegexFindQueryable
 	{
 		/**
 		 * The start index of the pattern on the last string that was processed
 		 */
 		protected int m_startIndex = -1;
-		
+
 		/**
 		 * The end index of the pattern on the last string that was processed
 		 */
 		protected int m_endIndex = -1;
-		
+
 		/**
 		 * The length of the last evaluated string
 		 */
 		protected int m_length;
-		
+
 		public RegexFoundQueryable(String reference, int start_index, int end_index, int length)
 		{
 			super(reference);
@@ -115,7 +123,7 @@ public class RegexFind extends UnaryFunction<String,String>
 			m_endIndex = end_index;
 			m_length = length;
 		}
-		
+
 		@Override
 		protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
 				TraceabilityNode root, Tracer factory)
@@ -146,14 +154,14 @@ public class RegexFind extends UnaryFunction<String,String>
 			}
 			return leaves;
 		}
-		
+
 		@Override
 		public RegexFoundQueryable duplicate(boolean with_state)
 		{
 			return new RegexFoundQueryable(m_reference, m_startIndex, m_endIndex, m_length);
 		}
 	}
-	
+
 	public static class RegexNotFoundQueryable extends RegexFindQueryable
 	{
 		public RegexNotFoundQueryable(String reference)
@@ -161,7 +169,7 @@ public class RegexFind extends UnaryFunction<String,String>
 			super(reference);
 		}
 	}
-	
+
 	@Override
 	public String toString()
 	{
