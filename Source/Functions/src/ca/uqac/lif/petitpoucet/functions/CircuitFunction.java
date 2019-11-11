@@ -219,7 +219,10 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 		if (with_state)
 		{
 			cf.m_context.putAll(m_context);
-			cf.m_queryable = m_queryable.duplicate(true);
+			if (m_queryable != null)
+			{
+				cf.m_queryable = m_queryable.duplicate(true);
+			}
 			for (int i = 0; i < m_outputValues.length; i++)
 			{
 				cf.m_outputValues[i] = m_outputValues[i];
@@ -295,6 +298,7 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 			m_queryable.setQueryable(q);
 			return m_queryable;
 		}
+		m_queryable = null;
 		return null;
 	}
 	
@@ -307,7 +311,7 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 	@Override
 	public final Queryable evaluate(Object[] inputs, Object[] outputs) 
 	{
-		return evaluate(inputs, outputs, m_context);
+		return evaluate(inputs, outputs, m_context, true);
 	}
 	
 	@Override

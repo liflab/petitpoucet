@@ -169,9 +169,17 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 			m_queryable = null;
 		}
 		// Flush memory
-		for (CircuitFunction cf : m_innerFunctions)
+		/*for (CircuitFunctionPlaceholder p : m_inputPlaceholders)
 		{
-			cf.reset();
+			p.reset();
+		}
+		for (CircuitFunctionPlaceholder p : m_outputPlaceholders)
+		{
+			p.reset();
+		}*/
+		for (Function f : m_innerFunctions)
+		{
+			f.reset();
 		}
 		return m_queryable;
 	}
@@ -225,6 +233,7 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 		public void reset()
 		{
 			m_computed = false;
+			m_value = null;
 		}
 
 		@Override
