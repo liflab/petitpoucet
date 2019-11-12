@@ -59,12 +59,12 @@ public class TraceabilityNodeDotRenderer implements TraceabilityNodeRenderer<Str
 			return dob.toString();
 		}
 		// Short
-		Designator d = dob.getDesignator().peek();
-		if (d instanceof NthInput || d instanceof NthOutput)
-		{
-			return dob.getObject().toString();
-		}
-		return dob.toString();
+		return getShortDesignator(dob.getDesignator()) + " of " + dob.getObject().toString();
+	}
+	
+	protected String getShortDesignator(Designator d)
+	{
+		return d.toString();
 	}
 	
 	protected String formatColor(DesignatedObject dob)

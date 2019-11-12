@@ -85,7 +85,7 @@ public class Ltl
 		{
 			List<Boolean> left = (List<Boolean>) inputs[0];
 			List<Boolean> right = (List<Boolean>) inputs[1];
-			int len = Math.max(left.size(), right.size());
+			int len = Math.min(left.size(), right.size());
 			List<Boolean> out = new ArrayList<Boolean>(len);
 			List<BinaryFunctionQueryable.Inputs> out_queryables = new ArrayList<BinaryFunctionQueryable.Inputs>(len);
 			for (int i = 0; i < len; i++)
@@ -149,6 +149,12 @@ public class Ltl
 			}
 			return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.And", out_queryables);
 		}
+		
+		@Override
+		public String toString()
+		{
+			return "Ltl.And";
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -185,7 +191,7 @@ public class Ltl
 		{
 			List<Boolean> left = (List<Boolean>) inputs[0];
 			List<Boolean> right = (List<Boolean>) inputs[1];
-			int len = Math.max(left.size(), right.size());
+			int len = Math.min(left.size(), right.size());
 			List<Boolean> out = new ArrayList<Boolean>(len);
 			List<BinaryFunctionQueryable.Inputs> out_queryables = new ArrayList<BinaryFunctionQueryable.Inputs>(len);
 			for (int i = 0; i < len; i++)
@@ -225,6 +231,12 @@ public class Ltl
 				return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Or", out_queryables);
 			}
 			return null;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "Ltl.Or";
 		}
 	}
 
@@ -262,7 +274,7 @@ public class Ltl
 		{
 			List<Boolean> left = (List<Boolean>) inputs[0];
 			List<Boolean> right = (List<Boolean>) inputs[1];
-			int len = Math.max(left.size(), right.size());
+			int len = Math.min(left.size(), right.size());
 			List<Boolean> out = new ArrayList<Boolean>(len);
 			List<BinaryFunctionQueryable.Inputs> out_queryables = new ArrayList<BinaryFunctionQueryable.Inputs>(len);
 			for (int i = 0; i < len; i++)
@@ -275,17 +287,6 @@ public class Ltl
 					{
 						if (b_right == true)
 						{
-							out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
-						}
-						else
-						{
-							out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
-						}
-					}
-					else
-					{
-						if (b_right == true)
-						{
 							out_queryables.add(BinaryFunctionQueryable.Inputs.RIGHT);
 						}
 						else
@@ -293,15 +294,33 @@ public class Ltl
 							out_queryables.add(BinaryFunctionQueryable.Inputs.BOTH);
 						}
 					}
+					else
+					{
+						// b_left = false
+						if (b_right == true)
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.ANY);
+						}
+						else
+						{
+							out_queryables.add(BinaryFunctionQueryable.Inputs.LEFT);
+						}
+					}
 				}
-				out.add(b_left || b_right);
+				out.add(!b_left || b_right);
 			}
 			outputs[0] = out;
 			if (track)
 			{
-				return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Or", out_queryables);
+				return new LtlBinaryConnective.LtlBinaryConnectiveQueryable("Ltl.Implies", out_queryables);
 			}
 			return null;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "Ltl.Implies";
 		}
 	}
 
@@ -410,6 +429,7 @@ public class Ltl
 			{
 				out_list.add(in_list.get(i));
 			}
+			out_list.add(false);
 			outputs[0] = out_list;
 			if (track)
 			{
@@ -422,6 +442,12 @@ public class Ltl
 				return nq;
 			}
 			return null;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "Ltl.Next";
 		}
 
 		protected static class NextQueryable extends FunctionQueryable
@@ -450,10 +476,18 @@ public class Ltl
 				{
 					NthElement ne = (NthElement) d_head;
 					int index = ne.getIndex();
-					if (index < 0 || index >= m_length - 1)
+					if (index < 0 || index >= m_length)
 					{
 						TraceabilityNode n = factory.getUnknownNode();
 						root.addChild(n, Quality.NONE);
+						list.add(n);
+					}
+					else if (index == m_length - 1)
+					{
+						// Nothing; this is the case where X is false on the last
+						// event of the input list
+						TraceabilityNode n = factory.getObjectNode(Designator.nothing, this);
+						root.addChild(n, Quality.EXACT);
 						list.add(n);
 					}
 					else
