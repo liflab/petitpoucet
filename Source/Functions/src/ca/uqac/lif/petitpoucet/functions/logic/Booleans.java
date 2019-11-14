@@ -7,6 +7,8 @@ import ca.uqac.lif.azrael.ReadException;
 import ca.uqac.lif.petitpoucet.common.Context;
 import ca.uqac.lif.petitpoucet.functions.BinaryFunction;
 import ca.uqac.lif.petitpoucet.functions.CumulableFunction;
+import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
+import ca.uqac.lif.petitpoucet.functions.UnaryFunction;
 import ca.uqac.lif.petitpoucet.functions.BinaryFunction.BinaryFunctionQueryable.Inputs;
 
 public class Booleans 
@@ -15,9 +17,53 @@ public class Booleans
 	
 	public static final transient Or or = new Or();
 	
+	public static final transient Not not = new Not();
+	
 	private Booleans()
 	{
 		super();
+	}
+	
+	protected static class Not extends UnaryFunction<Boolean,Boolean>
+	{
+		protected static final transient FunctionQueryable s_queryable = new FunctionQueryable("Not", 1, 1);
+		
+		protected Not()
+		{
+			super(Boolean.class, Boolean.class);
+		}
+
+		@Override
+		public Object print(ObjectPrinter<?> printer) throws PrintException 
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object read(ObjectReader<?> reader, Object o) throws ReadException 
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Not duplicate(boolean with_state) 
+		{
+			return this;
+		}
+
+		@Override
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
+		{
+			boolean b = (Boolean) inputs[0];
+			outputs[0] = !b;
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
+		}
 	}
 	
 	protected static class And extends BinaryFunction<Boolean,Boolean,Boolean> implements CumulableFunction<Boolean>

@@ -27,8 +27,10 @@ import ca.uqac.lif.petitpoucet.functions.UnaryFunction;
 public class GetSize extends UnaryFunction<List,Object>
 {
 	protected static final transient Map<Integer,GetSizeQueryable> s_queryablePool = new LinkedHashMap<Integer,GetSizeQueryable>();
+	
+	public static final transient GetSize instance = new GetSize();
 
-	public GetSize(int index)
+	GetSize()
 	{
 		super(List.class, Object.class);
 	}
@@ -62,10 +64,10 @@ public class GetSize extends UnaryFunction<List,Object>
 	{
 		protected int m_listSize;
 
-		public GetSizeQueryable(String reference, int index) 
+		public GetSizeQueryable(String reference, int list_size) 
 		{
 			super(reference, 1, 1);
-			m_listSize = index;
+			m_listSize = list_size;
 		}
 
 		@Override
