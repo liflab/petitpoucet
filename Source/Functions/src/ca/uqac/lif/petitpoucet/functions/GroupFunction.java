@@ -602,8 +602,9 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 		
 		@Override
 		public List<TraceabilityNode> query(TraceabilityQuery q, 
-				Designator d, TraceabilityNode root, Tracer factory)
+				Designator d, TraceabilityNode root, Tracer original_factory)
 		{
+			Tracer factory = original_factory.getSubTracer(toString());
 			if (q instanceof UpstreamQuery && d.peek() instanceof NthOutput)
 			{
 				return queryOutput(q, ((NthOutput) d.peek()).getIndex(), d.tail(), root, factory);

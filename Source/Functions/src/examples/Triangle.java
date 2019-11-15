@@ -2,30 +2,33 @@ package examples;
 
 import java.util.List;
 
+import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
+import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.functions.CircuitFunction;
 import ca.uqac.lif.petitpoucet.functions.Constant;
 import ca.uqac.lif.petitpoucet.functions.Equals;
 import ca.uqac.lif.petitpoucet.functions.Fork;
 import ca.uqac.lif.petitpoucet.functions.GroupFunction;
+import ca.uqac.lif.petitpoucet.functions.TreeDrawer;
 import ca.uqac.lif.petitpoucet.functions.lists.GetElement;
 import ca.uqac.lif.petitpoucet.functions.lists.GetSize;
 import ca.uqac.lif.petitpoucet.functions.logic.Booleans;
-import ca.uqac.lif.petitpoucet.functions.logic.IfThenElse;
+import ca.uqac.lif.petitpoucet.functions.logic.LazyBooleans;
 import ca.uqac.lif.petitpoucet.functions.numbers.Numbers;
 import ca.uqac.lif.petitpoucet.functions.reflect.InstanceOf;
+import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeRenderer.CaptionStyle;
 
 public class Triangle
 {
 	public static void main(String[] args)
 	{
 		IsATriangle is_a_triangle = new IsATriangle();
-		List<Object> list = Utilities.createList(3, 8);
-		Object[] outputs = new Object[1];
-		is_a_triangle.evaluate(new Object[] {list}, outputs);
-		System.out.println(outputs[0]);
+		List<Object> list = Utilities.createList(3, 4, 5);
+		// Use the shortcut from TreeDrawer to evaluate function and answer query
+		TreeDrawer.drawTree(CausalityQuery.instance, NthOutput.get(0), CaptionStyle.SHORT, false, "/tmp/out.png", is_a_triangle, list);
 	}
 	
-	protected static class IsATriangle extends GroupFunction
+	public static class IsATriangle extends GroupFunction
 	{
 		public IsATriangle()
 		{
@@ -40,31 +43,19 @@ public class Triangle
 			CircuitFunction eq_3 = new CircuitFunction(Equals.instance);
 			CircuitFunction three = new CircuitFunction(new Constant(3));
 			connect(three, 0, eq_3, 0);
-			connect(size, 0, eq_3, 1);
-			CircuitFunction not_1 = new CircuitFunction(Booleans.not);
-			connect(eq_3, 0, not_1, 0);
-			CircuitFunction ite_1 = new CircuitFunction(IfThenElse.instance);
-			connect(not_1, 0, ite_1, 0);
-			CircuitFunction false_1 = new CircuitFunction(new Constant(false));
-			connect(false_1, 0, ite_1, 1);
+			connect(size, 0, eq_3, 1);			
+			CircuitFunction ite_1 = new CircuitFunction(LazyBooleans.and);
+			connect(eq_3, 0, ite_1, 0);
 			CircuitFunction numbers = new CircuitFunction(new AllNumbers());
 			connect(f1, 1, numbers, 0);
-			CircuitFunction not_2 = new CircuitFunction(Booleans.not);
-			connect(numbers, 0, not_2, 0);
-			CircuitFunction ite_2 = new CircuitFunction(IfThenElse.instance);
-			connect(not_2, 0, ite_2, 0);
-			CircuitFunction false_2 = new CircuitFunction(new Constant(false));
-			connect(false_2, 0, ite_2, 1);
-			connect(ite_2, 0, ite_1, 2);
+			CircuitFunction ite_2 = new CircuitFunction(LazyBooleans.and);
+			connect(numbers, 0, ite_2, 0);
+			connect(ite_2, 0, ite_1, 1);
 			CircuitFunction positive = new CircuitFunction(new AllPositive());
 			connect(f1, 2, positive, 0);
-			CircuitFunction not_3 = new CircuitFunction(Booleans.not);
-			connect(positive, 0, not_3, 0);
-			CircuitFunction ite_3 = new CircuitFunction(IfThenElse.instance);
-			connect(not_3, 0, ite_3, 0);
-			CircuitFunction false_3 = new CircuitFunction(new Constant(false));
-			connect(false_3, 0, ite_3, 1);
-			connect(ite_3, 0, ite_2, 2);
+			CircuitFunction ite_3 = new CircuitFunction(LazyBooleans.and);
+			connect(positive, 0, ite_3, 0);
+			connect(ite_3, 0, ite_2, 1);
 			CircuitFunction f3 = new CircuitFunction(new Fork(List.class, 3));
 			connect(f2, 1, f3, 0);
 			CircuitFunction te_1 = new CircuitFunction(new TriangleInequality(0, 1, 2));
@@ -80,7 +71,7 @@ public class Triangle
 			CircuitFunction and_2 = new CircuitFunction(Booleans.and);
 			connect(and_1, 0, and_2, 0);
 			connect(te_3, 0, and_2, 1);
-			connect(and_2, 0, ite_3, 2);
+			connect(and_2, 0, ite_3, 1);
 		}
 	}
 	
@@ -184,7 +175,7 @@ public class Triangle
 		public TriangleInequality(int x, int y, int z)
 		{
 			super(1, 1);
-			setName("Triangle inequality");
+			setName(x + "+" + y + ">" + z);
 			m_x = x;
 			m_y = y;
 			m_z = z;

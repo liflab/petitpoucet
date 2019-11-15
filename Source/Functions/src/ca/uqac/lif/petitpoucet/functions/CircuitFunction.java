@@ -154,16 +154,36 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 	@Override
 	public final Object getOutput(int index, Context c, boolean track)
 	{
-		if (!m_computed)
+		if (m_computed)
 		{
-			Object[] inputs = new Object[m_inputConnections.length];
-			for (int i = 0; i < m_inputConnections.length; i++)
+			try
 			{
-				CircuitConnection cc = m_inputConnections[i];
-				Outputable f = (Outputable) cc.getObject();
-				inputs[i] = f.getOutput(cc.getIndex(), c, track);
+				return m_outputValues[index];
 			}
-			evaluate(inputs, m_outputValues, c, track); 
+			catch (ArrayIndexOutOfBoundsException e)
+			{
+				throw new FunctionException(e);
+			} 
+		}
+		Object[] inputs = new Object[m_inputConnections.length];
+		for (int i = 0; i < m_inputConnections.length; i++)
+		{
+			CircuitConnection cc = m_inputConnections[i];
+			Outputable f = (Outputable) cc.getObject();
+			inputs[i] = f.getOutput(cc.getIndex(), c, track);
+			if (isLazy())
+			{
+				// Try to evaluate function with a partial array of input arguments
+				evaluate(inputs, m_outputValues, c, track);
+				if (m_computed)
+				{
+					break;
+				}
+			}
+		}
+		if (!isLazy())
+		{
+			evaluate(inputs, m_outputValues, c, track);
 		}
 		try
 		{
@@ -172,7 +192,7 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 		catch (ArrayIndexOutOfBoundsException e)
 		{
 			throw new FunctionException(e);
-		}
+		} 
 	}
 	
 	@Override
@@ -292,6 +312,28 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 	public final Queryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 	{
 		Queryable q = m_function.evaluate(inputs, outputs, c, track);
+		boolean all_null = true;
+		if (isLazy())
+		{
+			// If the inner function is lazy, we consider it as evaluated only if it
+			// returns at least one non-null object in its output array
+			for (int i = 0; i < outputs.length; i++)
+			{
+				if (outputs[i] != null)
+				{
+					all_null = false;
+					break;
+				}
+			}
+		}
+		else
+		{
+			all_null = false;
+		}
+		if (all_null)
+		{
+			return null;
+		}
 		m_computed = true;
 		if (track)
 		{
@@ -336,6 +378,11 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 	public String toString()
 	{
 		return m_function.toString();
+	}
+	
+	public boolean isLazy()
+	{
+		return m_function instanceof LazyFunction;
 	}
 	
 	public static class CircuitFunctionQueryable extends CircuitQueryable implements StateDuplicable<CircuitFunctionQueryable>

@@ -35,8 +35,9 @@ import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.common.Context;
 import ca.uqac.lif.petitpoucet.functions.Function;
 import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
+import ca.uqac.lif.petitpoucet.functions.LazyFunction;
 
-public class IfThenElse implements Function
+public class IfThenElse implements Function, LazyFunction
 {
 	public static final transient IfThenElse instance = new IfThenElse();
 	
@@ -76,6 +77,10 @@ public class IfThenElse implements Function
 		FunctionQueryable q = null;
 		if (b)
 		{
+			if (inputs[1] == null)
+			{
+				return null;
+			}
 			outputs[0] = inputs[1];
 			if (track)
 			{
@@ -84,6 +89,10 @@ public class IfThenElse implements Function
 		}
 		else
 		{
+			if (inputs[2] == null)
+			{
+				return null;
+			}
 			outputs[0] = inputs[2];
 			if (track)
 			{
@@ -117,17 +126,18 @@ public class IfThenElse implements Function
 			TraceabilityNode and = factory.getAndNode();
 			root.addChild(and, Quality.EXACT);
 			TraceabilityNode cond_n = factory.getObjectNode(NthInput.get(0), this);
+			and.addChild(cond_n, Quality.EXACT);
 			leaves.add(cond_n);
 			if (m_first)
 			{
 				TraceabilityNode n = factory.getObjectNode(new ComposedDesignator(d, NthInput.get(1)), this);
-				root.addChild(n, Quality.EXACT);
+				and.addChild(n, Quality.EXACT);
 				leaves.add(n);
 			}
 			else
 			{
 				TraceabilityNode n = factory.getObjectNode(new ComposedDesignator(d, NthInput.get(2)), this);
-				root.addChild(n, Quality.EXACT);
+				and.addChild(n, Quality.EXACT);
 				leaves.add(n);
 			}
 			return leaves;

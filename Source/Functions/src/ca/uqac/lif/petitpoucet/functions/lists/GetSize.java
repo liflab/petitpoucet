@@ -79,7 +79,7 @@ public class GetSize extends UnaryFunction<List,Object>
 			root.addChild(and, Quality.EXACT);
 			for (int i = 0; i < m_listSize; i++)
 			{
-				ComposedDesignator cd = new ComposedDesignator(d, NthElement.get(m_listSize), NthInput.get(0));
+				ComposedDesignator cd = new ComposedDesignator(d, NthElement.get(i), NthInput.get(0));
 				TraceabilityNode child = factory.getObjectNode(cd, this);
 				and.addChild(child, Quality.EXACT);
 				leaves.add(child);

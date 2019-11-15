@@ -7,80 +7,31 @@ import ca.uqac.lif.azrael.ReadException;
 import ca.uqac.lif.petitpoucet.common.Context;
 import ca.uqac.lif.petitpoucet.functions.BinaryFunction;
 import ca.uqac.lif.petitpoucet.functions.CumulableFunction;
-import ca.uqac.lif.petitpoucet.functions.FunctionQueryable;
-import ca.uqac.lif.petitpoucet.functions.UnaryFunction;
+import ca.uqac.lif.petitpoucet.functions.LazyFunction;
 import ca.uqac.lif.petitpoucet.functions.BinaryFunction.BinaryFunctionQueryable.Inputs;
 
-public class Booleans 
+public class LazyBooleans 
 {
 	public static final transient And and = new And();
 	
 	public static final transient Or or = new Or();
 	
-	public static final transient Not not = new Not();
+	public static final transient Booleans.Not not = Booleans.not;
 	
-	private Booleans()
+	private LazyBooleans()
 	{
 		super();
 	}
 	
-	protected static class Not extends UnaryFunction<Boolean,Boolean>
+	protected static class And extends BinaryFunction<Boolean,Boolean,Boolean> implements CumulableFunction<Boolean>, LazyFunction
 	{
-		protected static final transient FunctionQueryable s_queryable = new FunctionQueryable("Not", 1, 1);
-		
-		protected Not()
-		{
-			super(Boolean.class, Boolean.class);
-		}
+		protected static final transient BinaryFunctionQueryable s_queryableBoth = new BinaryFunctionQueryable("LazyBooleans.And", Inputs.BOTH);
 
-		@Override
-		public Object print(ObjectPrinter<?> printer) throws PrintException 
-		{
-			// TODO Auto-generated method stub
-			return null;
-		}
+		protected static final transient BinaryFunctionQueryable s_queryableAny = new BinaryFunctionQueryable("LazyBooleans.And", Inputs.ANY);
 
-		@Override
-		public Object read(ObjectReader<?> reader, Object o) throws ReadException 
-		{
-			// TODO Auto-generated method stub
-			return null;
-		}
+		protected static final transient BinaryFunctionQueryable s_queryableLeft = new BinaryFunctionQueryable("LazyBooleans.And", Inputs.LEFT);
 
-		@Override
-		public Not duplicate(boolean with_state) 
-		{
-			return this;
-		}
-
-		@Override
-		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
-		{
-			boolean b = (Boolean) inputs[0];
-			outputs[0] = !b;
-			if (track)
-			{
-				return s_queryable;
-			}
-			return null;
-		}
-		
-		@Override
-		public String toString()
-		{
-			return "Not";
-		}
-	}
-	
-	protected static class And extends BinaryFunction<Boolean,Boolean,Boolean> implements CumulableFunction<Boolean>
-	{
-		protected static final transient BinaryFunctionQueryable s_queryableBoth = new BinaryFunctionQueryable("Booleans.And", Inputs.BOTH);
-
-		protected static final transient BinaryFunctionQueryable s_queryableAny = new BinaryFunctionQueryable("Booleans.And", Inputs.ANY);
-
-		protected static final transient BinaryFunctionQueryable s_queryableLeft = new BinaryFunctionQueryable("Booleans.And", Inputs.LEFT);
-
-		protected static final transient BinaryFunctionQueryable s_queryableRight = new BinaryFunctionQueryable("Booleans.And", Inputs.RIGHT);
+		protected static final transient BinaryFunctionQueryable s_queryableRight = new BinaryFunctionQueryable("LazyBooleans.And", Inputs.RIGHT);
 
 		protected And()
 		{
@@ -90,8 +41,21 @@ public class Booleans
 		@Override
 		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 		{
-			boolean left = (Boolean) inputs[0];
-			boolean right = (Boolean) inputs[1];
+			Boolean left = (Boolean) inputs[0];
+			if (left == false)
+			{
+				outputs[0] = false;
+				if (track)
+				{
+					return s_queryableLeft;
+				}
+				return null;
+			}
+			Boolean right = (Boolean) inputs[1];
+			if (right == null)
+			{
+				return null;
+			}
 			outputs[0] = left && right;
 			return getDependency(left, right, track);
 		}
@@ -144,7 +108,7 @@ public class Booleans
 		@Override
 		public String toString()
 		{
-			return "And";
+			return "LazyAnd";
 		}
 	}
 	
@@ -166,8 +130,21 @@ public class Booleans
 		@Override
 		public BinaryFunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
 		{
-			boolean left = (Boolean) inputs[0];
-			boolean right = (Boolean) inputs[1];
+			Boolean left = (Boolean) inputs[0];
+			if (left == true)
+			{
+				outputs[0] = true;
+				if (track)
+				{
+					return s_queryableLeft;
+				}
+				return null;
+			}
+			Boolean right = (Boolean) inputs[1];
+			if (right == null)
+			{
+				return null;
+			}
 			outputs[0] = left || right;
 			return getDependency(left, right, track);
 		}
@@ -220,7 +197,7 @@ public class Booleans
 		@Override
 		public String toString()
 		{
-			return "Or";
+			return "LazyOr";
 		}
 	}
 

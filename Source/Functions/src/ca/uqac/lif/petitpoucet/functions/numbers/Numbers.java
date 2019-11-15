@@ -47,6 +47,10 @@ public class Numbers
 	public static final transient IsGreaterThan isGreaterThan = new IsGreaterThan();
 
 	public static final transient IsEven isEven = new IsEven();
+	
+	public static final transient SquareRoot sqrt = new SquareRoot();
+	
+	public static final transient Sum sum = new Sum();
 
 	private Numbers()
 	{
@@ -288,6 +292,52 @@ public class Numbers
 				return s_queryable;
 			}
 			return null;
+		}
+	}
+	
+	protected static class SquareRoot extends UnaryFunction<Number,Number>
+	{
+		protected static final transient FunctionQueryable s_queryable = new FunctionQueryable("Numbers.Sqrt", 1, 1);
+
+		protected SquareRoot()
+		{
+			super(Number.class, Number.class);
+		}
+
+		@Override
+		public Object print(ObjectPrinter<?> printer) throws PrintException 
+		{
+			return null;
+		}
+
+		@Override
+		public SquareRoot read(ObjectReader<?> reader, Object o) throws ReadException 
+		{
+			return this;
+		}
+
+		@Override
+		public SquareRoot duplicate(boolean with_state) 
+		{
+			return this;
+		}
+
+		@Override
+		public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track) 
+		{
+			float f = ((Number) inputs[0]).floatValue();
+			outputs[0] = Math.sqrt(f);
+			if (track)
+			{
+				return s_queryable;
+			}
+			return null;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "Numbers.Sqrt";
 		}
 	}
 
