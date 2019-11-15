@@ -11,6 +11,7 @@ public class FetchAll
 {
 	public static void main(String[] args)
 	{
+		
 		TreeNode root = TreeUtils.create("a", "x", 10, "y", 10, "width", 20, "height", 40)
 				.addChild(TreeUtils.create("c", "x", 10, "y", 10, "width", 20, "height", 40))
 				.addChild(TreeUtils.create("b", "x", 15, "y", 10, "width", 20, "height", 40)
