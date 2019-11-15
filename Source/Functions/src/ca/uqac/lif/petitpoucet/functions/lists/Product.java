@@ -84,22 +84,30 @@ public class Product implements Function
 	{
 		List<List<Object>> out_list = new ArrayList<List<Object>>();
 		int[] sizes = new int[inputs.length];
-		List<?>[] lists = new List[inputs.length]; 
+		List<?>[] lists = new List[inputs.length];
+		boolean has_zero = false;
 		for (int i = 0; i < inputs.length; i++)
 		{
 			lists[i] = (List<?>) inputs[i];
 			sizes[i] = lists[i].size();
-		}
-		MultiIterator mit = new MultiIterator(sizes);
-		while (mit.hasNext())
-		{
-			List<Integer> indices = mit.next();
-			List<Object> out_elem = new ArrayList<Object>(inputs.length);
-			for (int i = 0; i < indices.size(); i++)
+			if (sizes[i] == 0)
 			{
-				out_elem.add(lists[i].get(indices.get(i)));
+				has_zero = true;
 			}
-			out_list.add(out_elem);
+		}
+		if (!has_zero)
+		{
+			MultiIterator mit = new MultiIterator(sizes);
+			while (mit.hasNext())
+			{
+				List<Integer> indices = mit.next();
+				List<Object> out_elem = new ArrayList<Object>(inputs.length);
+				for (int i = 0; i < indices.size(); i++)
+				{
+					out_elem.add(lists[i].get(indices.get(i)));
+				}
+				out_list.add(out_elem);
+			}			
 		}
 		outputs[0] = out_list;
 		if (track)
@@ -258,11 +266,14 @@ public class Product implements Function
 		
 		protected boolean m_done;
 		
+		protected boolean m_first;
+		
 		protected boolean m_hasNextCalled;
 		
 		public MultiIterator(int ... sizes)
 		{
 			super();
+			m_first = true;
 			m_sizes = sizes;
 			m_indices = new int[sizes.length];
 			for (int i = 0; i < sizes.length; i++)
@@ -280,7 +291,7 @@ public class Product implements Function
 			{
 				return false;
 			}
-			if (m_hasNextCalled)
+			if (m_first || m_hasNextCalled)
 			{
 				return true;
 			}
@@ -322,6 +333,7 @@ public class Product implements Function
 				out.add(m_indices[i]);
 			}
 			m_hasNextCalled = false;
+			m_first = false;
 			return out;
 		}		
 	}
