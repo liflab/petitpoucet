@@ -2,22 +2,23 @@ package examples.trees;
 
 import java.util.List;
 
-import ca.uqac.lif.petitpoucet.Queryable;
+import ca.uqac.lif.petitpoucet.TraceabilityQuery.CausalityQuery;
+import ca.uqac.lif.petitpoucet.circuit.CircuitDesignator.NthOutput;
 import ca.uqac.lif.petitpoucet.functions.CircuitFunction;
 import ca.uqac.lif.petitpoucet.functions.Fork;
 import ca.uqac.lif.petitpoucet.functions.GroupFunction;
+import ca.uqac.lif.petitpoucet.functions.TreeDrawer;
 import ca.uqac.lif.petitpoucet.functions.lists.ApplyToAll;
 import ca.uqac.lif.petitpoucet.functions.lists.GetElement;
 import ca.uqac.lif.petitpoucet.functions.lists.Product;
 import ca.uqac.lif.petitpoucet.functions.lists.Wrap;
 import ca.uqac.lif.petitpoucet.functions.logic.Booleans;
 import ca.uqac.lif.petitpoucet.functions.logic.Lists;
-import ca.uqac.lif.petitpoucet.functions.ltl.Ltl;
 import ca.uqac.lif.petitpoucet.functions.numbers.Numbers;
 import ca.uqac.lif.petitpoucet.functions.trees.GetAttribute;
 import ca.uqac.lif.petitpoucet.functions.trees.PathFetch;
-import ca.uqac.lif.petitpoucet.functions.trees.PathFetch.NthChild;
 import ca.uqac.lif.petitpoucet.functions.trees.PathFetch.PathElement;
+import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeRenderer.CaptionStyle;
 import ca.uqac.lif.petitpoucet.functions.trees.TreeNode;
 import examples.ltl.TreeUtils;
 
@@ -26,17 +27,21 @@ public class FetchAll
 	public static void main(String[] args)
 	{
 		
-		TreeNode root = TreeUtils.create("a", "x", 10, "y", 10, "width", 200, "height", 400)
+		TreeNode root = TreeUtils.create("", "x", 10, "y", 10, "width", 200, "height", 400)
 				.addChild(TreeUtils.create("c", "x", 10, "y", 10, "width", 20, "height", 40))
 				.addChild(TreeUtils.create("b", "x", 15, "y", 10, "width", 20, "height", 40)
-						.addChild((TreeUtils.create("c", "x", 15, "y", 10, "width", 2, "height", 4)))
+						.addChild((TreeUtils.create("c", "x", 15, "y", 10, "width", 200, "height", 4)))
 						);
 		
 		AllBoxes abb = new AllBoxes();
+		// Use the shortcut from TreeDrawer to evaluate function and answer query
+		TreeDrawer.drawTree(CausalityQuery.instance, NthOutput.get(0), CaptionStyle.SHORT, true, "/tmp/out.png", abb, root);
+		/*
 		Object[] inputs = new Object[] {root};
 		Object[] outputs = new Object[1];
 		Queryable q = abb.evaluate(inputs, outputs);
 		System.out.println(outputs[0]);
+		*/
 	}
 	
 	public static class AllBoxes extends GroupFunction

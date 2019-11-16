@@ -251,7 +251,7 @@ public class Product implements Function
 		// up to the desired position
 		MultiIterator mit = new MultiIterator(sizes);
 		List<Integer> indices = null;
-		for (int i = 0; i < elem_index; i++)
+		for (int i = 0; i <= elem_index; i++)
 		{
 			indices = mit.next();
 		}

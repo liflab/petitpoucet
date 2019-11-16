@@ -23,14 +23,14 @@ import ca.uqac.lif.petitpoucet.functions.UnaryFunction;
 public class Lists 
 {
 	public static final All all = new All();
-	
+
 	public static class All extends UnaryListOperator
 	{
 		protected All()
 		{
 			super(true);
 		}
-		
+
 		@Override
 		public String toString()
 		{
@@ -55,18 +55,18 @@ public class Lists
 			return this;
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static abstract class UnaryListOperator extends UnaryFunction<List,Boolean>
 	{
 		protected boolean m_startValue;
-		
+
 		public UnaryListOperator(boolean start_value)
 		{
 			super(List.class, Boolean.class);
 			m_startValue = start_value;
 		}
-		
+
 		@Override
 		public BooleanListQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)
 		{
@@ -91,27 +91,27 @@ public class Lists
 			outputs[0] = value;
 			return new BooleanListQueryable(toString(), list.size(), positions);
 		}
-		
+
 		public static class BooleanListQueryable extends FunctionQueryable
 		{
 			protected List<Integer> m_positions;
-			
+
 			protected int m_inputLength;
-			
+
 			public BooleanListQueryable(String reference, int input_length, List<Integer> positions)
 			{
 				super(reference, 1, 1);
 				m_positions = positions;
 				m_inputLength = input_length;
 			}
-			
+
 			@Override
 			public BooleanListQueryable duplicate(boolean with_state)
 			{
 				BooleanListQueryable ltlq = new BooleanListQueryable(m_reference, m_inputLength, m_positions);
 				return ltlq;
 			}
-			
+
 			@Override
 			protected List<TraceabilityNode> queryOutput(TraceabilityQuery q, int output_nb, Designator d,
 					TraceabilityNode root, Tracer factory)
@@ -136,20 +136,28 @@ public class Lists
 				root.addChild(or, Quality.EXACT);
 				return leaves;
 			}
-			
+
 			protected List<TraceabilityNode> answerQueryDefault(TraceabilityQuery q, int output_nb, Designator d,
 					TraceabilityNode root, Tracer factory, Quality quality)
 			{
 				List<TraceabilityNode> leaves = new ArrayList<TraceabilityNode>();
-				TraceabilityNode and = factory.getAndNode();
-				for (int i = 0; i < m_inputLength; i++)
+				if (m_inputLength > 0)
 				{
-					ComposedDesignator cd = new ComposedDesignator(d, NthElement.get(i), NthInput.get(0));
-					TraceabilityNode child = factory.getObjectNode(cd, this);
-					and.addChild(child, quality);
-					leaves.add(child);
+					TraceabilityNode top = root;
+					if (m_inputLength == 1)
+					{
+						TraceabilityNode and = factory.getAndNode();
+						root.addChild(and, quality);
+						top = and;
+					}
+					for (int i = 0; i < m_inputLength; i++)
+					{
+						ComposedDesignator cd = new ComposedDesignator(d, NthElement.get(i), NthInput.get(0));
+						TraceabilityNode child = factory.getObjectNode(cd, this);
+						top.addChild(child, quality);
+						leaves.add(child);
+					}
 				}
-				root.addChild(and, quality);
 				return leaves;
 			}
 		}
