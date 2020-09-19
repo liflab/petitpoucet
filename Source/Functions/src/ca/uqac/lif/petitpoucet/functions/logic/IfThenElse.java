@@ -49,6 +49,12 @@ public class IfThenElse implements Function, LazyFunction
 	{
 		super();
 	}
+	
+	@Override
+	public int size()
+	{
+		return 1;
+	}
 
 	@Override
 	public Object print(ObjectPrinter<?> printer) throws PrintException

@@ -30,6 +30,12 @@ public class ContextVariable implements Function
 	}
 	
 	@Override
+	public int size()
+	{
+		return 1;
+	}
+	
+	@Override
 	public Object print(ObjectPrinter<?> printer) throws PrintException
 	{
 		return printer.print(m_name);

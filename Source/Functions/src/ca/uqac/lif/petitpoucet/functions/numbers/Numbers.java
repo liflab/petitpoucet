@@ -663,6 +663,12 @@ public class Numbers
 			super();
 			m_queryable = new SlidableFunctionQueryable(toString());
 		}
+		
+		@Override
+		public int size()
+		{
+			return 1;
+		}
 
 		@Override
 		public int getInputArity() 
@@ -808,6 +814,12 @@ public class Numbers
 		{
 			super();
 			m_numValues = 0;
+		}
+		
+		@Override
+		public int size()
+		{
+			return 1;
 		}
 
 		@Override

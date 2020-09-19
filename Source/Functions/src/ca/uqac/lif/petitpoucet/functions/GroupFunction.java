@@ -79,6 +79,17 @@ public class GroupFunction implements Contextualizable, Function, Trackable
 		m_name = super.toString();
 	}
 	
+	@Override
+	public int size()
+	{
+		int size = 1;
+		for (Function f : m_innerFunctions)
+		{
+			size += f.size();
+		}
+		return size;
+	}
+	
 	public GroupFunction setName(String name)
 	{
 		m_name = name;

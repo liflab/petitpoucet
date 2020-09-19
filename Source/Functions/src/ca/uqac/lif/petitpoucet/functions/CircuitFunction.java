@@ -108,6 +108,16 @@ public class CircuitFunction implements CircuitElement, Contextualizable, Functi
 	}
 	
 	@Override
+	public int size()
+	{
+		if (m_function == null)
+		{
+			return 1;
+		}
+		return m_function.size();
+	}
+	
+	@Override
 	public final CircuitConnection getInputConnection(int index)
 	{
 		try

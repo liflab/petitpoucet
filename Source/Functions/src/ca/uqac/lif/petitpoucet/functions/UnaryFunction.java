@@ -28,6 +28,12 @@ public abstract class UnaryFunction<T,V> implements Function
 	}
 	
 	@Override
+	public int size()
+	{
+		return 1;
+	}
+	
+	@Override
 	public Class<? extends V> getOutputType(int index)
 	{
 		return m_outputType;

@@ -65,6 +65,12 @@ public class ApplyToAll implements Function
 	{
 		return "ApplyToAll";
 	}
+	
+	@Override
+	public int size()
+	{
+		return 1 + m_function.size();
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override

@@ -23,6 +23,12 @@ public class CumulativeFunction<T> implements Function
 	}
 	
 	@Override
+	public int size()
+	{
+		return 1 + m_function.size();
+	}
+	
+	@Override
 	public final int getInputArity() 
 	{
 		return 1;

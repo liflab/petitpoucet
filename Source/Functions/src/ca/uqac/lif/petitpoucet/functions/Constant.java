@@ -25,6 +25,12 @@ public class Constant implements Function
 		super();
 		m_value = value;
 	}
+	
+	@Override
+	public int size()
+	{
+		return 1;
+	}
 
 	@Override
 	public Constant duplicate(boolean with_state) 

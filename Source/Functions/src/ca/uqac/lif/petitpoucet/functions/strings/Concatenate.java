@@ -50,6 +50,12 @@ public class Concatenate implements Function
 	{
 		this(2);
 	}
+	
+	@Override
+	public int size()
+	{
+		return 1;
+	}
 
 	@Override
 	public ConcatenateQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)

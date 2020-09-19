@@ -26,6 +26,8 @@ public interface Function extends Printable, Readable, StateDuplicable<Function>
 	
 	public void reset();
 	
+	public int size();
+	
 	public class FunctionException extends RuntimeException
 	{
 		/**

@@ -47,6 +47,12 @@ public class FileLines implements Function
 	}
 	
 	@Override
+	public int size()
+	{
+		return 1;
+	}
+	
+	@Override
 	public FunctionQueryable evaluate(Object[] inputs, Object[] outputs, Context c)
 	{
 		return evaluate(inputs, outputs, c, true);

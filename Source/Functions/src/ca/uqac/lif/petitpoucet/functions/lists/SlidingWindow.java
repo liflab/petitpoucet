@@ -60,6 +60,12 @@ public class SlidingWindow implements Function
 		m_function = f;
 		m_width = width;
 	}
+	
+	@Override
+	public int size()
+	{
+		return 1 + m_function.size();
+	}
 
 	@Override
 	public SlidingWindowQueryable evaluate(Object[] inputs, Object[] outputs, Context c, boolean track)

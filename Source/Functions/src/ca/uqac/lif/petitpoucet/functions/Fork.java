@@ -138,6 +138,12 @@ public class Fork implements Function
 		return "fork " + m_outArity;
 	}
 	
+	@Override
+	public int size()
+	{
+		return 1;
+	}
+	
 	public static class ForkQueryable extends FunctionQueryable
 	{
 		protected ForkQueryable(int out_arity)

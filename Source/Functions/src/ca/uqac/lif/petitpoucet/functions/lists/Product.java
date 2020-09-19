@@ -48,6 +48,12 @@ public class Product implements Function
 	}
 	
 	@Override
+	public int size()
+	{
+		return 1;
+	}
+	
+	@Override
 	public String toString()
 	{
 		return "x";
