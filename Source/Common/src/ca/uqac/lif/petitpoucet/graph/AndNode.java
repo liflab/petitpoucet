@@ -8,9 +8,35 @@ import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 
 public class AndNode extends ConcreteTraceabilityNode
 {
+	protected ConstantElaboration m_shortElaboration;
+	
 	public AndNode()
 	{
 		super();
+	}
+	
+	@Override
+	public void setShortElaboration(ConstantElaboration e)
+	{
+		m_shortElaboration = e;
+	}
+	
+	@Override
+	public ConstantElaboration getShort()
+	{
+		return m_shortElaboration;
+	}
+	
+	@Override
+	public ComposedElaboration getLong()
+	{
+		AndElaboration ce = new AndElaboration(m_shortElaboration);
+		for (LabeledEdge edge : m_children)
+		{
+			TraceabilityNode child = edge.getNode();
+			ce.add(child.getLong());
+		}
+		return ce;
 	}
 	
 	@Override
@@ -66,5 +92,32 @@ public class AndNode extends ConcreteTraceabilityNode
 			super.addChild(e);
 		}
 		m_children.add(e);
+	}
+	
+	public static class AndElaboration extends ComposedElaboration
+	{
+		public AndElaboration(ConstantElaboration short_e, Object ... parts)
+		{
+			super(short_e, parts);
+		}
+		
+		@Override
+		public String toString()
+		{
+			if (m_parts.isEmpty())
+			{
+				return m_short.toString();
+			}
+			StringBuilder out = new StringBuilder();
+			for (int i = 0; i < m_parts.size(); i++)
+			{
+				if (i > 0)
+				{
+					out.append(" and ");
+				}
+				out.append(m_parts.get(i).getShort());
+			}
+			return out.toString();
+		}
 	}
 }

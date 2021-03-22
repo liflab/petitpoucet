@@ -20,12 +20,15 @@ package ca.uqac.lif.petitpoucet;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
+import ca.uqac.lif.petitpoucet.graph.ConstantElaboration;
 
-public interface TraceabilityNode
+public interface TraceabilityNode extends Elaboration
 {
 	public void addChild(TraceabilityNode n, Quality q);
 
 	public void addChild(LabeledEdge e);
 
 	public List<LabeledEdge> getChildren();
+	
+	public void setShortElaboration(ConstantElaboration e);
 }

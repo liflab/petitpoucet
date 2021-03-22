@@ -18,6 +18,7 @@
 package ca.uqac.lif.petitpoucet.graph;
 
 import ca.uqac.lif.petitpoucet.DesignatedObject;
+import ca.uqac.lif.petitpoucet.Elaboration;
 import ca.uqac.lif.petitpoucet.LabeledEdge;
 import ca.uqac.lif.petitpoucet.ObjectNode;
 
@@ -27,6 +28,11 @@ public class ConcreteObjectNode extends ConcreteTraceabilityNode implements Obje
 	 * The designated object
 	 */
 	protected DesignatedObject m_object;
+	
+	/**
+	 * A short elaboration for this object node
+	 */
+	protected ConstantElaboration m_shortElaboration;
 
 	/**
 	 * Creates a new traceability node with no children
@@ -38,6 +44,7 @@ public class ConcreteObjectNode extends ConcreteTraceabilityNode implements Obje
 	{
 		super();
 		m_object = dob;
+		m_shortElaboration = null;
 	}
 
 	/**
@@ -68,5 +75,37 @@ public class ConcreteObjectNode extends ConcreteTraceabilityNode implements Obje
 			out.append(((ConcreteTraceabilityNode) le.getNode()).toString(indent + " "));
 		}
 		return out.toString();
+	}
+	
+	@Override
+	public void setShortElaboration(ConstantElaboration e)
+	{
+		m_shortElaboration = e;
+	}
+
+	@Override
+	public ConstantElaboration getShort()
+	{
+		if (m_shortElaboration == null)
+		{
+			return new ConstantElaboration(m_object);
+		}
+		else
+		{
+			return m_shortElaboration;
+		}
+	}
+
+	@Override
+	public Elaboration getLong() 
+	{
+		ComposedElaboration ce = new ComposedElaboration(getShort());
+		if (!m_children.isEmpty())
+		{
+			//ce.add(new ConstantElaboration(m_object.getDesignator()));
+			LabeledEdge edge = m_children.get(0);
+			ce.add(edge.getNode().getLong());
+		}
+		return ce;
 	}
 }

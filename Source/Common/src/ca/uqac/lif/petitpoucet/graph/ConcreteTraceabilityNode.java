@@ -9,7 +9,7 @@ import ca.uqac.lif.petitpoucet.LabeledEdge;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 
-public class ConcreteTraceabilityNode implements TraceabilityNode
+public abstract class ConcreteTraceabilityNode implements TraceabilityNode
 {
 	protected List<LabeledEdge> m_children;
 

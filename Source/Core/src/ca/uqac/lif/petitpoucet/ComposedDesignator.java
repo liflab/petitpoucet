@@ -9,6 +9,44 @@ public class ComposedDesignator implements Designator
 	 * The list of designators representing the composition
 	 */
 	protected List<Designator> m_designators;
+	
+	/**
+	 * Creates a flat composed designator out of a list of designators.
+	 * @param designators The list of designators
+	 * @return A new designator
+	 */
+	public static Designator create(Designator... designators)
+	{
+		if (designators.length == 0)
+		{
+			return Designator.nothing;
+		}
+		List<Designator> l_designators = new ArrayList<Designator>();
+		for (int i = 0; i < designators.length; i++)
+		{
+			if (designators[i] == null)
+			{
+				continue;
+			}
+			if (designators[i] instanceof ComposedDesignator)
+			{
+				l_designators.addAll(((ComposedDesignator) designators[i]).m_designators);
+			}
+			else
+			{
+				l_designators.add(designators[i]);
+			}
+		}
+		if (l_designators.isEmpty())
+		{
+			return Designator.nothing;
+		}
+		if (l_designators.size() == 1)
+		{
+			return l_designators.get(0);
+		}
+		return new ComposedDesignator(l_designators);
+	}
 
 	/**
 	 * Creates a new composed designator
@@ -20,6 +58,22 @@ public class ComposedDesignator implements Designator
 	{
 		super();
 		m_designators = new ArrayList<Designator>(designators.length);
+		for (Designator d : designators)
+		{
+			add(d);
+		}
+	}
+	
+	/**
+	 * Creates a new composed designator
+	 * 
+	 * @param designators
+	 *          The list of designators representing the composition
+	 */
+	public ComposedDesignator(List<Designator> designators)
+	{
+		super();
+		m_designators = new ArrayList<Designator>(designators.size());
 		for (Designator d : designators)
 		{
 			add(d);
