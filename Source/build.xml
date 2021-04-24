@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+	A build script for a super-project containing multiple sub-projects
+    Copyright (C) 2019  Sylvain Hallé
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<project name="SuperProject" default="all" basedir=".">
+
+  <!-- The project's display name -->
+  <property name="build.name" value="Azrael"/>
+  
+  <!-- The author -->
+  <property name="build.author" value="Sylvain Hallé"/>
+  
+  <target name="all">
+    <!-- Compile core -->
+    <ant dir="Core" target="jar" />
+    <!-- Copy core to other projects -->
+    <copy file="petitpoucet-core.jar" todir="Common/lib" />
+    <copy file="petitpoucet-core.jar" todir="Functions/lib" />
+    <!-- Compile other projects -->
+    <ant dir="Common" target="jar" />
+    <copy file="petitpoucet-common.jar" todir="Functions/lib" />
+    <ant dir="Functions" target="jar" />
+  </target>
+  
+  <target name="download-deps">
+    <ant dir="Core" target="download-deps" />
+    <ant dir="Common" target="download-deps" />
+    <ant dir="Functions" target="download-deps" />
+  </target>
+  
+  <target name="clean">
+    <ant dir="Core" target="clean" />
+    <ant dir="Common" target="clean" />
+    <ant dir="Functions" target="clean" />
+  </target>
+  
+  <target name="javadoc">
+    <mkdir dir="../docs/javadoc"/>
+    <mkdir dir="../docs/javadoc/doc-files"/>
+    <javadoc
+      destdir="../docs/javadoc"
+      packagenames="*"
+      excludepackagenames=""
+      defaultexcludes="yes"
+      author="true"
+      version="true"
+      use="true"
+      Encoding="utf8"
+      docencoding="utf8"
+      charset="utf8"
+      windowtitle="Petit Poucet Documentation">
+      <doctitle><![CDATA[<h1>]]>${build.name}<![CDATA[ Documentation</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright&nbsp;&#169; ]]>${build.author}<![CDATA[. All Rights Reserved.</i>]]></bottom>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
+      <sourcepath>
+        <pathelement path="Core/src"/>
+        <pathelement path="Common/src"/>
+        <pathelement path="Functions/src"/>
+      </sourcepath>
+      <classpath>
+        <fileset dir="Core/dep">
+          <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="Core/lib">
+          <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="Common/dep">
+          <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="Functions/dep">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javadoc>
+  </target>
+</project>

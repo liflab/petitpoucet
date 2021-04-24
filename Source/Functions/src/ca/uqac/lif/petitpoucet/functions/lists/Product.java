@@ -341,6 +341,12 @@ public class Product implements Function
 			m_hasNextCalled = false;
 			m_first = false;
 			return out;
-		}		
+		}
+		
+		@Override
+		public void remove()
+		{
+			// Do nothing
+		}
 	}
 }

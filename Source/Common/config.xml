@@ -23,24 +23,24 @@
        script's default values -->
 
   <!-- The project's name -->
-  <name>Petit Poucet</name>
+  <name>Petit Poucet Common</name>
   
   <!-- The project's version number -->
-  <version>0.2-alpha</version>
+  <version>0.3-alpha</version>
   
   <!-- The project's author. Currently this only
   shows up in the footer of the Javadoc documentation. -->
   <author>Sylvain Hall&#233;</author>
   
   <!-- The project's main class -->
-  <mainclass>ca.uqac.lif.petitpoucet.Main</mainclass>
+  <!--<mainclass>ca.uqac.lif.petitpoucet.Main</mainclass>-->
   
   <!-- Installation folders -->
-  <srcdir>Source/Core/src</srcdir>
-  <bindir>Source/Core/bin</bindir>
+  <srcdir>src</srcdir>
+  <bindir>bin</bindir>
   <docdir>doc</docdir>
-  <depdir>Source/Core/dep</depdir>
-  <libdir>Source/Core/lib</libdir>
+  <depdir>dep</depdir>
+  <libdir>lib</libdir>
   <test>
     <srcdir>Source/CoreTest/src</srcdir>
     <bindir>Source/CoreTest/bin</bindir>
@@ -48,7 +48,7 @@
   
   <!-- Output jar -->
   <jar>
-    <filename>petitpoucet.jar</filename>
+    <filename>../petitpoucet-common.jar</filename>
     <withdoc>false</withdoc>
     <withdeps>true</withdeps>
   </jar>
