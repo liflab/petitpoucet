@@ -19,7 +19,7 @@ public class UnknownNode extends ConcreteTraceabilityNode
 	}
 	
 	@Override
-	public void setShortElaboration(ConstantElaboration e)
+	public void setShortElaboration(Elaboration e)
 	{
 		// Do nothing
 	}

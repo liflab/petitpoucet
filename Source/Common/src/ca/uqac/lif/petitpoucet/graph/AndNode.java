@@ -2,6 +2,7 @@ package ca.uqac.lif.petitpoucet.graph;
 
 import java.util.List;
 
+import ca.uqac.lif.petitpoucet.Elaboration;
 import ca.uqac.lif.petitpoucet.LabeledEdge;
 import ca.uqac.lif.petitpoucet.TraceabilityNode;
 import ca.uqac.lif.petitpoucet.LabeledEdge.Quality;
@@ -16,9 +17,9 @@ public class AndNode extends ConcreteTraceabilityNode
 	}
 	
 	@Override
-	public void setShortElaboration(ConstantElaboration e)
+	public void setShortElaboration(Elaboration e)
 	{
-		m_shortElaboration = e;
+		m_shortElaboration = (ConstantElaboration) e;
 	}
 	
 	@Override

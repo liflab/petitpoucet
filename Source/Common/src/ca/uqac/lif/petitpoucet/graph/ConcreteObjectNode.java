@@ -78,9 +78,9 @@ public class ConcreteObjectNode extends ConcreteTraceabilityNode implements Obje
 	}
 	
 	@Override
-	public void setShortElaboration(ConstantElaboration e)
+	public void setShortElaboration(Elaboration e)
 	{
-		m_shortElaboration = e;
+		m_shortElaboration = (ConstantElaboration) e;
 	}
 
 	@Override
