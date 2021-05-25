@@ -72,7 +72,7 @@ public class SlidingWindow implements Function
 	{
 		List<?> list = (List<?>) inputs[0];
 		List<Object> out_list = new ArrayList<Object>();
-		int max_pos = Math.max(0, list.size() - m_width);
+		int max_pos = Math.max(0, list.size() - m_width + 1);
 		List<FunctionQueryable> queryables = null;
 		if (track)
 		{
