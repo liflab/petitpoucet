@@ -19,7 +19,7 @@
 <project name="SuperProject" default="all" basedir=".">
 
   <!-- The project's display name -->
-  <property name="build.name" value="Azrael"/>
+  <property name="build.name" value="PetitPoucet"/>
   
   <!-- The author -->
   <property name="build.author" value="Sylvain Hallé"/>
@@ -30,22 +30,32 @@
     <!-- Copy core to other projects -->
     <copy file="petitpoucet-core.jar" todir="Common/lib" />
     <copy file="petitpoucet-core.jar" todir="Functions/lib" />
-    <!-- Compile other projects -->
+    <copy file="petitpoucet-core.jar" todir="Examples/lib" />
+    <!-- Compile Common -->
     <ant dir="Common" target="jar" />
+    <!-- Copy Common to other projects -->
     <copy file="petitpoucet-common.jar" todir="Functions/lib" />
+    <copy file="petitpoucet-common.jar" todir="Examples/lib" />
+    <!-- Compile Functions -->
     <ant dir="Functions" target="jar" />
+    <!-- Copy Functions to other projects -->
+    <copy file="petitpoucet-functions.jar" todir="Examples/lib" />
+    <!-- Compile Examples -->
+    <ant dir="Examples" target="jar" />
   </target>
   
   <target name="download-deps">
     <ant dir="Core" target="download-deps" />
     <ant dir="Common" target="download-deps" />
     <ant dir="Functions" target="download-deps" />
+    <ant dir="Examples" target="download-deps" />
   </target>
   
   <target name="clean">
     <ant dir="Core" target="clean" />
     <ant dir="Common" target="clean" />
     <ant dir="Functions" target="clean" />
+    <ant dir="Examples" target="clean" />
   </target>
   
   <target name="javadoc">
@@ -62,14 +72,15 @@
       Encoding="utf8"
       docencoding="utf8"
       charset="utf8"
-      windowtitle="Petit Poucet Documentation">
+      windowtitle="PetitPoucet Documentation">
       <doctitle><![CDATA[<h1>]]>${build.name}<![CDATA[ Documentation</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright&nbsp;&#169; ]]>${build.author}<![CDATA[. All Rights Reserved.</i>]]></bottom>
       <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <sourcepath>
         <pathelement path="Core/src"/>
-        <pathelement path="Common/src"/>
-        <pathelement path="Functions/src"/>
+        <pathelement path="Json/src"/>
+        <pathelement path="Size/src"/>
+        <pathelement path="Xml/src"/>
       </sourcepath>
       <classpath>
         <fileset dir="Core/dep">
@@ -78,10 +89,13 @@
         <fileset dir="Core/lib">
           <include name="**/*.jar"/>
         </fileset>
-        <fileset dir="Common/dep">
+        <fileset dir="Size/dep">
           <include name="**/*.jar"/>
         </fileset>
-        <fileset dir="Functions/dep">
+        <fileset dir="Json/dep">
+          <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="Xml/dep">
           <include name="**/*.jar"/>
         </fileset>
       </classpath>
