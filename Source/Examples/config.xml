@@ -8,7 +8,7 @@
   an element
   
   <jar>
-    <filename>azrael-core.jar</filename>
+    <filename>foo</filename>
   </jar>
   
   inside the <build> element.
@@ -23,41 +23,50 @@
        script's default values -->
 
   <!-- The project's name -->
-  <name>Azrael Core</name>
+  <name>Petit Poucet Examples</name>
+  
+  <!-- The project's version number -->
+  <version>0.3-alpha</version>
   
   <!-- The project's author. Currently this only
   shows up in the footer of the Javadoc documentation. -->
-  <author>Sylvain Hallé</author>
-
-  <jar>
-    <filename>../azrael-core.jar</filename>
-    <basename>Azrael</basename>
-  </jar>
-
+  <author>Sylvain Hall&#233;</author>
   
   <!-- The project's main class -->
-  <!-- <mainclass>my.package.MainClass</mainclass> -->
-
+  <!--<mainclass>ca.uqac.lif.petitpoucet.Main</mainclass>-->
+  
+  <!-- Installation folders -->
   <srcdir>src</srcdir>
+  <bindir>bin</bindir>
   <docdir>doc</docdir>
   <depdir>dep</depdir>
   <libdir>lib</libdir>
-  <bindir>bin</bindir>
-  
   <test>
-    <!-- The filename pattern to recognize test files -->
-    <filenamepattern>**/*Test.java</filenamepattern>
-    <srcdir>src</srcdir>
-    <docdir>doc</docdir>
-    <depdir>dep</depdir>
-    <libdir>lib</libdir>
-    <bindir>bin</bindir>
+    <srcdir>Source/CoreTest/src</srcdir>
+    <bindir>Source/CoreTest/bin</bindir>
   </test>
+  
+  <!-- Output jar -->
+  <jar>
+    <filename>../petitpoucet-examples.jar</filename>
+    <withdoc>false</withdoc>
+    <withdeps>true</withdeps>
+  </jar>
   
   <!--
     Write JAR dependencies here.
   -->
   <dependencies>
-    <!-- None -->
+  <dependency>
+      <!--
+      Azrael Core
+      -->
+      <name>Azrael Core</name>
+      <classname>ca.uqac.lif.azrael.Printable</classname>
+      <bundle>false</bundle>
+      <files>
+        <jar>https://github.com/sylvainhalle/Azrael/releases/download/v2.0/azrael-core.jar</jar>
+      </files>
+    </dependency>
   </dependencies>
 </build>
