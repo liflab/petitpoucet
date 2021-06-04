@@ -15,9 +15,34 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
-public interface Queryable
+/**
+ * Generic exception thrown by a function when being called.
+ */
+public class FunctionException extends RuntimeException
 {
+	/**
+	 * Dummy UID
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Creates a new function exception from a throwable instance.
+	 * @param t The throwable
+	 */
+	public FunctionException(Throwable t)
+	{
+		super(t);
+	}
+	
+	/**
+	 * Creates a new function exception from a String.
+	 * @param t The string
+	 */
+	public FunctionException(String s)
+	{
+		super(s);
+	}
 
 }

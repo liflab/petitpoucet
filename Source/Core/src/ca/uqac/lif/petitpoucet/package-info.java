@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2019 Sylvain Hallé
+    Copyright (C) 2016-2021 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -14,16 +14,5 @@
 
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
- * Core interfaces for traceability management.
- * <p>
- * This package should try to reach the following design goals:
- * <ul>
- * <li>Top-level elements should be interfaces</li>
- * <li>Classes should be limited in number, represent generic concepts, and if
- * possible be abstract</li>
- * </ul>
  */
 package ca.uqac.lif.petitpoucet;

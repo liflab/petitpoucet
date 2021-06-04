@@ -15,9 +15,34 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function.vector;
 
-public interface Queryable
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
+public class VectorTestUtilities
 {
-
+	@Test
+	public void dummyTest()
+	{
+		// Do nothing
+	}
+	
+	/**
+	 * Creates a list object out of a list of arguments.
+	 * @param arguments The arguments
+	 * @return The list containing the arguments
+	 */
+	public static List<?> getList(Object ... arguments)
+	{
+		List<Object> list = new ArrayList<Object>(arguments.length);
+		for (Object o : arguments)
+		{
+			list.add(o);
+		}
+		return list;
+	}
+	
 }

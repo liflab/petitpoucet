@@ -17,7 +17,9 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-public interface Queryable
+public interface ExplanationQueryable extends Queryable
 {
-
+	public PartNode getExplanation(Part part);
+	
+	public PartNode getExplanation(Part part, PartNodeFactory factory);
 }

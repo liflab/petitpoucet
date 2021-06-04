@@ -15,9 +15,28 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
-public interface Queryable
+public class InvalidArgumentTypeException extends FunctionException
 {
+	/**
+	 * Dummy UID
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public InvalidArgumentTypeException()
+	{
+		this("Invalid argument type");
+	}
+
+	public InvalidArgumentTypeException(String s)
+	{
+		super(s);
+	}
+	
+	public InvalidArgumentTypeException(Throwable t)
+	{
+		super(t);
+	}
 
 }

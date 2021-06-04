@@ -17,7 +17,12 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-public interface Queryable
-{
+import ca.uqac.lif.dag.LabelledNode;
 
+public class AndNode extends LabelledNode
+{
+	public AndNode()
+	{
+		super("∧");
+	}
 }

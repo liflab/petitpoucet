@@ -15,9 +15,35 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function.vector;
 
-public interface Queryable
+import java.util.ArrayList;
+import java.util.List;
+
+import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
+
+public class VectorSum extends VectorFunction
 {
-
+	@Override
+	protected List<?> getVectorValue(List<?> in_list)
+	{
+		float total = 0;
+		for (Object o : in_list)
+		{
+			if (!(o instanceof Number))
+			{
+				throw new InvalidArgumentTypeException("Expected a number");
+			}
+			total += ((Number) o).floatValue();
+		}
+		List<Number> out_list = new ArrayList<Number>(1);
+		out_list.add(total);
+		return out_list;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Σ";
+	}
 }

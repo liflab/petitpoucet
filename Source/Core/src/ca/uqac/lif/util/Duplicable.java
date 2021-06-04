@@ -15,9 +15,26 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.util;
 
-public interface Queryable
+/**
+ * Interface implemented by objects that can make stateful deep copies of
+ * themselves.
+ */
+public interface Duplicable
 {
-
+	/**
+	 * Creates a copy of an object. The behavior of this method is equivalent
+	 * to {@code duplicate(false)}.
+	 * @return The object's copy
+	 */
+	public Object duplicate();
+	
+	/**
+	 * Creates a possibly stateful copy of an object.
+	 * @param with_state Set to {@code true} for a stateful copy, {@code false}
+	 * otherwise
+	 * @return The object's copy
+	 */
+	public Object duplicate(boolean with_state);
 }

@@ -17,7 +17,28 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-public interface Queryable
-{
+import ca.uqac.lif.dag.LabelledNode;
 
+public class PartNode extends LabelledNode
+{	
+	public PartNode(Part part, Object subject)
+	{
+		super(new Object[] {part, subject});
+	}
+	
+	public Part getPart()
+	{
+		return (Part) ((Object[]) m_label)[0];
+	}
+	
+	public Object getSubject()
+	{
+		return ((Object[]) m_label)[1];
+	}
+	
+	@Override
+	public String toString()
+	{
+		return ((Object[]) m_label)[0] + " of " + ((Object[]) m_label)[1];
+	}
 }

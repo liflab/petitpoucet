@@ -15,9 +15,24 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
-public interface Queryable
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import ca.uqac.lif.petitpoucet.ComposedPart;
+import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.function.vector.NthElement;
+
+public class NthOutputTest
 {
-
+	@Test
+	public void testReplace1() 
+	{
+		ComposedPart d = (ComposedPart) NthOutput.replaceOutBy(ComposedPart.create(new NthElement(1), NthOutput.FIRST), Part.all);
+		assertEquals(2, d.size());
+		assertEquals(new NthElement(1), d.head());
+		assertEquals(Part.all, d.tail());
+	}
 }

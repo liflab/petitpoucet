@@ -15,9 +15,15 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
-public interface Queryable
+import ca.uqac.lif.dag.Connectable;
+import ca.uqac.lif.util.Contextualizable;
+import ca.uqac.lif.util.Duplicable;
+
+public interface Function extends Connectable, Contextualizable, Duplicable
 {
-
+	public Object[] evaluate(Object ... inputs);
+	
+	public void reset();
 }

@@ -17,7 +17,13 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-public interface Queryable
+import ca.uqac.lif.dag.LabelledNode;
+
+public class UnknownNode extends LabelledNode
 {
+	public UnknownNode()
+	{
+		super("?");
+	}
 
 }

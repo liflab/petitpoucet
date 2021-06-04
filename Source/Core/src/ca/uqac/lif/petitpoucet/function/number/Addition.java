@@ -15,9 +15,37 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function.number;
 
-public interface Queryable
+import ca.uqac.lif.petitpoucet.ExplanationQueryable;
+import ca.uqac.lif.petitpoucet.function.AtomicFunction;
+
+public class Addition extends AtomicFunction implements ExplanationQueryable
 {
+	public Addition(int in_arity)
+	{
+		super(in_arity, 1);
+	}
 
+	@Override
+	public Object[] getValue(Object ... inputs)
+	{
+		Object[] out = new Object[1];
+		float sum = 0;
+		for (Object o : inputs)
+		{
+			if (o instanceof Number)
+			{
+				sum += ((Number) o).floatValue();
+			}
+		}
+		out[0] = sum;
+		return out;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "+";
+	}
 }
