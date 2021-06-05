@@ -21,8 +21,6 @@ import org.junit.Test;
 
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
-import ca.uqac.lif.petitpoucet.AndNode;
-import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
@@ -39,10 +37,7 @@ public class VectorSumTest
 	{
 		List<?> in_list = getList(1, 2, 3);
 		VectorSum f = new VectorSum();
-		List<?> out_list = (List<?>) f.evaluate(in_list)[0];
-		assertNotNull(out_list);
-		assertEquals(1, out_list.size());
-		Number n = (Number) out_list.get(0);
+		Number n = (Number) f.evaluate(in_list)[0];
 		assertEquals(6, n.intValue());
 	}
 	
@@ -60,25 +55,4 @@ public class VectorSumTest
 		assertEquals(pn.getPart(), NthInput.FIRST);
 		assertEquals(f, pn.getSubject());
 	}
-	
-	@Test
-	public void testExplain2()
-	{
-		List<?> in_list = getList(1, 2, 3);
-		VectorSum f = new VectorSum();
-		f.evaluate(in_list);
-		Node root = f.getExplanation(ComposedPart.create(new NthElement(0), NthOutput.FIRST));
-		assertTrue(root instanceof PartNode);
-		assertEquals(1, root.getOutputLinks(0).size());
-		Pin<?> pin = root.getOutputLinks(0).get(0);
-		AndNode and = (AndNode) pin.getNode();
-		assertEquals(3, and.getOutputLinks(0).size());
-		for (int i = 0; i < 3; i++)
-		{
-			Pin<?> a_pin = and.getOutputLinks(0).get(i);
-			PartNode pn = (PartNode) a_pin.getNode();
-			assertEquals(pn.getPart(), ComposedPart.create(new NthElement(i), NthInput.FIRST));
-			assertEquals(f, pn.getSubject());
-		}
-	}	
 }

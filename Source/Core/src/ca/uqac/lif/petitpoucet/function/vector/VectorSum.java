@@ -17,15 +17,18 @@
  */
 package ca.uqac.lif.petitpoucet.function.vector;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 
+/**
+ * Calculates the sum of all numerical elements in a vector. The function
+ * produces an output vector with a single element.
+ */
 public class VectorSum extends VectorFunction
 {
 	@Override
-	protected List<?> getVectorValue(List<?> in_list)
+	protected Number getOutputValue(List<?> in_list)
 	{
 		float total = 0;
 		for (Object o : in_list)
@@ -36,14 +39,20 @@ public class VectorSum extends VectorFunction
 			}
 			total += ((Number) o).floatValue();
 		}
-		List<Number> out_list = new ArrayList<Number>(1);
-		out_list.add(total);
-		return out_list;
+		return total;
 	}
 	
 	@Override
 	public String toString()
 	{
 		return "Σ";
+	}
+	
+	@Override
+	public VectorSum duplicate(boolean with_state)
+	{
+		VectorSum vs = new VectorSum();
+		copyInto(vs, with_state);
+		return vs;
 	}
 }

@@ -24,6 +24,7 @@ import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.ExplanationQueryable;
+import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.util.Duplicable;
 
@@ -49,9 +50,9 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	}
 
 	@Override
-	public PartNode getExplanation(Part part)
+	public PartNode getExplanation(Part part, NodeFactory factory)
 	{
-		PartNode root = new PartNode(part, this);
+		PartNode root = factory.getPartNode(part, this);
 		int output_nb = NthOutput.mentionedOutput(part);
 		if (output_nb < 0 || output_nb >= getOutputArity())
 		{
@@ -60,7 +61,8 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 		}
 		Pin<? extends Node> start_pin = m_outputAssociations.get(output_nb);
 		Part start_part = NthOutput.replaceOutBy(part, new NthOutput(start_pin.getIndex()));
-		
+		// TODO: not finished
+		return null;
 	}
 
 	@Override
@@ -102,6 +104,12 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 				((Function) n).reset();
 			}
 		}
+	}
+
+	@Override
+	public PartNode getExplanation(Part part)
+	{
+		return getExplanation(part, new NodeFactory());
 	}
 
 }

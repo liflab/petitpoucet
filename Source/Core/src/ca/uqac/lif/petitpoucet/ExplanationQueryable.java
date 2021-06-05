@@ -21,5 +21,5 @@ public interface ExplanationQueryable extends Queryable
 {
 	public PartNode getExplanation(Part part);
 	
-	public PartNode getExplanation(Part part, PartNodeFactory factory);
+	public PartNode getExplanation(Part part, NodeFactory factory);
 }

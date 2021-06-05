@@ -25,11 +25,10 @@ import ca.uqac.lif.dag.LabelledNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.AndNode;
-import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.PartNode;
-import ca.uqac.lif.petitpoucet.PartNodeFactory;
+import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.util.Duplicable;
 
 /**
@@ -165,11 +164,11 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 	@Override
 	/*@ non_null @*/ public final PartNode getExplanation(Part part)
 	{
-		return getExplanation(part, new PartNodeFactory());
+		return getExplanation(part, new NodeFactory());
 	}
 	
 	@Override
-	/*@ non_null @*/ public PartNode getExplanation(Part part, PartNodeFactory factory)
+	/*@ non_null @*/ public PartNode getExplanation(Part part, NodeFactory factory)
 	{
 		PartNode root = new PartNode(part, this);
 		int index = NthOutput.mentionedOutput(part);

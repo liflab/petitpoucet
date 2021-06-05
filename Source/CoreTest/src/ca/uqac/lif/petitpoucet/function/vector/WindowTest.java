@@ -26,36 +26,37 @@ import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
-import ca.uqac.lif.petitpoucet.function.number.AbsoluteValue;
 
 import static ca.uqac.lif.petitpoucet.function.vector.VectorTestUtilities.getList;
 import static org.junit.Assert.*;
 
 import java.util.List;
 
-public class VectorApplyTest
+public class WindowTest
 {
 	@Test
 	public void test1()
 	{
-		List<?> in_list = getList(-1, 2, -3);
-		VectorApply f = new VectorApply(new AbsoluteValue());
+		List<?> in_list = getList(3, 1, 4, 1, 5);
+		Window f = new Window(new VectorSum(), 2);
 		List<?> out_list = (List<?>) f.evaluate(in_list)[0];
 		assertNotNull(out_list);
-		assertEquals(3, out_list.size());
+		assertEquals(4, out_list.size());
 		Number n = (Number) out_list.get(0);
-		assertEquals(1, n.intValue());
+		assertEquals(4, n.intValue());
 		n = (Number) out_list.get(1);
-		assertEquals(2, n.intValue());
+		assertEquals(5, n.intValue());
 		n = (Number) out_list.get(2);
-		assertEquals(3, n.intValue());
+		assertEquals(5, n.intValue());
+		n = (Number) out_list.get(3);
+		assertEquals(6, n.intValue());
 	}
-	
+
 	@Test
 	public void testExplain1()
 	{
-		List<?> in_list = getList(-1, 2, -3);
-		VectorApply f = new VectorApply(new AbsoluteValue());
+		List<?> in_list = getList(3, 1, 4, 1, 5);
+		Window f = new Window(new VectorSum(), 2);
 		f.evaluate(in_list);
 		Node root = f.getExplanation(NthOutput.FIRST);
 		assertTrue(root instanceof PartNode);
@@ -65,12 +66,12 @@ public class VectorApplyTest
 		assertEquals(pn.getPart(), NthInput.FIRST);
 		assertEquals(f, pn.getSubject());
 	}
-	
+
 	@Test
 	public void testExplain2()
 	{
-		List<?> in_list = getList(-1, 2, -3);
-		VectorApply f = new VectorApply(new AbsoluteValue());
+		List<?> in_list = getList(3, 1, 4, 1, 5);
+		Window f = new Window(new VectorSum(), 2);
 		f.evaluate(in_list);
 		Node root = f.getExplanation(ComposedPart.create(new NthElement(0), NthOutput.FIRST));
 		assertTrue(root instanceof PartNode);
@@ -78,18 +79,26 @@ public class VectorApplyTest
 		Pin<?> pin = root.getOutputLinks(0).get(0);
 		NestedNode nn = (NestedNode) pin.getNode();
 		assertEquals(1, nn.getOutputArity());
-		assertEquals(1, nn.getOutputLinks(0).size());
-		Pin<?> pin2 = nn.getOutputLinks(0).get(0);
-		PartNode in_node = (PartNode) pin2.getNode();
-		assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(0), NthInput.FIRST));
-		assertEquals(f, in_node.getSubject());
+		assertEquals(2, nn.getOutputLinks(0).size());
+		{
+			Pin<?> pin2 = nn.getOutputLinks(0).get(0);
+			PartNode in_node = (PartNode) pin2.getNode();
+			assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(0), NthInput.FIRST));
+			assertEquals(f, in_node.getSubject());
+		}
+		{
+			Pin<?> pin2 = nn.getOutputLinks(0).get(1);
+			PartNode in_node = (PartNode) pin2.getNode();
+			assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(1), NthInput.FIRST));
+			assertEquals(f, in_node.getSubject());
+		}
 	}
 	
 	@Test
 	public void testExplain3()
 	{
-		List<?> in_list = getList(-1, 2, -3);
-		VectorApply f = new VectorApply(new AbsoluteValue());
+		List<?> in_list = getList(3, 1, 4, 1, 5);
+		Window f = new Window(new VectorSum(), 2);
 		f.evaluate(in_list);
 		Node root = f.getExplanation(ComposedPart.create(new NthElement(2), NthOutput.FIRST));
 		assertTrue(root instanceof PartNode);
@@ -97,10 +106,34 @@ public class VectorApplyTest
 		Pin<?> pin = root.getOutputLinks(0).get(0);
 		NestedNode nn = (NestedNode) pin.getNode();
 		assertEquals(1, nn.getOutputArity());
-		assertEquals(1, nn.getOutputLinks(0).size());
-		Pin<?> pin2 = nn.getOutputLinks(0).get(0);
-		PartNode in_node = (PartNode) pin2.getNode();
-		assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(2), NthInput.FIRST));
-		assertEquals(f, in_node.getSubject());
-	}	
+		assertEquals(2, nn.getOutputLinks(0).size());
+		{
+			Pin<?> pin2 = nn.getOutputLinks(0).get(0);
+			PartNode in_node = (PartNode) pin2.getNode();
+			assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(2), NthInput.FIRST));
+			assertEquals(f, in_node.getSubject());
+		}
+		{
+			Pin<?> pin2 = nn.getOutputLinks(0).get(1);
+			PartNode in_node = (PartNode) pin2.getNode();
+			assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(3), NthInput.FIRST));
+			assertEquals(f, in_node.getSubject());
+		}
+	}
+	
+	@Test
+	public void testOffset1()
+	{
+		ComposedPart cd = (ComposedPart) ComposedPart.create(new NthElement(2), NthInput.FIRST);
+		ComposedPart new_cd = (ComposedPart) Window.offsetElement(cd, 5);
+		assertEquals(new_cd, ComposedPart.create(new NthElement(7), NthInput.FIRST));
+	}
+	
+	@Test
+	public void testOffset2()
+	{
+		ComposedPart cd = (ComposedPart) ComposedPart.create(new NthElement(10), new NthElement(2), NthInput.FIRST);
+		ComposedPart new_cd = (ComposedPart) Window.offsetElement(cd, 5);
+		assertEquals(new_cd, ComposedPart.create(new NthElement(10), new NthElement(7), NthInput.FIRST));
+	}
 }

@@ -20,6 +20,7 @@ package ca.uqac.lif.petitpoucet.function.number;
 import ca.uqac.lif.dag.LabelledNode;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.ExplanationQueryable;
+import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.OrNode;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
@@ -95,14 +96,14 @@ public class Multiplication extends AtomicFunction implements ExplanationQueryab
 	}
 
 	@Override
-	public PartNode getExplanation(Part part)
+	public PartNode getExplanation(Part part, NodeFactory factory)
 	{
-		PartNode root = new PartNode(part, this);
+		PartNode root = factory.getPartNode(part, this);
 		int num_nulls = countNulls();
 		if (num_nulls == 0)
 		{
 			// No null values: output depends on all inputs
-			return super.getExplanation(part);
+			return super.getExplanation(part, factory);
 		}
 		LabelledNode ln = null;
 		if (num_nulls == 1)
@@ -118,7 +119,7 @@ public class Multiplication extends AtomicFunction implements ExplanationQueryab
 		{
 			if (m_nulls[i])
 			{
-				ln.addChild(new PartNode(new NthInput(i), this));
+				ln.addChild(factory.getPartNode(new NthInput(i), this));
 			}
 		}
 		return root;

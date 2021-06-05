@@ -24,6 +24,7 @@ import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
 import ca.uqac.lif.dag.Pin;
+import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
@@ -31,24 +32,35 @@ import ca.uqac.lif.petitpoucet.function.Function;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
-public class VectorApply extends ParameterizedVectorFunction
+public class Window extends ParameterizedVectorFunction
 {
-	public VectorApply(/*@ non_null @*/ Function f)
+	/**
+	 * The width of the sliding window.
+	 */
+	protected int m_width;
+	
+	/**
+	 * Creates a new sliding window function.
+	 * @param f The function to apply on each window
+	 * @param width The width of the sliding window
+	 */
+	public Window(/*@ non_null @*/ Function f, int width)
 	{
-		super(f);		
+		super(f);
+		m_width = width;
 	}
-
+	
 	@Override
 	protected List<?> getVectorValue(List<?> in_list)
 	{
-		m_lastInstances.clear();
-		List<Object> out_list = new ArrayList<Object>(in_list.size());
-		for (Object o : in_list)
+		List<Object> out_list = new ArrayList<Object>();
+		for (int i = 0; i < in_list.size() - m_width + 1; i++)
 		{
-			Function new_f = (Function) m_function.duplicate(true);
-			Object[] out = new_f.evaluate(new Object[] {o});
+			List<?> sub_list = in_list.subList(i, i + m_width);
+			Function f = (Function) m_function.duplicate(true);
+			Object[] out = f.evaluate(new Object[] {sub_list});
+			m_lastInstances.add(f);
 			out_list.add(out[0]);
-			m_lastInstances.add(new_f);
 		}
 		return out_list;
 	}
@@ -82,11 +94,25 @@ public class VectorApply extends ParameterizedVectorFunction
 				if (n instanceof PartNode)
 				{
 					PartNode pn = (PartNode) n;
-					int input_nb = NthInput.mentionedInput(pn.getPart());
+					Part pn_p = pn.getPart();
+					int input_nb = NthInput.mentionedInput(pn_p);
 					if (input_nb >= 0)
 					{
 						// This leaf mentions an input of the inner function
-						NodeConnector.connect(sub_node, i, factory.getPartNode(VectorOutputFunction.replaceInputByElement(pn.getPart(), elem_index), this), 0);
+						int mentioned_elem = mentionedElement(pn_p);
+						if (mentioned_elem >= 0)
+						{
+							// This leaf points to a precise element of its input vector; offset by window position
+							NodeConnector.connect(sub_node, i, factory.getPartNode(offsetElement(pn.getPart(), elem_index), this), 0);
+						}
+						else
+						{
+							// Leaf points to the whole input, which corresponds to all elements of the window
+							for (int j = 0; j < m_width; j++)
+							{
+								NodeConnector.connect(sub_node, i, factory.getPartNode(replaceInputByElement(pn.getPart(), elem_index + j), this), 0);
+							}
+						}
 					}
 				}
 			}
@@ -94,10 +120,39 @@ public class VectorApply extends ParameterizedVectorFunction
 		return root;
 	}
 	
-	@Override
-	public VectorApply duplicate(boolean with_state)
+	public static Part offsetElement(Part d, int offset)
 	{
-		VectorApply w = new VectorApply((Function) m_function.duplicate(with_state));
+		if (!(d instanceof ComposedPart))
+		{
+			return d; // Nothing to do
+		}
+		ComposedPart cd = (ComposedPart) d;
+		boolean replaced = false;
+		List<Part> parts = new ArrayList<Part>();
+		for (int i = 0; i < cd.size(); i++)
+		{
+			Part in_d = cd.get(i);
+			if (in_d instanceof NthElement && cd.get(i + 1) instanceof NthInput)
+			{
+				parts.add(new NthElement(((NthElement) in_d).getIndex() + offset));
+				replaced = true;
+			}
+			else
+			{
+				parts.add(in_d);
+			}
+		}
+		if (!replaced)
+		{
+			return d;
+		}
+		return ComposedPart.create(parts);
+	}
+	
+	@Override
+	public Window duplicate(boolean with_state)
+	{
+		Window w = new Window((Function) m_function.duplicate(with_state), m_width);
 		copyInto(w, with_state);
 		return w;
 	}

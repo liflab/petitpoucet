@@ -32,7 +32,7 @@ public class NthOutputTest
 	{
 		ComposedPart d = (ComposedPart) NthOutput.replaceOutBy(ComposedPart.create(new NthElement(1), NthOutput.FIRST), Part.all);
 		assertEquals(2, d.size());
-		assertEquals(new NthElement(1), d.head());
-		assertEquals(Part.all, d.tail());
+		assertEquals(Part.all, d.head());
+		assertEquals(new NthElement(1), d.tail());
 	}
 }

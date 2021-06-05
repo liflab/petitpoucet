@@ -17,6 +17,7 @@
  */
 package ca.uqac.lif.petitpoucet.function;
 
+import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 
@@ -55,13 +56,13 @@ public class Constant extends AtomicFunction
 	}
 	
 	@Override
-	public PartNode getExplanation(Part part)
+	public PartNode getExplanation(Part part, NodeFactory factory)
 	{
-		PartNode root = new PartNode(part, this);
+		PartNode root = factory.getPartNode(part, this);
 		int index = NthOutput.mentionedOutput(part);
 		if (index >= 0)
 		{
-			root.addChild(new PartNode(NthOutput.replaceOutBy(part, Part.all), m_value));
+			root.addChild(factory.getPartNode(NthOutput.replaceOutBy(part, Part.all), m_value));
 		}
 		return root;
 	}
