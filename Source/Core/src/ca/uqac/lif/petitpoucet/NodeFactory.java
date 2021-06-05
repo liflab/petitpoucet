@@ -27,10 +27,18 @@ public class NodeFactory
 {
 	/*@ non_null @*/ protected Map<ObjectPart,PartNode> m_partNodes;
 	
-	public NodeFactory()
+	/*@ null @*/ protected NodeFactory m_parent;
+	
+	public NodeFactory(/*@ null @*/ NodeFactory parent)
 	{
 		super();
 		m_partNodes = new HashMap<ObjectPart,PartNode>();
+		m_parent = parent;
+	}
+	
+	public NodeFactory()
+	{
+		this(null);
 	}
 	
 	public PartNode getPartNode(Part p, Object subject)

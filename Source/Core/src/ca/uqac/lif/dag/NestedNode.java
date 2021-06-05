@@ -116,6 +116,27 @@ public class NestedNode extends Node
 		}
 	}
 	
+	/**
+	 * Gets the nested node input to which the n-th input of an inner node
+	 * is associated with.
+	 * @param node The node
+	 * @param index The value of n in the previous description
+	 * @return The nested node input number, or -1 of node is not associated
+	 * to an input of the nested node 
+	 */
+	public int getNestedInput(Node node, int index)
+	{
+		for (Map.Entry<Integer,Pin<? extends Node>> e : m_inputAssociations.entrySet())
+		{
+			Pin<? extends Node> pin = e.getValue();
+			if (pin.getNode().equals(node) && pin.getIndex() == index)
+			{
+				return e.getKey();
+			}
+		}
+		return -1;
+	}
+	
 	protected static class NestedNodeCrawler extends Crawler
 	{
 		protected List<Node> m_leaves;

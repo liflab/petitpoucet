@@ -17,6 +17,9 @@
  */
 package ca.uqac.lif.petitpoucet.function;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.Part;
 
@@ -34,6 +37,11 @@ public class NthInput implements Part
 	 * A static reference to an instance of "second input"
 	 */
 	public static final transient NthInput SECOND = new NthInput(1);
+	
+	/**
+	 * A static reference to an instance of "third input"
+	 */
+	public static final transient NthInput THIRD = new NthInput(2);
 	
 	/**
 	 * The index of the function's input.
@@ -123,5 +131,60 @@ public class NthInput implements Part
 			}
 		}
 		return -1;
+	}
+	
+	/**
+	 * Given an arbitrary designator, replaces the first occurrence of
+	 * {@link NthInput} by an instance of {@link NthOutput} with given index.
+	 * @param d The designator
+	 * @param index The index
+	 * @return The new designator. The input object is not modified if it does
+	 * not contain {@code d}
+	 */
+	/*@ non_null @*/ public static Part replaceInByOut(/*@ non_null @*/ Part d, int index)
+	{
+		return replaceInBy(d, new NthOutput(index));
+	}
+	
+	/**
+	 * Given an arbitrary designator, replaces the first occurrence of
+	 * {@link NthInput} by another part.
+	 * @param from The designator
+	 * @param index The index
+	 * @return The new designator. The input object is not modified if it does
+	 * not contain {@code d}
+	 */
+	/*@ non_null @*/ public static Part replaceInBy(/*@ non_null @*/ Part from, Part to)
+	{
+		if (from instanceof NthInput)
+		{
+			return to;
+		}
+		if (from instanceof ComposedPart)
+		{
+			ComposedPart cd = (ComposedPart) from;
+			List<Part> desigs = new ArrayList<Part>();
+			boolean replaced = false;
+			for (int i = 0 ; i < cd.size(); i++)
+			{
+				Part in_d = cd.get(i);
+				if (in_d instanceof NthInput && !replaced)
+				{
+					desigs.add(to);
+					replaced = true;
+				}
+				else
+				{
+					desigs.add(in_d);
+				}
+			}
+			if (!replaced)
+			{
+				// Return input object if no replacement was done
+				return from;
+			}
+			return new ComposedPart(desigs);
+		}
+		return from;
 	}
 }
