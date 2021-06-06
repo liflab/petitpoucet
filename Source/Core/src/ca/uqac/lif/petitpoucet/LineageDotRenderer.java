@@ -32,74 +32,119 @@ import ca.uqac.lif.dag.Renderer;
 public class LineageDotRenderer implements Renderer
 {
 	/*@ non_null @*/ protected Node m_root;
-	
-	/*@ non_null @*/ protected Map<Node,Integer> m_nodeIds;
-	
+
+	/*@ non_null @*/ protected Map<Node,String> m_nodeIds;
+
 	/*@ non_null @*/ protected Set<Node> m_rendered;
 	
+	/*@ non_null @*/ protected Set<Node> m_expanded;
+
+	/*@ non_null @*/ protected String m_prefix;
+
 	protected int m_idCounter;
-	
-	public LineageDotRenderer(/*@ non_null @*/ Node root)
+
+	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix)
 	{
 		super();
 		m_root = root;
-		m_nodeIds = new HashMap<Node,Integer>();
+		m_nodeIds = new HashMap<Node,String>();
 		m_rendered = new HashSet<Node>();
+		m_expanded = new HashSet<Node>();
 		m_idCounter = 0;
+		m_prefix = prefix;
 	}
-	
+
+	public LineageDotRenderer(/*@ non_null @*/ Node root)
+	{
+		this(root, "");
+	}
+
 	@Override
 	public void render(PrintStream ps)
 	{
-		ps.println("digraph G {");
-		render(ps, m_root);
-		ps.println("}");
-	}
-	
-	protected void render(PrintStream ps, Node current)
-	{
-		int n_id = -1;
-		if (!m_nodeIds.containsKey(current))
+		if (m_prefix.isEmpty())
 		{
-			n_id = m_idCounter++;
-			m_nodeIds.put(current, n_id);
-			renderNode(ps, current, n_id);
+			ps.println("digraph G {");
+			ps.println("compound=true;");
+			ps.println("node [style=\"filled\",shape=\"rectangle\"]");
+			render(ps, m_root);
+			ps.println("}");
 		}
 		else
 		{
-			n_id = m_nodeIds.get(current);
+			ps.println("subgraph " + m_prefix + " {");
+			ps.println("compound=true;");
+			ps.println("color=black;");
+			render(ps, m_root);
+			ps.println("}");
 		}
+	}
+
+	protected void render(PrintStream ps, Node current)
+	{
+		if (m_expanded.contains(current))
+		{
+			return;
+		}
+		renderNode(ps, current);
+		m_expanded.add(current);
+		for (int i = 0; i < current.getOutputArity(); i++)
+		{
+			Collection<Pin<? extends Node>> pins = current.getOutputLinks(i);
+			for (Pin<? extends Node> pin : pins)
+			{
+				Node target = (Node) pin.getNode();
+				render(ps, target);
+				renderTransition(ps, current, i, pin);
+			}
+		}
+	}
+	
+	protected void renderTransition(PrintStream ps, Node from, int out_index, Pin<? extends Node> pin)
+	{
+		String source_id = "", dest_id = "";
+		Node to = pin.getNode();
+		if (from instanceof NestedNode)
+		{
+			NestedNode nn_from = (NestedNode) from;
+			Pin<? extends Node> inner_pin = nn_from.getAssociatedOutput(out_index);
+			Node inner_node = inner_pin.getNode();
+			source_id = m_nodeIds.get(inner_node);
+		}
+		else
+		{
+			source_id = m_nodeIds.get(from);
+		}
+		if (to instanceof NestedNode)
+		{
+			NestedNode nn_to = (NestedNode) to;
+			Pin<? extends Node> inner_pin = nn_to.getAssociatedInput(pin.getIndex());
+			Node inner_node = inner_pin.getNode();
+			dest_id = m_nodeIds.get(inner_node);
+		}
+		else
+		{
+			dest_id = m_nodeIds.get(to);
+		}
+		ps.println(source_id + " -> " + dest_id + ";");
+	}
+
+	protected void renderNode(PrintStream ps, Node current)
+	{
 		if (m_rendered.contains(current))
 		{
 			return;
 		}
 		m_rendered.add(current);
-		for (int i = 0; i < current.getOutputArity(); i++)
-		{
-			Collection<Pin<? extends Node>> pins = current.getOutputLinks(i);
-			for (Pin<?> pin : pins)
-			{
-				Node o_n = (Node) pin.getNode();
-				int o_id = getNodeId(o_n);
-				render(ps, o_n);
-				ps.println(n_id + " -> " + o_id + ";");
-			}
-		}
-	}
-	
-	protected void renderNode(PrintStream ps, Node current, int n_id)
-	{
-		if (m_rendered.contains(current))
-		{
-			return;
-		}
+		String n_id = m_prefix + m_idCounter++;
+		m_nodeIds.put(current, n_id);
 		if (current instanceof OrNode)
 		{
-			ps.println(n_id + " [shape=\"circle\",label=\"&lor;\"];");
+			ps.println(n_id + " [shape=\"circle\",label=<<font color='white'><b>∨</b></font>>,width=.3,fixedsize=\"true\",fillcolor=\"red\",textcolor=\"white\"];");
 		}
 		else if (current instanceof AndNode)
 		{
-			ps.println(n_id + " [shape=\"circle\",label=\"&land;\"];");
+			ps.println(n_id + " [shape=\"circle\",label=<<font color='white'><b>∧</b></font>>,width=.3,fixedsize=\"true\",fillcolor=\"blue\",textcolor=\"white\"];");
 		}
 		else if (current instanceof PartNode)
 		{
@@ -107,27 +152,41 @@ public class LineageDotRenderer implements Renderer
 		}
 		else if (current instanceof NestedNode)
 		{
-			// TODO
+			renderNestedNode(ps, (NestedNode) current, n_id);
 		}
 		else
 		{
 			ps.println(n_id + " [label=\"?\"];");
 		}
 	}
-	
-	protected void renderPartNode(PrintStream ps, PartNode current, int n_id)
+
+	protected void renderPartNode(PrintStream ps, PartNode current, String n_id)
 	{
 		Part d = current.getPart();
 		Object o = current.getSubject();
 		ps.println(n_id + "[label=\"" + d.toString() + " of " + o.toString() + "\"];");
 	}
-	
-	protected int getNodeId(Node current)
+
+	protected String renderNestedNode(PrintStream ps, NestedNode current, String n_id)
 	{
-		int n_id = -1;
+		Node inner_start = current.getAssociatedInput(0).getNode();
+		String new_prefix = "C" + n_id;
+		if (m_prefix.isEmpty())
+		{
+			new_prefix = "cluster_" + new_prefix;
+		}
+		LineageDotRenderer sub_renderer = new LineageDotRenderer(inner_start, new_prefix);
+		sub_renderer.render(ps);
+		m_nodeIds.putAll(sub_renderer.m_nodeIds);
+		return "C" + n_id + "0";
+	}
+
+	protected String getNodeId(Node current)
+	{
+		String n_id = "";
 		if (!m_nodeIds.containsKey(current))
 		{
-			n_id = m_idCounter++;
+			n_id = m_prefix + m_idCounter++;
 			m_nodeIds.put(current, n_id);
 		}
 		else

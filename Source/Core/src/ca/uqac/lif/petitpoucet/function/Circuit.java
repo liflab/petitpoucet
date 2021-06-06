@@ -38,10 +38,21 @@ import ca.uqac.lif.util.Duplicable;
 public class Circuit extends NestedNode implements Function, Duplicable, ExplanationQueryable
 {
 	protected Map<String,Object> m_context;
+	
+	/**
+	 * A name that can be given to the circuit.
+	 */
+	/*@ null @*/ protected String m_name;
 
-	public Circuit(int in_arity, int out_arity)
+	public Circuit(int in_arity, int out_arity, String name)
 	{
 		super(in_arity, out_arity);
+		m_name = name;
+	}
+	
+	public Circuit(int in_arity, int out_arity)
+	{
+		this(in_arity, out_arity, null);
 	}
 
 	@Override
@@ -262,11 +273,27 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 		copyInto(c, with_state);
 		return c;
 	}
+	
+	protected void copyInto(Circuit c, boolean with_state)
+	{
+		super.copyInto(c, with_state);
+		c.m_name = m_name;
+	}
 
 	@Override
 	public PartNode getExplanation(Part part)
 	{
 		return getExplanation(part, new NodeFactory());
+	}
+	
+	@Override
+	public String toString()
+	{
+		if (m_name == null)
+		{
+			return super.toString();
+		}
+		return m_name;
 	}
 
 }
