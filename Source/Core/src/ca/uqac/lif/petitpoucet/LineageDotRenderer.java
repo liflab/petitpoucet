@@ -28,35 +28,91 @@ import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.dag.Renderer;
+import ca.uqac.lif.petitpoucet.function.NthInput;
+import ca.uqac.lif.petitpoucet.function.NthOutput;
 
+/**
+ * Renders a graph produced by a call to
+ * {@link ExplanationQueryable#getExplanation(Part)} as an input file in the
+ * DOT format used by <a href="https://graphviz.org">Graphviz</a>.
+ */
 public class LineageDotRenderer implements Renderer
 {
+	/**
+	 * The node used as the starting point for the rendering.
+	 */
 	/*@ non_null @*/ protected Node m_root;
 
+	/**
+	 * A map associating node instances to their uniquely generated ID.
+	 */
 	/*@ non_null @*/ protected Map<Node,String> m_nodeIds;
 
+	/**
+	 * The set of nodes that have been rendered. Used internally by the renderer
+	 * to avoid outputting code for the same node when encountered multiple times
+	 * in the traversal of the graph.
+	 */
 	/*@ non_null @*/ protected Set<Node> m_rendered;
 	
+	/**
+	 * The set of nodes that have been expanded (nodes that had their children
+	 * rendered). Used internally by the renderer to avoid expanding the same
+	 * node when encountered multiple times in the traversal of the graph.
+	 */
 	/*@ non_null @*/ protected Set<Node> m_expanded;
 
+	/**
+	 * The prefix to give to each node ID in the graph.
+	 */
 	/*@ non_null @*/ protected String m_prefix;
+	
+	/**
+	 * The prefix to give to each node ID in the graph.
+	 */
+	/*@ non_null @*/ protected String m_indent;
 
+	/**
+	 * A counter used to give unique IDs to each new node encountered in the
+	 * graph.
+	 */
 	protected int m_idCounter;
+	
+	/**
+	 * The nesting level of this graph.
+	 */
+	protected int m_nestingLevel;
+	
+	
 
-	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix)
+	/**
+	 * Creates a new instance of renderer.
+	 * @param root The node used as the starting point for the rendering. This is
+	 * typically the root of a directed acyclic graph.
+	 * @param prefix The prefix to give to each node ID in the graph
+	 * @param nesting_level The nesting level of this graph
+	 */
+	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix, int nesting_level)
 	{
 		super();
+		m_idCounter = 0;
 		m_root = root;
 		m_nodeIds = new HashMap<Node,String>();
 		m_rendered = new HashSet<Node>();
 		m_expanded = new HashSet<Node>();
-		m_idCounter = 0;
 		m_prefix = prefix;
+		m_nestingLevel = nesting_level;
+		m_indent = getIndent(nesting_level);
 	}
 
+	/**
+	 * Creates a new instance of renderer. 
+	 * @param root The node used as the starting point for the rendering. This is
+	 * typically the root of a directed acyclic graph.
+	 */
 	public LineageDotRenderer(/*@ non_null @*/ Node root)
 	{
-		this(root, "");
+		this(root, "", 0);
 	}
 
 	@Override
@@ -72,14 +128,22 @@ public class LineageDotRenderer implements Renderer
 		}
 		else
 		{
-			ps.println("subgraph " + m_prefix + " {");
-			ps.println("compound=true;");
-			ps.println("color=black;");
+			ps.println(m_indent + "subgraph " + m_prefix + " {");
+			ps.println(m_indent + "compound=true;");
+			ps.println(m_indent + "color=black;");
+			ps.println(m_indent + "style=filled;");
+			ps.println(m_indent + "fillcolor=\"" + getBackgroundColor(m_nestingLevel) + "\";");
 			render(ps, m_root);
-			ps.println("}");
+			ps.println(m_indent + "}");
 		}
 	}
 
+	/**
+	 * Recursive function that renders a node and then calls itself to render its
+	 * descendants.
+	 * @param ps The print stream where the node should be printed
+	 * @param current The node to render
+	 */
 	protected void render(PrintStream ps, Node current)
 	{
 		if (m_expanded.contains(current))
@@ -100,6 +164,14 @@ public class LineageDotRenderer implements Renderer
 		}
 	}
 	
+	/**
+	 * Renders a transition between two nodes of the graph.
+	 * @param ps The print stream where the transition should be printed
+	 * @param from The source node
+	 * @param out_index The index of the output pin on the source node
+	 * corresponding
+	 * @param pin The pin on the destination node of this transition
+	 */
 	protected void renderTransition(PrintStream ps, Node from, int out_index, Pin<? extends Node> pin)
 	{
 		String source_id = "", dest_id = "";
@@ -126,9 +198,15 @@ public class LineageDotRenderer implements Renderer
 		{
 			dest_id = m_nodeIds.get(to);
 		}
-		ps.println(source_id + " -> " + dest_id + ";");
+		ps.println(m_indent + source_id + " -> " + dest_id + ";");
 	}
 
+	/**
+	 * Renders a node. This method only adds a line in the output file for the
+	 * node itself and its properties.
+	 * @param ps The print stream where the node should be printed
+	 * @param current The node to render
+	 */
 	protected void renderNode(PrintStream ps, Node current)
 	{
 		if (m_rendered.contains(current))
@@ -140,11 +218,11 @@ public class LineageDotRenderer implements Renderer
 		m_nodeIds.put(current, n_id);
 		if (current instanceof OrNode)
 		{
-			ps.println(n_id + " [shape=\"circle\",label=<<font color='white'><b>∨</b></font>>,width=.3,fixedsize=\"true\",fillcolor=\"red\",textcolor=\"white\"];");
+			ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∨</b></font>>,width=.3,fixedsize=\"true\",fillcolor=\"red\",textcolor=\"white\"];");
 		}
 		else if (current instanceof AndNode)
 		{
-			ps.println(n_id + " [shape=\"circle\",label=<<font color='white'><b>∧</b></font>>,width=.3,fixedsize=\"true\",fillcolor=\"blue\",textcolor=\"white\"];");
+			ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∧</b></font>>,width=.3,fixedsize=\"true\",fillcolor=\"blue\",textcolor=\"white\"];");
 		}
 		else if (current instanceof PartNode)
 		{
@@ -156,17 +234,32 @@ public class LineageDotRenderer implements Renderer
 		}
 		else
 		{
-			ps.println(n_id + " [label=\"?\"];");
+			ps.println(m_indent + n_id + " [label=\"?\"];");
 		}
 	}
 
+	/**
+	 * A specialization of {@link #renderNode(PrintStream, Node)} that renders
+	 * a {@link PartNode}.
+	 * @param ps The print stream where the node should be printed
+	 * @param current The node to render
+	 * @param n_id The unique ID given to that node
+	 */
 	protected void renderPartNode(PrintStream ps, PartNode current, String n_id)
 	{
 		Part d = current.getPart();
 		Object o = current.getSubject();
-		ps.println(n_id + "[label=\"" + d.toString() + " of " + o.toString() + "\"];");
+		String color = getPartNodeColor(d);
+		ps.println(m_indent + n_id + " [label=\"" + d.toString() + " of " + o.toString() + "\",fillcolor=\"" + color + "\"];");
 	}
 
+	/**
+	 * A specialization of {@link #renderNode(PrintStream, Node)} that renders
+	 * a {@link PartNode}.
+	 * @param ps The print stream where the node should be printed
+	 * @param current The node to render
+	 * @param n_id The unique ID given to that node
+	 */
 	protected String renderNestedNode(PrintStream ps, NestedNode current, String n_id)
 	{
 		Node inner_start = current.getAssociatedInput(0).getNode();
@@ -175,25 +268,71 @@ public class LineageDotRenderer implements Renderer
 		{
 			new_prefix = "cluster_" + new_prefix;
 		}
-		LineageDotRenderer sub_renderer = new LineageDotRenderer(inner_start, new_prefix);
+		LineageDotRenderer sub_renderer = new LineageDotRenderer(inner_start, new_prefix, m_nestingLevel + 1);
 		sub_renderer.render(ps);
 		m_nodeIds.putAll(sub_renderer.m_nodeIds);
 		return "C" + n_id + "0";
 	}
-
-	protected String getNodeId(Node current)
+	
+	/**
+	 * Gets the background color of the sub-graph associated to a given nesting
+	 * level. This method has a purely cosmetic effect: it results in
+	 * increasingly nested sub-graphs to be pained against increasingly darker
+	 * backgrounds to better distinguish them.
+	 * @param nesting_level The level of nesting
+	 * @return The background color associated to this nesting level
+	 */
+	/*@ non_null @*/ protected static String getBackgroundColor(int nesting_level)
 	{
-		String n_id = "";
-		if (!m_nodeIds.containsKey(current))
+		switch (nesting_level)
 		{
-			n_id = m_prefix + m_idCounter++;
-			m_nodeIds.put(current, n_id);
+			case 0:
+				return "white";
+			case 1:
+				return "#f0f0f0";
+			case 2:
+				return "#efefef";
+			case 3:
+				return "#e0e0e0";
+			case 4:
+				return "#dfdfdf";
+			default:
+				return "#d0d0d0";
 		}
-		else
-		{
-			n_id = m_nodeIds.get(current);
-		}
-		return n_id;
 	}
-
+	
+	/**
+	 * Gets the background color of a part node.
+	 * @param p The part
+	 * @return The color this node is assigned to
+	 */
+	protected static String getPartNodeColor(Part p)
+	{
+		if (NthInput.mentionedInput(p) >= 0)
+		{
+			return "Tomato";
+		}
+		if (NthOutput.mentionedOutput(p) >= 0)
+		{
+			return "GreenYellow";
+		}
+		return "AliceBlue";
+	}
+	
+	/**
+	 * Gets the indent to apply to each line of code depending on the renderrer's
+	 * nesting level. The goal of this method is simply to make the output file
+	 * minimally human-readable.
+	 * @param nesting_level 
+	 * @return A string with the appropriate number of indents
+	 */
+	protected static String getIndent(int nesting_level)
+	{
+		String out = "";
+		for (int i = 0; i < nesting_level; i++)
+		{
+			out += "  ";
+		}
+		return out;
+	}
 }

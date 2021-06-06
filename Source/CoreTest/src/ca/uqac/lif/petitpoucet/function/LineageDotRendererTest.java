@@ -31,7 +31,7 @@ public class LineageDotRendererTest
 	public void testRender1()
 	{
 		// This circuit calculates (x+y)*z
-		Circuit c = new Circuit(3, 1, "(x+y)*z");
+		Circuit c = new Circuit(3, 1, "(x+y)×z");
 		Addition a = new Addition(2);
 		Multiplication m = new Multiplication(2);
 		c.addNodes(a, m);
@@ -40,7 +40,7 @@ public class LineageDotRendererTest
 		c.associateInput(2, m.getInputPin(1));
 		NodeConnector.connect(a, 0, m, 0);
 		c.associateOutput(0, m.getOutputPin(0));
-		c.evaluate(2, 3, 4);
+		c.evaluate(-2, 2, 0);
 		PartNode root = c.getExplanation(NthOutput.FIRST);
 		LineageDotRenderer renderer = new LineageDotRenderer(root);
 		renderer.render(System.out);
