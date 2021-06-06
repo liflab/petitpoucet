@@ -89,6 +89,52 @@ public class CircuitTest
 	}
 
 	@Test
+	public void testDuplicate1()
+	{
+		Circuit c = new Circuit(2, 1);
+		Addition a = new Addition(2);
+		c.addNodes(a);
+		c.associateInput(0, a.getInputPin(0));
+		c.associateInput(1, a.getInputPin(1));
+		c.associateOutput(0, a.getOutputPin(0));
+		Circuit c_dup = c.duplicate();
+		Object[] out = c_dup.evaluate(2, 3);
+		assertEquals(5, ((Number) out[0]).intValue());
+	}
+
+	@Test
+	public void testDuplicate2()
+	{
+		Circuit c = new Circuit(2, 1);
+		Multiplication a = new Multiplication(2);
+		c.addNodes(a);
+		c.associateInput(0, a.getInputPin(0));
+		c.associateInput(1, a.getInputPin(1));
+		c.associateOutput(0, a.getOutputPin(0));
+		Circuit c_dup = c.duplicate();
+		Object[] out = c_dup.evaluate(2, 3);
+		assertEquals(6, ((Number) out[0]).intValue());
+	}
+
+	@Test
+	public void testDuplicate3()
+	{
+		// This circuit calculates (x+y)*z
+		Circuit c = new Circuit(3, 1);
+		Addition a = new Addition(2);
+		Multiplication m = new Multiplication(2);
+		c.addNodes(a, m);
+		c.associateInput(0, a.getInputPin(0));
+		c.associateInput(1, a.getInputPin(1));
+		c.associateInput(2, m.getInputPin(1));
+		NodeConnector.connect(a, 0, m, 0);
+		c.associateOutput(0, m.getOutputPin(0));
+		Circuit c_dup = c.duplicate();
+		Object[] out = c_dup.evaluate(2, 3, 4);
+		assertEquals(20, ((Number) out[0]).intValue());
+	}
+
+	@Test
 	public void testExplain1()
 	{
 		Circuit c = new Circuit(2, 1);
@@ -191,7 +237,7 @@ public class CircuitTest
 		assertEquals(c, pn_in.getSubject());
 		assertEquals(NthInput.THIRD, pn_in.getPart());
 	}
-	
+
 	@Test
 	public void testExplain5()
 	{

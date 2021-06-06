@@ -20,7 +20,6 @@ package ca.uqac.lif.petitpoucet.function;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -248,6 +247,20 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 				((Function) n).reset();
 			}
 		}
+	}
+	
+	@Override
+	public Circuit duplicate()
+	{
+		return duplicate(false);
+	}
+	
+	@Override
+	public Circuit duplicate(boolean with_state)
+	{
+		Circuit c = new Circuit(getInputArity(), getOutputArity());
+		copyInto(c, with_state);
+		return c;
 	}
 
 	@Override
