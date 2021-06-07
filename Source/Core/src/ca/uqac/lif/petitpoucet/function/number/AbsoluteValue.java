@@ -17,8 +17,8 @@
  */
 package ca.uqac.lif.petitpoucet.function.number;
 
-import ca.uqac.lif.petitpoucet.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
+import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 
 public class AbsoluteValue extends AtomicFunction implements ExplanationQueryable

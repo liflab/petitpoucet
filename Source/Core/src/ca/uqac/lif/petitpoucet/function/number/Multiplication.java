@@ -19,11 +19,10 @@ package ca.uqac.lif.petitpoucet.function.number;
 
 import ca.uqac.lif.dag.LabelledNode;
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.NodeFactory;
-import ca.uqac.lif.petitpoucet.OrNode;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
+import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 
 public class Multiplication extends AtomicFunction implements ExplanationQueryable
@@ -112,7 +111,7 @@ public class Multiplication extends AtomicFunction implements ExplanationQueryab
 		}
 		else
 		{
-			ln = new OrNode();
+			ln = factory.getOrNode();
 			root.addChild(ln);
 		}
 		for (int i = 0; i < m_nulls.length; i++)

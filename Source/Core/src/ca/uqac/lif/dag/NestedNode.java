@@ -27,6 +27,8 @@ import java.util.Map;
  * A node that itself encloses a directed acyclic graph of other nodes. The
  * input/output pins of some of these nodes may be associated to the
  * input/output pins of the global container node.
+ * 
+ * @author Sylvain Hallé
  */
 public class NestedNode extends Node
 {

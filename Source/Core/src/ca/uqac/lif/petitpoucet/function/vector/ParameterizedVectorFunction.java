@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.dag.NestedNode;
-import ca.uqac.lif.petitpoucet.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
+import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.Function;
 
 /**

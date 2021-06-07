@@ -19,9 +19,17 @@ package ca.uqac.lif.petitpoucet;
 
 import ca.uqac.lif.dag.LabelledNode;
 
+/**
+ * Node representing a disjunction of two lineage graphs.
+ * @author Sylvain Hallé
+ */
 public class OrNode extends LabelledNode
 {
-	public OrNode()
+	/**
+	 * Creates a new or node. The constructor has {@code package} visibility to
+	 * force the use of a {@link NodeFactory} to obtain instances of this class.
+	 */
+	OrNode()
 	{
 		super("∨");
 	}

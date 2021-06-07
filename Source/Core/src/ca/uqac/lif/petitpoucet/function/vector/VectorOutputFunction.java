@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.dag.LabelledNode;
-import ca.uqac.lif.petitpoucet.AndNode;
 import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
@@ -99,7 +98,7 @@ public abstract class VectorOutputFunction extends VectorFunction
 			LabelledNode and = root;
 			if (m_lastInputs.size() > 1)
 			{
-				and = new AndNode();
+				and = factory.getAndNode();
 				root.addChild(and);
 			}
 			for (int i = 0; i < m_lastInputs.size(); i++)

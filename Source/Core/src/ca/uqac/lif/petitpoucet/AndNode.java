@@ -19,9 +19,17 @@ package ca.uqac.lif.petitpoucet;
 
 import ca.uqac.lif.dag.LabelledNode;
 
+/**
+ * Node representing a conjunction of two lineage graphs.
+ * @author Sylvain Hallé
+ */
 public class AndNode extends LabelledNode
 {
-	public AndNode()
+	/**
+	 * Creates a new and node. The constructor has {@code package} visibility to
+	 * force the use of a {@link NodeFactory} to obtain instances of this class.
+	 */
+	AndNode()
 	{
 		super("∧");
 	}

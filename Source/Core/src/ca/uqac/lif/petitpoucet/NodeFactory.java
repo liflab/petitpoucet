@@ -21,14 +21,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides lineage nodes in a local context.
+ * Provides lineage nodes in a local context. Objects that implement a
+ * descendant of the {@link Queryable} interface should use a node factory to
+ * create nodes, and not call their constructors directly.
+ * @author Sylvain Hallé
  */
 public class NodeFactory
 {
+	/**
+	 * A map associating object/part pairs to instances of {@link PartNode}. This
+	 * map is used to return the same node if the same object/part is requested
+	 * multiple times.
+	 */
 	/*@ non_null @*/ protected Map<ObjectPart,PartNode> m_partNodes;
 	
+	/**
+	 * A reference to the node factory that instantiated the present node
+	 * factory, if any. This field is currently unused, but could make possible
+	 * to create nodes that depend on their nesting context in the future.
+	 */
 	/*@ null @*/ protected NodeFactory m_parent;
 	
+	/**
+	 * Creates a new node factory.
+	 * @param parent A reference to the node factory that instantiated the
+	 * present node, or {@code null} if the factory is instantiated outside
+	 * of any other factory.
+	 */
 	public NodeFactory(/*@ null @*/ NodeFactory parent)
 	{
 		super();
@@ -36,11 +55,22 @@ public class NodeFactory
 		m_parent = parent;
 	}
 	
+	/**
+	 * Creates a new node factory.
+	 */
 	public NodeFactory()
 	{
 		this(null);
 	}
 	
+	/**
+	 * Gets an instance of {@link PartNode} corresponding to a particular part
+	 * and subject. If the same part and subject are requested multiple times, the
+	 * factory reuses the same node instance on each successive call.
+	 * @param p The part
+	 * @param subject The subject
+	 * @return The node instance
+	 */
 	public PartNode getPartNode(Part p, Object subject)
 	{
 		ObjectPart op = new ObjectPart(p, subject);
@@ -51,6 +81,28 @@ public class NodeFactory
 		PartNode pn = new PartNode(p, subject);
 		m_partNodes.put(op, pn);
 		return pn;
+	}
+	
+	/**
+	 * Gets an instance of {@link AndNode}. A new instance is created on every
+	 * call to this method. The factory keeps no track of this object after it
+	 * is returned.
+	 * @return The and node
+	 */
+	public AndNode getAndNode()
+	{
+		return new AndNode();
+	}
+	
+	/**
+	 * Gets an instance of {@link OrNode}. A new instance is created on every
+	 * call to this method. The factory keeps no track of this object after it
+	 * is returned.
+	 * @return The or node
+	 */
+	public OrNode getOrNode()
+	{
+		return new OrNode();
 	}
 	
 	/**

@@ -21,11 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Designator made of a composition of other "atomic" designators.
- * This designator is composed of a "head" and a "tail". The head is
+ * Part made of a composition of other "atomic" parts.
+ * This part is composed of a "head" and a "tail". The head is
  * an {@link AtomicPart} part that points to a part of an object. The
- * tail is a sequence of designators that further refine that part into
+ * tail is a sequence of parts that further refine that part into
  * a smaller part.
+ * @author Sylvain Hallé
  */
 public class ComposedPart implements Part
 {

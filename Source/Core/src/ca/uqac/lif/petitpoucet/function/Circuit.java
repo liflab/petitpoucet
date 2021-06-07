@@ -29,7 +29,6 @@ import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.util.Contextualizable;

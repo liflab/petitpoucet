@@ -19,6 +19,8 @@ package ca.uqac.lif.dag;
 
 /**
  * Provides methods to connect nodes together.
+ * 
+ * @author Sylvain Hallé
  */
 public class NodeConnector
 {

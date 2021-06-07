@@ -19,9 +19,18 @@ package ca.uqac.lif.petitpoucet;
 
 import ca.uqac.lif.dag.LabelledNode;
 
+/**
+ * A node representing an unknown lineage.
+ * @author Sylvain Hallé
+ */
 public class UnknownNode extends LabelledNode
 {
-	public UnknownNode()
+	/**
+	 * Creates a new unknown node. The constructor has {@code package} visibility
+	 * to force the use of a {@link NodeFactory} to obtain instances of this
+	 * class.
+	 */
+	UnknownNode()
 	{
 		super("?");
 	}

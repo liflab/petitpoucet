@@ -17,7 +17,12 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+/**
+ * Interface indicating that an object can be queried for lineage. The
+ * interface implements no method, but is used as a common ancestor to all
+ * other interfaces defining lineage querying capabilities.
+ */
 public interface Queryable
 {
-
+	// Nothing
 }

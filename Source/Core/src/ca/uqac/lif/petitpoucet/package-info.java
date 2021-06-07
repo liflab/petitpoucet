@@ -15,4 +15,9 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * Package defining the core classes and interfaces for lineage tracking.
+ * @author Sylvain Hallé
+ */
 package ca.uqac.lif.petitpoucet;

@@ -28,6 +28,7 @@ import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.dag.Renderer;
+import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
@@ -35,6 +36,7 @@ import ca.uqac.lif.petitpoucet.function.NthOutput;
  * Renders a graph produced by a call to
  * {@link ExplanationQueryable#getExplanation(Part)} as an input file in the
  * DOT format used by <a href="https://graphviz.org">Graphviz</a>.
+ * @author Sylvain Hallé
  */
 public class LineageDotRenderer implements Renderer
 {

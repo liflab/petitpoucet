@@ -24,9 +24,7 @@ import java.util.Map;
 import ca.uqac.lif.dag.LabelledNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
-import ca.uqac.lif.petitpoucet.AndNode;
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.util.Duplicable;
@@ -170,19 +168,19 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 	@Override
 	/*@ non_null @*/ public PartNode getExplanation(Part part, NodeFactory factory)
 	{
-		PartNode root = new PartNode(part, this);
+		PartNode root = factory.getPartNode(part, this);
 		int index = NthOutput.mentionedOutput(part);
 		if (index >= 0)
 		{
 			LabelledNode and = root;
 			if (getInputArity() > 1)
 			{
-				and = new AndNode();
+				and = factory.getAndNode();
 				root.addChild(and);
 			}
 			for (int i = 0; i < getInputArity(); i++)
 			{
-				PartNode in = new PartNode(NthOutput.replaceOutByIn(part, i), this);
+				PartNode in = factory.getPartNode(NthOutput.replaceOutByIn(part, i), this);
 				and.addChild(in);
 			}
 		}

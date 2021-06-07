@@ -17,6 +17,11 @@
  */
 package ca.uqac.lif.petitpoucet.function;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.junit.Test;
 
 import ca.uqac.lif.dag.NodeConnector;
@@ -31,6 +36,8 @@ public class LineageDotRendererTest
 	public void testRender1()
 	{
 		// This circuit calculates (x+y)*z
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
 		Circuit c = new Circuit(3, 1, "(x+y)×z");
 		Addition a = new Addition(2);
 		Multiplication m = new Multiplication(2);
@@ -43,6 +50,7 @@ public class LineageDotRendererTest
 		c.evaluate(-2, 2, 0);
 		PartNode root = c.getExplanation(NthOutput.FIRST);
 		LineageDotRenderer renderer = new LineageDotRenderer(root);
-		renderer.render(System.out);
+		renderer.render(ps);
+		assertNotNull(baos.toString());
 	}
 }

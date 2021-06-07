@@ -19,19 +19,38 @@ package ca.uqac.lif.petitpoucet;
 
 import ca.uqac.lif.dag.LabelledNode;
 
+/**
+ * Node whose label is a pair made of a part and an object. These nodes are
+ * used in explanation graphs to designate the part of some object (input or
+ * output of a function, etc.). 
+ */
 public class PartNode extends LabelledNode
 {	
-	public PartNode(Part part, Object subject)
+	/**
+	 * Creates a new part node. The constructor has {@code package} visibility to
+	 * force the use of a {@link NodeFactory} to obtain instances of this class.
+	 * @param part The part
+	 * @param subject The object this part refers to. This object can be null.
+	 */
+	PartNode(/*@ non_null @*/ Part part, /*@ null @*/ Object subject)
 	{
 		super(new Object[] {part, subject});
 	}
 	
-	public Part getPart()
+	/**
+	 * Gets the part contained in this node.
+	 * @return The part
+	 */
+	/*@ non_null @*/ public Part getPart()
 	{
 		return (Part) ((Object[]) m_label)[0];
 	}
 	
-	public Object getSubject()
+	/**
+	 * Gets the subject contained in this node.
+	 * @return The subject
+	 */
+	/*@ null @*/ public Object getSubject()
 	{
 		return ((Object[]) m_label)[1];
 	}
