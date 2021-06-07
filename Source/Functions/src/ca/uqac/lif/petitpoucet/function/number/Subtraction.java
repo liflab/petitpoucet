@@ -20,8 +20,17 @@ package ca.uqac.lif.petitpoucet.function.number;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 
+/**
+ * Subtracts from the first argument all the remaining arguments.
+ * @author Sylvain Hallé
+ *
+ */
 public class Subtraction extends AtomicFunction implements ExplanationQueryable
 {
+	/**
+	 * Creates a new instance of the function.
+	 * @param in_arity The input arity of the function
+	 */
 	public Subtraction(int in_arity)
 	{
 		super(in_arity, 1);

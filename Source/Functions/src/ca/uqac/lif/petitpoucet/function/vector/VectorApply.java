@@ -31,8 +31,16 @@ import ca.uqac.lif.petitpoucet.function.Function;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
+/**
+ * Applies a 1:1 function to every element of an input vector.
+ * @author Sylvain Hallé
+ */
 public class VectorApply extends ParameterizedVectorFunction
 {
+	/**
+	 * Creates a new instance of the function.
+	 * @param f The function to apply on each element of the input vector
+	 */
 	public VectorApply(/*@ non_null @*/ Function f)
 	{
 		super(f);		

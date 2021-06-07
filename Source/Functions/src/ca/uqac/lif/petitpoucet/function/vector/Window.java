@@ -32,6 +32,12 @@ import ca.uqac.lif.petitpoucet.function.Function;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
+/**
+ * Creates an output vector by applying a function on successive "windows" of
+ * elements in an input vector.
+ * 
+ * @author Sylvain Hallé
+ */
 public class Window extends ParameterizedVectorFunction
 {
 	/**

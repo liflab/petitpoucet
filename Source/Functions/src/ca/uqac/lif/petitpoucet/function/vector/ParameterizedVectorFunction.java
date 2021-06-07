@@ -30,6 +30,8 @@ import ca.uqac.lif.petitpoucet.function.Function;
  * A function that applies another function repeatedly on elements of an input
  * vector. The two notable descendants of this class are {@link VectorApply}
  * and {@link Window}.
+ * 
+ * @author Sylvain Hallé
  */
 public abstract class ParameterizedVectorFunction extends VectorOutputFunction
 {

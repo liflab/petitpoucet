@@ -44,6 +44,8 @@ import ca.uqac.lif.petitpoucet.function.NthOutput;
  * </ul>
  * Only vector functions that explain their output differently need to override
  * this method.
+ * 
+ * @author Sylvain Hallé
  */
 public abstract class VectorOutputFunction extends VectorFunction
 {

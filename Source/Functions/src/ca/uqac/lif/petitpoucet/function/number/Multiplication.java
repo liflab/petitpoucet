@@ -25,10 +25,23 @@ import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 
+/**
+ * Multiplies all arguments of the input.
+ * @author Sylvain Hallé
+ */
 public class Multiplication extends AtomicFunction implements ExplanationQueryable
 {
+	/**
+	 * An array keeping track of what input arguments were equal to zero the last
+	 * time the function was called. A different explanation is produced if some
+	 * arguments are null than when they are all different from zero.
+	 */
 	protected boolean[] m_nulls;
 
+	/**
+	 * Creates a new instance of the function.
+	 * @param in_arity The input arity of the function
+	 */
 	public Multiplication(int in_arity)
 	{
 		super(in_arity, 1);

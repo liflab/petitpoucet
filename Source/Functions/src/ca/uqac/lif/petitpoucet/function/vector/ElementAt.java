@@ -27,6 +27,8 @@ import ca.uqac.lif.petitpoucet.function.NthOutput;
 
 /**
  * Gets an element at a given position inside a vector.
+ * 
+ * @author Sylvain Hallé
  */
 public class ElementAt extends VectorFunction
 {

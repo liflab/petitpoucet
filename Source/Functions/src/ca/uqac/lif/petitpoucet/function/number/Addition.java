@@ -20,8 +20,16 @@ package ca.uqac.lif.petitpoucet.function.number;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 
+/**
+ * Adds all arguments of the input.
+ * @author Sylvain Hallé
+ */
 public class Addition extends AtomicFunction implements ExplanationQueryable
 {
+	/**
+	 * Creates a new instance of the function.
+	 * @param in_arity The input arity of the function
+	 */
 	public Addition(int in_arity)
 	{
 		super(in_arity, 1);

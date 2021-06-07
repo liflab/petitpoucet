@@ -21,8 +21,15 @@ import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 
+/**
+ * Calculates the absolute value of a number.
+ * @author Sylvain Hallé
+ */
 public class AbsoluteValue extends AtomicFunction implements ExplanationQueryable
 {
+	/**
+	 * Creates a new instance of the function.
+	 */
 	public AbsoluteValue()
 	{
 		super(1, 1);

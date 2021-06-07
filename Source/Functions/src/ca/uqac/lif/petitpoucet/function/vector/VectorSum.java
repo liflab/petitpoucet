@@ -24,6 +24,8 @@ import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 /**
  * Calculates the sum of all numerical elements in a vector. The function
  * produces an output vector with a single element.
+ * 
+ * @author Sylvain Hallé
  */
 public class VectorSum extends VectorFunction
 {

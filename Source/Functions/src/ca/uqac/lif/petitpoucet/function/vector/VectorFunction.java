@@ -19,6 +19,8 @@ import ca.uqac.lif.petitpoucet.function.NthOutput;
  * boilerplate explanation where the whole output is explained by the whole
  * input. Only functions that explain their output differently need to
  * override this method.
+ * 
+ * @author Sylvain Hallé
  */
 public abstract class VectorFunction extends AtomicFunction
 {
