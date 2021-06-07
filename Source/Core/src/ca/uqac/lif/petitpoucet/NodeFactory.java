@@ -106,6 +106,17 @@ public class NodeFactory
 	}
 	
 	/**
+	 * Gets an instance of {@link UnknownNode}. A new instance is created on every
+	 * call to this method. The factory keeps no track of this object after it
+	 * is returned.
+	 * @return The unknown node
+	 */
+	public UnknownNode getUnknownNode()
+	{
+		return new UnknownNode();
+	}
+	
+	/**
 	 * Class that uniquely defines an object part and a subject. Instances of
 	 * this class are used as keys by the node factory to uniquely identify
 	 * {@link PartNode}s.

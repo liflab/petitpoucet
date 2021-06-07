@@ -68,7 +68,7 @@ public class VectorApply extends ParameterizedVectorFunction
 		int index = NthOutput.mentionedOutput(part);
 		if (index == 0) // Only one output pin possible
 		{
-			int elem_index = mentionedElement(part);
+			int elem_index = NthElement.mentionedElement(part);
 			if (elem_index < 0)
 			{
 				// No specific element is mentioned

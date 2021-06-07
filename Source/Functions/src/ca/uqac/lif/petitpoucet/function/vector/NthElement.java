@@ -123,4 +123,29 @@ public class NthElement implements Part
 		}
 		return new ComposedPart(desigs);
 	}
+	
+	/**
+	 * Retrieves the element of the output vector mentioned in a designator.
+	 * If multiple {@link NthElement} are present, the one closest to the
+	 * designator mentioning the function's output is kept.
+	 * @param d The designator
+	 * @return The element index, or -1 if no specific element is mentioned
+	 */
+	public static int mentionedElement(Part d)
+	{
+		int index = -1;
+		if (d instanceof ComposedPart)
+		{
+			ComposedPart cd = (ComposedPart) d;
+			for (int i = cd.size() - 1; i >= 0; i--)
+			{
+				Part in_d = cd.get(i);
+				if (in_d instanceof NthElement)
+				{
+					index = ((NthElement) in_d).getIndex();
+				}
+			}
+		}
+		return index;
+	}
 }

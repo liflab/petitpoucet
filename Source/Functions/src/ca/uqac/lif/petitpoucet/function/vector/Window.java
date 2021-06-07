@@ -78,7 +78,7 @@ public class Window extends ParameterizedVectorFunction
 		int index = NthOutput.mentionedOutput(part);
 		if (index == 0) // Only one output pin possible
 		{
-			int elem_index = mentionedElement(part);
+			int elem_index = NthElement.mentionedElement(part);
 			if (elem_index < 0)
 			{
 				// No specific element is mentioned
@@ -105,7 +105,7 @@ public class Window extends ParameterizedVectorFunction
 					if (input_nb >= 0)
 					{
 						// This leaf mentions an input of the inner function
-						int mentioned_elem = mentionedElement(pn_p);
+						int mentioned_elem = NthElement.mentionedElement(pn_p);
 						if (mentioned_elem >= 0)
 						{
 							// This leaf points to a precise element of its input vector; offset by window position
