@@ -38,6 +38,15 @@ public class LabelledNode extends Node
 		m_label = label;
 	}
 	
+	/**
+	 * Gets the label associated to this node.
+	 * @return The label
+	 */
+	/*@ null @*/ public Object getLabel()
+	{
+		return m_label;
+	}
+	
 	@Override
 	public String toString()
 	{
@@ -46,6 +55,14 @@ public class LabelledNode extends Node
 			return m_label.toString();
 		}
 		return "null";
+	}
+	
+	@Override
+	public LabelledNode duplicate(boolean with_state)
+	{
+		LabelledNode ln = new LabelledNode(m_label);
+		copyInto(ln, with_state);
+		return ln;
 	}
 	
 	/**

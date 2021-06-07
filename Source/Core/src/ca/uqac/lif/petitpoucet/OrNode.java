@@ -33,4 +33,12 @@ public class OrNode extends LabelledNode
 	{
 		super("∨");
 	}
+	
+	@Override
+	public OrNode duplicate(boolean with_state)
+	{
+		OrNode n = new OrNode();
+		copyInto(n, with_state);
+		return n;
+	}
 }

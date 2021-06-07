@@ -33,4 +33,12 @@ public class AndNode extends LabelledNode
 	{
 		super("∧");
 	}
+	
+	@Override
+	public AndNode duplicate(boolean with_state)
+	{
+		AndNode n = new AndNode();
+		copyInto(n, with_state);
+		return n;
+	}
 }

@@ -34,5 +34,13 @@ public class UnknownNode extends LabelledNode
 	{
 		super("?");
 	}
+	
+	@Override
+	public UnknownNode duplicate(boolean with_state)
+	{
+		UnknownNode n = new UnknownNode();
+		copyInto(n, with_state);
+		return n;
+	}
 
 }
