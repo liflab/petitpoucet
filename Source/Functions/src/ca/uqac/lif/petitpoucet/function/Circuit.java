@@ -31,7 +31,6 @@ import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.PartNode;
-import ca.uqac.lif.util.Contextualizable;
 import ca.uqac.lif.util.Duplicable;
 
 public class Circuit extends NestedNode implements Function, Duplicable, ExplanationQueryable

@@ -25,7 +25,6 @@ import java.io.PrintStream;
 import org.junit.Test;
 
 import ca.uqac.lif.dag.NodeConnector;
-import ca.uqac.lif.petitpoucet.LineageDotRenderer;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.number.Addition;
 import ca.uqac.lif.petitpoucet.function.number.Multiplication;

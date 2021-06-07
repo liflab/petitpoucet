@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -28,9 +28,10 @@ import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.dag.Renderer;
-import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
-import ca.uqac.lif.petitpoucet.function.NthInput;
-import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.AndNode;
+import ca.uqac.lif.petitpoucet.OrNode;
+import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.PartNode;
 
 /**
  * Renders a graph produced by a call to
@@ -84,8 +85,6 @@ public class LineageDotRenderer implements Renderer
 	 * The nesting level of this graph.
 	 */
 	protected int m_nestingLevel;
-	
-	
 
 	/**
 	 * Creates a new instance of renderer.

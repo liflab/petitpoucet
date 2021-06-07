@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.util;
+package ca.uqac.lif.petitpoucet.function;
 
 /**
  * Interface implemented by objects that can be assigned context elements, i.e.
