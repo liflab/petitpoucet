@@ -22,8 +22,7 @@ import java.util.List;
 import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 
 /**
- * Calculates the sum of all numerical elements in a vector. The function
- * produces an output vector with a single element.
+ * Calculates the sum of all numerical elements in a vector.
  * 
  * @author Sylvain Hallé
  */
