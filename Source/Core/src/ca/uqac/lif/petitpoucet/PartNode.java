@@ -60,4 +60,12 @@ public class PartNode extends LabelledNode
 	{
 		return ((Object[]) m_label)[0] + " of " + ((Object[]) m_label)[1];
 	}
+	
+	@Override
+	public PartNode duplicate(boolean with_state)
+	{
+		PartNode pn = new PartNode((Part) ((Object[]) m_label)[0], ((Object[]) m_label)[1]);
+		copyInto(pn, with_state);
+		return pn;
+	}
 }

@@ -20,6 +20,7 @@ package ca.uqac.lif.petitpoucet;
 import java.util.HashSet;
 import java.util.Set;
 
+import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
 import ca.uqac.lif.dag.Pin;
@@ -30,6 +31,77 @@ import ca.uqac.lif.dag.Pin;
  */
 public class GraphUtilities
 {
+	/**
+	 * Simplifies a single-rooted lineage graph. This method is the combined
+	 * application of {@link #squash(Node) squash()} and
+	 * {@link #flatten(Node) flatten()}.
+	 * @param root The root of the original graph
+	 * @return The root of the squashed graph
+	 */
+	public static Node simplify(Node root)
+	{
+		return squash(flatten(root));
+	}
+	
+	/**
+	 * Out of a single-rooted lineage graph, creates another graph where nested
+	 * nodes are exploded.
+	 * @param root The root of the original graph
+	 * @return The root of the simplified graph
+	 */
+	public static Node flatten(Node root)
+	{
+		Node new_root = root.duplicate();
+		for (int i = 0; i < root.getOutputArity(); i++)
+		{
+			for (Pin<? extends Node> pin : root.getOutputLinks(i))
+			{
+				flatten(new_root, i, pin, new HashSet<Node>());
+			}
+		}
+		return new_root;
+	}
+	
+	protected static void flatten(Node parent, int pin_index, Pin<? extends Node> pin, Set<Node> visited)
+	{
+		Node target = pin.getNode();
+		Node target_dup = target.duplicate();
+		visited.add(parent);
+		Node out_parent = parent;
+		if (target instanceof NestedNode)
+		{
+			NestedNode nn = (NestedNode) target_dup;
+			Node start = nn.getAssociatedInput(0).getNode();
+			NestedNode.CopyCrawler cc = nn.new CopyCrawler(start, NodeConnector.instance, false);
+			cc.crawl();
+			NodeConnector.connect(parent, pin_index, cc.getCopyOf(start), 0);
+			for (int i = 0; i < target.getOutputArity(); i++)
+			{
+				Pin<? extends Node> in_pin = nn.getAssociatedOutput(i);
+				Node in_parent = cc.getCopyOf(in_pin.getNode());
+				for (Pin<? extends Node> out_pin : target.getOutputLinks(i))
+				{
+					flatten(in_parent, in_pin.getIndex(), out_pin, visited);
+				}
+			}
+		}
+		else
+		{
+			out_parent = target_dup;
+			NodeConnector.connect(parent, pin_index, target_dup, pin.getIndex());
+			if (!visited.contains(target))
+			{
+				for (int i = 0; i < target.getOutputArity(); i++)
+				{
+					for (Pin<? extends Node> t_pin : target.getOutputLinks(i))
+					{
+						squash(out_parent, i, t_pin, visited);
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Out of a single-rooted lineage graph, creates another graph where only
 	 * Boolean nodes and leaves are kept.

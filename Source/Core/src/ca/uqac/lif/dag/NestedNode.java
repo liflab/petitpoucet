@@ -212,7 +212,7 @@ public class NestedNode extends Node
 	 * A crawler that creates copies of all visited nodes and connects them in
 	 * the same way as the originals.
 	 */
-	protected class CopyCrawler extends Crawler
+	public class CopyCrawler extends Crawler
 	{
 		/**
 		 * A map associating original nodes to their corresponding copy.
@@ -265,6 +265,11 @@ public class NestedNode extends Node
 			}
 		}
 		
+		public Node getCopyOf(Node n)
+		{
+			return m_copies.get(n);
+		}
+		
 		@Override
 		public void visit(/*@ non_null @*/ Node n)
 		{
@@ -282,7 +287,7 @@ public class NestedNode extends Node
 					if (!m_copies.containsKey(target))
 					{
 						Node target_copy = target.duplicate(m_withState);
-						m_copies.put(n, target_copy);
+						m_copies.put(target, target_copy);
 						m_connector.connectTo(m_copies.get(n), i, target_copy, pin.getIndex());
 					}
 				}

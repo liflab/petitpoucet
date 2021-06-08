@@ -257,7 +257,7 @@ public class GraphUtilitiesTest
 	 * + a
 	 * + AND
 	 *   + c
-	 *     + e
+	 *   | + e
 	 *   + d   
 	 * We expect:
 	 * root
@@ -290,5 +290,157 @@ public class GraphUtilitiesTest
 		LabelledNode n4 = (LabelledNode) n2.getOutputLinks(0).get(1).getNode();
 		assertEquals("d", (String) n4.getLabel());
 		assertNotEquals(d, n4);
+	}
+	
+	/*
+	 * Flattens the tree:
+	 * root
+	 * + a
+	 * | + c
+	 * + b
+	 *   + d
+	 * We expect: the same
+	 */
+	@Test
+	public void testFlatten1()
+	{
+		root.addChild(a);
+		root.addChild(b);
+		a.addChild(c);
+		b.addChild(d);
+		Node new_root = GraphUtilities.flatten(root);
+		assertSameLabel(root, new_root);
+		assertHasChildren(2, new_root);
+		LabelledNode a1 = (LabelledNode) getChild(new_root, 0);
+		assertSameLabel(a, a1);
+		assertHasChildren(1, a1);
+		LabelledNode b1 = (LabelledNode) getChild(new_root, 1);
+		assertSameLabel(b, b1);
+		assertHasChildren(1, b1);
+		LabelledNode c1 = (LabelledNode) getChild(a1, 0);
+		assertSameLabel(c, c1);
+		LabelledNode d1 = (LabelledNode) getChild(b1, 0);
+		assertSameLabel(d, d1);
+	}
+	
+	/*
+	 * Flattens the tree:
+	 * root
+	 * + [
+	 *    a
+	 *    + b
+	 *    + c
+	 *   ]
+	 * We expect:
+	 * root
+	 * + a
+	 *   + b
+	 *   + c
+	 */
+	@Test
+	public void testFlatten2()
+	{
+		NestedNode nn = new NestedNode(1, 2);
+		a.addChild(b);
+		a.addChild(c);
+		nn.addNodes(a, b, c);
+		nn.associateInput(0, a.getInputPin(0));
+		nn.associateOutput(0, b.getInputPin(0));
+		nn.associateOutput(1, c.getInputPin(0));
+		root.addChild(nn);
+		Node new_root = GraphUtilities.flatten(root);
+		assertSameLabel(root, new_root);
+		assertHasChildren(1, new_root);
+		LabelledNode a1 = (LabelledNode) getChild(new_root, 0);
+		assertSameLabel(a, a1);
+		assertHasChildren(2, a1);
+		LabelledNode b1 = (LabelledNode) getChild(a1, 0);
+		assertSameLabel(b, b1);
+		LabelledNode c1 = (LabelledNode) getChild(a1, 1);
+		assertSameLabel(c, c1);
+	}
+	
+	/*
+	 * Flattens the tree:
+	 * root
+	 * + [
+	 *    a
+	 *    + b
+	 *    + c
+	 *   ]
+	 *   + d
+	 *   + e
+	 * We expect:
+	 * root
+	 * + a
+	 *   + b
+	 *     + d
+	 *   + c
+	 *     + e
+	 */
+	@Test
+	public void testFlatten3()
+	{
+		NestedNode nn = new NestedNode(1, 2);
+		a.addChild(b);
+		a.addChild(c);
+		nn.addNodes(a, b, c);
+		nn.associateInput(0, a.getInputPin(0));
+		nn.associateOutput(0, b.getInputPin(0));
+		nn.associateOutput(1, c.getInputPin(0));
+		root.addChild(nn);
+		NodeConnector.connect(nn, 0, d, 0);
+		NodeConnector.connect(nn, 1, e, 0);
+		Node new_root = GraphUtilities.flatten(root);
+		assertSameLabel(root, new_root);
+		assertHasChildren(1, new_root);
+		LabelledNode a1 = (LabelledNode) getChild(new_root, 0);
+		assertSameLabel(a, a1);
+		assertHasChildren(2, a1);
+		LabelledNode b1 = (LabelledNode) getChild(a1, 0);
+		assertSameLabel(b, b1);
+		LabelledNode c1 = (LabelledNode) getChild(a1, 1);
+		assertSameLabel(c, c1);
+		assertHasChildren(1, b1);
+		LabelledNode d1 = (LabelledNode) getChild(b1, 0);
+		assertSameLabel(d, d1);
+		assertHasChildren(1, c1);
+		LabelledNode e1 = (LabelledNode) getChild(c1, 0);
+		assertSameLabel(e, e1);
+	}
+	
+	/**
+	 * Asserts that two nodes are <em>distinct</em> labelled nodes with the
+	 * same label.
+	 * @param n1 The first node
+	 * @param n2 The second node
+	 */
+	protected static void assertSameLabel(Node n1, Node n2)
+	{
+		assertTrue(n1 instanceof LabelledNode);
+		assertTrue(n2 instanceof LabelledNode);
+		assertNotEquals(n1, n2);
+		assertEquals(((LabelledNode) n1).getLabel(), ((LabelledNode) n2).getLabel());
+	}
+	
+	/**
+	 * Asserts that a node has a given number of children.
+	 * @param num_children The expected number of children
+	 * @param n The node
+	 */
+	protected static void assertHasChildren(int num_children, Node n)
+	{
+		assertEquals(num_children, n.getOutputLinks(0).size());
+	}
+	
+	/**
+	 * Gets the n-th child node of the first output pin of a node.
+	 * @param n The node
+	 * @param child_index The child index
+	 * @return The child
+	 */
+	protected static Node getChild(Node n, int child_index)
+	{
+		return n.getOutputLinks(0).get(child_index).getNode();
 	}
 }
