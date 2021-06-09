@@ -245,7 +245,7 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 		public AtomicFunctionInputPin duplicate(boolean with_state)
 		{
 			AtomicFunctionInputPin afip = new AtomicFunctionInputPin(m_index);
-			copyInto(afip, with_state);
+			copyInto(afip, false);
 			return afip;
 		}
 	}
@@ -289,7 +289,7 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 		public AtomicFunctionOutputPin duplicate(boolean with_state)
 		{
 			AtomicFunctionOutputPin afop = new AtomicFunctionOutputPin(m_index);
-			copyInto(afop, with_state);
+			copyInto(afop, false);
 			return afop;
 		}
 	}
