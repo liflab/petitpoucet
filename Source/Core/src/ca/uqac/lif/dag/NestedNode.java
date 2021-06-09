@@ -254,13 +254,13 @@ public class NestedNode extends Node
 			for (Map.Entry<Integer,Pin<? extends Node>> e : m_inputAssociations.entrySet())
 			{
 				Pin<? extends Node> pin = e.getValue();
-				Node target = pin.getNode();
+				Node target = m_copies.get(pin.getNode());
 				nn.m_inputAssociations.put(e.getKey(), target.getInputPin(pin.getIndex()));
 			}
 			for (Map.Entry<Integer,Pin<? extends Node>> e : m_outputAssociations.entrySet())
 			{
 				Pin<? extends Node> pin = e.getValue();
-				Node target = pin.getNode();
+				Node target = m_copies.get(pin.getNode());
 				nn.m_outputAssociations.put(e.getKey(), target.getOutputPin(pin.getIndex()));
 			}
 		}

@@ -97,6 +97,7 @@ public class CircuitTest
 		c.associateInput(0, a.getInputPin(0));
 		c.associateInput(1, a.getInputPin(1));
 		c.associateOutput(0, a.getOutputPin(0));
+		c.evaluate(0, 0);
 		Circuit c_dup = c.duplicate();
 		Object[] out = c_dup.evaluate(2, 3);
 		assertEquals(5, ((Number) out[0]).intValue());
