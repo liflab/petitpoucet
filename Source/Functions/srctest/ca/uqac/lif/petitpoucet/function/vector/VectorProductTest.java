@@ -52,7 +52,7 @@ public class VectorProductTest
 		List<Pin<? extends Node>> links = root.getOutputLinks(0);
 		assertEquals(1, links.size());
 		PartNode pn = (PartNode) links.get(0).getNode();
-		assertEquals(ComposedPart.create(NthInput.FIRST), pn.getPart());
+		assertEquals(ComposedPart.compose(NthInput.FIRST), pn.getPart());
 		assertEquals(add, pn.getSubject());
 	}
 	
@@ -69,6 +69,6 @@ public class VectorProductTest
 		assertTrue(n instanceof PartNode);
 		PartNode pn = (PartNode) n;
 		Part d = pn.getPart();
-		assertTrue(d.equals(ComposedPart.create(new NthElement(1), NthInput.FIRST)));
+		assertTrue(d.equals(ComposedPart.compose(new NthElement(1), NthInput.FIRST)));
 	}
 }

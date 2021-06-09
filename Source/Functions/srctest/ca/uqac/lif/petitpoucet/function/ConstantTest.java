@@ -60,11 +60,11 @@ public class ConstantTest
 		List<?> in_list = getList("foo", "bar");
 		Constant c = new Constant(in_list);
 		c.evaluate();
-		PartNode node = c.getExplanation(ComposedPart.create(new NthElement(1), NthOutput.FIRST));
+		PartNode node = c.getExplanation(ComposedPart.compose(new NthElement(1), NthOutput.FIRST));
 		assertEquals(1, node.getOutputLinks(0).size());
 		Pin<?> pin = node.getOutputLinks(0).get(0);
 		PartNode out_node = (PartNode) pin.getNode();
-		assertEquals(ComposedPart.create(new NthElement(1), Part.all), out_node.getPart());
+		assertEquals(ComposedPart.compose(new NthElement(1), Part.all), out_node.getPart());
 		assertEquals(in_list, out_node.getSubject());
 	}
 }

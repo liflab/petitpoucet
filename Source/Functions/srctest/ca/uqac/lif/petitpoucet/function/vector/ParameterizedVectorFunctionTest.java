@@ -30,14 +30,14 @@ public class ParameterizedVectorFunctionTest
 	@Test
 	public void testReplaceOutput1()
 	{
-		NthOutput d = (NthOutput) VectorOutputFunction.replaceElementByOutput(ComposedPart.create(new NthElement(1), NthOutput.FIRST));
+		NthOutput d = (NthOutput) VectorOutputFunction.replaceElementByOutput(ComposedPart.compose(new NthElement(1), NthOutput.FIRST));
 		assertEquals(NthOutput.FIRST, d);
 	}
 	
 	@Test
 	public void testReplaceOutput2()
 	{
-		ComposedPart d = (ComposedPart) VectorOutputFunction.replaceElementByOutput(ComposedPart.create(new NthElement(4), new NthElement(1), NthOutput.FIRST));
+		ComposedPart d = (ComposedPart) VectorOutputFunction.replaceElementByOutput(ComposedPart.compose(new NthElement(4), new NthElement(1), NthOutput.FIRST));
 		assertEquals(2, d.size());
 		assertEquals(NthOutput.FIRST, d.head());
 		assertEquals(new NthElement(4), d.tail());
@@ -55,7 +55,7 @@ public class ParameterizedVectorFunctionTest
 	@Test
 	public void testReplaceInput2()
 	{
-		ComposedPart d = (ComposedPart) VectorOutputFunction.replaceInputByElement(ComposedPart.create(new NthElement(4), new NthElement(1), NthInput.FIRST), 10);
+		ComposedPart d = (ComposedPart) VectorOutputFunction.replaceInputByElement(ComposedPart.compose(new NthElement(4), new NthElement(1), NthInput.FIRST), 10);
 		assertEquals(4, d.size());
 		assertEquals(NthInput.FIRST, d.get(3));
 		assertEquals(new NthElement(10), d.get(2));

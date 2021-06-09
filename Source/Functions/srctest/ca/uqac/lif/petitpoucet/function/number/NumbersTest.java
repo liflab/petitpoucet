@@ -114,4 +114,28 @@ public class NumbersTest
 		Part d = pn.getPart();
 		assertTrue(d.equals(new NthInput(1)));
 	}
+	
+	@Test
+	public void testNumberCast1()
+	{
+		NumberCast nc = new NumberCast();
+		Number n = (Number) nc.evaluate(-2)[0];
+		assertEquals(-2, n.intValue());
+	}
+	
+	@Test
+	public void testNumberCast2()
+	{
+		NumberCast nc = new NumberCast();
+		Number n = (Number) nc.evaluate("-2")[0];
+		assertEquals(-2, n.intValue());
+	}
+	
+	@Test
+	public void testNumberCast3()
+	{
+		NumberCast nc = new NumberCast();
+		Number n = (Number) nc.evaluate("foobar")[0];
+		assertEquals(0, n.intValue());
+	}
 }

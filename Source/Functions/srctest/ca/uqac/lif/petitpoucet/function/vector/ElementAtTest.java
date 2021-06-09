@@ -68,6 +68,6 @@ public class ElementAtTest
 		assertEquals(1, root.getOutputArity());
 		Pin<? extends Node> pin = root.getOutputLinks(0).get(0);
 		PartNode leaf = (PartNode) pin.getNode();
-		assertEquals(ComposedPart.create(new NthElement(2), NthInput.FIRST), leaf.getPart());
+		assertEquals(ComposedPart.compose(new NthElement(2), NthInput.FIRST), leaf.getPart());
 	}
 }

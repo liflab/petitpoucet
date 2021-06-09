@@ -30,7 +30,7 @@ public class NthOutputTest
 	@Test
 	public void testReplace1() 
 	{
-		ComposedPart d = (ComposedPart) NthOutput.replaceOutBy(ComposedPart.create(new NthElement(1), NthOutput.FIRST), Part.all);
+		ComposedPart d = (ComposedPart) NthOutput.replaceOutBy(ComposedPart.compose(new NthElement(1), NthOutput.FIRST), Part.all);
 		assertEquals(2, d.size());
 		assertEquals(Part.all, d.head());
 		assertEquals(new NthElement(1), d.tail());

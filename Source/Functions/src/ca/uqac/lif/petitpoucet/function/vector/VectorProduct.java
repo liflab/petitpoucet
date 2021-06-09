@@ -115,7 +115,7 @@ public class VectorProduct extends VectorFunction
 		{
 			if (m_nulls.get(i))
 			{
-				ln.addChild(factory.getPartNode(ComposedPart.create(new NthElement(i), NthInput.FIRST), this));
+				ln.addChild(factory.getPartNode(ComposedPart.compose(new NthElement(i), NthInput.FIRST), this));
 			}
 		}
 		return root;

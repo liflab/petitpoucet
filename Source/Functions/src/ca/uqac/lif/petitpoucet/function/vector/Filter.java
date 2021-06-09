@@ -164,11 +164,11 @@ public class Filter extends AtomicFunction
 	{
 		LabelledNode in_and = factory.getAndNode();
 		{
-			Part new_part = NthOutput.replaceOutBy(NthOutput.FIRST, ComposedPart.create(new NthElement(j), NthInput.FIRST));
+			Part new_part = NthOutput.replaceOutBy(NthOutput.FIRST, ComposedPart.compose(new NthElement(j), NthInput.FIRST));
 			in_and.addChild(factory.getPartNode(new_part, this));
 		}
 		{
-			Part new_part = NthOutput.replaceOutBy(NthOutput.FIRST, ComposedPart.create(new NthElement(j), NthInput.SECOND));
+			Part new_part = NthOutput.replaceOutBy(NthOutput.FIRST, ComposedPart.compose(new NthElement(j), NthInput.SECOND));
 			in_and.addChild(factory.getPartNode(new_part, this));
 		}
 		root.addChild(in_and);

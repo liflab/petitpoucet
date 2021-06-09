@@ -62,36 +62,36 @@ public class FilterTest
 			AndNode in_and = (AndNode) and.getOutputLinks(0).get(0).getNode();
 			assertEquals(2, in_and.getOutputLinks(0).size());
 			PartNode pn1 = (PartNode) in_and.getOutputLinks(0).get(0).getNode();
-			assertEquals(ComposedPart.create(new NthElement(0), NthInput.FIRST), pn1.getPart());
+			assertEquals(ComposedPart.compose(new NthElement(0), NthInput.FIRST), pn1.getPart());
 			PartNode pn2 = (PartNode) in_and.getOutputLinks(0).get(1).getNode();
-			assertEquals(ComposedPart.create(new NthElement(0), NthInput.SECOND), pn2.getPart());
+			assertEquals(ComposedPart.compose(new NthElement(0), NthInput.SECOND), pn2.getPart());
 		}
 		{
 			// 2nd output = 2nd input
 			AndNode in_and = (AndNode) and.getOutputLinks(0).get(1).getNode();
 			assertEquals(2, in_and.getOutputLinks(0).size());
 			PartNode pn1 = (PartNode) in_and.getOutputLinks(0).get(0).getNode();
-			assertEquals(ComposedPart.create(new NthElement(1), NthInput.FIRST), pn1.getPart());
+			assertEquals(ComposedPart.compose(new NthElement(1), NthInput.FIRST), pn1.getPart());
 			PartNode pn2 = (PartNode) in_and.getOutputLinks(0).get(1).getNode();
-			assertEquals(ComposedPart.create(new NthElement(1), NthInput.SECOND), pn2.getPart());
+			assertEquals(ComposedPart.compose(new NthElement(1), NthInput.SECOND), pn2.getPart());
 		}
 		{
 			// 3rd output = 4th input --look out!
 			AndNode in_and = (AndNode) and.getOutputLinks(0).get(2).getNode();
 			assertEquals(2, in_and.getOutputLinks(0).size());
 			PartNode pn1 = (PartNode) in_and.getOutputLinks(0).get(0).getNode();
-			assertEquals(ComposedPart.create(new NthElement(3), NthInput.FIRST), pn1.getPart());
+			assertEquals(ComposedPart.compose(new NthElement(3), NthInput.FIRST), pn1.getPart());
 			PartNode pn2 = (PartNode) in_and.getOutputLinks(0).get(1).getNode();
-			assertEquals(ComposedPart.create(new NthElement(3), NthInput.SECOND), pn2.getPart());
+			assertEquals(ComposedPart.compose(new NthElement(3), NthInput.SECOND), pn2.getPart());
 		}
 		{
 			// 4th output = 6th input
 			AndNode in_and = (AndNode) and.getOutputLinks(0).get(3).getNode();
 			assertEquals(2, in_and.getOutputLinks(0).size());
 			PartNode pn1 = (PartNode) in_and.getOutputLinks(0).get(0).getNode();
-			assertEquals(ComposedPart.create(new NthElement(5), NthInput.FIRST), pn1.getPart());
+			assertEquals(ComposedPart.compose(new NthElement(5), NthInput.FIRST), pn1.getPart());
 			PartNode pn2 = (PartNode) in_and.getOutputLinks(0).get(1).getNode();
-			assertEquals(ComposedPart.create(new NthElement(5), NthInput.SECOND), pn2.getPart());
+			assertEquals(ComposedPart.compose(new NthElement(5), NthInput.SECOND), pn2.getPart());
 		}
 	}
 
@@ -102,14 +102,14 @@ public class FilterTest
 		List<?> list2 = VectorTestUtilities.getList(true, true, false, true, false, true);
 		Filter f = new Filter();
 		f.evaluate(list1, list2);
-		PartNode root = f.getExplanation(ComposedPart.create(new NthElement(3), NthOutput.FIRST));
+		PartNode root = f.getExplanation(ComposedPart.compose(new NthElement(3), NthOutput.FIRST));
 		assertEquals(1, root.getOutputArity());
 		assertEquals(1, root.getOutputLinks(0).size());
 		AndNode in_and = (AndNode) root.getOutputLinks(0).get(0).getNode();
 		assertEquals(2, in_and.getOutputLinks(0).size());
 		PartNode pn1 = (PartNode) in_and.getOutputLinks(0).get(0).getNode();
-		assertEquals(ComposedPart.create(new NthElement(5), NthInput.FIRST), pn1.getPart());
+		assertEquals(ComposedPart.compose(new NthElement(5), NthInput.FIRST), pn1.getPart());
 		PartNode pn2 = (PartNode) in_and.getOutputLinks(0).get(1).getNode();
-		assertEquals(ComposedPart.create(new NthElement(5), NthInput.SECOND), pn2.getPart());
+		assertEquals(ComposedPart.compose(new NthElement(5), NthInput.SECOND), pn2.getPart());
 	}
 }

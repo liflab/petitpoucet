@@ -42,7 +42,7 @@ public class ComposedPart implements Part
 	 * @param designators The list of designators
 	 * @return A new designator
 	 */
-	public static Part create(Part... designators)
+	public static Part compose(Part... designators)
 	{
 		if (designators.length == 0)
 		{
@@ -80,14 +80,14 @@ public class ComposedPart implements Part
 	 * @param designators The list of designators
 	 * @return A new designator
 	 */
-	public static Part create(List<Part> designators)
+	public static Part compose(List<Part> designators)
 	{
 		Part[] parts = new Part[designators.size()];
 		for (int i = 0; i < parts.length; i++)
 		{
 			parts[i] = designators.get(i);
 		}
-		return create(parts);
+		return compose(parts);
 	}
 
 	/**
@@ -229,7 +229,7 @@ public class ComposedPart implements Part
 		{
 			if (i > 0 && (previous != null && !(previous instanceof All)))
 			{
-				out.append(" of ");
+				out.append(" ∘ ");
 			}
 			previous = m_designators.get(i);
 			out.append(previous);

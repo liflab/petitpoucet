@@ -75,7 +75,7 @@ public class NthElement implements Part
 	@Override
 	public String toString()
 	{
-		return "Element " + m_index;
+		return "[" + m_index + "]";
 	}
 	
 	@Override

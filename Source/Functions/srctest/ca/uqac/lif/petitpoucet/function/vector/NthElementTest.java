@@ -31,7 +31,7 @@ public class NthElementTest
 	@Test
 	public void testReplace1()
 	{
-		Part cd = ComposedPart.create(new NthElement(0), NthOutput.FIRST);
+		Part cd = ComposedPart.compose(new NthElement(0), NthOutput.FIRST);
 		Part d = NthElement.replaceNthOutputByNthInput(cd, 10);
 		assertTrue(d instanceof ComposedPart);
 		ComposedPart n_cd = (ComposedPart) d;
@@ -43,7 +43,7 @@ public class NthElementTest
 	@Test
 	public void testReplace2()
 	{
-		Part cd = ComposedPart.create(new NthElement(0), new NthElement(25), NthOutput.FIRST);
+		Part cd = ComposedPart.compose(new NthElement(0), new NthElement(25), NthOutput.FIRST);
 		Part d = NthElement.replaceNthOutputByNthInput(cd, 10);
 		assertTrue(d instanceof ComposedPart);
 		ComposedPart n_cd = (ComposedPart) d;
@@ -56,7 +56,7 @@ public class NthElementTest
 	@Test
 	public void testReplace3()
 	{
-		Part cd = ComposedPart.create(NthInput.FIRST, NthOutput.FIRST);
+		Part cd = ComposedPart.compose(NthInput.FIRST, NthOutput.FIRST);
 		Part d = NthElement.replaceNthOutputByNthInput(cd, 10);
 		assertEquals(cd, d);
 	}

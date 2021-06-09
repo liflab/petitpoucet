@@ -83,7 +83,7 @@ public class NthOutput implements Part
 	@Override
 	public String toString()
 	{
-		return "Output " + m_index;
+		return "↓" + getSuperscript();
 	}
 
 	@Override
@@ -181,5 +181,34 @@ public class NthOutput implements Part
 			}
 		}
 		return -1;
+	}
+	
+	protected String getSuperscript()
+	{
+		switch (m_index)
+		{
+		case 0:
+			return "\u2080";
+		case 1:
+			return "\u2081";
+		case 2:
+			return "\u2082";
+		case 3:
+			return "\u2083";
+		case 4:
+			return "\u2084";
+		case 5:
+			return "\u2085";
+		case 6:
+			return "\u2086";
+		case 7:
+			return "\u2087";
+		case 8:
+			return "\u2088";
+		case 9:
+			return "\u2089";
+		default:
+			return "" + m_index;
+		}
 	}
 }

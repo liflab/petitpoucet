@@ -123,7 +123,7 @@ public class LineageDotRenderer implements Renderer
 		{
 			ps.println("digraph G {");
 			ps.println("compound=true;");
-			ps.println("node [style=\"filled\",shape=\"rectangle\"]");
+			ps.println("node [style=\"filled\",shape=\"rectangle\",fontsize=10,fontname=\"Arial\"]");
 			render(ps, m_root);
 			ps.println("}");
 		}
@@ -219,7 +219,7 @@ public class LineageDotRenderer implements Renderer
 		m_nodeIds.put(current, n_id);
 		if (current instanceof OrNode)
 		{
-			ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∨</b></font>>,width=.3,fixedsize=\"true\",fillcolor=\"red\",textcolor=\"white\"];");
+			ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∨</b></font>>,width=.25,fixedsize=\"true\",fillcolor=\"red\",textcolor=\"white\"];");
 		}
 		else if (current instanceof AndNode)
 		{
@@ -251,7 +251,7 @@ public class LineageDotRenderer implements Renderer
 		Part d = current.getPart();
 		Object o = current.getSubject();
 		String color = getPartNodeColor(d);
-		ps.println(m_indent + n_id + " [label=\"" + d.toString() + " of " + o.toString() + "\",fillcolor=\"" + color + "\"];");
+		ps.println(m_indent + n_id + " [height=0.25,label=\"" + d.toString() + " of " + o.toString() + "\",fillcolor=\"" + color + "\"];");
 	}
 
 	/**

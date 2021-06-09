@@ -114,9 +114,19 @@ public class Window extends ParameterizedVectorFunction
 						else
 						{
 							// Leaf points to the whole input, which corresponds to all elements of the window
-							for (int j = 0; j < m_width; j++)
+							Node and = sub_node;
+							if (m_width > 1)
 							{
-								NodeConnector.connect(sub_node, i, factory.getPartNode(replaceInputByElement(pn.getPart(), elem_index + j), this), 0);
+								and = factory.getAndNode();
+								NodeConnector.connect(sub_node, i, and, 0);
+								for (int j = 0; j < m_width; j++)
+								{
+									NodeConnector.connect(and, 0, factory.getPartNode(replaceInputByElement(pn.getPart(), elem_index + j), this), 0);
+								}
+							}
+							else
+							{
+								NodeConnector.connect(sub_node, i, factory.getPartNode(replaceInputByElement(pn.getPart(), elem_index), this), 0);
 							}
 						}
 					}
@@ -152,7 +162,7 @@ public class Window extends ParameterizedVectorFunction
 		{
 			return d;
 		}
-		return ComposedPart.create(parts);
+		return ComposedPart.compose(parts);
 	}
 	
 	@Override
@@ -161,5 +171,11 @@ public class Window extends ParameterizedVectorFunction
 		Window w = new Window((Function) m_function.duplicate(with_state), m_width);
 		copyInto(w, with_state);
 		return w;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "W(" + m_width + "," + m_function.toString() + ")";
 	}
 }

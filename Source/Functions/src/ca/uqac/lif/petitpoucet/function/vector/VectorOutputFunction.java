@@ -129,7 +129,7 @@ public abstract class VectorOutputFunction extends VectorFunction
 	{
 		if (d instanceof NthInput)
 		{
-			return ComposedPart.create(new NthElement(n), NthInput.FIRST);
+			return ComposedPart.compose(new NthElement(n), NthInput.FIRST);
 		}
 		if (!(d instanceof ComposedPart))
 		{
@@ -156,7 +156,7 @@ public abstract class VectorOutputFunction extends VectorFunction
 		{
 			return d;
 		}
-		return ComposedPart.create(parts);
+		return ComposedPart.compose(parts);
 	}
 
 	/**
@@ -191,7 +191,7 @@ public abstract class VectorOutputFunction extends VectorFunction
 		{
 			return d;
 		}
-		return ComposedPart.create(parts);
+		return ComposedPart.compose(parts);
 	}
 	
 }

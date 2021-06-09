@@ -73,7 +73,7 @@ public class WindowTest
 		List<?> in_list = getList(3, 1, 4, 1, 5);
 		Window f = new Window(new VectorSum(), 2);
 		f.evaluate(in_list);
-		Node root = f.getExplanation(ComposedPart.create(new NthElement(0), NthOutput.FIRST));
+		Node root = f.getExplanation(ComposedPart.compose(new NthElement(0), NthOutput.FIRST));
 		assertTrue(root instanceof PartNode);
 		assertEquals(1, root.getOutputLinks(0).size());
 		Pin<?> pin = root.getOutputLinks(0).get(0);
@@ -83,13 +83,13 @@ public class WindowTest
 		{
 			Pin<?> pin2 = nn.getOutputLinks(0).get(0);
 			PartNode in_node = (PartNode) pin2.getNode();
-			assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(0), NthInput.FIRST));
+			assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(0), NthInput.FIRST));
 			assertEquals(f, in_node.getSubject());
 		}
 		{
 			Pin<?> pin2 = nn.getOutputLinks(0).get(1);
 			PartNode in_node = (PartNode) pin2.getNode();
-			assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(1), NthInput.FIRST));
+			assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(1), NthInput.FIRST));
 			assertEquals(f, in_node.getSubject());
 		}
 	}
@@ -100,7 +100,7 @@ public class WindowTest
 		List<?> in_list = getList(3, 1, 4, 1, 5);
 		Window f = new Window(new VectorSum(), 2);
 		f.evaluate(in_list);
-		Node root = f.getExplanation(ComposedPart.create(new NthElement(2), NthOutput.FIRST));
+		Node root = f.getExplanation(ComposedPart.compose(new NthElement(2), NthOutput.FIRST));
 		assertTrue(root instanceof PartNode);
 		assertEquals(1, root.getOutputLinks(0).size());
 		Pin<?> pin = root.getOutputLinks(0).get(0);
@@ -110,13 +110,13 @@ public class WindowTest
 		{
 			Pin<?> pin2 = nn.getOutputLinks(0).get(0);
 			PartNode in_node = (PartNode) pin2.getNode();
-			assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(2), NthInput.FIRST));
+			assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(2), NthInput.FIRST));
 			assertEquals(f, in_node.getSubject());
 		}
 		{
 			Pin<?> pin2 = nn.getOutputLinks(0).get(1);
 			PartNode in_node = (PartNode) pin2.getNode();
-			assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(3), NthInput.FIRST));
+			assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(3), NthInput.FIRST));
 			assertEquals(f, in_node.getSubject());
 		}
 	}
@@ -124,16 +124,16 @@ public class WindowTest
 	@Test
 	public void testOffset1()
 	{
-		ComposedPart cd = (ComposedPart) ComposedPart.create(new NthElement(2), NthInput.FIRST);
+		ComposedPart cd = (ComposedPart) ComposedPart.compose(new NthElement(2), NthInput.FIRST);
 		ComposedPart new_cd = (ComposedPart) Window.offsetElement(cd, 5);
-		assertEquals(new_cd, ComposedPart.create(new NthElement(7), NthInput.FIRST));
+		assertEquals(new_cd, ComposedPart.compose(new NthElement(7), NthInput.FIRST));
 	}
 	
 	@Test
 	public void testOffset2()
 	{
-		ComposedPart cd = (ComposedPart) ComposedPart.create(new NthElement(10), new NthElement(2), NthInput.FIRST);
+		ComposedPart cd = (ComposedPart) ComposedPart.compose(new NthElement(10), new NthElement(2), NthInput.FIRST);
 		ComposedPart new_cd = (ComposedPart) Window.offsetElement(cd, 5);
-		assertEquals(new_cd, ComposedPart.create(new NthElement(10), new NthElement(7), NthInput.FIRST));
+		assertEquals(new_cd, ComposedPart.compose(new NthElement(10), new NthElement(7), NthInput.FIRST));
 	}
 }

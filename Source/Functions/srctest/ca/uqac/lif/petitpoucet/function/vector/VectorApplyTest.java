@@ -72,7 +72,7 @@ public class VectorApplyTest
 		List<?> in_list = getList(-1, 2, -3);
 		VectorApply f = new VectorApply(new AbsoluteValue());
 		f.evaluate(in_list);
-		Node root = f.getExplanation(ComposedPart.create(new NthElement(0), NthOutput.FIRST));
+		Node root = f.getExplanation(ComposedPart.compose(new NthElement(0), NthOutput.FIRST));
 		assertTrue(root instanceof PartNode);
 		assertEquals(1, root.getOutputLinks(0).size());
 		Pin<?> pin = root.getOutputLinks(0).get(0);
@@ -81,7 +81,7 @@ public class VectorApplyTest
 		assertEquals(1, nn.getOutputLinks(0).size());
 		Pin<?> pin2 = nn.getOutputLinks(0).get(0);
 		PartNode in_node = (PartNode) pin2.getNode();
-		assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(0), NthInput.FIRST));
+		assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(0), NthInput.FIRST));
 		assertEquals(f, in_node.getSubject());
 	}
 	
@@ -91,7 +91,7 @@ public class VectorApplyTest
 		List<?> in_list = getList(-1, 2, -3);
 		VectorApply f = new VectorApply(new AbsoluteValue());
 		f.evaluate(in_list);
-		Node root = f.getExplanation(ComposedPart.create(new NthElement(2), NthOutput.FIRST));
+		Node root = f.getExplanation(ComposedPart.compose(new NthElement(2), NthOutput.FIRST));
 		assertTrue(root instanceof PartNode);
 		assertEquals(1, root.getOutputLinks(0).size());
 		Pin<?> pin = root.getOutputLinks(0).get(0);
@@ -100,7 +100,7 @@ public class VectorApplyTest
 		assertEquals(1, nn.getOutputLinks(0).size());
 		Pin<?> pin2 = nn.getOutputLinks(0).get(0);
 		PartNode in_node = (PartNode) pin2.getNode();
-		assertEquals(in_node.getPart(), ComposedPart.create(new NthElement(2), NthInput.FIRST));
+		assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(2), NthInput.FIRST));
 		assertEquals(f, in_node.getSubject());
 	}	
 }
