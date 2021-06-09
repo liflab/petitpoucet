@@ -57,4 +57,12 @@ public class Subtraction extends AtomicFunction implements ExplanationQueryable
 	{
 		return "−";
 	}
+	
+	@Override
+	public Subtraction duplicate(boolean with_state)
+	{
+		Subtraction a = new Subtraction(getInputArity());
+		copyInto(a, with_state);
+		return a;
+	}
 }

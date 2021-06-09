@@ -136,4 +136,12 @@ public class Multiplication extends AtomicFunction implements ExplanationQueryab
 		}
 		return root;
 	}
+	
+	@Override
+	public Multiplication duplicate(boolean with_state)
+	{
+		Multiplication a = new Multiplication(getInputArity());
+		copyInto(a, with_state);
+		return a;
+	}
 }

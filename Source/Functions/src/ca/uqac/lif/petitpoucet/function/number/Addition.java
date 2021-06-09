@@ -56,4 +56,12 @@ public class Addition extends AtomicFunction implements ExplanationQueryable
 	{
 		return "+";
 	}
+
+	@Override
+	public Addition duplicate(boolean with_state)
+	{
+		Addition a = new Addition(getInputArity());
+		copyInto(a, with_state);
+		return a;
+	}
 }
