@@ -28,6 +28,7 @@ import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.AndNode;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
+import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 import ca.uqac.lif.petitpoucet.function.number.Addition;
@@ -137,5 +138,28 @@ public class NumbersTest
 		NumberCast nc = new NumberCast();
 		Number n = (Number) nc.evaluate("foobar")[0];
 		assertEquals(0, n.intValue());
+	}
+	
+	@Test
+	public void testIsGreaterThan1()
+	{
+		IsGreaterThan f = new IsGreaterThan();
+		Boolean b = (Boolean) f.evaluate(-2, 3)[0];
+		assertEquals(false, b);
+	}
+	
+	@Test
+	public void testIsGreaterThan2()
+	{
+		IsGreaterThan f = new IsGreaterThan();
+		Boolean b = (Boolean) f.evaluate(3, -2)[0];
+		assertEquals(true, b);
+	}
+	
+	@Test (expected = InvalidArgumentTypeException.class)
+	public void testIsGreaterThan3()
+	{
+		IsGreaterThan f = new IsGreaterThan();
+		f.evaluate(3, "foo");
 	}
 }
