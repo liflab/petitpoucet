@@ -22,6 +22,7 @@ import org.junit.Test;
 import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
+import ca.uqac.lif.petitpoucet.AndNode;
 import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.NthInput;
@@ -79,15 +80,17 @@ public class WindowTest
 		Pin<?> pin = root.getOutputLinks(0).get(0);
 		NestedNode nn = (NestedNode) pin.getNode();
 		assertEquals(1, nn.getOutputArity());
-		assertEquals(2, nn.getOutputLinks(0).size());
+		assertEquals(1, nn.getOutputLinks(0).size());
+		AndNode and = (AndNode) nn.getOutputLinks(0).get(0).getNode();
+		assertEquals(2, and.getOutputLinks(0).size());
 		{
-			Pin<?> pin2 = nn.getOutputLinks(0).get(0);
+			Pin<?> pin2 = and.getOutputLinks(0).get(0);
 			PartNode in_node = (PartNode) pin2.getNode();
 			assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(0), NthInput.FIRST));
 			assertEquals(f, in_node.getSubject());
 		}
 		{
-			Pin<?> pin2 = nn.getOutputLinks(0).get(1);
+			Pin<?> pin2 = and.getOutputLinks(0).get(1);
 			PartNode in_node = (PartNode) pin2.getNode();
 			assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(1), NthInput.FIRST));
 			assertEquals(f, in_node.getSubject());
@@ -106,15 +109,17 @@ public class WindowTest
 		Pin<?> pin = root.getOutputLinks(0).get(0);
 		NestedNode nn = (NestedNode) pin.getNode();
 		assertEquals(1, nn.getOutputArity());
-		assertEquals(2, nn.getOutputLinks(0).size());
+		assertEquals(1, nn.getOutputLinks(0).size());
+		AndNode and = (AndNode) nn.getOutputLinks(0).get(0).getNode();
+		assertEquals(2, and.getOutputLinks(0).size());
 		{
-			Pin<?> pin2 = nn.getOutputLinks(0).get(0);
+			Pin<?> pin2 = and.getOutputLinks(0).get(0);
 			PartNode in_node = (PartNode) pin2.getNode();
 			assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(2), NthInput.FIRST));
 			assertEquals(f, in_node.getSubject());
 		}
 		{
-			Pin<?> pin2 = nn.getOutputLinks(0).get(1);
+			Pin<?> pin2 = and.getOutputLinks(0).get(1);
 			PartNode in_node = (PartNode) pin2.getNode();
 			assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(3), NthInput.FIRST));
 			assertEquals(f, in_node.getSubject());
