@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.dag.NestedNode;
+import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
@@ -58,9 +59,10 @@ public abstract class ParameterizedVectorFunction extends VectorOutputFunction
 	 * evaluation of a given instance of the inner function.
 	 * @param p The part corresponding to the starting point
 	 * @param elem_index The index of the function instance
+	 * @param factory A factory to obtain node instances
 	 * @return A nested node corresponding to the explanation tree
 	 */
-	/*@ null @*/ protected NestedNode getSubNode(Part p, int elem_index)
+	/*@ null @*/ protected NestedNode getSubNode(Part p, int elem_index, NodeFactory factory)
 	{
 		Function f = m_lastInstances.get(elem_index);
 		if (!(f instanceof ExplanationQueryable))
@@ -69,7 +71,7 @@ public abstract class ParameterizedVectorFunction extends VectorOutputFunction
 			return null;
 		}
 		Part in_d = VectorOutputFunction.replaceElementByOutput(p);
-		PartNode sub_root = ((ExplanationQueryable) f).getExplanation(in_d);
+		PartNode sub_root = ((ExplanationQueryable) f).getExplanation(in_d, factory);
 		return NestedNode.createFromTree(sub_root);
 	}
 

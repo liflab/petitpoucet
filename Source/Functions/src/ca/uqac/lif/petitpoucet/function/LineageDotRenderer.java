@@ -264,10 +264,14 @@ public class LineageDotRenderer implements Renderer
 	protected String renderNestedNode(PrintStream ps, NestedNode current, String n_id)
 	{
 		Node inner_start = current.getAssociatedInput(0).getNode();
-		String new_prefix = "C" + n_id;
+		String new_prefix = "";
 		if (m_prefix.isEmpty())
 		{
-			new_prefix = "cluster_" + new_prefix;
+			new_prefix = "cluster_" + "C" + n_id;
+		}
+		else
+		{
+			new_prefix = m_prefix + "C" + n_id.replace("cluster_", "");
 		}
 		LineageDotRenderer sub_renderer = new LineageDotRenderer(inner_start, new_prefix, m_nestingLevel + 1);
 		sub_renderer.render(ps);

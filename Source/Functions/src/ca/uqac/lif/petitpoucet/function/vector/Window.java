@@ -86,7 +86,7 @@ public class Window extends ParameterizedVectorFunction
 				return root;
 			}
 			// Get sub-tree corresponding to evaluation of the inner function
-			NestedNode sub_node = getSubNode(part, elem_index);
+			NestedNode sub_node = getSubNode(part, elem_index, factory);
 			if (sub_node == null)
 			{
 				return root;

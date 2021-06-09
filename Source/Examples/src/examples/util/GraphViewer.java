@@ -80,6 +80,7 @@ public class GraphViewer
 		PrintStream ps = new PrintStream(baos);
 		LineageDotRenderer renderer = new LineageDotRenderer(graph);
 		renderer.render(ps);
+		System.out.println(baos.toString());
 		CommandRunner runner = new CommandRunner(new String[] {"dot", "-Tpng"}, baos.toString());
 		runner.run();
 		return runner.getBytes();

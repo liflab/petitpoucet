@@ -76,7 +76,7 @@ public class VectorApply extends ParameterizedVectorFunction
 				return root;
 			}
 			// Get sub-tree corresponding to evaluation of the inner function
-			NestedNode sub_node = getSubNode(part, elem_index);
+			NestedNode sub_node = getSubNode(part, elem_index, factory);
 			if (sub_node == null)
 			{
 				return root;
@@ -108,5 +108,11 @@ public class VectorApply extends ParameterizedVectorFunction
 		VectorApply w = new VectorApply((Function) m_function.duplicate(with_state));
 		copyInto(w, with_state);
 		return w;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "α(" + m_function.toString() + ")";
 	}
 }
