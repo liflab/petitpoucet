@@ -25,7 +25,6 @@ import java.io.PrintStream;
 import org.junit.Test;
 
 import ca.uqac.lif.dag.NodeConnector;
-import ca.uqac.lif.petitpoucet.GraphUtilities;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.number.Addition;
 import ca.uqac.lif.petitpoucet.function.number.Multiplication;
@@ -51,7 +50,7 @@ public class LineageDotRendererTest
 		//PartNode root = (PartNode) GraphUtilities.simplify(c.getExplanation(NthOutput.FIRST));
 		PartNode root = c.getExplanation(NthOutput.FIRST);
 		LineageDotRenderer renderer = new LineageDotRenderer(root);
-		renderer.render(System.out);
+		renderer.render(ps);
 		assertNotNull(baos.toString());
 	}
 }

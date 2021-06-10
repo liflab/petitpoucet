@@ -24,7 +24,6 @@ import java.util.List;
 import static ca.uqac.lif.petitpoucet.GraphUtilities.simplify;
 import static ca.uqac.lif.petitpoucet.ComposedPart.compose;
 import static examples.util.GraphViewer.display;
-import static examples.util.GraphViewer.save;
 
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.petitpoucet.function.NthOutput;

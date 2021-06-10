@@ -286,6 +286,7 @@ public class LineageDotRenderer implements Renderer
 	 * @param ps The print stream where the node should be printed
 	 * @param current The node to render
 	 * @param n_id The unique ID given to that node
+	 * @return The ID of the nested node corresponding to the cluster
 	 */
 	protected String renderNestedNode(PrintStream ps, NestedNode current, String n_id)
 	{
@@ -356,7 +357,7 @@ public class LineageDotRenderer implements Renderer
 	 * Gets the indent to apply to each line of code depending on the renderrer's
 	 * nesting level. The goal of this method is simply to make the output file
 	 * minimally human-readable.
-	 * @param nesting_level 
+	 * @param nesting_level The level of nesting of this renderer
 	 * @return A string with the appropriate number of indents
 	 */
 	protected static String getIndent(int nesting_level)

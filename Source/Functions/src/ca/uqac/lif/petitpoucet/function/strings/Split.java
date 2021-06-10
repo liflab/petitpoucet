@@ -135,9 +135,9 @@ public class Split extends AtomicFunction
 	/**
 	 * Creates a new designator by replacing the sequence "m-th element of output 0"
 	 * by "range of input 0" inside a composed designator. 
-	 * @param d The designator
-	 * @param range The The designator to replace the pattern
-	 * @return The new designator
+	 * @param d The part
+	 * @param r The range to insert in the output part
+	 * @return The new part
 	 */
 	public static Part replaceNthOutputByRange(Part d, Range r)
 	{

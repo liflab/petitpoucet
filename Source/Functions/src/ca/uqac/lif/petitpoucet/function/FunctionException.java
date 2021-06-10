@@ -38,11 +38,10 @@ public class FunctionException extends RuntimeException
 	
 	/**
 	 * Creates a new function exception from a String.
-	 * @param t The string
+	 * @param s The string
 	 */
 	public FunctionException(String s)
 	{
 		super(s);
 	}
-
 }

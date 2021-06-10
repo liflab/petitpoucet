@@ -83,7 +83,6 @@ public class GraphViewer
 	 * Saves a graph to a file.
 	 * @param graph The graph to display
 	 * @param filename The file where this graph will be saved
-	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 */
 	public static void save(Node graph, String filename)
 	{

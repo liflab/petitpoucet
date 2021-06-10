@@ -32,7 +32,7 @@ import ca.uqac.lif.util.Duplicable;
 /**
  * A self-contained computation unit that produces an array of output values
  * from an array of input values. This class is abstract, and must minimally
- * implement method {@link getValue() #getValue(Object...)} to become concrete.
+ * implement method {@link #getValue(Object...) getValue()} to become concrete.
  * <p>
  * The class also implements the {@link ExplanationQueryable} interface by
  * providing a boilerplate explanation where all elements of the output are
@@ -95,7 +95,7 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 	 * Copies the contents of the current function into another function
 	 * instance.
 	 * @param f The other function
-	 * @param with_state Set to {@code true} for a stateful copy, {@link false}
+	 * @param with_state Set to {@code true} for a stateful copy, {@code false}
 	 * otherwise
 	 */
 	protected void copyInto(AtomicFunction f, boolean with_state)

@@ -118,8 +118,8 @@ public class NthOutput implements Part
 	/**
 	 * Given an arbitrary designator, replaces the first occurrence of
 	 * {@link NthOutput} by an instance of {@link NthInput} with given index.
-	 * @param from The designator
-	 * @param index The index
+	 * @param from The original part
+	 * @param to The part to replace it with
 	 * @return The new designator. The input object is not modified if it does
 	 * not contain {@code d}
 	 */

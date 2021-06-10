@@ -15,4 +15,10 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * Implementation of Petit Poucet lineage tracking capabilities for function
+ * circuits. This implementation depends on the core classes and interfaces
+ * defined in the {@code Core} project.
+ */
 package ca.uqac.lif.petitpoucet.function;
