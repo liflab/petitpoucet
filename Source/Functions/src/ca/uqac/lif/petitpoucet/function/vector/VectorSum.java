@@ -15,14 +15,45 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function.vector;
+
+import java.util.List;
+
+import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Calculates the sum of all numerical elements in a vector.
+ * 
+ * @author Sylvain Hallé
  */
-public interface Queryable
+public class VectorSum extends VectorFunction
 {
-	// Nothing
+	@Override
+	protected Number getOutputValue(List<?> in_list)
+	{
+		float total = 0;
+		for (Object o : in_list)
+		{
+			if (!(o instanceof Number))
+			{
+				throw new InvalidArgumentTypeException("Expected a number");
+			}
+			total += ((Number) o).floatValue();
+		}
+		return total;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Σ";
+	}
+	
+	@Override
+	public VectorSum duplicate(boolean with_state)
+	{
+		VectorSum vs = new VectorSum();
+		copyInto(vs, with_state);
+		return vs;
+	}
 }

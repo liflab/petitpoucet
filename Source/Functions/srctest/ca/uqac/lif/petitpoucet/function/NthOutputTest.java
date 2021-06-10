@@ -15,14 +15,24 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
-/**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
- */
-public interface Queryable
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import ca.uqac.lif.petitpoucet.ComposedPart;
+import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.function.vector.NthElement;
+
+public class NthOutputTest
 {
-	// Nothing
+	@Test
+	public void testReplace1() 
+	{
+		ComposedPart d = (ComposedPart) NthOutput.replaceOutBy(ComposedPart.compose(new NthElement(1), NthOutput.FIRST), Part.all);
+		assertEquals(2, d.size());
+		assertEquals(Part.all, d.head());
+		assertEquals(new NthElement(1), d.tail());
+	}
 }

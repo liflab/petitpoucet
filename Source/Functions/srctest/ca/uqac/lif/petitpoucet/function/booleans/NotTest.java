@@ -15,14 +15,29 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function.booleans;
 
-/**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
- */
-public interface Queryable
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+public class NotTest
 {
-	// Nothing
+	@Test
+	public void testNot1()
+	{
+		Not n = new Not();
+		Object[] out = new Object[1];
+		out = n.evaluate(true);
+		assertEquals(false, (Boolean) out[0]);
+	}
+	
+	@Test
+	public void testNot2()
+	{
+		Not n = new Not();
+		Object[] out = new Object[1];
+		out = n.evaluate(false);
+		assertEquals(true, (Boolean) out[0]);
+	}
 }

@@ -17,12 +17,28 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import ca.uqac.lif.dag.LabelledNode;
+
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Node representing a disjunction of two lineage graphs.
+ * @author Sylvain Hallé
  */
-public interface Queryable
+public class OrNode extends LabelledNode
 {
-	// Nothing
+	/**
+	 * Creates a new or node. The constructor has {@code package} visibility to
+	 * force the use of a {@link NodeFactory} to obtain instances of this class.
+	 */
+	OrNode()
+	{
+		super("∨");
+	}
+	
+	@Override
+	public OrNode duplicate(boolean with_state)
+	{
+		OrNode n = new OrNode();
+		copyInto(n, with_state);
+		return n;
+	}
 }

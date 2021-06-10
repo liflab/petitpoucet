@@ -17,12 +17,28 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import ca.uqac.lif.dag.LabelledNode;
+
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Node representing a conjunction of two lineage graphs.
+ * @author Sylvain Hallé
  */
-public interface Queryable
+public class AndNode extends LabelledNode
 {
-	// Nothing
+	/**
+	 * Creates a new and node. The constructor has {@code package} visibility to
+	 * force the use of a {@link NodeFactory} to obtain instances of this class.
+	 */
+	AndNode()
+	{
+		super("∧");
+	}
+	
+	@Override
+	public AndNode duplicate(boolean with_state)
+	{
+		AndNode n = new AndNode();
+		copyInto(n, with_state);
+		return n;
+	}
 }

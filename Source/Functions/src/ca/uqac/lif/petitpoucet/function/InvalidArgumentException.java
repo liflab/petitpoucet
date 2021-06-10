@@ -15,14 +15,28 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
-/**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
- */
-public interface Queryable
+public class InvalidArgumentException extends FunctionException
 {
-	// Nothing
+	/**
+	 * Dummy UID
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public InvalidArgumentException()
+	{
+		this("Invalid argument type");
+	}
+
+	public InvalidArgumentException(String s)
+	{
+		super(s);
+	}
+	
+	public InvalidArgumentException(Throwable t)
+	{
+		super(t);
+	}
+
 }

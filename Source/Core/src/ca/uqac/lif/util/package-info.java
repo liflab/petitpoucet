@@ -15,14 +15,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Package defining generic classes and interfaces used in this library.
  */
-public interface Queryable
-{
-	// Nothing
-}
+package ca.uqac.lif.util;

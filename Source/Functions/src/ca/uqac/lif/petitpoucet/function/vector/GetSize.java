@@ -15,14 +15,34 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function.vector;
+
+import java.util.List;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Calculates the size of the input vector.
+ * 
+ * @author Sylvain Hallé
  */
-public interface Queryable
+public class GetSize extends VectorFunction
 {
-	// Nothing
+	@Override
+	protected Number getOutputValue(List<?> in_list)
+	{
+		return in_list.size();
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Size";
+	}
+	
+	@Override
+	public GetSize duplicate(boolean with_state)
+	{
+		GetSize vs = new GetSize();
+		copyInto(vs, with_state);
+		return vs;
+	}
 }

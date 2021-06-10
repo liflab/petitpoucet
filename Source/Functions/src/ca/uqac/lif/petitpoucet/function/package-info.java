@@ -15,14 +15,10 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Implementation of Petit Poucet lineage tracking capabilities for function
+ * circuits. This implementation depends on the core classes and interfaces
+ * defined in the {@code Core} project.
  */
-public interface Queryable
-{
-	// Nothing
-}
+package ca.uqac.lif.petitpoucet.function;

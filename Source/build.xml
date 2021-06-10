@@ -28,14 +28,8 @@
     <!-- Compile core -->
     <ant dir="Core" target="jar" />
     <!-- Copy core to other projects -->
-    <copy file="petitpoucet-core.jar" todir="Common/lib" />
     <copy file="petitpoucet-core.jar" todir="Functions/lib" />
     <copy file="petitpoucet-core.jar" todir="Examples/lib" />
-    <!-- Compile Common -->
-    <ant dir="Common" target="jar" />
-    <!-- Copy Common to other projects -->
-    <copy file="petitpoucet-common.jar" todir="Functions/lib" />
-    <copy file="petitpoucet-common.jar" todir="Examples/lib" />
     <!-- Compile Functions -->
     <ant dir="Functions" target="jar" />
     <!-- Copy Functions to other projects -->
@@ -46,14 +40,12 @@
   
   <target name="download-deps">
     <ant dir="Core" target="download-deps" />
-    <ant dir="Common" target="download-deps" />
     <ant dir="Functions" target="download-deps" />
     <ant dir="Examples" target="download-deps" />
   </target>
   
   <target name="clean">
     <ant dir="Core" target="clean" />
-    <ant dir="Common" target="clean" />
     <ant dir="Functions" target="clean" />
     <ant dir="Examples" target="clean" />
   </target>
@@ -78,9 +70,8 @@
       <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <sourcepath>
         <pathelement path="Core/src"/>
-        <pathelement path="Json/src"/>
-        <pathelement path="Size/src"/>
-        <pathelement path="Xml/src"/>
+        <pathelement path="Functions/src"/>
+        <pathelement path="Examples/src"/>
       </sourcepath>
       <classpath>
         <fileset dir="Core/dep">
@@ -89,16 +80,10 @@
         <fileset dir="Core/lib">
           <include name="**/*.jar"/>
         </fileset>
-        <fileset dir="Size/dep">
-          <include name="**/*.jar"/>
-        </fileset>
-        <fileset dir="Json/dep">
-          <include name="**/*.jar"/>
-        </fileset>
-        <fileset dir="Xml/dep">
-          <include name="**/*.jar"/>
-        </fileset>
       </classpath>
     </javadoc>
+    <copy todir="../docs/javadoc/doc-files">
+      <fileset dir="Examples/src/doc-files"/>
+    </copy>
   </target>
 </project>

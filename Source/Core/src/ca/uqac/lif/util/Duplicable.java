@@ -15,14 +15,26 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.util;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Interface implemented by objects that can make stateful deep copies of
+ * themselves.
  */
-public interface Queryable
+public interface Duplicable
 {
-	// Nothing
+	/**
+	 * Creates a copy of an object. The behavior of this method is equivalent
+	 * to {@code duplicate(false)}.
+	 * @return The object's copy
+	 */
+	public Object duplicate();
+	
+	/**
+	 * Creates a possibly stateful copy of an object.
+	 * @param with_state Set to {@code true} for a stateful copy, {@code false}
+	 * otherwise
+	 * @return The object's copy
+	 */
+	public Object duplicate(boolean with_state);
 }

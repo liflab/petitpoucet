@@ -17,12 +17,30 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import ca.uqac.lif.dag.LabelledNode;
+
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * A node representing an unknown lineage.
+ * @author Sylvain Hallé
  */
-public interface Queryable
+public class UnknownNode extends LabelledNode
 {
-	// Nothing
+	/**
+	 * Creates a new unknown node. The constructor has {@code package} visibility
+	 * to force the use of a {@link NodeFactory} to obtain instances of this
+	 * class.
+	 */
+	UnknownNode()
+	{
+		super("?");
+	}
+	
+	@Override
+	public UnknownNode duplicate(boolean with_state)
+	{
+		UnknownNode n = new UnknownNode();
+		copyInto(n, with_state);
+		return n;
+	}
+
 }

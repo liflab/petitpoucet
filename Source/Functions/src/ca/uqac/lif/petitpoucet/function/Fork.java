@@ -15,14 +15,44 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Duplicates the value on an input pin to multiple output pins.
  */
-public interface Queryable
+public class Fork extends AtomicFunction
 {
-	// Nothing
+	/**
+	 * Creates a new fork.
+	 * @param out_arity The output arity
+	 */
+	public Fork(int out_arity)
+	{
+		super(1, out_arity);
+	}
+
+	@Override
+	protected Object[] getValue(Object... inputs) throws InvalidNumberOfArgumentsException
+	{
+		Object[] out = new Object[getOutputArity()];
+		for (int i = 0; i < out.length; i++)
+		{
+			out[i] = inputs[0];
+		}
+		return out;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "\u2aaa";
+	}
+	
+	@Override
+	public Fork duplicate(boolean with_state)
+	{
+		Fork f = new Fork(getOutputArity());
+		copyInto(f, with_state);
+		return f;
+	}
 }

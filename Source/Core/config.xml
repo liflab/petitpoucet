@@ -42,8 +42,8 @@
   <depdir>dep</depdir>
   <libdir>lib</libdir>
   <test>
-    <srcdir>Source/CoreTest/src</srcdir>
-    <bindir>Source/CoreTest/bin</bindir>
+    <srcdir>srctest</srcdir>
+    <bindir>bintest</bindir>
   </test>
   
   <!-- Output jar -->
@@ -57,16 +57,6 @@
     Write JAR dependencies here.
   -->
   <dependencies>
-  <dependency>
-      <!--
-      Azrael Core
-      -->
-      <name>Azrael Core</name>
-      <classname>ca.uqac.lif.azrael.Printable</classname>
-      <bundle>false</bundle>
-      <files>
-        <jar>https://github.com/sylvainhalle/Azrael/releases/download/v2.0/azrael-core.jar</jar>
-      </files>
-    </dependency>
+  <!-- None -->
   </dependencies>
 </build>

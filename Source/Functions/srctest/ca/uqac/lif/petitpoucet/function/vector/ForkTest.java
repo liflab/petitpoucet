@@ -15,14 +15,25 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function.vector;
 
-/**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
- */
-public interface Queryable
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+import ca.uqac.lif.petitpoucet.function.Fork;
+
+public class ForkTest
 {
-	// Nothing
+	@Test
+	public void test1()
+	{
+		Fork f = new Fork(3);
+		Object[] out = f.evaluate("foo");
+		assertEquals(3, out.length);
+		for (int i = 0; i < 3; i++)
+		{
+			assertEquals("foo", out[i]);
+		}
+	}	
 }

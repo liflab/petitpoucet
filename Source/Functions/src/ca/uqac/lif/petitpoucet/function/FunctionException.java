@@ -15,14 +15,33 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Generic exception thrown by a function when being called.
  */
-public interface Queryable
+public class FunctionException extends RuntimeException
 {
-	// Nothing
+	/**
+	 * Dummy UID
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Creates a new function exception from a throwable instance.
+	 * @param t The throwable
+	 */
+	public FunctionException(Throwable t)
+	{
+		super(t);
+	}
+	
+	/**
+	 * Creates a new function exception from a String.
+	 * @param s The string
+	 */
+	public FunctionException(String s)
+	{
+		super(s);
+	}
 }

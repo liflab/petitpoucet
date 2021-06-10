@@ -15,14 +15,26 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.function;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Interface implemented by objects that can be assigned context elements, i.e.
+ * a memory made of key-value pairs. Keys are non-null strings, and values are
+ * any object (including null).
  */
-public interface Queryable
+public interface Contextualizable
 {
-	// Nothing
+	/**
+	 * Gets a value from the object's context.
+	 * @param key The key
+	 * @return The value
+	 */
+	/*@ null @*/ public Object getContext(/*@ non_null @*/ String key);
+
+	/**
+	 * Sets a value for a key in the object's context.
+	 * @param key The key
+	 * @param value The value
+	 */
+	public void setContext(/*@ non_null @*/ String key, /*@ null @*/ Object value);
 }

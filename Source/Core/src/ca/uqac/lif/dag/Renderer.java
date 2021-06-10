@@ -15,14 +15,19 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.dag;
+
+import java.io.PrintStream;
 
 /**
- * Interface indicating that an object can be queried for lineage. The
- * interface implements no method, but is used as a common ancestor to all
- * other interfaces defining lineage querying capabilities.
+ * Object that renders something to a print stream.
+ * @author Sylvain Hallé
  */
-public interface Queryable
+public interface Renderer
 {
-	// Nothing
+	/**
+	 * Renders an object to a print stream.
+	 * @param ps The print stream
+	 */
+	public void render(PrintStream ps);
 }
