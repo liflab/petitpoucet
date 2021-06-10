@@ -29,6 +29,7 @@ import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.dag.Renderer;
 import ca.uqac.lif.petitpoucet.AndNode;
+import ca.uqac.lif.petitpoucet.GraphUtilities;
 import ca.uqac.lif.petitpoucet.OrNode;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
@@ -57,7 +58,7 @@ public class LineageDotRenderer implements Renderer
 	 * in the traversal of the graph.
 	 */
 	/*@ non_null @*/ protected Set<Node> m_rendered;
-	
+
 	/**
 	 * The set of nodes that have been expanded (nodes that had their children
 	 * rendered). Used internally by the renderer to avoid expanding the same
@@ -69,7 +70,7 @@ public class LineageDotRenderer implements Renderer
 	 * The prefix to give to each node ID in the graph.
 	 */
 	/*@ non_null @*/ protected String m_prefix;
-	
+
 	/**
 	 * The prefix to give to each node ID in the graph.
 	 */
@@ -80,11 +81,16 @@ public class LineageDotRenderer implements Renderer
 	 * graph.
 	 */
 	protected int m_idCounter;
-	
+
 	/**
 	 * The nesting level of this graph.
 	 */
 	protected int m_nestingLevel;
+
+	/**
+	 * Flag that determines if the captions of non-leaf nodes should be printed.
+	 */
+	protected boolean m_noCaptions;
 
 	/**
 	 * Creates a new instance of renderer.
@@ -92,8 +98,11 @@ public class LineageDotRenderer implements Renderer
 	 * typically the root of a directed acyclic graph.
 	 * @param prefix The prefix to give to each node ID in the graph
 	 * @param nesting_level The nesting level of this graph
+	 * @param no_captions Flag that determines if the captions of non-leaf nodes
+	 * should be printed. If set to {@code true}, these nodes will simply be
+	 * rendered as colored circles.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix, int nesting_level)
+	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
 	{
 		super();
 		m_idCounter = 0;
@@ -104,6 +113,7 @@ public class LineageDotRenderer implements Renderer
 		m_prefix = prefix;
 		m_nestingLevel = nesting_level;
 		m_indent = getIndent(nesting_level);
+		m_noCaptions = no_captions;
 	}
 
 	/**
@@ -113,7 +123,16 @@ public class LineageDotRenderer implements Renderer
 	 */
 	public LineageDotRenderer(/*@ non_null @*/ Node root)
 	{
-		this(root, "", 0);
+		this(root, "", 0, false);
+	}
+	
+	/**
+	 * Sets whether to hide captions of non-leaf nodes.
+	 * @param b Set to {@code true} to hide captions, {@code false} otherwise
+	 */
+	public void setNoCaptions(boolean b)
+	{
+		m_noCaptions = b;
 	}
 
 	@Override
@@ -164,7 +183,7 @@ public class LineageDotRenderer implements Renderer
 			}
 		}
 	}
-	
+
 	/**
 	 * Renders a transition between two nodes of the graph.
 	 * @param ps The print stream where the transition should be printed
@@ -223,7 +242,7 @@ public class LineageDotRenderer implements Renderer
 		}
 		else if (current instanceof AndNode)
 		{
-			ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∧</b></font>>,width=.3,fixedsize=\"true\",fillcolor=\"blue\",textcolor=\"white\"];");
+			ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∧</b></font>>,width=.25,fixedsize=\"true\",fillcolor=\"blue\",textcolor=\"white\"];");
 		}
 		else if (current instanceof PartNode)
 		{
@@ -251,7 +270,14 @@ public class LineageDotRenderer implements Renderer
 		Part d = current.getPart();
 		Object o = current.getSubject();
 		String color = getPartNodeColor(d);
-		ps.println(m_indent + n_id + " [height=0.25,label=\"" + d.toString() + " of " + o.toString() + "\",fillcolor=\"" + color + "\"];");
+		if (m_noCaptions && ((!GraphUtilities.isLeaf(current) && current != m_root) || m_nestingLevel > 0))
+		{
+			ps.println(m_indent + n_id + " [height=0.25,shape=\"circle\",label=\"\",fillcolor=\"" + color + "\"];");
+		}
+		else
+		{
+			ps.println(m_indent + n_id + " [height=0.25,label=\"" + d.toString() + " of " + o.toString() + "\",fillcolor=\"" + color + "\"];");
+		}
 	}
 
 	/**
@@ -273,12 +299,12 @@ public class LineageDotRenderer implements Renderer
 		{
 			new_prefix = m_prefix + "C" + n_id.replace("cluster_", "");
 		}
-		LineageDotRenderer sub_renderer = new LineageDotRenderer(inner_start, new_prefix, m_nestingLevel + 1);
+		LineageDotRenderer sub_renderer = new LineageDotRenderer(inner_start, new_prefix, m_nestingLevel + 1, m_noCaptions);
 		sub_renderer.render(ps);
 		m_nodeIds.putAll(sub_renderer.m_nodeIds);
 		return "C" + n_id + "0";
 	}
-	
+
 	/**
 	 * Gets the background color of the sub-graph associated to a given nesting
 	 * level. This method has a purely cosmetic effect: it results in
@@ -291,21 +317,23 @@ public class LineageDotRenderer implements Renderer
 	{
 		switch (nesting_level)
 		{
-			case 0:
-				return "white";
-			case 1:
-				return "#f0f0f0";
-			case 2:
-				return "#efefef";
-			case 3:
-				return "#e0e0e0";
-			case 4:
-				return "#dfdfdf";
-			default:
-				return "#d0d0d0";
+		case 0:
+			return "white";
+		case 1:
+			return "#f8f8f8";
+		case 2:
+			return "#f0f0f0";
+		case 3:
+			return "#e8e8e8";
+		case 4:
+			return "#e0e0e0";
+		case 5:
+			return "#d8d8d8";
+		default:
+			return "#d0d0d0";
 		}
 	}
-	
+
 	/**
 	 * Gets the background color of a part node.
 	 * @param p The part
@@ -323,7 +351,7 @@ public class LineageDotRenderer implements Renderer
 		}
 		return "AliceBlue";
 	}
-	
+
 	/**
 	 * Gets the indent to apply to each line of code depending on the renderrer's
 	 * nesting level. The goal of this method is simply to make the output file

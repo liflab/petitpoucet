@@ -17,7 +17,9 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import ca.uqac.lif.dag.FlatteningCrawler;
@@ -69,16 +71,25 @@ public class GraphUtilities
 		{
 			for (Pin<? extends Node> pin : root.getOutputLinks(i))
 			{
-				squash(new_root, i, pin, new HashSet<Node>());
+				squash(new_root, i, pin, new HashSet<Node>(), new HashMap<Node,Node>());
 			}
 		}
 		return new_root;
 	}
 	
-	protected static void squash(Node parent, int pin_index, Pin<? extends Node> pin, Set<Node> visited)
+	protected static void squash(Node parent, int pin_index, Pin<? extends Node> pin, Set<Node> visited, Map<Node,Node> duplicates)
 	{
 		Node target = pin.getNode();
-		Node target_dup = target.duplicate();
+		Node target_dup = null;
+		if (duplicates.containsKey(target))
+		{
+			target_dup = duplicates.get(target);
+		}
+		else
+		{
+			target_dup = target.duplicate();
+			duplicates.put(target, target_dup);
+		}
 		visited.add(parent);
 		Node out_parent = parent;
 		if (!(target instanceof AndNode) && !(target instanceof OrNode))
@@ -105,7 +116,7 @@ public class GraphUtilities
 			{
 				for (Pin<? extends Node> t_pin : target.getOutputLinks(i))
 				{
-					squash(out_parent, i, t_pin, visited);
+					squash(out_parent, i, t_pin, visited, duplicates);
 				}
 			}
 		}
@@ -116,7 +127,7 @@ public class GraphUtilities
 	 * @param n The node
 	 * @return {@code true} if the node is a leaf, {@code false} otherwise.
 	 */
-	protected static boolean isLeaf(Node n)
+	public static boolean isLeaf(Node n)
 	{
 		for (int i = 0; i < n.getOutputArity(); i++)
 		{

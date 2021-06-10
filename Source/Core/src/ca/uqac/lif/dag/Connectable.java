@@ -82,6 +82,17 @@ public interface Connectable
 	public void setToInput(int index, /*@ non_null @*/ Pin<? extends Node> pin) throws IndexOutOfBoundsException;
 	
 	/**
+	 * Removes a node's output pin to the set of connections of this node's
+	 * input pin. If other pins are already associated to this input pin,
+	 * they are kept. 
+	 * @param index The index of the current node's input pin
+	 * @param pin A node's output pin to remove from the connections
+	 * @throws IndexOutOfBoundsException If the index is incompatible with
+	 * the node's input arity
+	 */
+	public void removeFromInput(int index, /*@ non_null @*/ Pin<? extends Node> pin) throws IndexOutOfBoundsException;
+	
+	/**
 	 * Adds a node's input pin to the set of connections of this node's
 	 * output pin. If other pins are already associated to this output pin,
 	 * they are kept. 
@@ -102,6 +113,17 @@ public interface Connectable
 	 * the node's output arity
 	 */
 	/*@ non_null @*/ public void setToOutput(int index, /*@ non_null @*/ Pin<? extends Node> pin) throws IndexOutOfBoundsException;
+	
+	/**
+	 * Removes a node's input pin to the set of connections of this node's
+	 * output pin. If other pins are already associated to this output pin,
+	 * they are kept. 
+	 * @param index The index of the current node's output pin
+	 * @param pin A node's input pin to remove from the connections
+	 * @throws IndexOutOfBoundsException If the index is incompatible with
+	 * the node's output arity
+	 */
+	public void removeFromOutput(int index, /*@ non_null @*/ Pin<? extends Node> pin) throws IndexOutOfBoundsException;
 	
 	/**
 	 * Gets the node's input pin for a given index.

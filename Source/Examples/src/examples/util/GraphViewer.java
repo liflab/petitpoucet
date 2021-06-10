@@ -41,31 +41,53 @@ public class GraphViewer
 	 * Displays an explanation graph into a window. This method acts as a
 	 * primitive image viewer, used to display the result of the examples.
 	 * @param graph The graph to display
+	 * @param no_captions Set to {@code true} to hide non-leaf captions
+	 */
+	public static void display(Node graph, boolean no_captions)
+	{
+		BitmapJFrame window = new BitmapJFrame(getGraph(graph, no_captions));
+		window.setVisible(true);
+	}
+	
+	/**
+	 * Displays an explanation graph into a window. This method acts as a
+	 * primitive image viewer, used to display the result of the examples.
+	 * @param graph The graph to display
 	 */
 	public static void display(Node graph)
 	{
-		BitmapJFrame window = new BitmapJFrame(getGraph(graph));
-		window.setVisible(true);
+		display(graph, false);
 	}
 	
 	/**
 	 * Saves a graph to a file.
 	 * @param graph The graph to display
 	 * @param filename The file where this graph will be saved
+	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 */
-	public static void save(Node graph, String filename)
+	public static void save(Node graph, String filename, boolean no_captions)
 	{
 		File outputFile = new File(filename);
 		try (FileOutputStream outputStream = new FileOutputStream(outputFile))
 		{
-		    outputStream.write(getGraph(graph));
+		    outputStream.write(getGraph(graph, no_captions));
 		    outputStream.close();
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Saves a graph to a file.
+	 * @param graph The graph to display
+	 * @param filename The file where this graph will be saved
+	 * @param no_captions Set to {@code true} to hide non-leaf captions
+	 */
+	public static void save(Node graph, String filename)
+	{
+		save(graph, filename, false);
 	}
 	
 	/**
@@ -74,13 +96,13 @@ public class GraphViewer
 	 * @param graph The graph to render
 	 * @return An array of bytes containing the image to display
 	 */
-	protected static byte[] getGraph(Node graph)
+	protected static byte[] getGraph(Node graph, boolean no_captions)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream ps = new PrintStream(baos);
 		LineageDotRenderer renderer = new LineageDotRenderer(graph);
+		renderer.setNoCaptions(no_captions);
 		renderer.render(ps);
-		System.out.println(baos.toString());
 		CommandRunner runner = new CommandRunner(new String[] {"dot", "-Tpng"}, baos.toString());
 		runner.run();
 		return runner.getBytes();

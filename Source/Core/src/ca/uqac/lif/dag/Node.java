@@ -65,34 +65,19 @@ public class Node implements Connectable, Duplicable
 		}
 	}
 	
-	/**
-	 * Gets the input arity of the node. The input arity is the number of
-	 * input pins of this node.
-	 * @return The input arity
-	 */
+	@Override
 	/*@ pure @*/ public int getInputArity()
 	{
 		return m_inputs.size();
 	}
 	
-	/**
-	 * Gets the output arity of the node. The input arity is the number of
-	 * output pins of this node.
-	 * @return The input arity
-	 */
+	@Override
 	/*@ pure @*/ public int getOutputArity()
 	{
 		return m_outputs.size();
 	}
 	
-	/**
-	 * Gets the output pins of other nodes that are connected to a given
-	 * input pin of this node.
-	 * @param index The index of the current node's input pin
-	 * @return The collection of output pins of other nodes
-	 * @throws IndexOutOfBoundsException If the index is incompatible with
-	 * the node's input arity
-	 */
+	@Override
 	/*@ pure non_null @*/ public Collection<Pin<? extends Node>> getInputLinks(int index)
 	{
 		if (index < 0 || index >= m_inputs.size())
@@ -102,14 +87,7 @@ public class Node implements Connectable, Duplicable
 		return m_inputs.get(index);
 	}
 	
-	/**
-	 * Gets the input pins of other nodes that are connected to a given
-	 * output pin of this node.
-	 * @param index The index of the current node's output pin
-	 * @return The collection of input pins of other nodes
-	 * @throws IndexOutOfBoundsException If the index is incompatible with
-	 * the node's output arity
-	 */
+	@Override
 	/*@ pure non_null @*/ public List<Pin<? extends Node>> getOutputLinks(int index)
 	{
 		if (index < 0 || index >= m_outputs.size())
@@ -119,15 +97,7 @@ public class Node implements Connectable, Duplicable
 		return m_outputs.get(index);
 	}
 	
-	/**
-	 * Adds a node's output pin to the set of connections of this node's
-	 * input pin. If other pins are already associated to this input pin,
-	 * they are kept. 
-	 * @param index The index of the current node's input pin
-	 * @param pin A node's output pin to add to the connections
-	 * @throws IndexOutOfBoundsException If the index is incompatible with
-	 * the node's input arity
-	 */
+	@Override
 	public void addToInput(int index, /*@ non_null @*/ Pin<? extends Node> pin)
 	{
 		if (index < 0 || index >= m_inputs.size())
@@ -137,15 +107,7 @@ public class Node implements Connectable, Duplicable
 		m_inputs.get(index).add(pin);
 	}
 	
-	/**
-	 * Sets a node's output pin as the connection of this node's input
-	 * pin. If other pins are already associated to this input pin, they
-	 * are deleted. 
-	 * @param index The index of the current node's input pin
-	 * @param pin A node's output pin to add to the connections
-	 * @throws IndexOutOfBoundsException If the index is incompatible with
-	 * the node's input arity
-	 */
+	@Override
 	public void setToInput(int index, /*@ non_null @*/ Pin<? extends Node> pin)
 	{
 		if (index < 0 || index >= m_inputs.size())
@@ -156,15 +118,17 @@ public class Node implements Connectable, Duplicable
 		m_inputs.get(index).add(pin);
 	}
 	
-	/**
-	 * Adds a node's input pin to the set of connections of this node's
-	 * output pin. If other pins are already associated to this output pin,
-	 * they are kept. 
-	 * @param index The index of the current node's output pin
-	 * @param pin A node's input pin to add to the connections
-	 * @throws IndexOutOfBoundsException If the index is incompatible with
-	 * the node's output arity
-	 */
+	@Override
+	public void removeFromInput(int index, /*@ non_null @*/ Pin<? extends Node> pin)
+	{
+		if (index < 0 || index >= m_inputs.size())
+		{
+			throw new IndexOutOfBoundsException();
+		}
+		m_inputs.get(index).remove(pin);
+	}
+	
+	@Override
 	public void addToOutput(int index, /*@ non_null @*/ Pin<? extends Node> pin)
 	{
 		if (index < 0 || index >= m_outputs.size())
@@ -174,15 +138,7 @@ public class Node implements Connectable, Duplicable
 		m_outputs.get(index).add(pin);
 	}
 	
-	/**
-	 * Sets a node's input pin as the connection of this node's output
-	 * pin. If other pins are already associated to this output pin, they
-	 * are deleted. 
-	 * @param index The index of the current node's output pin
-	 * @param pin A node's input pin to add to the connections
-	 * @throws IndexOutOfBoundsException If the index is incompatible with
-	 * the node's output arity
-	 */
+	@Override
 	/*@ non_null @*/ public void setToOutput(int index, /*@ non_null @*/ Pin<? extends Node> pin)
 	{
 		if (index < 0 || index >= m_outputs.size())
@@ -193,13 +149,17 @@ public class Node implements Connectable, Duplicable
 		m_outputs.get(index).add(pin);
 	}
 	
-	/**
-	 * Gets the node's input pin for a given index.
-	 * @param index The index
-	 * @return The pin
-	 * @throws IndexOutOfBoundsException If the index is incompatible with
-	 * the node's input arity
-	 */
+	@Override
+	public void removeFromOutput(int index, /*@ non_null @*/ Pin<? extends Node> pin)
+	{
+		if (index < 0 || index >= m_outputs.size())
+		{
+			throw new IndexOutOfBoundsException();
+		}
+		m_outputs.get(index).remove(pin);
+	}
+	
+	@Override
 	/*@ non_null @*/ public Pin<? extends Node> getInputPin(int index) throws IndexOutOfBoundsException
 	{
 		if (index < 0 || index >= m_inputs.size())
@@ -209,13 +169,7 @@ public class Node implements Connectable, Duplicable
 		return new Pin<Node>(this, index);
 	}
 	
-	/**
-	 * Gets the node's input pin for a given index.
-	 * @param index The index
-	 * @return The pin
-	 * @throws IndexOutOfBoundsException If the index is incompatible with
-	 * the node's output arity
-	 */
+	@Override
 	/*@ non_null @*/ public Pin<? extends Node> getOutputPin(int index) throws IndexOutOfBoundsException
 	{
 		if (index < 0 || index >= m_outputs.size())

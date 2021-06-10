@@ -30,6 +30,32 @@ public class NodeConnector
 	public static final transient NodeConnector instance = new NodeConnector();
 	
 	/**
+	 * Disconnects an output pin of a node to the input pin of another node.
+	 * @param n1 The first node
+	 * @param i1 The index of the output pin on {@code n1}
+	 * @param n2 The second node
+	 * @param i2 The index of the output pin on {@code n2}
+	 */
+	public static void disconnect(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
+	{
+		instance.disconnectFrom(n1, i1, n2, i2);
+	}
+	
+	/**
+	 * Cuts the directed link between a node and another one. This does not
+	 * remove the reciprocal link in the reverse direction. This method can be
+	 * used when the downstream node is completely removed from a graph.
+	 * @param n1 The first node
+	 * @param i1 The index of the output pin on {@code n1}
+	 * @param n2 The second node
+	 * @param i2 The index of the output pin on {@code n2}
+	 */
+	public static void cutFrom(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
+	{
+		n1.removeFromOutput(i1, n2.getInputPin(i2));
+	}
+	
+	/**
 	 * Connects an output pin of a node to the input pin of another node.
 	 * @param n1 The first node
 	 * @param i1 The index of the output pin on {@code n1}
@@ -52,5 +78,18 @@ public class NodeConnector
 	{
 		n1.addToOutput(i1, n2.getInputPin(i2));
 		n2.addToInput(i2, n1.getOutputPin(i1));
+	}
+	
+	/**
+	 * Disconnects an output pin of a node to the input pin of another node.
+	 * @param n1 The first node
+	 * @param i1 The index of the output pin on {@code n1}
+	 * @param n2 The second node
+	 * @param i2 The index of the output pin on {@code n2}
+	 */
+	public void disconnectFrom(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
+	{
+		n1.removeFromOutput(i1, n2.getInputPin(i2));
+		n2.removeFromInput(i2, n1.getOutputPin(i1));
 	}
 }
