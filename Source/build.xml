@@ -71,6 +71,7 @@
       <sourcepath>
         <pathelement path="Core/src"/>
         <pathelement path="Functions/src"/>
+        <pathelement path="Examples/src"/>
       </sourcepath>
       <classpath>
         <fileset dir="Core/dep">
@@ -81,5 +82,8 @@
         </fileset>
       </classpath>
     </javadoc>
+    <copy todir="../docs/javadoc/doc-files">
+      <fileset dir="Examples/src/doc-files"/>
+    </copy>
   </target>
 </project>

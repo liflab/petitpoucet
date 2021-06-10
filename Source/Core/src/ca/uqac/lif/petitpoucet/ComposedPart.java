@@ -21,11 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Part made of a composition of other "atomic" parts.
- * This part is composed of a "head" and a "tail". The head is
- * an {@link AtomicPart} part that points to a part of an object. The
- * tail is a sequence of parts that further refine that part into
- * a smaller part.
+ * Part made of a composition of other "atomic" parts. This part is composed
+ * of a "head" and a "tail". The head is a {@link Part} that points to a part
+ * of an object. The tail is a sequence of parts that further refine that part
+ * into a smaller part.
  * @author Sylvain Hallé
  */
 public class ComposedPart implements Part

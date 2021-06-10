@@ -196,7 +196,7 @@ public class Node implements Connectable, Duplicable
 	/**
 	 * Copies the contents of the current node into another node instance.
 	 * @param n The other node
-	 * @param with_state Set to {@code true} for a stateful copy, {@link false}
+	 * @param with_state Set to {@code true} for a stateful copy, {@code false}
 	 * otherwise
 	 */
 	protected void copyInto(Node n, boolean with_state)

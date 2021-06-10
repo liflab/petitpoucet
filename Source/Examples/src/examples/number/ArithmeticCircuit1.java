@@ -35,7 +35,9 @@ import ca.uqac.lif.petitpoucet.function.vector.NthElement;
  * circuit can be represented as:
  * <p>
  * <img src="{@docRoot}/doc-files/number/ArithmeticCircuit.png" alt="Circuit">
- * <p>
+ * 
+ * <h3>Explanation</h3>
+ * 
  * The program evaluates this circuit on the input x=2, y=3, z=4, and then
  * requests the explanation graph corresponding to the resulting output.
  * 
@@ -54,6 +56,9 @@ import ca.uqac.lif.petitpoucet.function.vector.NthElement;
  * <img src="{@docRoot}/doc-files/number/ArithmeticCircuit1-small.png" alt="Simplified graph">
  * 
  * @author Sylvain Hallé
+ * 
+ * @see ArithmeticCircuit2
+ * @see ArithmeticCircuit3
  */
 public class ArithmeticCircuit1
 {

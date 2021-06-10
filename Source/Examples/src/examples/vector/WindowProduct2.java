@@ -24,7 +24,6 @@ import java.util.List;
 import static ca.uqac.lif.petitpoucet.GraphUtilities.simplify;
 import static ca.uqac.lif.petitpoucet.ComposedPart.compose;
 import static examples.util.GraphViewer.display;
-import static examples.util.GraphViewer.save;
 
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
@@ -38,7 +37,9 @@ import ca.uqac.lif.petitpoucet.function.vector.Window;
  * Graphically, this is represented by the following circuit:
  * <p>
  * <img src="{@docRoot}/doc-files/vector/WindowProduct.png" alt="Circuit">
- * <p>
+ * 
+ * <h3>Explanation</h3>
+ * 
  * The program evaluates this circuit on the input
  * [3, 1, 0, 1, 0, 9, 2, 6, 5, 3, 5], and then requests the explanation graph
  * corresponding to the second element of the resulting output vector.
@@ -60,7 +61,7 @@ import ca.uqac.lif.petitpoucet.function.vector.Window;
  * <p>
  * <img src="{@docRoot}/doc-files/vector/WindowProduct2-small.png" alt="Simplified graph">
  * @author Sylvain Hallé
- * @see {@link WindowProduct1}
+ * @see WindowProduct1
  *
  */
 public class WindowProduct2

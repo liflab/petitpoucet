@@ -44,7 +44,9 @@ import ca.uqac.lif.petitpoucet.function.vector.Window;
  * be represented as:
  * <p>
  * <img src="{@docRoot}/doc-files/circuits/ConditionSum.png" alt="Circuit">
- * <p>
+ * 
+ * <h3>Explanation</h3>
+ * 
  * The circuit is evaluated on this list of text lines:
  * <pre>
  * the,2,penny

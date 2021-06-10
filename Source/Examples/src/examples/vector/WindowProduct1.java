@@ -38,7 +38,9 @@ import ca.uqac.lif.petitpoucet.function.vector.Window;
  * Graphically, this is represented by the following circuit:
  * <p>
  * <img src="{@docRoot}/doc-files/vector/WindowProduct.png" alt="Circuit">
- * <p>
+ * 
+ * <h3>Explanation</h3>
+ * 
  * The program evaluates this circuit on the input
  * [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5], and then requests the explanation graph
  * corresponding to the second element of the resulting output vector.
@@ -59,7 +61,7 @@ import ca.uqac.lif.petitpoucet.function.vector.Window;
  * <p>
  * <img src="{@docRoot}/doc-files/vector/WindowProduct1-small.png" alt="Simplified graph">
  * @author Sylvain Hallé
- * @see {@link WindowProduct2}
+ * @see WindowProduct2
  *
  */
 public class WindowProduct1
