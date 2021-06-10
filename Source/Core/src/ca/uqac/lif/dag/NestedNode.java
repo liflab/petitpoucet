@@ -300,7 +300,7 @@ public class NestedNode extends Node
 	 * the list of all such nodes, or the list of all "leaf" nodes (downstream
 	 * nodes that have no output connection).
 	 */
-	protected static class NestedNodeCrawler extends Crawler
+	public static class NestedNodeCrawler extends Crawler
 	{
 		/**
 		 * The list of nodes that are leaves.
