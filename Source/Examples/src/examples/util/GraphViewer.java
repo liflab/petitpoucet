@@ -64,7 +64,7 @@ public class GraphViewer
 	/**
 	 * Displays an explanation graph into a window. This method acts as a
 	 * primitive image viewer, used to display the result of the examples.
-	 * @param roots The root of the graph to display
+	 * @param root The root of the graph to display
 	 */
 	public static void display(Node root)
 	{
@@ -115,7 +115,7 @@ public class GraphViewer
 	/**
 	 * Renders a graph as a DOT file.
 	 * @param roots The roots of the graph to render
-	 * @param no_captions
+	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 * @return A string with the contents of the DOT file
 	 */
 	public static String toDot(List<Node> roots, boolean no_captions)
@@ -132,7 +132,7 @@ public class GraphViewer
 	 * Renders a graph, calls DOT in the background and retrieves the binary
 	 * image it produces.
 	 * @param roots The roots of the graph to render
-	 * @param no_captions
+	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 * @return An array of bytes containing the image to display
 	 */
 	protected static byte[] getGraph(List<Node> roots, boolean no_captions)

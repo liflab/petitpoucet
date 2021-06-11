@@ -54,6 +54,7 @@
     <mkdir dir="../docs/javadoc"/>
     <mkdir dir="../docs/javadoc/doc-files"/>
     <javadoc
+      overview="project-overview.html"
       destdir="../docs/javadoc"
       packagenames="*"
       excludepackagenames=""
@@ -81,6 +82,9 @@
           <include name="**/*.jar"/>
         </fileset>
       </classpath>
+      <group title="Core" packages="ca.uqac.lif.dag:ca.uqac.lif.petitpoucet:ca.uqac.lif.util"/>
+      <group title="Function Circuits" packages="ca.uqac.lif.petitpoucet.function:ca.uqac.lif.petitpoucet.function.*"/>
+      <group title="Examples" packages="examples:examples.*"/>
     </javadoc>
     <copy todir="../docs/javadoc/doc-files">
       <fileset dir="Examples/src/doc-files"/>

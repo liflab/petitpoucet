@@ -51,7 +51,7 @@ public class GraphUtilities
 	 * Simplifies a list of lineage graphs. This method is the combined
 	 * application of {@link #squash(List)} and
 	 * {@link #flatten(List) flatten()}.
-	 * @param root The roots of the original graphs
+	 * @param roots The roots of the original graphs
 	 * @return The roots of the squashed graphs
 	 */
 	/*@ non_null @*/ public static List<Node> simplify(/*@ non_null @*/ List<Node> roots)
@@ -81,8 +81,8 @@ public class GraphUtilities
 	 * sub-graphs will result in two copies. One must therefore pass the set of
 	 * copies already produced in a previous flattening operation to the next
 	 * one.
-	 * @param root The root of the original graph
-	 * @return The root of the simplified graph
+	 * @param roots The root of the original graph
+	 * @return The list of roots of the simplified graphs
 	 */
 	/*@ non_null @*/ public static List<Node> flatten(/*@ non_null @*/ List<Node> roots)
 	{

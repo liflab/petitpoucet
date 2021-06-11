@@ -127,7 +127,7 @@ public class LineageDotRenderer implements Renderer
 	
 	/**
 	 * Creates a new instance of renderer.
-	 * @param roots The node used as the starting point for the rendering. This
+	 * @param root The node used as the starting point for the rendering. This
 	 * is typically the root of a directed acyclic graph.
 	 * @param prefix The prefix to give to each node ID in the graph
 	 * @param nesting_level The nesting level of this graph

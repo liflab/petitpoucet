@@ -1,0 +1,12 @@
+ca.uqac.lif.dag
+ca.uqac.lif.petitpoucet
+ca.uqac.lif.petitpoucet.function
+ca.uqac.lif.petitpoucet.function.booleans
+ca.uqac.lif.petitpoucet.function.number
+ca.uqac.lif.petitpoucet.function.strings
+ca.uqac.lif.petitpoucet.function.vector
+ca.uqac.lif.util
+examples.circuits
+examples.number
+examples.util
+examples.vector
