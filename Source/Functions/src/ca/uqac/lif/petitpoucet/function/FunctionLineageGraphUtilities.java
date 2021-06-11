@@ -41,13 +41,32 @@ public class FunctionLineageGraphUtilities
 	 * the graph all the leaves that do not refer to either an input or an output
 	 * of a function (i.e. constants).
 	 * @param graph The graph to simplify
-	 * @return The simmplified graph
+	 * @return The simplified graph
 	 */
 	public static Node simplify(Node graph)
 	{
 		Node new_graph = GraphUtilities.simplify(graph);
 		deleteConstantLeaves(new_graph);
 		return new_graph;
+	}
+	
+	/**
+	 * Simplifies a lineage graph. In addition to the simplifications performed
+	 * by {@link GraphUtilities#simplify(Node)}, this method also deletes from
+	 * the graph all the leaves that do not refer to either an input or an output
+	 * of a function (i.e. constants).
+	 * @param roots The roots of the graph to simplify
+	 * @return The roots of the simplified graph
+	 */
+	public static List<Node> simplify(List<Node> roots)
+	{
+		List<Node> out = new ArrayList<Node>(roots.size());
+		out = GraphUtilities.simplify(roots);
+		for (Node root : roots)
+		{
+			deleteConstantLeaves(root);
+		}
+		return out;
 	}
 
 	/**

@@ -18,6 +18,7 @@
 package ca.uqac.lif.petitpoucet.function;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -77,6 +78,11 @@ public class LineageDotRenderer implements Renderer
 	 * The prefix to give to each node ID in the graph.
 	 */
 	/*@ non_null @*/ protected String m_indent;
+	
+	/**
+	 * The nodes that corresponds to he leaves of the graph.
+	 */
+	/*@ non_null @*/ protected List<Node> m_leaves;
 
 	/**
 	 * A counter used to give unique IDs to each new node encountered in the
@@ -116,6 +122,7 @@ public class LineageDotRenderer implements Renderer
 		m_nestingLevel = nesting_level;
 		m_indent = getIndent(nesting_level);
 		m_noCaptions = no_captions;
+		m_leaves = new ArrayList<Node>();
 	}
 	
 	/**
@@ -130,7 +137,7 @@ public class LineageDotRenderer implements Renderer
 	 */
 	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
 	{
-		this((List<Node>) Arrays.asList(root), "", 0, false);
+		this((List<Node>) Arrays.asList(root), prefix, nesting_level, no_captions);
 	}
 
 	/**
@@ -174,6 +181,10 @@ public class LineageDotRenderer implements Renderer
 			{
 				render(ps, root);
 			}
+			if (m_roots.size() > 1)
+			{
+				printRanks(ps);
+			}
 			ps.println("}");
 		}
 		else
@@ -187,6 +198,31 @@ public class LineageDotRenderer implements Renderer
 			render(ps, m_roots.get(0));
 			ps.println(m_indent + "}");
 		}
+	}
+	
+	protected void printRanks(PrintStream ps)
+	{
+		ps.println("edge [style=invis];");
+		ps.print("{rank=same; ");
+		for (int i = 0; i < m_roots.size(); i++)
+		{
+			if (i > 0)
+			{
+				ps.print(" -> ");
+			}
+			ps.print(m_nodeIds.get(m_roots.get(i)));
+		}
+		ps.println(";};");
+		ps.print("{rank=same; ");
+		for (int i = 0; i < m_leaves.size(); i++)
+		{
+			if (i > 0)
+			{
+				ps.print(" -> ");
+			}
+			ps.print(m_nodeIds.get(m_leaves.get(i)));
+		}
+		ps.println(";};");
 	}
 
 	/**
@@ -227,6 +263,10 @@ public class LineageDotRenderer implements Renderer
 	{
 		String source_id = "", dest_id = "";
 		Node to = pin.getNode();
+		/*if (from instanceof DummyNode || to instanceof DummyNode)
+		{
+			return;
+		}*/
 		if (from instanceof NestedNode)
 		{
 			NestedNode nn_from = (NestedNode) from;
@@ -265,6 +305,10 @@ public class LineageDotRenderer implements Renderer
 			return;
 		}
 		m_rendered.add(current);
+		if (GraphUtilities.isLeaf(current))
+		{
+			m_leaves.add(current);
+		}
 		String n_id = m_prefix + m_idCounter++;
 		m_nodeIds.put(current, n_id);
 		if (current instanceof OrNode)

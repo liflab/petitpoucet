@@ -17,8 +17,10 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,9 +42,21 @@ public class GraphUtilities
 	 * @param root The root of the original graph
 	 * @return The root of the squashed graph
 	 */
-	public static Node simplify(Node root)
+	/*@ non_null @*/ public static Node simplify(/*@ non_null @*/ Node root)
 	{
 		return squash(flatten(root));
+	}
+	
+	/**
+	 * Simplifies a list of lineage graphs. This method is the combined
+	 * application of {@link #squash(List)} and
+	 * {@link #flatten(List) flatten()}.
+	 * @param root The roots of the original graphs
+	 * @return The roots of the squashed graphs
+	 */
+	/*@ non_null @*/ public static List<Node> simplify(/*@ non_null @*/ List<Node> roots)
+	{
+		return squash(flatten(roots));
 	}
 	
 	/**
@@ -51,11 +65,77 @@ public class GraphUtilities
 	 * @param root The root of the original graph
 	 * @return The root of the simplified graph
 	 */
-	public static Node flatten(Node root)
+	/*@ non_null @*/ public static Node flatten(/*@ non_null @*/ Node root)
 	{
 		FlatteningCrawler fc = new FlatteningCrawler(root, NodeConnector.instance);
 		fc.crawl();
 		return fc.getRootCopy();
+	}
+	
+	/**
+	 * Out of a list of lineage graph roots, creates another set of graphs where
+	 * nested nodes are exploded.
+	 * <p>
+	 * The operation is less trivial than it seems, as one cannot simply flatten
+	 * the graph starting from each root separately. Any node shared between two
+	 * sub-graphs will result in two copies. One must therefore pass the set of
+	 * copies already produced in a previous flattening operation to the next
+	 * one.
+	 * @param root The root of the original graph
+	 * @return The root of the simplified graph
+	 */
+	/*@ non_null @*/ public static List<Node> flatten(/*@ non_null @*/ List<Node> roots)
+	{
+		List<Node> flattened = new ArrayList<Node>(roots.size());
+		FlatteningCrawler previous_fc = null;
+		for (Node root : roots)
+		{
+			FlatteningCrawler fc = new FlatteningCrawler(root, NodeConnector.instance, previous_fc);
+			fc.crawl();
+			flattened.add(fc.getRootCopy());
+			previous_fc = fc;
+		}
+		return flattened;
+	}
+	
+	/**
+	 * Out of a list of lineage graphs, creates another graph where only
+	 * Boolean nodes and leaves are kept.
+	 * @param roots The roots of the original graph
+	 * @return The roots of the squashed graph
+	 */
+	/*@ non_null @*/ public static List<Node> squash(/*@ non_null @*/ List<Node> roots)
+	{
+		List<Node> squashed = new ArrayList<Node>(roots.size());
+		Set<Node> visited = new HashSet<Node>();
+		Map<Node,Node> duplicates = new HashMap<Node,Node>();
+		for (Node root : roots)
+		{
+			squashed.add(squash(root, visited, duplicates));
+		}
+		return squashed;
+	}
+	
+	/**
+	 * Out of a single-rooted lineage graph, creates another graph where only
+	 * Boolean nodes and leaves are kept.
+	 * @param root The root of the original graph
+	 * @param visited A set of already visited nodes
+	 * @param duplicates A map keeping track of original nodes and their copies
+	 * in the resulting graph
+	 * @return The root of the squashed graph
+	 */
+	/*@ non_null @*/ protected static Node squash(/*@ non_null @*/ Node root, Set<Node> visited, Map<Node,Node> duplicates)
+	{
+		Node new_root = root.duplicate();
+		for (int i = 0; i < root.getOutputArity(); i++)
+		{
+			for (Pin<? extends Node> pin : root.getOutputLinks(i))
+			{
+				squash(new_root, i, pin, visited, duplicates);
+			}
+		}
+		return new_root;
 	}
 	
 	/**
@@ -64,17 +144,9 @@ public class GraphUtilities
 	 * @param root The root of the original graph
 	 * @return The root of the squashed graph
 	 */
-	public static Node squash(Node root)
+	/*@ non_null @*/ public static Node squash(/*@ non_null @*/ Node root)
 	{
-		Node new_root = root.duplicate();
-		for (int i = 0; i < root.getOutputArity(); i++)
-		{
-			for (Pin<? extends Node> pin : root.getOutputLinks(i))
-			{
-				squash(new_root, i, pin, new HashSet<Node>(), new HashMap<Node,Node>());
-			}
-		}
-		return new_root;
+		return squash(root, new HashSet<Node>(), new HashMap<Node,Node>());
 	}
 	
 	protected static void squash(Node parent, int pin_index, Pin<? extends Node> pin, Set<Node> visited, Map<Node,Node> duplicates)
@@ -127,7 +199,7 @@ public class GraphUtilities
 	 * @param n The node
 	 * @return {@code true} if the node is a leaf, {@code false} otherwise.
 	 */
-	public static boolean isLeaf(Node n)
+	public static boolean isLeaf(/*@ non_null @*/ Node n)
 	{
 		for (int i = 0; i < n.getOutputArity(); i++)
 		{

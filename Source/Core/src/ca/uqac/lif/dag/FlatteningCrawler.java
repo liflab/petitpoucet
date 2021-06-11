@@ -23,17 +23,21 @@ public class FlatteningCrawler
 	 */
 	/*@ non_null @*/ protected Node m_start;
 
-	/**
-	 * The set of nodes whose output links have been explored by the crawler. 
-	 */
-	protected Set<Node> m_expanded;
-
 	public FlatteningCrawler(/*@ non_null @*/ Node start, /*@ non_null @*/ NodeConnector connector)
 	{
 		super();
 		m_start = start;
 		m_copies = new HashMap<Node,Node>();
 		m_connector = connector;
+	}
+	
+	public FlatteningCrawler(/*@ non_null @*/ Node start, /*@ non_null @*/ NodeConnector connector, /*@ null @*/ FlatteningCrawler crawler)
+	{
+		this(start, connector);
+		if (crawler != null)
+		{
+			m_copies.putAll(crawler.m_copies);
+		}
 	}
 
 	public Node getRootCopy()

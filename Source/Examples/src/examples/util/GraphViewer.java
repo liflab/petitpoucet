@@ -113,19 +113,32 @@ public class GraphViewer
 	}
 	
 	/**
-	 * Renders a graph, calls DOT in the background and retrieves the binary
-	 * image it produces.
-	 * @param graph The graph to render
-	 * @return An array of bytes containing the image to display
+	 * Renders a graph as a DOT file.
+	 * @param roots The roots of the graph to render
+	 * @param no_captions
+	 * @return A string with the contents of the DOT file
 	 */
-	protected static byte[] getGraph(List<Node> roots, boolean no_captions)
+	public static String toDot(List<Node> roots, boolean no_captions)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream ps = new PrintStream(baos);
 		LineageDotRenderer renderer = new LineageDotRenderer(roots);
 		renderer.setNoCaptions(no_captions);
 		renderer.render(ps);
-		CommandRunner runner = new CommandRunner(new String[] {"dot", "-Tpng"}, baos.toString());
+		return baos.toString();
+	}
+	
+	/**
+	 * Renders a graph, calls DOT in the background and retrieves the binary
+	 * image it produces.
+	 * @param roots The roots of the graph to render
+	 * @param no_captions
+	 * @return An array of bytes containing the image to display
+	 */
+	protected static byte[] getGraph(List<Node> roots, boolean no_captions)
+	{
+		String graph = toDot(roots, no_captions);
+		CommandRunner runner = new CommandRunner(new String[] {"dot", "-Tpng"}, graph);
 		runner.run();
 		return runner.getBytes();
 	}
