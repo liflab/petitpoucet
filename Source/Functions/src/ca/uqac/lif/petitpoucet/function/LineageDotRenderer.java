@@ -18,9 +18,11 @@
 package ca.uqac.lif.petitpoucet.function;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,9 +45,9 @@ import ca.uqac.lif.petitpoucet.PartNode;
 public class LineageDotRenderer implements Renderer
 {
 	/**
-	 * The node used as the starting point for the rendering.
+	 * The nodes used as the starting point for the rendering.
 	 */
-	/*@ non_null @*/ protected Node m_root;
+	/*@ non_null @*/ protected List<Node> m_roots;
 
 	/**
 	 * A map associating node instances to their uniquely generated ID.
@@ -94,19 +96,19 @@ public class LineageDotRenderer implements Renderer
 
 	/**
 	 * Creates a new instance of renderer.
-	 * @param root The node used as the starting point for the rendering. This is
-	 * typically the root of a directed acyclic graph.
+	 * @param roots The nodes used as the starting point for the rendering. These
+	 * are typically the roots of a directed acyclic graph.
 	 * @param prefix The prefix to give to each node ID in the graph
 	 * @param nesting_level The nesting level of this graph
 	 * @param no_captions Flag that determines if the captions of non-leaf nodes
 	 * should be printed. If set to {@code true}, these nodes will simply be
 	 * rendered as colored circles.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
+	public LineageDotRenderer(/*@ non_null @*/ List<Node> roots, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
 	{
 		super();
 		m_idCounter = 0;
-		m_root = root;
+		m_roots = roots;
 		m_nodeIds = new HashMap<Node,String>();
 		m_rendered = new HashSet<Node>();
 		m_expanded = new HashSet<Node>();
@@ -115,15 +117,40 @@ public class LineageDotRenderer implements Renderer
 		m_indent = getIndent(nesting_level);
 		m_noCaptions = no_captions;
 	}
+	
+	/**
+	 * Creates a new instance of renderer.
+	 * @param roots The node used as the starting point for the rendering. This
+	 * is typically the root of a directed acyclic graph.
+	 * @param prefix The prefix to give to each node ID in the graph
+	 * @param nesting_level The nesting level of this graph
+	 * @param no_captions Flag that determines if the captions of non-leaf nodes
+	 * should be printed. If set to {@code true}, these nodes will simply be
+	 * rendered as colored circles.
+	 */
+	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
+	{
+		this((List<Node>) Arrays.asList(root), "", 0, false);
+	}
 
 	/**
 	 * Creates a new instance of renderer. 
-	 * @param root The node used as the starting point for the rendering. This is
-	 * typically the root of a directed acyclic graph.
+	 * @param roots The nodes used as the starting point for the rendering. These
+	 * are typically the roots of a directed acyclic graph.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ Node root)
+	public LineageDotRenderer(/*@ non_null @*/ Node ... roots)
 	{
-		this(root, "", 0, false);
+		this((List<Node>) Arrays.asList(roots), "", 0, false);
+	}
+	
+	/**
+	 * Creates a new instance of renderer. 
+	 * @param roots The nodes used as the starting point for the rendering. These
+	 * are typically the roots of a directed acyclic graph.
+	 */
+	public LineageDotRenderer(/*@ non_null @*/ List<Node> roots)
+	{
+		this(roots, "", 0, false);
 	}
 	
 	/**
@@ -143,17 +170,21 @@ public class LineageDotRenderer implements Renderer
 			ps.println("digraph G {");
 			ps.println("compound=true;");
 			ps.println("node [style=\"filled\",shape=\"rectangle\",fontsize=10,fontname=\"Arial\"]");
-			render(ps, m_root);
+			for (Node root : m_roots)
+			{
+				render(ps, root);
+			}
 			ps.println("}");
 		}
 		else
 		{
+			// This case only makes sense for a sub-graph with a single root
 			ps.println(m_indent + "subgraph " + m_prefix + " {");
 			ps.println(m_indent + "compound=true;");
 			ps.println(m_indent + "color=black;");
 			ps.println(m_indent + "style=filled;");
 			ps.println(m_indent + "fillcolor=\"" + getBackgroundColor(m_nestingLevel) + "\";");
-			render(ps, m_root);
+			render(ps, m_roots.get(0));
 			ps.println(m_indent + "}");
 		}
 	}
@@ -270,7 +301,7 @@ public class LineageDotRenderer implements Renderer
 		Part d = current.getPart();
 		Object o = current.getSubject();
 		String color = getPartNodeColor(d);
-		if (m_noCaptions && ((!GraphUtilities.isLeaf(current) && current != m_root) || m_nestingLevel > 0))
+		if (m_noCaptions && ((!GraphUtilities.isLeaf(current) && !m_roots.contains(current)) || m_nestingLevel > 0))
 		{
 			ps.println(m_indent + n_id + " [height=0.25,shape=\"circle\",label=\"\",fillcolor=\"" + color + "\"];");
 		}

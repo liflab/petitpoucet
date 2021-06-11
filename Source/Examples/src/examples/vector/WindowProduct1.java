@@ -21,7 +21,6 @@ package examples.vector;
 import java.util.Arrays;
 import java.util.List;
 
-import static ca.uqac.lif.petitpoucet.GraphUtilities.simplify;
 import static ca.uqac.lif.petitpoucet.ComposedPart.compose;
 import static examples.util.GraphViewer.display;
 
@@ -71,7 +70,6 @@ public class WindowProduct1
 		List<?> result = (List<?>) w.evaluate(Arrays.asList(3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5))[0];
 		System.out.println(result);
 		Node full_graph = w.getExplanation(compose(new NthElement(1), NthOutput.FIRST));
-		Node small_graph = simplify(full_graph);
 		display(full_graph);
 	}
 }

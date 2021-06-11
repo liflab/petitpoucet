@@ -33,8 +33,17 @@ import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.util.Duplicable;
 
+/**
+ * An object encasing a graph of connected functions and acting externally as
+ * a single function.
+ * 
+ * @author Sylvain Hallé
+ */
 public class Circuit extends NestedNode implements Function, Duplicable, ExplanationQueryable
 {
+	/**
+	 * A context that can be assigned to a circuit.
+	 */
 	protected Map<String,Object> m_context;
 	
 	/**
@@ -42,12 +51,25 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 */
 	/*@ null @*/ protected String m_name;
 
+	/**
+	 * Creates a new empty circuit instance.
+	 * @param in_arity The input arity of the circuit
+	 * @param out_arity The output arity of the circuit
+	 * @param name A name given to the circuit. This will be used in lineage
+	 * trees instead of displaying the meaningless default string produced by
+	 * Java.
+	 */
 	public Circuit(int in_arity, int out_arity, String name)
 	{
 		super(in_arity, out_arity);
 		m_name = name;
 	}
 	
+	/**
+	 * Creates a new empty circuit instance.
+	 * @param in_arity The input arity of the circuit
+	 * @param out_arity The output arity of the circuit
+	 */
 	public Circuit(int in_arity, int out_arity)
 	{
 		this(in_arity, out_arity, null);

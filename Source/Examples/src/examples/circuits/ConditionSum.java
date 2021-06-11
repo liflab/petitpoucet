@@ -22,7 +22,6 @@ import java.util.List;
 
 import static ca.uqac.lif.petitpoucet.function.FunctionLineageGraphUtilities.simplify;
 import static examples.util.GraphViewer.display;
-import static examples.util.GraphViewer.save;
 
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
@@ -134,8 +133,5 @@ public class ConditionSum
 		System.out.println(b);
 		Node graph = global.getExplanation(NthOutput.FIRST);
 		display(simplify(graph));
-		save(simplify(graph), "/tmp/Flat.png");
-		save(graph, "/tmp/Big.png");
-		save(graph, "/tmp/Big-simp.png", true);
 	}
 }

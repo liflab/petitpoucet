@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -40,37 +42,47 @@ public class GraphViewer
 	/**
 	 * Displays an explanation graph into a window. This method acts as a
 	 * primitive image viewer, used to display the result of the examples.
-	 * @param graph The graph to display
+	 * @param roots The roots of the graph to display
 	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 */
-	public static void display(Node graph, boolean no_captions)
+	public static void display(List<Node> roots, boolean no_captions)
 	{
-		BitmapJFrame window = new BitmapJFrame(getGraph(graph, no_captions));
+		BitmapJFrame window = new BitmapJFrame(getGraph(roots, no_captions));
 		window.setVisible(true);
 	}
 	
 	/**
 	 * Displays an explanation graph into a window. This method acts as a
 	 * primitive image viewer, used to display the result of the examples.
-	 * @param graph The graph to display
+	 * @param roots The roots of the graph to display
 	 */
-	public static void display(Node graph)
+	public static void display(List<Node> roots)
 	{
-		display(graph, false);
+		display(roots, false);
+	}
+	
+	/**
+	 * Displays an explanation graph into a window. This method acts as a
+	 * primitive image viewer, used to display the result of the examples.
+	 * @param roots The root of the graph to display
+	 */
+	public static void display(Node root)
+	{
+		display((List<Node>) Arrays.asList(root), false);
 	}
 	
 	/**
 	 * Saves a graph to a file.
-	 * @param graph The graph to display
+	 * @param roots The roots of the graph to display
 	 * @param filename The file where this graph will be saved
 	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 */
-	public static void save(Node graph, String filename, boolean no_captions)
+	public static void save(List<Node> roots, String filename, boolean no_captions)
 	{
 		File outputFile = new File(filename);
 		try (FileOutputStream outputStream = new FileOutputStream(outputFile))
 		{
-		    outputStream.write(getGraph(graph, no_captions));
+		    outputStream.write(getGraph(roots, no_captions));
 		    outputStream.close();
 		}
 		catch (IOException e)
@@ -81,12 +93,23 @@ public class GraphViewer
 	
 	/**
 	 * Saves a graph to a file.
-	 * @param graph The graph to display
+	 * @param root The root of the graph to display
+	 * @param filename The file where this graph will be saved
+	 * @param no_captions Set to {@code true} to hide non-leaf captions
+	 */
+	public static void save(Node root, String filename, boolean no_captions)
+	{
+		save(Arrays.asList(root), filename, no_captions);
+	}
+	
+	/**
+	 * Saves a graph to a file.
+	 * @param roots The roots of the graph to display
 	 * @param filename The file where this graph will be saved
 	 */
-	public static void save(Node graph, String filename)
+	public static void save(List<Node> roots, String filename)
 	{
-		save(graph, filename, false);
+		save(roots, filename, false);
 	}
 	
 	/**
@@ -95,11 +118,11 @@ public class GraphViewer
 	 * @param graph The graph to render
 	 * @return An array of bytes containing the image to display
 	 */
-	protected static byte[] getGraph(Node graph, boolean no_captions)
+	protected static byte[] getGraph(List<Node> roots, boolean no_captions)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream ps = new PrintStream(baos);
-		LineageDotRenderer renderer = new LineageDotRenderer(graph);
+		LineageDotRenderer renderer = new LineageDotRenderer(roots);
 		renderer.setNoCaptions(no_captions);
 		renderer.render(ps);
 		CommandRunner runner = new CommandRunner(new String[] {"dot", "-Tpng"}, baos.toString());

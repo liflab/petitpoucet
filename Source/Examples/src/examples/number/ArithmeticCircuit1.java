@@ -18,9 +18,7 @@
 package examples.number;
 
 import static ca.uqac.lif.petitpoucet.ComposedPart.compose;
-import static ca.uqac.lif.petitpoucet.GraphUtilities.simplify;
 import static examples.util.GraphViewer.display;
-import static examples.util.GraphViewer.save;
 
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
@@ -76,9 +74,6 @@ public class ArithmeticCircuit1
 		Number result = (Number) c.evaluate(2, 3, 4)[0];
 		System.out.println(result);
 		Node full_graph = c.getExplanation(compose(new NthElement(1), NthOutput.FIRST));
-		Node small_graph = simplify(full_graph);
 		display(full_graph);
-		save(full_graph, "/tmp/ArithmeticCircuit1-full.png");
-		save(small_graph, "/tmp/ArithmeticCircuit1-small.png");
 	}
 }
