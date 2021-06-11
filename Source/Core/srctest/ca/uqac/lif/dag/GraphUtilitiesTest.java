@@ -89,7 +89,7 @@ public class GraphUtilitiesTest
 	@Test
 	public void testSquash2()
 	{
-		NodeFactory factory = new NodeFactory();
+		NodeFactory factory = NodeFactory.getFactory();
 		root.addChild(a);
 		AndNode and1 = factory.getAndNode();
 		root.addChild(and1);
@@ -125,7 +125,7 @@ public class GraphUtilitiesTest
 	@Test
 	public void testSquash3()
 	{
-		NodeFactory factory = new NodeFactory();
+		NodeFactory factory = NodeFactory.getFactory();
 		root.addChild(a);
 		AndNode and1 = factory.getAndNode();
 		root.addChild(and1);
@@ -175,7 +175,7 @@ public class GraphUtilitiesTest
 	@Test
 	public void testSquash4()
 	{
-		NodeFactory factory = new NodeFactory();
+		NodeFactory factory = NodeFactory.getFactory();
 		root.addChild(a);
 		AndNode and1 = factory.getAndNode();
 		root.addChild(and1);
@@ -223,7 +223,7 @@ public class GraphUtilitiesTest
 	@Test
 	public void testSquash5()
 	{
-		NodeFactory factory = new NodeFactory();
+		NodeFactory factory = NodeFactory.getFactory();
 		root.addChild(a);
 		OrNode and1 = factory.getOrNode();
 		root.addChild(and1);
@@ -269,7 +269,7 @@ public class GraphUtilitiesTest
 	@Test
 	public void testSquash6()
 	{
-		NodeFactory factory = new NodeFactory();
+		NodeFactory factory = NodeFactory.getFactory();
 		root.addChild(a);
 		AndNode and1 = factory.getAndNode();
 		root.addChild(and1);

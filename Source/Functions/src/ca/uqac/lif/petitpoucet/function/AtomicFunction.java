@@ -162,7 +162,7 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 	@Override
 	/*@ non_null @*/ public final PartNode getExplanation(Part part)
 	{
-		return getExplanation(part, new NodeFactory());
+		return getExplanation(part, NodeFactory.getFactory());
 	}
 	
 	@Override

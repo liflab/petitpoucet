@@ -36,31 +36,39 @@ public class NodeFactory
 	/*@ non_null @*/ protected Map<ObjectPart,PartNode> m_partNodes;
 	
 	/**
-	 * A reference to the node factory that instantiated the present node
-	 * factory, if any. This field is currently unused, but could make possible
-	 * to create nodes that depend on their nesting context in the future.
+	 * A map associating part nodes to child factory instances.
 	 */
-	/*@ null @*/ protected NodeFactory m_parent;
+	/*@ null @*/ protected Map<ObjectPart,NodeFactory> m_factories;
 	
 	/**
-	 * Creates a new node factory.
-	 * @param parent A reference to the node factory that instantiated the
-	 * present node, or {@code null} if the factory is instantiated outside
-	 * of any other factory.
+	 * Gets a new empty instance of a node factory.
+	 * @return The factory instance
 	 */
-	public NodeFactory(/*@ null @*/ NodeFactory parent)
+	public static NodeFactory getFactory()
 	{
-		super();
-		m_partNodes = new HashMap<ObjectPart,PartNode>();
-		m_parent = parent;
+		return new NodeFactory();
 	}
 	
 	/**
 	 * Creates a new node factory.
 	 */
-	public NodeFactory()
+	protected NodeFactory()
 	{
-		this(null);
+		super();
+		m_partNodes = new HashMap<ObjectPart,PartNode>();
+		m_factories = new HashMap<ObjectPart,NodeFactory>();
+	}
+	
+	public NodeFactory getFactory(Part p, Object subject)
+	{
+		ObjectPart op = new ObjectPart(p, subject);
+		if (m_factories.containsKey(op))
+		{
+			return m_factories.get(op);
+		}
+		NodeFactory new_factory = new NodeFactory();
+		m_factories.put(op, new_factory);
+		return new_factory;
 	}
 	
 	/**

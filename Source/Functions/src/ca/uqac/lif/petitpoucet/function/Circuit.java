@@ -84,7 +84,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 		}
 		Pin<? extends Node> start_pin = m_outputAssociations.get(output_nb);
 		Part start_part = NthOutput.replaceOutBy(part, new NthOutput(start_pin.getIndex()));
-		NodeFactory in_factory = new NodeFactory(factory);
+		NodeFactory in_factory = factory.getFactory(part, this);
 		NestedNode sub_node = develop(start_part, start_pin.getNode(), in_factory);
 		if (sub_node == null)
 		{
@@ -281,7 +281,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	@Override
 	public PartNode getExplanation(Part part)
 	{
-		return getExplanation(part, new NodeFactory());
+		return getExplanation(part, NodeFactory.getFactory());
 	}
 	
 	@Override
