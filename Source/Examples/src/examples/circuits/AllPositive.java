@@ -50,7 +50,7 @@ import static examples.util.GraphViewer.display;
  * 
  * The full explanation graph is this one:
  * <p>
- * <img src="{@docRoot}/doc-files/circuits/AllPositive-full.png" alt="Circuit"></a>
+ * <img src="{@docRoot}/doc-files/circuits/AllPositive-full.png" alt="Circuit">
  * 
  * <h4>Simplified graph</h4>
  * The simplified explanation graph is the following:
