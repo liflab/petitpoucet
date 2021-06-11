@@ -20,8 +20,10 @@ package ca.uqac.lif.dag;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A node that itself encloses a directed acyclic graph of other nodes. The
@@ -220,6 +222,12 @@ public class NestedNode extends Node
 		/*@ non_null @*/ protected Map<Node,Node> m_copies;
 		
 		/**
+		 * The set of nodes that have been expanded (i.e. their output links
+		 * have been visited).
+		 */
+		/*@ non_null @*/ protected Set<Node> m_expanded;
+		
+		/**
 		 * A connector used to connect nodes.
 		 */
 		/*@ non_null @*/ protected NodeConnector m_connector;
@@ -242,6 +250,7 @@ public class NestedNode extends Node
 			m_copies = new HashMap<Node,Node>();
 			m_connector = connector;
 			m_withState = with_state;
+			m_expanded = new HashSet<Node>(m_internalNodes.size());
 		}
 		
 		/**
@@ -284,8 +293,9 @@ public class NestedNode extends Node
 				for (Pin<? extends Node> pin : pins)
 				{
 					Node target = pin.getNode();
-					if (!m_copies.containsKey(target))
+					if (!m_expanded.contains(target))
 					{
+						m_expanded.add(target);
 						Node target_copy = target.duplicate(m_withState);
 						m_copies.put(target, target_copy);
 						m_connector.connectTo(m_copies.get(n), i, target_copy, pin.getIndex());

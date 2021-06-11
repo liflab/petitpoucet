@@ -225,6 +225,12 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 				return m_value;
 			}
 			Collection<Pin<? extends Node>> pins = getInputLinks(m_index);
+			if (getInputArity() == 0)
+			{
+				// Special case for functions with input arity of 0
+				m_evaluated = true;
+				return null;
+			}
 			for (Pin<?> p : pins)
 			{
 				if (p instanceof FunctionPin)

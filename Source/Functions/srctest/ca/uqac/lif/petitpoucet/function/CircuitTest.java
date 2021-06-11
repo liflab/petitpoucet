@@ -27,6 +27,7 @@ import ca.uqac.lif.dag.NodeConnector;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.number.Addition;
+import ca.uqac.lif.petitpoucet.function.number.IsGreaterThan;
 import ca.uqac.lif.petitpoucet.function.number.Multiplication;
 import ca.uqac.lif.petitpoucet.function.number.Subtraction;
 
@@ -86,6 +87,23 @@ public class CircuitTest
 		c.associateOutput(0, a.getOutputPin(0));
 		Object[] out = c.evaluate(2, 3);
 		assertEquals(1, ((Number) out[0]).intValue());
+	}
+	
+	@Test
+	public void test5()
+	{
+		Circuit gt_0 = new Circuit(1, 1);
+		{
+			IsGreaterThan gt = new IsGreaterThan();
+			Constant zero = new Constant(0);
+			gt_0.addNodes(gt, zero);
+			gt_0.associateInput(0, gt.getInputPin(0));
+			NodeConnector.connect(zero, 0, gt, 1);
+			gt_0.associateOutput(0, gt.getOutputPin(0));
+		}
+		Circuit gt_0_dup = gt_0.duplicate();
+		Boolean result = (Boolean) gt_0_dup.evaluate(1)[0];
+		assertEquals(true, result);
 	}
 
 	@Test
