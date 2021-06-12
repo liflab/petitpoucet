@@ -46,7 +46,7 @@ public class ParameterizedVectorFunctionTest
 	@Test
 	public void testReplaceInput1()
 	{
-		ComposedPart d = (ComposedPart) VectorOutputFunction.replaceInputByElement(NthInput.FIRST, 10);
+		ComposedPart d = (ComposedPart) VectorOutputFunction.replaceInputByElement(NthInput.FIRST, 0, 10);
 		assertEquals(2, d.size());
 		assertEquals(NthInput.FIRST, d.get(1));
 		assertEquals(new NthElement(10), d.get(0));
@@ -55,7 +55,7 @@ public class ParameterizedVectorFunctionTest
 	@Test
 	public void testReplaceInput2()
 	{
-		ComposedPart d = (ComposedPart) VectorOutputFunction.replaceInputByElement(ComposedPart.compose(new NthElement(4), new NthElement(1), NthInput.FIRST), 10);
+		ComposedPart d = (ComposedPart) VectorOutputFunction.replaceInputByElement(ComposedPart.compose(new NthElement(4), new NthElement(1), NthInput.FIRST), 0, 10);
 		assertEquals(4, d.size());
 		assertEquals(NthInput.FIRST, d.get(3));
 		assertEquals(new NthElement(10), d.get(2));

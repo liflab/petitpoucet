@@ -20,6 +20,7 @@ package ca.uqac.lif.petitpoucet.function.vector;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uqac.lif.dag.LabelledNode;
 import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
@@ -32,7 +33,8 @@ import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
 /**
- * Applies a 1:1 function to every element of an input vector.
+ * Applies a m:1 function to m-uples of elements at matching positions in
+ * m input vectors.
  * @author Sylvain Hallé
  */
 public class VectorApply extends ParameterizedVectorFunction
@@ -43,24 +45,30 @@ public class VectorApply extends ParameterizedVectorFunction
 	 */
 	public VectorApply(/*@ non_null @*/ Function f)
 	{
-		super(f);		
+		super(f);
 	}
 
 	@Override
-	protected List<?> getVectorValue(List<?> in_list)
+	protected List<?> getVectorValue(List<?> ... in_lists)
 	{
 		m_lastInstances.clear();
-		List<Object> out_list = new ArrayList<Object>(in_list.size());
-		for (Object o : in_list)
+		int min_len = getMinLength();
+		List<Object> out_list = new ArrayList<Object>(min_len);
+		for (int i = 0; i < min_len; i++)
 		{
+			Object[] ins = new Object[in_lists.length];
+			for (int j = 0; j < ins.length; j++)
+			{
+				ins[j] = in_lists[j].get(i);
+			}
 			Function new_f = (Function) m_function.duplicate(true);
-			Object[] out = new_f.evaluate(new Object[] {o});
+			Object[] out = new_f.evaluate(ins);
 			out_list.add(out[0]);
 			m_lastInstances.add(new_f);
 		}
 		return out_list;
 	}
-	
+
 	@Override
 	/*@ non_null @*/ public PartNode getExplanation(Part part, NodeFactory factory)
 	{
@@ -72,7 +80,16 @@ public class VectorApply extends ParameterizedVectorFunction
 			if (elem_index < 0)
 			{
 				// No specific element is mentioned
-				root.addChild(factory.getPartNode(NthOutput.replaceOutByIn(part, 0), this));
+				LabelledNode and = root;
+				if (getInputArity() > 1)
+				{
+					and = factory.getAndNode();
+					root.addChild(and);
+				}
+				for (int i = 0; i < getInputArity(); i++)
+				{
+					and.addChild(factory.getPartNode(NthOutput.replaceOutByIn(part, i), this));
+				}
 				return root;
 			}
 			// Get sub-tree corresponding to evaluation of the inner function
@@ -94,14 +111,14 @@ public class VectorApply extends ParameterizedVectorFunction
 					if (input_nb >= 0)
 					{
 						// This leaf mentions an input of the inner function
-						NodeConnector.connect(sub_node, i, factory.getPartNode(VectorOutputFunction.replaceInputByElement(pn.getPart(), elem_index), this), 0);
+						NodeConnector.connect(sub_node, i, factory.getPartNode(VectorOutputFunction.replaceInputByElement(pn.getPart(), input_nb, elem_index), this), 0);
 					}
 				}
 			}
 		}
 		return root;
 	}
-	
+
 	@Override
 	public VectorApply duplicate(boolean with_state)
 	{
@@ -109,7 +126,7 @@ public class VectorApply extends ParameterizedVectorFunction
 		copyInto(w, with_state);
 		return w;
 	}
-	
+
 	@Override
 	public String toString()
 	{

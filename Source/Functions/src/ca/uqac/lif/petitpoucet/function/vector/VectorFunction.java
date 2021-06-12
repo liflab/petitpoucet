@@ -10,11 +10,11 @@ import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
 /**
- * An atomic function taking as its input a single vector, and producing as its
+ * An atomic function taking as its input m vectors, and producing as its
  * output an arbitrary value (not necessarily a vector).
  * <p>
  * The class extends {@link AtomicFunction} by keeping in memory the last
- * of input list involved in a function call. It also overrides the
+ * input lists involved in a function call. It also overrides the
  * explanation provided by its parent {@link AtomicFunction}, and provides a
  * boilerplate explanation where the whole output is explained by the whole
  * input. Only functions that explain their output differently need to
@@ -25,16 +25,18 @@ import ca.uqac.lif.petitpoucet.function.NthOutput;
 public abstract class VectorFunction extends AtomicFunction
 {
 	/**
-	 * The last vector given as an input to the function.
+	 * The last vectors given as an input to the function.
 	 */
-	protected List<?> m_lastInputs;
+	/*@ non_null @*/ protected List<?>[] m_lastInputs;
 
 	/**
 	 * Creates a new instance of input vector function.
+	 * @param in_arity The input arity of the function
 	 */
-	public VectorFunction()
+	public VectorFunction(int in_arity)
 	{
-		super(1, 1);
+		super(in_arity, 1);
+		m_lastInputs = new List[in_arity];
 	}
 
 	@Override
@@ -44,7 +46,10 @@ public abstract class VectorFunction extends AtomicFunction
 		{
 			throw new InvalidArgumentTypeException("Expected a list");
 		}
-		m_lastInputs = (List<?>) inputs[0];
+		for (int i = 0; i < m_lastInputs.length; i++)
+		{
+			m_lastInputs[i] = (List<?>) inputs[i];
+		}
 		return new Object[] {getOutputValue(m_lastInputs)};
 	}
 
@@ -64,9 +69,35 @@ public abstract class VectorFunction extends AtomicFunction
 	public void reset()
 	{
 		super.reset();
-		m_lastInputs = null;
+		for (int i = 0; i < m_lastInputs.length; i++)
+		{
+			m_lastInputs[i] = null;			
+		}
+	}
+	
+	/**
+	 * Returns the length of the shortest of the input lists given to the
+	 * function the last time it was called.
+	 * @return The length
+	 */
+	protected int getMinLength()
+	{
+		int len = -1;
+		for (List<?> list : m_lastInputs)
+		{
+			if (list == null)
+			{
+				len = 0;
+				break;
+			}
+			if (len < 0 || list.size() < len)
+			{
+				len = list.size();
+			}
+		}
+		return len;
 	}
 
-	protected abstract Object getOutputValue(List<?> inputs);
+	protected abstract Object getOutputValue(List<?> ... inputs);
 
 }

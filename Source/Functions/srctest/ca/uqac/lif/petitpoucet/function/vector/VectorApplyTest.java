@@ -27,6 +27,7 @@ import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 import ca.uqac.lif.petitpoucet.function.number.AbsoluteValue;
+import ca.uqac.lif.petitpoucet.function.number.Multiplication;
 
 import static ca.uqac.lif.petitpoucet.function.vector.VectorTestUtilities.getList;
 import static org.junit.Assert.*;
@@ -102,5 +103,31 @@ public class VectorApplyTest
 		PartNode in_node = (PartNode) pin2.getNode();
 		assertEquals(in_node.getPart(), ComposedPart.compose(new NthElement(2), NthInput.FIRST));
 		assertEquals(f, in_node.getSubject());
-	}	
+	}
+	
+	@Test
+	public void testBinary1()
+	{
+		List<?> in_list1 = getList(-1, 2, -3);
+		List<?> in_list2 = getList(-1, 0, -3);
+		VectorApply f = new VectorApply(new Multiplication());
+		List<?> out_list = (List<?>) f.evaluate(in_list1, in_list2)[0];
+		assertNotNull(out_list);
+		assertEquals(3, out_list.size());
+		Number n = (Number) out_list.get(0);
+		assertEquals(1, n.intValue());
+		n = (Number) out_list.get(1);
+		assertEquals(0, n.intValue());
+		n = (Number) out_list.get(2);
+		assertEquals(9, n.intValue());
+		PartNode root = f.getExplanation(ComposedPart.compose(new NthElement(1), NthOutput.FIRST));
+		assertEquals(1, root.getOutputLinks(0).size());
+		Pin<?> pin = root.getOutputLinks(0).get(0);
+		NestedNode nn = (NestedNode) pin.getNode();
+		assertEquals(1, nn.getOutputArity());
+		assertEquals(1, nn.getOutputLinks(0).size());
+		Pin<?> pin2 = nn.getOutputLinks(0).get(0);
+		PartNode leaf = (PartNode) pin2.getNode();
+		assertEquals(ComposedPart.compose(new NthElement(1), NthInput.SECOND), leaf.getPart());
+	}
 }

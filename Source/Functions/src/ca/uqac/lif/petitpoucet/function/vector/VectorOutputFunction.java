@@ -30,8 +30,8 @@ import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
 /**
- * An atomic function taking as its input a single vector, and producing as its
- * output a single vector (of possibly different size).
+ * An atomic function taking as its input a number of vectors, and producing
+ * as its output a single vector (of possibly different size).
  * <p>
  * The class extends {@link AtomicFunction} by keeping in memory the last pair
  * of input/output lists involved in a function call. It also overrides the
@@ -49,7 +49,6 @@ import ca.uqac.lif.petitpoucet.function.NthOutput;
  */
 public abstract class VectorOutputFunction extends VectorFunction
 {
-	
 	/**
 	 * The last vector produced as an output by the function.
 	 */
@@ -57,26 +56,27 @@ public abstract class VectorOutputFunction extends VectorFunction
 	
 	/**
 	 * Creates a new instance of vector function.
+	 * @param in_arity The input arity of the function
 	 */
-	public VectorOutputFunction()
+	public VectorOutputFunction(int in_arity)
 	{
-		super();
+		super(in_arity);
 		m_lastOutputs = null;
 	}
 	
 	@Override
-	protected final Object getOutputValue(List<?> in_list)
+	protected final Object getOutputValue(List<?> ... in_lists)
 	{
-		m_lastOutputs = getVectorValue(in_list);
+		m_lastOutputs = getVectorValue(in_lists);
 		return m_lastOutputs;
 	}
 	
 	/**
-	 * Computes the output list based on an input list.
-	 * @param in_list The input list
+	 * Computes the output list based on input lists.
+	 * @param in_lists The input lists
 	 * @return The output list
 	 */
-	protected abstract List<?> getVectorValue(List<?> in_list);
+	protected abstract List<?> getVectorValue(List<?> ... in_lists);
 	
 	@Override
 	/*@ non_null @*/ public PartNode getExplanation(Part part, NodeFactory factory)
@@ -98,12 +98,13 @@ public abstract class VectorOutputFunction extends VectorFunction
 				return root;
 			}
 			LabelledNode and = root;
-			if (m_lastInputs.size() > 1)
+			int min_len = getMinLength();
+			if (min_len > 1)
 			{
 				and = factory.getAndNode();
 				root.addChild(and);
 			}
-			for (int i = 0; i < m_lastInputs.size(); i++)
+			for (int i = 0; i < min_len; i++)
 			{
 				PartNode in = factory.getPartNode(NthElement.replaceNthOutputByNthInput(part, i), this);
 				and.addChild(in);
@@ -120,16 +121,17 @@ public abstract class VectorOutputFunction extends VectorFunction
 	}
 
 	/**
-	 * Replaces "input 0" by "n-th element of input 0" in a designator.
+	 * Replaces "input X" by "n-th element of input X" in a designator.
 	 * @param d The part to replace
+	 * @param input_nb The index of the input
 	 * @param n The value of n in the description above
 	 * @return The replaced part
 	 */
-	public static Part replaceInputByElement(Part d, int n)
+	public static Part replaceInputByElement(Part d, int input_nb, int n)
 	{
 		if (d instanceof NthInput)
 		{
-			return ComposedPart.compose(new NthElement(n), NthInput.FIRST);
+			return ComposedPart.compose(new NthElement(n), new NthInput(input_nb));
 		}
 		if (!(d instanceof ComposedPart))
 		{

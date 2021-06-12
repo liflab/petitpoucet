@@ -47,6 +47,14 @@ public class Multiplication extends AtomicFunction implements ExplanationQueryab
 		super(in_arity, 1);
 		m_nulls = new boolean[in_arity];
 	}
+	
+	/**
+	 * Creates a new instance of the function with an arity of 2.
+	 */
+	public Multiplication()
+	{
+		this(2);
+	}
 
 	@Override
 	public Object[] getValue(Object ... inputs)

@@ -44,16 +44,16 @@ public class VectorProduct extends VectorFunction
 	
 	public VectorProduct()
 	{
-		super();
+		super(1);
 		m_nulls = new ArrayList<Boolean>();
 	}
 	
 	@Override
-	protected Number getOutputValue(List<?> in_list)
+	protected Number getOutputValue(List<?> ... in_lists)
 	{
 		float total = 1;
 		m_nulls.clear();
-		for (Object o : in_list)
+		for (Object o : in_lists[0])
 		{
 			if (!(o instanceof Number))
 			{

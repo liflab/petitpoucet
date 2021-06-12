@@ -46,7 +46,7 @@ public abstract class VectorBooleanConnective extends VectorFunction
 	 */
 	public VectorBooleanConnective()
 	{
-		super();
+		super(1);
 		m_witnesses = new ArrayList<Boolean>();
 	}
 	

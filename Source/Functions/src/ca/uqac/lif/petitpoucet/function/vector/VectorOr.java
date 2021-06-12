@@ -34,11 +34,11 @@ public class VectorOr extends VectorBooleanConnective
 	}
 	
 	@Override
-	protected Boolean getOutputValue(List<?> in_list)
+	protected Boolean getOutputValue(List<?> ... in_lists)
 	{
 		boolean total = true;
 		m_witnesses.clear();
-		for (Object o : in_list)
+		for (Object o : in_lists[0])
 		{
 			if (!(o instanceof Boolean))
 			{

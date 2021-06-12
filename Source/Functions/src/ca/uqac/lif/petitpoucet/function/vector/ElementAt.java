@@ -43,18 +43,18 @@ public class ElementAt extends VectorFunction
 	 */
 	public ElementAt(int position)
 	{
-		super();
+		super(1);
 		m_position = position;
 	}
 	
 	@Override
-	protected Object getOutputValue(List<?> inputs)
+	protected Object getOutputValue(List<?> ... inputs)
 	{
-		if (m_position < 0 || m_position >= inputs.size())
+		if (m_position < 0 || m_position >= inputs[0].size())
 		{
 			throw new FunctionException("Position outside of bounds");
 		}
-		return inputs.get(m_position);
+		return inputs[0].get(m_position);
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class ElementAt extends VectorFunction
 			return root;
 		}
 		Part new_p = NthOutput.replaceOutByIn(d, output_index);
-		new_p = VectorOutputFunction.replaceInputByElement(new_p, m_position);
+		new_p = VectorOutputFunction.replaceInputByElement(new_p, 0, m_position);
 		root.addChild(factory.getPartNode(new_p, this));
 		return root;
 	}

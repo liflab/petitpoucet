@@ -28,11 +28,19 @@ import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
  */
 public class VectorSum extends VectorFunction
 {
+	/**
+	 * Creates a new instance of the function.
+	 */
+	public VectorSum()
+	{
+		super(1);
+	}
+	
 	@Override
-	protected Number getOutputValue(List<?> in_list)
+	protected Number getOutputValue(List<?> ... in_lists)
 	{
 		float total = 0;
-		for (Object o : in_list)
+		for (Object o : in_lists[0])
 		{
 			if (!(o instanceof Number))
 			{

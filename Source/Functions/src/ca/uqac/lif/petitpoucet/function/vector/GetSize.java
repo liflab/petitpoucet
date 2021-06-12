@@ -26,10 +26,18 @@ import java.util.List;
  */
 public class GetSize extends VectorFunction
 {
-	@Override
-	protected Number getOutputValue(List<?> in_list)
+	/**
+	 * Creates a new instance of the function.
+	 */
+	public GetSize()
 	{
-		return in_list.size();
+		super(1);
+	}
+	
+	@Override
+	protected Number getOutputValue(List<?> ... in_lists)
+	{
+		return in_lists[0].size();
 	}
 	
 	@Override

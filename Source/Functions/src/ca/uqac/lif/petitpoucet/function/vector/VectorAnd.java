@@ -28,17 +28,20 @@ import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
  */
 public class VectorAnd extends VectorBooleanConnective
 {
+	/**
+	 * Creates a new instance of the function.
+	 */
 	public VectorAnd()
 	{
 		super();
 	}
 	
 	@Override
-	protected Boolean getOutputValue(List<?> in_list)
+	protected Boolean getOutputValue(List<?> ... in_lists)
 	{
 		boolean total = true;
 		m_witnesses.clear();
-		for (Object o : in_list)
+		for (Object o : in_lists[0])
 		{
 			if (!(o instanceof Boolean))
 			{

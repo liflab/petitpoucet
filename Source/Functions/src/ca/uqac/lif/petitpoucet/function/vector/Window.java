@@ -57,12 +57,12 @@ public class Window extends ParameterizedVectorFunction
 	}
 	
 	@Override
-	protected List<?> getVectorValue(List<?> in_list)
+	protected List<?> getVectorValue(List<?> ... in_lists)
 	{
 		List<Object> out_list = new ArrayList<Object>();
-		for (int i = 0; i < in_list.size() - m_width + 1; i++)
+		for (int i = 0; i < in_lists[0].size() - m_width + 1; i++)
 		{
-			List<?> sub_list = in_list.subList(i, i + m_width);
+			List<?> sub_list = in_lists[0].subList(i, i + m_width);
 			Function f = (Function) m_function.duplicate(true);
 			Object[] out = f.evaluate(new Object[] {sub_list});
 			m_lastInstances.add(f);
@@ -121,12 +121,12 @@ public class Window extends ParameterizedVectorFunction
 								NodeConnector.connect(sub_node, i, and, 0);
 								for (int j = 0; j < m_width; j++)
 								{
-									NodeConnector.connect(and, 0, factory.getPartNode(replaceInputByElement(pn.getPart(), elem_index + j), this), 0);
+									NodeConnector.connect(and, 0, factory.getPartNode(replaceInputByElement(pn.getPart(), 0, elem_index + j), this), 0);
 								}
 							}
 							else
 							{
-								NodeConnector.connect(sub_node, i, factory.getPartNode(replaceInputByElement(pn.getPart(), elem_index), this), 0);
+								NodeConnector.connect(sub_node, i, factory.getPartNode(replaceInputByElement(pn.getPart(), 0, elem_index), this), 0);
 							}
 						}
 					}
