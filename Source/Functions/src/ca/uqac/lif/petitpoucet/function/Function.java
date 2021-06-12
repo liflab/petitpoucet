@@ -20,9 +20,26 @@ package ca.uqac.lif.petitpoucet.function;
 import ca.uqac.lif.dag.Connectable;
 import ca.uqac.lif.util.Duplicable;
 
+/**
+ * An object that receives inputs and produces outputs. To this end, a function
+ * must implement a method called {@link #evaluate(Object...) evaluate()}.
+ *  
+ * @author Sylvain Hallé
+ */
 public interface Function extends Connectable, Contextualizable, Duplicable
 {
-	public Object[] evaluate(Object ... inputs);
+	/**
+	 * Evaluates a function on input arguments.
+	 * @param inputs The input arguments. The number of arguments must be equal
+	 * to the function's input arity.
+	 * @return An array containing the output values produced by the function.
+	 * The size of this array must be equal to the function's output arity. 
+	 */
+	/*@ non_null @*/ public Object[] evaluate(/*@ non_null @*/ Object ... inputs);
 	
+	/**
+	 * Resets the state of the function to that of a fresh instance of the
+	 * class.
+	 */
 	public void reset();
 }
