@@ -74,7 +74,7 @@ import java.util.List;
  * <p>
  * <a href="{@docRoot}/doc-files/circuits/Triangle-not3-full.png"><img style="width:80px" src="{@docRoot}/doc-files/circuits/Triangle-not3-full.png" alt="Graph 1"></a>
  * <p>
- * The function that is mentioned in the graph is {@link Size}; the other
+ * The function that is mentioned in the graph is {@link GetSize}; the other
  * parts of the circuit are not present. Therefore, the graph correctly
  * "explains" that the issue with the input vector is related to its size. 
  * 
@@ -156,7 +156,7 @@ public class Triangle
 	/**
 	 * Determines if a vector contains the lengths of sides of a valid triangle.
 	 * This global circuit itself refers to multiple other circuits (also defined
-	 * in this file: {@link AllNumbers}, {@link TriangleEquality},
+	 * in this file: {@link AllNumbers}, {@link TriangleInequality},
 	 * {@link AllPositive}). If one expands all these circuits, it results in the
 	 * following graphical representation:
 	 * <p>
@@ -331,7 +331,10 @@ public class Triangle
 	}
 	
 	/**
-	 * Function that determines if a number is positive.
+	 * Function that determines if a number is positive. The
+	 * circuit can be represented graphically as:
+	 * <p>
+	 * <img src="{@docRoot}/doc-files/circuits/Triangle.IsPositive.png" alt="Circuit">
 	 */
 	protected static class IsPositive extends Circuit
 	{

@@ -33,6 +33,7 @@ public class InstanceOf extends AtomicFunction
 	
 	/**
 	 * Creates a new instance of the function.
+	 * @param clazz The class to check
 	 */
 	public InstanceOf(/*@ non_null @*/ Class<?> clazz)
 	{

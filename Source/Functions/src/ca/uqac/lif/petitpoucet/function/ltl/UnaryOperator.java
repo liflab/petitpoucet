@@ -54,7 +54,7 @@ public abstract class UnaryOperator extends AtomicFunction
 	/**
 	 * A generic form of {@link #getExplanation(Part, NodeFactory)} parameterized
 	 * by the Boolean value used by the operator as a witness for explanations.
-	 * @param part The part used as the starting point of the explanation
+	 * @param d The part used as the starting point of the explanation
 	 * @param factory The factory that provides nodes
 	 * @param witness_value The Boolean value used as the witness
 	 * @return A node corresponding to the root of the resulting explanation

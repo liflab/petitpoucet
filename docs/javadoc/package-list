@@ -2,7 +2,9 @@ ca.uqac.lif.dag
 ca.uqac.lif.petitpoucet
 ca.uqac.lif.petitpoucet.function
 ca.uqac.lif.petitpoucet.function.booleans
+ca.uqac.lif.petitpoucet.function.ltl
 ca.uqac.lif.petitpoucet.function.number
+ca.uqac.lif.petitpoucet.function.reflect
 ca.uqac.lif.petitpoucet.function.strings
 ca.uqac.lif.petitpoucet.function.vector
 ca.uqac.lif.util
