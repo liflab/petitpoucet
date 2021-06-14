@@ -22,6 +22,8 @@ import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
+import ca.uqac.lif.petitpoucet.function.FunctionException;
+import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
@@ -39,40 +41,64 @@ public abstract class BooleanConnective extends AtomicFunction
 	/*@ non_null @*/ protected boolean[] m_arguments;
 	
 	/**
+	 * The value used as a witness for the Boolean connective.
+	 */
+	protected boolean m_witnessValue;
+	
+	/**
+	 * A flag specifying if the connective is fail-fast.
+	 */
+	protected boolean m_failFast;
+	
+	/**
 	 * Creates a new Boolean connective.
 	 * @param in_arity The input arity of the connective
+	 * @param witness_value The value used as a witness for the Boolean
+	 * connective
+	 * @param fail_fast Set to {@code true} to make it a fail-fast connective
 	 */
-	public BooleanConnective(int in_arity)
+	public BooleanConnective(int in_arity, boolean witness_value, boolean fail_fast)
 	{
 		super(in_arity, 1);
 		m_arguments = new boolean[in_arity];
+		m_failFast = fail_fast;
+		if (fail_fast)
+		{
+			m_outputPins[0] = new FailFastOutputPin();
+		}
+		m_witnessValue = witness_value;
 	}
 	
-	public PartNode getExplanation(Part d, NodeFactory factory, boolean witness_value)
+	@Override
+	public PartNode getExplanation(Part d, NodeFactory factory)
 	{
-		PartNode root = factory.getPartNode(d, factory);
+		PartNode root = factory.getPartNode(d, this);
 		int output_nb = NthOutput.mentionedOutput(d);
 		if (output_nb != 0)
 		{
 			return root;
 		}
-		int nb_witnesses = countWitnesses(witness_value);
+		int nb_witnesses = countWitnesses(m_witnessValue);
 		if (nb_witnesses == 0)
 		{
 			// Output depends on all inputs
 			return super.getExplanation(d, factory);
 		}
 		LabelledNode and = root;
-		if (nb_witnesses > 1)
+		if (nb_witnesses > 1 && !m_failFast)
 		{
-			and = factory.getAndNode();
+			and = factory.getOrNode();
 			root.addChild(and);
 		}
 		for (int i = 0; i < m_arguments.length; i++)
 		{
-			if (m_arguments[i] == witness_value)
+			if (m_arguments[i] == m_witnessValue)
 			{
 				and.addChild(factory.getPartNode(new NthInput(i), this));
+				if (m_failFast)
+				{
+					break;
+				}
 			}
 		}
 		return root;
@@ -98,12 +124,67 @@ public abstract class BooleanConnective extends AtomicFunction
 	protected void copyInto(BooleanConnective bc, boolean with_state)
 	{
 		super.copyInto(bc, with_state);
+		bc.m_witnessValue = m_witnessValue;
 		if (with_state)
 		{
 			for (int i = 0; i < m_arguments.length; i++)
 			{
 				bc.m_arguments[i] = m_arguments[i];
 			}
+		}
+	}
+	
+	public class FailFastOutputPin extends AtomicFunctionOutputPin
+	{
+		/**
+		 * Creates a new fail-fast output pin.
+		 */
+		public FailFastOutputPin()
+		{
+			super(0);
+		}
+
+		@Override
+		public Object getValue()
+		{
+			if (m_evaluated)
+			{
+				return m_value;
+			}
+			Object[] ins = new Object[getInputArity()];
+			for (int i = 0; i < m_inputPins.length; i++)
+			{
+				ins[i] = m_inputPins[i].getValue();
+				if (!(ins[i] instanceof Boolean))
+				{
+					throw new InvalidArgumentTypeException("Expected a Boolean");
+				}
+				boolean b = (Boolean) ins[i];
+				m_arguments[i] = b;
+				if (b == m_witnessValue)
+				{
+					// Don't evaluate other input arguments
+					break;
+				}
+			}
+			Object[] outs = BooleanConnective.this.getValue(ins);
+			for (int i = 0; i < m_outputPins.length; i++)
+			{
+				m_outputPins[i].setValue(outs[i]);
+			}
+			if (!m_evaluated)
+			{
+				throw new FunctionException("Cannot get value");
+			}
+			return m_value;
+		}
+		
+		@Override
+		public FailFastOutputPin duplicate(boolean with_state)
+		{
+			FailFastOutputPin afop = new FailFastOutputPin();
+			copyInto(afop, false);
+			return afop;
 		}
 	}
 }

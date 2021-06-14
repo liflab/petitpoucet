@@ -28,7 +28,7 @@ public class NodeConnector
 	 * A static instance of the node connector.
 	 */
 	public static final transient NodeConnector instance = new NodeConnector();
-	
+
 	/**
 	 * Disconnects an output pin of a node to the input pin of another node.
 	 * @param n1 The first node
@@ -40,7 +40,7 @@ public class NodeConnector
 	{
 		instance.disconnectFrom(n1, i1, n2, i2);
 	}
-	
+
 	/**
 	 * Cuts the directed link between a node and another one. This does not
 	 * remove the reciprocal link in the reverse direction. This method can be
@@ -54,7 +54,7 @@ public class NodeConnector
 	{
 		n1.removeFromOutput(i1, n2.getInputPin(i2));
 	}
-	
+
 	/**
 	 * Connects an output pin of a node to the input pin of another node.
 	 * @param n1 The first node
@@ -66,7 +66,7 @@ public class NodeConnector
 	{
 		instance.connectTo(n1, i1, n2, i2);
 	}
-	
+
 	/**
 	 * Connects an output pin of a node to the input pin of another node.
 	 * @param n1 The first node
@@ -76,10 +76,18 @@ public class NodeConnector
 	 */
 	public void connectTo(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
 	{
-		n1.addToOutput(i1, n2.getInputPin(i2));
-		n2.addToInput(i2, n1.getOutputPin(i1));
+		Pin<? extends Node> out_p1 = n1.getOutputPin(i1);
+		Pin<? extends Node> in_p2 = n2.getInputPin(i2);
+		if (!n1.getOutputLinks(i1).contains(in_p2))
+		{
+			n1.addToOutput(i1, in_p2);
+		}
+		if (!n2.getInputLinks(i2).contains(out_p1))
+		{
+			n2.addToInput(i2, out_p1);
+		}
 	}
-	
+
 	/**
 	 * Disconnects an output pin of a node to the input pin of another node.
 	 * @param n1 The first node

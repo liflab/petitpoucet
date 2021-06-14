@@ -42,6 +42,18 @@ import ca.uqac.lif.util.Duplicable;
 public class Circuit extends NestedNode implements Function, Duplicable, ExplanationQueryable
 {
 	/**
+	 * An array of input pins for the function. The size of the array
+	 * corresponds to the function's input arity.
+	 */
+	/*@ non_null @*/ protected CircuitInputPin[] m_inputPins;
+	
+	/**
+	 * An array of output pins for the function. The size of the array
+	 * corresponds to the function's output arity.
+	 */
+	/*@ non_null @*/ protected CircuitOutputPin[] m_outputPins;
+	
+	/**
 	 * A context that can be assigned to a circuit.
 	 */
 	protected Map<String,Object> m_context;
@@ -63,6 +75,16 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	{
 		super(in_arity, out_arity);
 		m_name = name;
+		m_inputPins = new CircuitInputPin[in_arity];
+		for (int i = 0; i < in_arity; i++)
+		{
+			m_inputPins[i] = new CircuitInputPin(i);
+		}
+		m_outputPins = new CircuitOutputPin[out_arity];
+		for (int i = 0; i < out_arity; i++)
+		{
+			m_outputPins[i] = new CircuitOutputPin(i);
+		}
 	}
 	
 	/**
@@ -299,6 +321,26 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 		super.copyInto(c, with_state);
 		c.m_name = m_name;
 	}
+	
+	@Override
+	/*@ non_null @*/ public CircuitInputPin getInputPin(int index) throws IndexOutOfBoundsException
+	{
+		if (index < 0 || index >= m_inputs.size())
+		{
+			throw new IndexOutOfBoundsException();
+		}
+		return m_inputPins[index];
+	}
+
+	@Override
+	/*@ non_null @*/ public CircuitOutputPin getOutputPin(int index) throws IndexOutOfBoundsException
+	{
+		if (index < 0 || index >= m_outputs.size())
+		{
+			throw new IndexOutOfBoundsException();
+		}
+		return m_outputPins[index];
+	}
 
 	@Override
 	public PartNode getExplanation(Part part)
@@ -314,6 +356,133 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 			return super.toString();
 		}
 		return m_name;
+	}
+	
+	public class CircuitInputPin extends FunctionPin<Circuit>
+	{
+		/**
+		 * Creates a new input pin.
+		 * @param index The index of the input
+		 */
+		public CircuitInputPin(int index)
+		{
+			super(Circuit.this, index);
+		}
+		
+		@Override
+		public void setValue(Object o)
+		{
+			Pin<? extends Node> pin = m_inputAssociations.get(m_index);
+			if (pin != null && pin instanceof FunctionPin)
+			{
+				((FunctionPin<?>) pin).setValue(o);
+			}
+			m_evaluated = true;
+		}
+
+		/**
+		 * Gets the value of this input pin.
+		 * @return The value
+		 */
+		public Object getValue()
+		{
+			if (m_evaluated)
+			{
+				return m_value;
+			}
+			Collection<Pin<? extends Node>> pins = getInputLinks(m_index);
+			if (getInputArity() == 0)
+			{
+				// Special case for functions with input arity of 0
+				m_evaluated = true;
+				return null;
+			}
+			for (Pin<?> p : pins)
+			{
+				if (p instanceof FunctionPin)
+				{
+					m_value = ((FunctionPin<?>) p).getValue();
+					m_evaluated = true;
+					break;
+				}
+				else
+				{
+					System.out.println("EILLE");
+				}
+			}
+			if (!m_evaluated)
+			{
+				throw new FunctionException("Cannot get value");
+			}
+			return m_value;
+		}
+		
+		@Override
+		public CircuitInputPin duplicate(boolean with_state)
+		{
+			CircuitInputPin afip = new CircuitInputPin(m_index);
+			copyInto(afip, false);
+			return afip;
+		}
+	}
+	
+	public class CircuitOutputPin extends FunctionPin<Circuit>
+	{
+		/**
+		 * Creates a new output pin.
+		 * @param index The index of the input
+		 */
+		public CircuitOutputPin(int index)
+		{
+			super(Circuit.this, index);
+		}
+
+		@Override
+		public Object getValue()
+		{
+			if (m_evaluated)
+			{
+				return m_value;
+			}
+			Object[] ins = new Object[getInputArity()];
+			for (int i = 0; i < m_inputPins.length; i++)
+			{
+				ins[i] = m_inputPins[i].getValue();
+				Pin<? extends Node> pin = m_inputAssociations.get(i);
+				if (pin != null && pin instanceof FunctionPin)
+				{
+					((FunctionPin<?>) pin).setValue(ins[i]);
+				}
+			}			
+			m_evaluated = true;
+			Object[] outs = new Object[getOutputArity()];
+			for (int i = 0; i < outs.length; i++)
+			{
+				Pin<? extends Node> pin = m_outputAssociations.get(i);
+				if (!(pin instanceof FunctionPin))
+				{
+					throw new FunctionException("Invalid circuit");
+				}
+				outs[i] = ((FunctionPin<?>) pin).getValue();
+			}
+			for (int i = 0; i < m_outputPins.length; i++)
+			{
+				m_outputPins[i].setValue(outs[i]);
+			}
+			if (!m_evaluated)
+			{
+				throw new FunctionException("Cannot get value");
+			}
+			return m_value;
+		}
+		
+		@Override
+		public CircuitOutputPin duplicate(boolean with_state)
+		{
+			CircuitOutputPin afop = new CircuitOutputPin(m_index);
+			copyInto(afop, false);
+			return afop;
+		}
 	}
 
 }

@@ -15,66 +15,56 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.function.booleans;
+package ca.uqac.lif.petitpoucet.function.reflect;
 
-import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
+import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
 
 /**
- * Function implementing logical conjunction.
+ * Function that checks if an object is an instance of a given class.
  * @author Sylvain Hallé
  */
-public class Or extends BooleanConnective
+public class InstanceOf extends AtomicFunction
 {
 	/**
-	 * Creates a new instance of the "and" connective.
-	 * @param in_arity The input arity of the connective
-	 * @param fail_fast Set to {@code true} to make it a fail-fast connective
+	 * The class to check.
 	 */
-	public Or(int in_arity, boolean fail_fast)
-	{
-		super(in_arity, true, fail_fast);
-	}
+	/*@ non_null @*/ protected Class<?> m_class;
 	
 	/**
-	 * Creates a new instance of the "and" connective.
-	 * @param in_arity The input arity of the connective
+	 * Creates a new instance of the function.
 	 */
-	public Or(int in_arity)
+	public InstanceOf(/*@ non_null @*/ Class<?> clazz)
 	{
-		this(in_arity, false);
+		super(1, 1);
+		m_class = clazz;
 	}
 
 	@Override
 	protected Object[] getValue(Object... inputs) throws InvalidNumberOfArgumentsException
 	{
-		boolean value = false;
-		for (int i = 0; i < inputs.length; i++)
+		Object o = inputs[0];
+		if (o == null)
 		{
-			if (!(inputs[i] instanceof Boolean))
-			{
-				throw new InvalidArgumentTypeException("Expected a Boolean");
-			}
-			m_arguments[i] = (Boolean) inputs[i];
-			if (m_arguments[i])
-			{
-				value = true;
-			}
+			return new Object[] {false};
 		}
-		return new Object[] {value};
+		else
+		{
+			return new Object[] {m_class.isInstance(o)};
+		}
 	}
 	
 	@Override
-	public Or duplicate(boolean with_state)
+	public InstanceOf duplicate(boolean with_state)
 	{
-		Or a = new Or(getInputArity(), m_failFast);
-		copyInto(a, with_state);
-		return a;
+		InstanceOf i = new InstanceOf(m_class);
+		copyInto(i, with_state);
+		return i;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return "∧";
+		return "InstanceOf";
 	}
 }

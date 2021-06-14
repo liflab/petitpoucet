@@ -17,9 +17,6 @@
  */
 package ca.uqac.lif.petitpoucet.function.booleans;
 
-import ca.uqac.lif.petitpoucet.NodeFactory;
-import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
 
@@ -32,10 +29,20 @@ public class And extends BooleanConnective
 	/**
 	 * Creates a new instance of the "and" connective.
 	 * @param in_arity The input arity of the connective
+	 * @param fail_fast Set to {@code true} to make it a fail-fast connective
+	 */
+	public And(int in_arity, boolean fail_fast)
+	{
+		super(in_arity, false, fail_fast);
+	}
+	
+	/**
+	 * Creates a new instance of the "and" connective.
+	 * @param in_arity The input arity of the connective
 	 */
 	public And(int in_arity)
 	{
-		super(in_arity);
+		this(in_arity, false);
 	}
 
 	@Override
@@ -52,21 +59,19 @@ public class And extends BooleanConnective
 			if (!m_arguments[i])
 			{
 				value = false;
+				if (m_failFast)
+				{
+					break;
+				}
 			}
 		}
 		return new Object[] {value};
 	}
 	
 	@Override
-	public PartNode getExplanation(Part d, NodeFactory factory)
-	{
-		return super.getExplanation(d, factory, false);
-	}
-	
-	@Override
 	public And duplicate(boolean with_state)
 	{
-		And a = new And(getInputArity());
+		And a = new And(getInputArity(), m_failFast);
 		copyInto(a, with_state);
 		return a;
 	}

@@ -239,6 +239,10 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 					m_evaluated = true;
 					break;
 				}
+				else
+				{
+					System.out.println("EILLE");
+				}
 			}
 			if (!m_evaluated)
 			{

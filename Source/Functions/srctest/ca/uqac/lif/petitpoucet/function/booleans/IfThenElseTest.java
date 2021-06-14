@@ -79,4 +79,16 @@ public class IfThenElseTest
 		PartNode pn2 = (PartNode) and.getOutputLinks(0).get(1).getNode();
 		assertEquals(ComposedPart.compose(new NthElement(1), NthInput.SECOND), pn2.getPart());
 	}
+	
+	@Test
+	public void test4()
+	{
+		IfThenElse ite = new IfThenElse();
+		Object result = ite.evaluate(true, "foo", "foo")[0];
+		assertEquals("foo", result);
+		PartNode root = ite.getExplanation(NthOutput.FIRST);
+		assertEquals(1, root.getOutputLinks(0).size());
+		PartNode pn1 = (PartNode) root.getOutputLinks(0).get(0).getNode();
+		assertEquals(NthInput.SECOND, pn1.getPart());
+	}
 }
