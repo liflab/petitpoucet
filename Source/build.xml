@@ -30,10 +30,16 @@
     <!-- Copy core to other projects -->
     <copy file="petitpoucet-core.jar" todir="Functions/lib" />
     <copy file="petitpoucet-core.jar" todir="Examples/lib" />
+    <copy file="petitpoucet-core.jar" todir="GraphUtils/lib" />
     <!-- Compile Functions -->
     <ant dir="Functions" target="jar" />
     <!-- Copy Functions to other projects -->
     <copy file="petitpoucet-functions.jar" todir="Examples/lib" />
+    <copy file="petitpoucet-functions.jar" todir="GraphUtils/lib" />
+    <!-- Compile GraphUtils -->
+    <ant dir="GraphUtils" target="jar" />
+    <!-- Copy GraphUtils to other projects -->
+    <copy file="petitpoucet-graphutils.jar" todir="Examples/lib" />
     <!-- Compile Examples -->
     <ant dir="Examples" target="jar" />
   </target>
@@ -42,12 +48,14 @@
     <ant dir="Core" target="download-deps" />
     <ant dir="Functions" target="download-deps" />
     <ant dir="Examples" target="download-deps" />
+    <ant dir="GraphUtils" target="download-deps" />
   </target>
   
   <target name="clean">
     <ant dir="Core" target="clean" />
     <ant dir="Functions" target="clean" />
     <ant dir="Examples" target="clean" />
+    <ant dir="GraphUtils" target="clean" />
   </target>
   
   <target name="javadoc">
@@ -73,6 +81,7 @@
         <pathelement path="Core/src"/>
         <pathelement path="Functions/src"/>
         <pathelement path="Examples/src"/>
+        <pathelement path="GraphUtils/src"/>
       </sourcepath>
       <classpath>
         <fileset dir="Core/dep">
@@ -85,6 +94,7 @@
       <group title="Core" packages="ca.uqac.lif.dag:ca.uqac.lif.petitpoucet:ca.uqac.lif.util"/>
       <group title="Function Circuits" packages="ca.uqac.lif.petitpoucet.function:ca.uqac.lif.petitpoucet.function.*"/>
       <group title="Examples" packages="examples:examples.*"/>
+      <!-- Add GraphUtils' package -->
     </javadoc>
     <copy todir="../docs/javadoc/doc-files">
       <fileset dir="Examples/src/doc-files"/>

@@ -14,7 +14,7 @@
 **/doc/
 lib/
 doxygen/
-/dep/
+dep/
 /tests/
 /html/
 
@@ -44,6 +44,10 @@ jacoco.exec
 **/.settings/
 **/.recommenders/
 **/.loadpath
+
+# IntelliJ-specific
+**/.idea
+*.iml
 
 # External tool builders
 **/.externalToolBuilders/
