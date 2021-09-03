@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-	A build script for a super-project containing multiple sub-projects
-    Copyright (C) 2019  Sylvain Hallé
+    A build script for a super-project containing multiple sub-projects
+    Copyright (C) 2019-2021  Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,6 +48,12 @@
     <ant dir="Core" target="clean" />
     <ant dir="Functions" target="clean" />
     <ant dir="Examples" target="clean" />
+  </target>
+
+  <target name="download-rt8">
+    <ant dir="Core" target="download-rt8" />
+    <copy file="Core/rt.jar" todir="Functions" />
+    <copy file="Core/rt.jar" todir="Examples" />
   </target>
   
   <target name="javadoc">
