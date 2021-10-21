@@ -62,9 +62,16 @@ public class NthElementTest
 	}
 	
 	@Test
-	public void testMentionedElement1()
+	public void mentionedElement1()
 	{
 		Part cd = ComposedPart.compose(new NthElement(0), new NthElement(25), NthOutput.FIRST);
+		assertEquals(25, NthElement.mentionedElement(cd));
+	}
+	
+	@Test
+	public void mentionedElement2()
+	{
+		Part cd = ComposedPart.compose(new NthElement(25), NthOutput.FIRST);
 		assertEquals(25, NthElement.mentionedElement(cd));
 	}
 }
