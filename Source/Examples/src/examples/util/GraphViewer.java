@@ -90,11 +90,11 @@ public class GraphViewer
 	public static void save(List<Node> roots, String filename, boolean no_captions) throws IOException
 	{
 		File outputFile = new File(filename);
-		FileOutputStream outputStream = null;
 		try
 		{
-			outputStream = new FileOutputStream(outputFile);
-			outputStream.write(getGraph(roots, no_captions));
+			FileOutputStream outputStream = new FileOutputStream(outputFile);
+		    outputStream.write(getGraph(roots, no_captions));
+		    outputStream.close();
 		}
 		catch (IOException e)
 		{
