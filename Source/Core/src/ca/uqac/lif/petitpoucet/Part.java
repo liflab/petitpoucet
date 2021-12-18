@@ -63,6 +63,11 @@ public interface Part
 	 * An instance of the "unknown" designator
 	 */
 	public static Unknown unknown = new Unknown();
+	
+	/**
+	 * An instance of the "self" designator
+	 */
+	public static Self self = new Self();
 
 	/**
 	 * Designator that designates an entire object.
@@ -204,6 +209,48 @@ public interface Part
 		public boolean equals(Object o)
 		{
 			return o != null && o instanceof Unknown;
+		}
+	}
+	
+	/**
+	 * Designator that represents the object being queried.
+	 */
+	public static final class Self implements Part
+	{
+		@Override
+		public boolean appliesTo(Object o)
+		{
+			return true;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "Self";
+		}
+
+		@Override
+		public Part head()
+		{
+			return this;
+		}
+
+		@Override
+		public Part tail()
+		{
+			return null;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return 321;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			return o != null && o instanceof Self;
 		}
 	}
 }
