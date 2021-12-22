@@ -119,17 +119,83 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	@Override
 	public PartNode getExplanation(Part part, NodeFactory factory)
 	{
-		PartNode root = factory.getPartNode(part, this);
-		int output_nb = NthOutput.mentionedOutput(part);
-		if (output_nb < 0 || output_nb >= getOutputArity())
+		int input_nb = NthInput.mentionedInput(part);
+		if (input_nb >= 0 && input_nb < getInputArity())
 		{
-			// Nothing to do
+			return explainInput(input_nb, part, factory);
+		}
+		int output_nb = NthOutput.mentionedOutput(part);
+		if (output_nb >= 0 && output_nb < getOutputArity())
+		{
+			return explainOutput(output_nb, part, factory);
+		}
+		// Nothing to do
+		PartNode root = factory.getPartNode(part, this);
+		return root;
+	}
+	
+	/**
+	 * Explains a part of the input of the circuit in terms of parts of its
+	 * output.
+	 * @param input_nb The number of the output pin
+	 * @param part The part of the input to explain
+	 * @param factory A factory to generate explainability nodes
+	 * @return The root of the generated tree
+	 */
+	/*@ non_null @*/ protected PartNode explainInput(int input_nb, Part part, NodeFactory factory)
+	{
+		PartNode root = factory.getPartNode(part, this);
+		Pin<? extends Node> start_pin = m_inputAssociations.get(input_nb);
+		Part start_part = NthInput.replaceInBy(part, new NthInput(start_pin.getIndex()));
+		NodeFactory in_factory = factory.getFactory(part, this);
+		NestedNode sub_node = developToOutput(start_part, start_pin.getNode(), in_factory);
+		if (sub_node == null)
+		{
+			// No explanation for the inner circuit
 			return root;
 		}
+		root.addChild(sub_node);
+		// Tie leaves to the outputs of the circuit 
+		for (int i = 0; i < sub_node.getOutputArity(); i++)
+		{
+			Pin<? extends Node> pin = sub_node.getAssociatedOutput(i);
+			if (!(pin.getNode() instanceof PartNode))
+			{
+				// Not a part node
+				continue;
+			}
+			PartNode pn = (PartNode) pin.getNode();
+			int mentioned_output = NthOutput.mentionedOutput(pn.getPart());
+			if (mentioned_output < 0)
+			{
+				// No input mentioned
+				continue;
+			}
+			int circuit_output = getNestedOutput((Node) pn.getSubject(), mentioned_output);
+			if (circuit_output >= 0)
+			{
+				PartNode leaf = factory.getPartNode(NthOutput.replaceOutBy(pn.getPart(), new NthOutput(circuit_output)), this);
+				NodeConnector.connect(sub_node, i, leaf, 0);
+			}
+		}
+		return root;
+	}
+	
+	/**
+	 * Explains a part of the output of the circuit in terms of parts of its
+	 * input.
+	 * @param output_nb The number of the output pin
+	 * @param part The part of the output to explain
+	 * @param factory A factory to generate explainability nodes
+	 * @return The root of the generated tree
+	 */
+	/*@ non_null @*/ protected PartNode explainOutput(int output_nb, Part part, NodeFactory factory)
+	{
+		PartNode root = factory.getPartNode(part, this);
 		Pin<? extends Node> start_pin = m_outputAssociations.get(output_nb);
 		Part start_part = NthOutput.replaceOutBy(part, new NthOutput(start_pin.getIndex()));
 		NodeFactory in_factory = factory.getFactory(part, this);
-		NestedNode sub_node = develop(start_part, start_pin.getNode(), in_factory);
+		NestedNode sub_node = developToInput(start_part, start_pin.getNode(), in_factory);
 		if (sub_node == null)
 		{
 			// No explanation for the inner circuit
@@ -182,7 +248,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 * @return The nested node containing the explanation graph of the entire
 	 * circuit. 
 	 */
-	protected NestedNode develop(Part start, Node subject, NodeFactory factory)
+	protected NestedNode developToInput(Part start, Node subject, NodeFactory factory)
 	{
 		Queue<PartNode> to_explore = new ArrayDeque<PartNode>();
 		Set<PartNode> explored = new HashSet<PartNode>();
@@ -233,6 +299,87 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 				PartNode upstream_root = ((ExplanationQueryable) upstream_subject).getExplanation(upstream_part, factory);
 				pn.addChild(upstream_root);
 				to_explore.add(upstream_root);
+			}
+		}
+		if (root == null)
+		{
+			return null;	
+		}
+		// All nodes explored; create nested node
+		return NestedNode.createFromTree(root);
+	}
+	
+	/**
+	 * From an input pin of an inner function, calculates the explanation and
+	 * repeats the process if any output pins that are mentioned are connected to
+	 * input pins of other functions. This has for effect of generating the
+	 * (input-to-output) explanation graph of the whole circuit.
+	 * <p>
+	 * The method encapsulates this graph into a nested node. This node has a
+	 * single input pin (the output used as the starting point) and has as many
+	 * output pins as the number of leaves in the resulting graph. Each of these
+	 * pins is linked to the output pin of one of the functions in the circuit
+	 * that are associated to an output pin of the circuit itself.
+	 * 
+	 * @param start The <em>input</em> part to explain, used as a starting point
+	 * @param subject The inner function that must provide the explanation
+	 * @param factory A factory used to obtain part nodes. This factory must be
+	 * distinct from the one given to the circuit in a call to
+	 * {@link #getExplanation(Part, NodeFactory)}
+	 * @return The nested node containing the explanation graph of the entire
+	 * circuit. 
+	 */
+	protected NestedNode developToOutput(Part start, Node subject, NodeFactory factory)
+	{
+		Queue<PartNode> to_explore = new ArrayDeque<PartNode>();
+		Set<PartNode> explored = new HashSet<PartNode>();
+		PartNode root = null;
+		if (subject instanceof ExplanationQueryable)
+		{
+			root = ((ExplanationQueryable) subject).getExplanation(start, factory);
+			to_explore.add(root);
+		}
+		while (!to_explore.isEmpty())
+		{
+			PartNode current = to_explore.remove();
+			explored.add(current);
+			NestedNodeCrawler c = new NestedNodeCrawler(current);
+			c.crawl();
+			for (Node n : c.getLeaves())
+			{
+				if (!(n instanceof PartNode) || explored.contains(n))
+				{
+					continue;
+				}
+				PartNode pn = (PartNode) n;
+				Part current_part = pn.getPart();					
+				int num_output = NthOutput.mentionedOutput(current_part);
+				if (num_output < 0)
+				{
+					continue;
+				}
+				// This node mentions the input of a function; what is this output connected to?
+				Node current_subject = (Node) pn.getSubject();
+				Pin<? extends Node> pin = getPin(current_subject.getOutputLinks(num_output));
+				if (pin == null)
+				{
+					continue;
+				}
+				Node downstream_subject = pin.getNode();
+				if (!(downstream_subject instanceof ExplanationQueryable))
+				{
+					continue;
+				}
+				// Get explanation for this function's input
+				Part downstream_part = NthOutput.replaceOutByIn(current_part, pin.getIndex());
+				PartNode downstream_node = factory.getPartNode(downstream_part, downstream_subject);
+				if (to_explore.contains(downstream_node) || explored.contains(downstream_node))
+				{
+					continue;
+				}
+				PartNode downstream_root = ((ExplanationQueryable) downstream_subject).getExplanation(downstream_part, factory);
+				pn.addChild(downstream_root);
+				to_explore.add(downstream_root);
 			}
 		}
 		if (root == null)
