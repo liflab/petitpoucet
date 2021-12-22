@@ -32,12 +32,12 @@ public class Range implements Part, Comparable<Range>
 	/**
 	 * The start position of the range.
 	 */
-	protected int m_startIndex;
+	private final int m_startIndex;
 	
 	/**
 	 * The end position of the range.
 	 */
-	protected int m_endIndex;
+	private final int m_endIndex;
 	
 	/**
 	 * Creates a new range.

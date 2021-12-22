@@ -109,7 +109,7 @@ public class ReplaceTest
 	@Test
 	public void testMapping1()
 	{
-		ReplaceTestInner f = new ReplaceTestInner("foo", "barbaz");
+		Replace f = new Replace("foo", "barbaz");
 		String input = "abcfoog";
 		String output = (String) f.evaluate(input)[0];
 		assertEquals("abcbarbazg", output);
@@ -123,7 +123,7 @@ public class ReplaceTest
 	@Test
 	public void testMapping2()
 	{
-		ReplaceTestInner f = new ReplaceTestInner("foo", "");
+		Replace f = new Replace("foo", "");
 		String input = "abcfoog";
 		String output = (String) f.evaluate(input)[0];
 		assertEquals("abcg", output);
@@ -136,7 +136,7 @@ public class ReplaceTest
 	@Test
 	public void testMapping3()
 	{
-		ReplaceTestInner f = new ReplaceTestInner("([a-c]+)", "Z$1Z");
+		Replace f = new Replace("([a-c]+)", "Z$1Z");
 		String input = "abcfoog";
 		String output = (String) f.evaluate(input)[0];
 		assertEquals("ZabcZfoog", output);
@@ -149,29 +149,12 @@ public class ReplaceTest
 	@Test
 	public void testMapping4()
 	{
-		ReplaceTestInner f = new ReplaceTestInner("abc" + CRLF, "");
+		Replace f = new Replace("abc" + CRLF, "");
 		String input = "abc" + CRLF + "def";
 		String output = (String) f.evaluate(input)[0];
 		assertEquals("def", output);
 		assertEquals(new RangeMapping(
 				new RangePair(3 + CRLF_S, 5 + CRLF_S, 0, 2)
 				), f.getMapping());
-	}
-	
-	/**
-	 * A descendant of Replace used for testing. It exposes the internal
-	 * range mapping so that its contents can be examined.
-	 */
-	protected static final class ReplaceTestInner extends Replace
-	{
-		ReplaceTestInner(String to, String from)
-		{
-			super(to, from);
-		}
-		
-		RangeMapping getMapping()
-		{
-			return m_mapping;
-		}
 	}
 }

@@ -18,6 +18,7 @@
 package ca.uqac.lif.petitpoucet.function.strings;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,34 @@ public class RangeMapping
 	 * The (sorted) list of associations between ranges of characters.
 	 */
 	/*@ non_null @*/ protected final List<RangePair> m_mapping;
+	
+	/**
+	 * A flag indicating if the mapping has changed since the last call to
+	 * {@link #simplify()}.
+	 */
+	protected boolean m_changed;
+	
+	/**
+	 * Composes two range mappings.
+	 * @param rm1 The first range mapping
+	 * @param rm2 The second range mapping
+	 * @return The composition of the two mappings
+	 */
+	/*@ non_null @*/ public static RangeMapping compose(/*@ non_null @*/ RangeMapping rm1, /*@ non_null @*/ RangeMapping rm2)
+	{
+		RangeMapping rm_out = new RangeMapping();
+		for (RangePair rp : rm2.m_mapping)
+		{
+			List<RangePair> pairs = rm1.invertMapping(rp.getFrom());
+			for (RangePair p_rp : pairs)
+			{
+				//RangePair new_rp = new RangePair(p_rp.get)
+			}
+			rm_out.addAll(pairs);
+		}
+		rm_out.simplify();
+		return rm_out;
+	}
 
 	/**
 	 * Creates a new empty range mapping.
@@ -43,7 +72,8 @@ public class RangeMapping
 		{
 			m_mapping.add(rp);
 		}
-		Collections.sort(m_mapping);
+		m_changed = true;
+		simplify();
 	}
 
 	/**
@@ -52,8 +82,20 @@ public class RangeMapping
 	 */
 	public RangeMapping(RangeMapping m)
 	{
-		this();
+		super();
+		m_mapping = new LinkedList<RangePair>();
 		m_mapping.addAll(m.m_mapping);
+		m_changed = true;
+		simplify();
+	}
+	
+	/**
+	 * Gets the list of range pairs in this mapping.
+	 * @return The list of pairs
+	 */
+	/*@ pure non_null @*/ public List<RangePair> getPairs()
+	{
+		return m_mapping;
 	}
 
 	/**
@@ -94,7 +136,22 @@ public class RangeMapping
 		{
 			m_mapping.add(left_index + 1, new_rp);	
 		}
+		m_changed = true;
 		merge(left_index + 1);
+		return this;
+	}
+	
+	/**
+	 * Adds multiple range pairs to the mapping.
+	 * @param new_rps The range pairs to add
+	 * @return This mapping
+	 */
+	/*@ non_null @*/ protected RangeMapping addAll(Collection<RangePair> new_rps)
+	{
+		for (RangePair new_rp : new_rps)
+		{
+			add(new_rp);
+		}
 		return this;
 	}
 
@@ -103,7 +160,7 @@ public class RangeMapping
 	 * @param r The output range
 	 * @return The list of ranges to which this output is mapped
 	 */
-	/*@ pure non_null @*/ public List<Range> invert(/*@ null @*/ Range r)
+	/*@ pure non_null @*/ public List<Range> trackToInput(/*@ null @*/ Range r)
 	{
 		List<Range> ranges = new ArrayList<Range>();
 		if (r == null)
@@ -114,7 +171,7 @@ public class RangeMapping
 		{
 			if (rp.getTo().overlaps(r))
 			{
-				Range i_r = rp.invert(r);
+				Range i_r = rp.trackToInput(r);
 				if (!ranges.isEmpty())
 				{
 					Range last = ranges.get(ranges.size() - 1);
@@ -137,6 +194,112 @@ public class RangeMapping
 		}
 		return ranges;
 	}
+	
+	/**
+	 * Gets the "output" ranges mapped to the whole "input" range.
+	 * @return The list of ranges to which the whole input is mapped
+	 */
+	/*@ pure non_null @*/ public List<Range> trackToOutput()
+	{
+		List<Range> ranges = new ArrayList<Range>();
+		for (RangePair rp : m_mapping)
+		{
+			Range r = rp.getTo();
+			if (ranges.isEmpty())
+			{
+				ranges.add(r);
+			}
+			else
+			{
+				Range previous = ranges.get(ranges.size() - 1);
+				if (previous.getEnd() == r.getStart() - 1)
+				{
+					ranges.remove(ranges.size() - 1);
+					Range merged = new Range(previous.getStart(), r.getEnd());
+					ranges.add(merged);
+				}
+			}
+		}
+		return ranges;
+	}
+	
+	/**
+	 * Gets the "output" ranges mapped to a given "input" range.
+	 * @param r The input range
+	 * @return The list of ranges to which this input is mapped
+	 */
+	/*@ pure non_null @*/ public List<Range> trackToOutput(/*@ null @*/ Range r)
+	{
+		List<Range> ranges = new ArrayList<Range>();
+		if (r == null)
+		{
+			return ranges;
+		}
+		for (RangePair rp : m_mapping)
+		{
+			if (rp.getFrom().overlaps(r))
+			{
+				Range i_r = rp.trackToOutput(r);
+				if (!ranges.isEmpty())
+				{
+					Range last = ranges.get(ranges.size() - 1);
+					if (last.getEnd() == i_r.getStart() - 1)
+					{
+						Range merged = new Range(last.getStart(), i_r.getEnd());
+						ranges.remove(ranges.size() - 1);
+						ranges.add(merged);
+					}
+					else
+					{
+						ranges.add(i_r);
+					}
+				}
+				else
+				{
+					ranges.add(i_r);
+				}
+			}
+		}
+		return ranges;
+	}
+	
+	/**
+	 * Determines if the range mapping contains associations.
+	 * @return <tt>true</tt> if the mapping contains associations, <tt>false</tt>
+	 * otherwise
+	 */
+	/*@ pure @*/ public boolean isEmpty()
+	{
+		return m_mapping.isEmpty();
+	}
+	
+	/**
+	 * Gets the list of all ranges in the "from" part of each range pair.
+	 * @return The list or ranges
+	 */
+	/*@ pure non_null @*/ protected List<Range> getFromRanges()
+	{
+		List<Range> ranges = new ArrayList<Range>();
+		for (RangePair rp : m_mapping)
+		{
+			ranges.add(rp.getFrom());
+		}
+		return ranges;
+	}
+	
+	/**
+	 * Gets the list of all ranges in the "to" part of each range pair.
+	 * @return The list or ranges
+	 */
+	/*@ pure non_null @*/ protected List<Range> getToRanges()
+	{
+		List<Range> ranges = new ArrayList<Range>();
+		for (RangePair rp : m_mapping)
+		{
+			ranges.add(rp.getTo());
+		}
+		return ranges;
+	}
 
 	/**
 	 * Gets the "input" ranges mapped to a given "output" range.
@@ -146,14 +309,37 @@ public class RangeMapping
 	 */
 	/*@ pure non_null @*/ public List<Range> invert(int start, int end)
 	{
-		return invert(new Range(start, end));
+		return trackToInput(new Range(start, end));
+	}
+	
+	/**
+	 * Gets the "input" ranges mapped to the whole "output" range.
+	 * @return The list of ranges to which the whole output is mapped
+	 */
+	/*@ pure non_null @*/ protected List<RangePair> invertMapping(Range r)
+	{
+		List<RangePair> ranges = new ArrayList<RangePair>();
+		if (r == null)
+		{
+			return ranges;
+		}
+		for (RangePair rp : m_mapping)
+		{
+			if (rp.getTo().overlaps(r))
+			{
+				Range i_r = rp.trackToInput(r);
+				RangePair new_rp = new RangePair(i_r, rp.getTo().intersect(r));
+				ranges.add(new_rp);
+			}
+		}
+		return ranges;
 	}
 
 	/**
 	 * Gets the "input" ranges mapped to the whole "output" range.
 	 * @return The list of ranges to which the whole output is mapped
 	 */
-	/*@ pure non_null @*/ public List<Range> invert()
+	/*@ pure non_null @*/ public List<Range> trackToInput()
 	{
 		List<Range> ranges = new ArrayList<Range>();
 		for (RangePair rp : m_mapping)
@@ -176,6 +362,32 @@ public class RangeMapping
 		}
 		return ranges;
 	}
+	
+	/**
+	 * Attempts to simplify the list of range pairs in this mapping by merging
+	 * adjacent entries. This amounts to calling {@link #mergeRight(int)}
+	 * successively on each element of the list, except the last one.
+	 */
+	public void simplify()
+	{
+		// No change made to the mapping since last call
+		if (!m_changed)
+		{
+			return;
+		}
+		Collections.sort(m_mapping);
+		int position = 0;
+		while (position < m_mapping.size() - 1)
+		{
+			// If mergeRight returns true, the size of m_mapping is decremented by 1,
+			// otherwise nothing has changed and we move to the next element
+			if (!mergeRight(position))
+			{
+				position++;
+			}
+		}
+		m_changed = false;
+	}
 
 	/**
 	 * Attempts to merge a range pair at a given position in the list to its two
@@ -194,6 +406,25 @@ public class RangeMapping
 			return;
 		}
 		// Check if merge left
+		if (mergeLeft(position))
+		{
+			position--;
+		}
+		// Check if merge right
+		mergeRight(position);
+		m_changed = false;
+	}
+	
+	/**
+	 * Attempts to merge a range pair at a given position to its left neighbor,
+	 * if it exists.
+	 * @param position The position of the range pair to examine
+	 * @return <tt>true</tt> if merging was possible, <tt>false</tt> otherwise
+	 * @see #merge(int)
+	 */
+	protected boolean mergeLeft(int position)
+	{
+		boolean merged = false;
 		if (position > 0)
 		{
 			RangePair rp_left = m_mapping.get(position - 1);
@@ -205,10 +436,22 @@ public class RangeMapping
 				m_mapping.remove(position);
 				m_mapping.remove(position - 1);
 				m_mapping.add(position - 1, new_rp);
-				position--;
+				merged = true;
 			}
 		}
-		// Check if merge right
+		return merged;
+	}
+	
+	/**
+	 * Attempts to merge a range pair at a given position to its right neighbor,
+	 * if it exists.
+	 * @param position The position of the range pair to examine
+	 * @return <tt>true</tt> if merging was possible, <tt>false</tt> otherwise
+	 * @see #merge(int)
+	 */
+	protected boolean mergeRight(int position)
+	{
+		boolean merged = false;
 		if (position < m_mapping.size() - 1)
 		{
 			RangePair rp_current = m_mapping.get(position);
@@ -220,8 +463,47 @@ public class RangeMapping
 				m_mapping.remove(position + 1);
 				m_mapping.remove(position);
 				m_mapping.add(position, new_rp);
+				merged = true;
 			}
 		}
+		return merged;
+	}
+	
+	/**
+	 * Adds the range pairs of another range mapping to the current one,
+	 * optionally shifting their intervals by a fixed offset.
+	 * @param m The other range mapping 
+	 * @param from_offset The offset to apply to the interval of the "from"
+	 * part of each range pair
+	 * @param to_offset The offset to apply to the interval of the "to"
+	 * part of each range pair
+	 * @return This range mapping
+	 */
+	/*@ non_null @*/ public RangeMapping uniteWith(/*@ non_null @*/ RangeMapping m, int from_offset, int to_offset)
+	{
+		for (RangePair rp : m.m_mapping)
+		{
+			RangePair new_rp = new RangePair(rp.getFrom().shift(from_offset), rp.getTo().shift(to_offset));
+			m_mapping.add(new_rp);
+		}
+		m_changed = true;
+		simplify();
+		return this;
+	}
+	
+	/**
+	 * Produces a range mapping where the to/from pairs of each association
+	 * are flipped.
+	 * @return The new range mapping
+	 */
+	/*@ non_null @*/ public RangeMapping reverse()
+	{
+		RangeMapping rm = new RangeMapping();
+		for (RangePair rp : m_mapping)
+		{
+			rm.add(new RangePair(rp.getTo(), rp.getFrom()));
+		}
+		return rm;
 	}
 	
 	@Override
@@ -255,7 +537,7 @@ public class RangeMapping
 	/**
 	 * Association between two ranges.
 	 */
-	protected static class RangePair implements Comparable<RangePair>
+	public static class RangePair implements Comparable<RangePair>
 	{
 		/**
 		 * The first range.
@@ -315,7 +597,7 @@ public class RangeMapping
 		 * @param r The second range
 		 * @return The portion of the first range
 		 */
-		/*@ null @*/ public Range invert(/*@ null @*/ Range r)
+		/*@ null @*/ public Range trackToInput(/*@ null @*/ Range r)
 		{
 			if (r == null)
 			{
@@ -331,6 +613,30 @@ public class RangeMapping
 				return null;
 			}
 			return out_portion.shift(m_from.getStart() - m_to.getStart());
+		}
+		
+		/**
+		 * Gets the portion of the second range corresponding to a portion of the
+		 * first range.
+		 * @param r The first range
+		 * @return The portion of the second range
+		 */
+		/*@ null @*/ public Range trackToOutput(/*@ null @*/ Range r)
+		{
+			if (r == null)
+			{
+				return null;
+			}
+			if (!isBijective())
+			{
+				return m_to;
+			}
+			Range in_portion = m_from.intersect(r);
+			if (in_portion == null)
+			{
+				return null;
+			}
+			return in_portion.shift(m_to.getStart() - m_from.getStart());
 		}
 
 		/**

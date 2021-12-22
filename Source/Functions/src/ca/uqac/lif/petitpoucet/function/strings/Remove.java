@@ -18,17 +18,17 @@
 package ca.uqac.lif.petitpoucet.function.strings;
 
 /**
- * Extracts a substring out of an input string, based on a start and an
- * end index.
+ * Removes a substring from an input string, based on a start and an
+ * end index. This function can be seen as the opposite of {@link Substring}.
  */
-public class Substring extends RangeStringMappingFunction
-{
+public class Remove extends RangeStringMappingFunction
+{	
 	/**
 	 * Creates a new instance of the function.
 	 * @param start The start index of the range
 	 * @param end The end index of the range
 	 */
-	public Substring(int start, int end)
+	public Remove(int start, int end)
 	{
 		super(start, end);
 	}
@@ -36,14 +36,25 @@ public class Substring extends RangeStringMappingFunction
 	@Override
 	protected String applyOnRange(String s, int start, int end)
 	{
-		m_mapping.add(new Range(start, end - 1), new Range(0, end - start - 1));
-		return s.substring(start, end);
+		StringBuilder out = new StringBuilder();
+		if (start > 0)
+		{
+			m_mapping.add(new Range(0, start - 1), new Range(0, start - 1));
+			out.append(s.substring(0, start));
+		}
+		if (end < s.length())
+		{
+			int remaining = s.length() - end - 1;
+			m_mapping.add(new Range(end, end + remaining), new Range(start, start + remaining));
+			out.append(s.substring(end));
+		}
+		return out.toString();
 	}
 	
 	@Override
-	public Substring duplicate(boolean with_state)
+	public Remove duplicate(boolean with_state)
 	{
-		Substring r = new Substring(m_start, m_end);
+		Remove r = new Remove(m_start, m_end);
 		copyInto(r, with_state);
 		return r;
 	}
@@ -51,6 +62,6 @@ public class Substring extends RangeStringMappingFunction
 	@Override
 	public String toString()
 	{
-		return "Substring " + m_start + "-" + m_end;
+		return "Remove " + m_start + "-" + m_end;
 	}
 }

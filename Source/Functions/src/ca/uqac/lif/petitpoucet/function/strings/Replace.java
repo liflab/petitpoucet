@@ -103,7 +103,14 @@ public class Replace extends StringMappingFunction
 				output.append(replacement);
 				out_len += replacement.length();
 			}
-			pos = index + matched.length();
+			if (matched.length() == 0)
+			{
+				pos = index + 1;
+			}
+			else
+			{
+				pos = index + matched.length();
+			}
 		}
 		if (pos < input.length())
 		{
