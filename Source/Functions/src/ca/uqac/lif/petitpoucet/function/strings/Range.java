@@ -75,7 +75,7 @@ public class Range implements Part, Comparable<Range>
 	 */
 	/*@ pure @*/ public int length()
 	{
-		return m_endIndex - m_startIndex;
+		return m_endIndex - m_startIndex + 1;
 	}
 	
 	/**

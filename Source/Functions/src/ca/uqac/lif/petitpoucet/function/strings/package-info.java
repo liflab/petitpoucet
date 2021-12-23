@@ -17,6 +17,19 @@
  */
 
 /**
- * String manipulation functions.
+ * String manipulation functions. For these functions, lineage is the
+ * relationship between characters or ranges of characters of an input string,
+ * and characters or ranges of characters of an output string. The operations
+ * provided in this package each apply a basic transformation on a string
+ * (e.g.: extracting a substring, replacing a regex pattern by another one,
+ * etc.), and keep track of where the parts of the input string end up in
+ * the output. Most of these functions do so by descending from
+ * {@link StringMappingFunction}; they simply add entries to a 
+ * {@link RangeMapping} when they perform their computation. The explanation
+ * of the output in terms of the input (and vice versa) is taken care of
+ * by {@link StringMappingFunction} based on the contents of this mapping.
+ * 
+ * @author Sylvain Hallé
+ * @since 2.0
  */
 package ca.uqac.lif.petitpoucet.function.strings;

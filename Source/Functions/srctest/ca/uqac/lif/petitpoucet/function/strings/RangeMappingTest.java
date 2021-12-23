@@ -19,6 +19,7 @@ package ca.uqac.lif.petitpoucet.function.strings;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -301,6 +302,20 @@ public class RangeMappingTest
 				new RangePair(new Range(10, 11), new Range(20, 23)),
 				new RangePair(new Range(17, 19), new Range(37, 39))				
 				), rp);
+	}
+	
+	@Test
+	public void testFragment1()
+	{
+		List<Range> list1 = Arrays.asList(new Range(0, 2), new Range(3, 7));
+		List<Range> list2 = Arrays.asList(new Range(0, 5), new Range(6, 6), new Range(7, 10));
+		List<Range> result = RangeMapping.fragment(list1, list2);
+		assertEquals(5, result.size());
+		assertEquals(new Range(0, 2), result.get(0));
+		assertEquals(new Range(3, 5), result.get(1));
+		assertEquals(new Range(6, 6), result.get(2));
+		assertEquals(new Range(7, 7), result.get(3));
+		assertEquals(new Range(8, 10), result.get(4));
 	}
 	
 	@Test

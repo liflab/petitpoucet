@@ -24,7 +24,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A set of associations between input and output ranges.
+ * A set of associations between elements of two ordered lists, called the
+ * "input" and the "output". A range mapping stores these associations in
+ * the form of pairs of {@link Range}s. It provides methods to retrieve the
+ * input range(s) associated to a given output range, and vice versa. Thus,
+ * if <i>R</i> is a set of ranges, a range mapping can be seen as a pair of
+ * functions <i>f</i><sup>&rarr;</sup> : <i>R</i>&rarr;2<sup><i>R</i></sup>
+ * and <i>f</i><sup>&larr;</sup> : <i>R</i>&rarr;2<sup><i>R</i></sup>, one
+ * associating input ranges to sets of output ranges, and the other
+ * associating output ranges to sets of input ranges.
  */
 public class RangeMapping
 {
@@ -40,27 +48,80 @@ public class RangeMapping
 	protected boolean m_changed;
 	
 	/**
-	 * Composes two range mappings.
+	 * Composes two range mappings. If a rang
 	 * @param rm1 The first range mapping
 	 * @param rm2 The second range mapping
 	 * @return The composition of the two mappings
 	 */
 	/*@ non_null @*/ public static RangeMapping compose(/*@ non_null @*/ RangeMapping rm1, /*@ non_null @*/ RangeMapping rm2)
 	{
+		List<Range> rm1_to = rm1.getToRanges();
+		List<Range> rm2_from = rm2.getFromRanges();
+		List<Range> fragmented = fragment(rm1_to, rm2_from);
 		RangeMapping rm_out = new RangeMapping();
-		for (RangePair rp : rm2.m_mapping)
+		for (Range r : fragmented)
 		{
-			List<RangePair> pairs = rm1.invertMapping(rp.getFrom());
-			for (RangePair p_rp : pairs)
+			List<Range> ranges_up = rm1.trackToInput(r);
+			List<Range> ranges_down = rm2.trackToOutput(r);
+			if (!(ranges_up.isEmpty() && ranges_down.isEmpty()))
 			{
-				//RangePair new_rp = new RangePair(p_rp.get)
+				rm_out.add(new RangePair(ranges_up.get(0), ranges_down.get(0)));
 			}
-			rm_out.addAll(pairs);
 		}
 		rm_out.simplify();
 		return rm_out;
 	}
-
+	
+	/**
+	 * Merges the bounds of two lists of ranges and creates a new list of ranges
+	 * out of it. The list is such that every range contains positions coming
+	 * from the same range in both lists. This has for effect of "fragmenting"
+	 * the original range along all the boundaries mentioned in ranges of either
+	 * list.
+	 * <p>
+	 * For example, if the first list of ranges is [0,2], [3,7] and the second
+	 * list is [0,5], [6,6], [7,10], the expected result is the list
+	 * [0,2], [3,5], [6,6], [7,7], [8,10].
+	 * @param list1 The first list of ranges; assumed to be sorted
+	 * @param list2 The second list of ranges; assumed to be sorted
+	 * @return The list of ranges resulting from the merging described above
+	 */
+	/*@ non_null @*/ static List<Range> fragment(List<Range> list1, List<Range> list2)
+	{
+		List<Integer> indices = new ArrayList<Integer>();
+		for (Range r : list1)
+		{
+			int start = r.getStart(), end = r.getEnd() + 1;
+			if (!indices.contains(start))
+			{
+				indices.add(start);
+			}
+			if (!indices.contains(end))
+			{
+				indices.add(end);
+			}
+		}
+		for (Range r : list2)
+		{
+			int start = r.getStart(), end = r.getEnd() + 1;
+			if (!indices.contains(start))
+			{
+				indices.add(start);
+			}
+			if (!indices.contains(end))
+			{
+				indices.add(end);
+			}
+		}
+		Collections.sort(indices);
+		List<Range> out_list = new ArrayList<Range>(indices.size());
+		for (int i = 0; i < indices.size() - 1; i++)
+		{
+			out_list.add(new Range(indices.get(i), indices.get(i + 1) - 1));
+		}
+		return out_list;
+	}
+	
 	/**
 	 * Creates a new empty range mapping.
 	 */
@@ -140,7 +201,7 @@ public class RangeMapping
 		merge(left_index + 1);
 		return this;
 	}
-	
+		
 	/**
 	 * Adds multiple range pairs to the mapping.
 	 * @param new_rps The range pairs to add
@@ -307,7 +368,7 @@ public class RangeMapping
 	 * @param end The end position
 	 * @return The list of ranges to which this output is mapped
 	 */
-	/*@ pure non_null @*/ public List<Range> invert(int start, int end)
+	/*@ pure non_null @*/ public List<Range> trackToInput(int start, int end)
 	{
 		return trackToInput(new Range(start, end));
 	}
