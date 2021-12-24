@@ -1,6 +1,13 @@
 Petit Poucet: a general purpose explainability library
 ======================================================
 
+*Explainability* is the process of linking part of the inputs given to a
+calculation to its output, in such a way that the selected inputs somehow
+"cause" the result. *Petit Poucet* is a fully-functioning Java library allowing
+users to create their own complex functions by composing built-in primitives,
+and that can automatically produce an explanation for any result computed by
+these functions on a given input.
+
 The theory behind Petit Poucet, along with a short description of the library,
 have been published in this research paper:
 
@@ -8,6 +15,28 @@ have been published in this research paper:
   *Proc. 33rd Intl. Conf. on Computer Aided Verification (CAV 2021)*. Springer:
   Lecture Notes in Computer Science 12760, 500-523. DOI:
   [10.1007/978-3-030-81688-9_24](https://doi.org/10.1007/978-3-030-81688-9_24)
+
+An example
+----------
+
+(This is just one example. Go to the [API
+documentation](https://liflab.github.io/petitpoucet/javadoc/) to find many other
+commented examples, or look directly at their [source
+code](https://github.com/liflab/petitpoucet/tree/master/Source/Examples/src/examples)
+in the project's repository.)
+
+Computations are represented in Petit Poucet by the composition of *functions* transforming an input into an output, in such a way that parts of the output can be associated to parts of the input. Each function represents an elementary transformation, and complex calculations are achieved by composing or "piping" these functions together to form function *circuits*.
+
+As an example, consider the following text file:
+
+	the,2,penny
+	fool,7,lane
+	on,18,come
+	the,2,together
+	hill,-80,i
+	strawberry,7,am
+	fields,1,the
+	forever,10,walrus
 
 Building Petit Poucet
 ---------------------
@@ -26,16 +55,20 @@ using Git:
 
 ### Project structure
 
-The 
+Petit Poucet is structured with a small *Core* library containing only the
+essential classes and interfaces that are required in any project. In the
+repository, this corresponds to the `Source/Core` folder, which compiles into
+the `petitpoucet-core.jar` file.
+
+Extensions specific to some use cases are located in the remaining folders
+inside `Source`. For instance, the `Functions` folder compiles into a library
+named `petitpoucet-functions.jar`, and, as its name implies, defines elementary
+functions for arithmetic, vector and string manipulation.
 
 ### Compiling
 
-Open a command prompt to the `Source` folder of the project. First, download
-the dependencies by typing:
-
-    ant download-deps
-
-Then, compile the sources by simply typing:
+Open a command prompt to the `Source` folder of the project. Then, compile the
+sources by simply typing:
 
     ant
 
@@ -77,9 +110,23 @@ Petit Poucet is used as a library in a few projects, including the following:
   retraced all the way up to the individual values that contributed to its
   creation.
 
-- [The Programmatic Spreadsheet](https://github.com/liflab/programmatic-spreadsheet),
-  a library that allows users to create and manipulate spreadsheet-like data
-  structures (still under construction).
+- [lif-units](https://github.com/liflab/lif-units), a library that manipulates
+  and converts quantities expressed in dimensional units with uncertainty.
+  Operations on these units are descendants of Petit Poucet's arithmetic
+  functions, and hence inherit their explainability features.
+
+- [The Programmatic
+  Spreadsheet](https://github.com/liflab/programmatic-spreadsheet), a library
+  that allows users to create and manipulate spreadsheet-like data structures
+  (still under construction).
+
+Why is it called Petit Poucet?
+------------------------------
+
+"Petit Poucet" translates in English to "Hop-o'-My-Thumb". It is the title of a
+a fairy tale by French writer Charles Perrault where the main character uses
+stones to mark a trail that enables him to successfully lead his lost brothers
+back home.
 
 About the author
 ----------------
@@ -88,4 +135,4 @@ Petit Poucet was written by [Sylvain Hallé](https://leduotang.ca/sylvain), Full
 Professor in the Department of Computer Science and Mathematics at
 [Université du Québec à Chicoutimi](http://www.uqac.ca), Canada.
 
-<!-- :wrap=soft: -->
+<!-- :wrap=soft:maxLineLen=80: -->
