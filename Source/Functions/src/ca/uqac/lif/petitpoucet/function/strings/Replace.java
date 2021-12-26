@@ -27,6 +27,11 @@ import java.util.regex.Pattern;
 public class Replace extends StringMappingFunction
 {
 	/**
+	 * The pattern used to identify capture groups in the replacement string.
+	 */
+	protected static final Pattern s_capturePattern = Pattern.compile("\\$(\\d+)");
+	
+	/**
 	 * The pattern to look for in the string.
 	 */
 	/*@ non_null @*/ protected final String m_from;
@@ -92,16 +97,28 @@ public class Replace extends StringMappingFunction
 				out_len += index - pos;
 			}
 			String matched = mat.group();
-			String replacement = m_to;
-			for (int g = 1; g <= mat.groupCount(); g++)
+			Matcher cg_mat = s_capturePattern.matcher(m_to);
+			int last_pos = 0;
+			while (cg_mat.find())
 			{
-				replacement = replacement.replaceAll("\\$" + g, mat.group(g));
+				int match_start = cg_mat.start();
+				if (match_start > last_pos)
+				{
+					output.append(m_to.substring(last_pos, match_start));
+					m_mapping.add(new Range(mat.start(), mat.start() + mat.group().length() - 1), new Range(out_len, out_len + match_start - last_pos - 1), false);
+					out_len += match_start - last_pos;
+				}
+				int group_nb = Integer.parseInt(cg_mat.group(1));
+				output.append(mat.group(group_nb));
+				m_mapping.add(new Range(mat.start(group_nb), mat.start(group_nb) + mat.group(group_nb).length() - 1), new Range(out_len, out_len + mat.group(group_nb).length() - 1));
+				out_len += mat.group(group_nb).length();
+				last_pos = cg_mat.end();
 			}
-			if (!replacement.isEmpty())
+			if (last_pos < m_to.length())
 			{
-				m_mapping.add(new Range(index, index + matched.length() - 1), new Range(out_len, out_len + replacement.length() - 1));
-				output.append(replacement);
-				out_len += replacement.length();
+				output.append(m_to.substring(last_pos));
+				m_mapping.add(new Range(mat.start(), mat.start() + mat.group().length() - 1), new Range(out_len, out_len + m_to.length() - last_pos - 1), false);
+				out_len += m_to.length() - last_pos;
 			}
 			if (matched.length() == 0)
 			{
@@ -118,6 +135,7 @@ public class Replace extends StringMappingFunction
 			output.append(input.substring(pos));
 			m_mapping.add(new Range(pos, pos + remaining - 1), new Range(out_len, out_len + remaining - 1));
 		}
+		m_mapping.sort();
 		return output.toString();
 	}
 

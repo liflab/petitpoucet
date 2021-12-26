@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import ca.uqac.lif.textidote.as.RemoveLine;
-
 public class RemoveLineTest
 {
 	protected static final String CRLF = System.getProperty("line.separator");

@@ -18,6 +18,7 @@
 package ca.uqac.lif.petitpoucet.function.strings;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +32,24 @@ import ca.uqac.lif.petitpoucet.function.strings.RangeMapping.RangePair;
  */
 public class RangeMappingTest
 {
+	@Test
+	public void testRangePairEquals1()
+	{
+		RangePair rp1 = new RangePair(10, 18, 13, 13, false);
+		RangePair rp2 = new RangePair(10, 18, 13, 13, false);
+		assertTrue(rp1.equals(rp2));
+		assertTrue(rp2.equals(rp1));
+	}
+	
+	@Test
+	public void testRangeMappingEquals1()
+	{
+		RangeMapping rm1 = new RangeMapping().add(new RangePair(10, 18, 13, 13, false));
+		RangeMapping rm2 = new RangeMapping().add(new RangePair(10, 18, 13, 13, false));
+		assertTrue(rm1.equals(rm2));
+		assertTrue(rm2.equals(rm1));
+	}
+	
 	@Test
 	public void testTrackToOutput1()
 	{

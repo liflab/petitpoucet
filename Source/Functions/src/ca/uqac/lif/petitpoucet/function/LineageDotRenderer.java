@@ -35,6 +35,7 @@ import ca.uqac.lif.petitpoucet.AndNode;
 import ca.uqac.lif.petitpoucet.GraphUtilities;
 import ca.uqac.lif.petitpoucet.OrNode;
 import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.Part.All;
 import ca.uqac.lif.petitpoucet.PartNode;
 
 /**
@@ -351,7 +352,16 @@ public class LineageDotRenderer implements Renderer
 		}
 		else
 		{
-			ps.println(m_indent + n_id + " [height=0.25,label=\"" + d.toString() + " of " + o.toString() + "\",fillcolor=\"" + color + "\"];");
+			String message;
+			if (d instanceof All)
+			{
+				message = o.toString();
+			}
+			else
+			{
+				message = d.toString() + " of " + o.toString();
+			}
+			ps.println(m_indent + n_id + " [height=0.25,label=<" + message + ">,fillcolor=\"" + color + "\"];");
 		}
 	}
 

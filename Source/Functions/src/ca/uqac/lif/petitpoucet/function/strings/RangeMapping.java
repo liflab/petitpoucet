@@ -169,6 +169,18 @@ public class RangeMapping
 	{
 		return add(new RangePair(from, to));
 	}
+	
+	/**
+	 * Adds a pair of ranges to the mapping.
+	 * @param from The first range of the pair
+	 * @param to The second range of the pair
+	 * @param bijective Whether the pair is declared as bijective or not
+	 * @return This mapping
+	 */
+	/*@ non_null @*/ public RangeMapping add(Range from, Range to, boolean bijective)
+	{
+		return add(new RangePair(from, to, bijective));
+	}
 
 	/**
 	 * Adds a range pair to the mapping.
@@ -428,15 +440,16 @@ public class RangeMapping
 	 * Attempts to simplify the list of range pairs in this mapping by merging
 	 * adjacent entries. This amounts to calling {@link #mergeRight(int)}
 	 * successively on each element of the list, except the last one.
+	 * @return This mapping
 	 */
-	public void simplify()
+	/*@ non_null @*/ public RangeMapping simplify()
 	{
 		// No change made to the mapping since last call
 		if (!m_changed)
 		{
-			return;
+			return this;
 		}
-		Collections.sort(m_mapping);
+		sort();
 		int position = 0;
 		while (position < m_mapping.size() - 1)
 		{
@@ -448,6 +461,17 @@ public class RangeMapping
 			}
 		}
 		m_changed = false;
+		return this;
+	}
+	
+	/**
+	 * Sorts the range pairs inside this mapping.
+	 * @return This mapping
+	 */
+	/*@ non_null @*/ public RangeMapping sort()
+	{
+		Collections.sort(m_mapping);
+		return this;
 	}
 
 	/**
@@ -609,7 +633,28 @@ public class RangeMapping
 		 * The second range.
 		 */
 		/*@ non_null @*/ protected final Range m_to;
+		
+		/**
+		 * Whether this range pair is intended to be interpreted as a bijection
+		 * between the two ranges. 
+		 */
+		protected final boolean m_isBijective;
 
+		/**
+		 * Creates a new range pair.
+		 * @param from The first range
+		 * @param to The second range
+		 * @param bijective Set to <tt>false</tt> to make the range pair declare
+		 * itself as non-bijective, regardless of the size of its two ranges
+		 */
+		public RangePair(/*@ non_null @*/ Range from, /*@ non_null @*/ Range to, boolean bijective)
+		{
+			super();
+			m_from = from;
+			m_to = to;
+			m_isBijective = bijective;
+		}
+		
 		/**
 		 * Creates a new range pair.
 		 * @param from The first range
@@ -617,9 +662,7 @@ public class RangeMapping
 		 */
 		public RangePair(/*@ non_null @*/ Range from, /*@ non_null @*/ Range to)
 		{
-			super();
-			m_from = from;
-			m_to = to;
+			this(from, to, true);
 		}
 		
 		/**
@@ -632,6 +675,20 @@ public class RangeMapping
 		public RangePair(int from_start, int from_end, int to_start, int to_end)
 		{
 			this(new Range(from_start, from_end), new Range(to_start, to_end));
+		}
+		
+		/**
+		 * Creates a new range pair.
+		 * @param from_start The start index of the first range
+		 * @param from_end The end index of the first range
+		 * @param to_start The start index of the second range
+		 * @param to_end The end index of the second range
+		 * @param bijective Set to <tt>false</tt> to make the range pair declare
+		 * itself as non-bijective, regardless of the size of its two ranges 
+		 */
+		public RangePair(int from_start, int from_end, int to_start, int to_end, boolean bijective)
+		{
+			this(new Range(from_start, from_end), new Range(to_start, to_end), bijective);
 		}
 
 		/**
@@ -712,13 +769,14 @@ public class RangeMapping
 		
 		/**
 		 * Determines if a pair of ranges is bijective. It is so when both its
-		 * ranges have the same length. In such a case, each element of a range can
-		 * be mapped to a unique element of the other.
+		 * ranges have the same length <em>and</em> the pair has not been declared
+		 * non-bijective at construction. In such a case, each element of a range
+		 * can be mapped to a unique element of the other.
 		 * @return <tt>true</tt> if the pair is bijective, <tt>false</tt> otherwise
 		 */
 		/*@ pure @*/ public boolean isBijective()
 		{
-			return m_from.length() == m_to.length();
+			return m_isBijective && m_from.length() == m_to.length();
 		}
 
 		@Override
@@ -734,7 +792,15 @@ public class RangeMapping
 			{
 				return -1;
 			}
-			return 0;
+			if (m_isBijective == p.m_isBijective)
+			{
+				return 0;
+			}
+			if (m_isBijective)
+			{
+				return -1;
+			}
+			return 1;
 		}
 		
 		@Override
@@ -745,7 +811,7 @@ public class RangeMapping
 				return false;
 			}
 			RangePair rp = (RangePair) o;
-			return m_from.equals(rp.m_from) && m_to.equals(rp.m_to);
+			return m_from.equals(rp.m_from) && m_to.equals(rp.m_to) && isBijective() == rp.isBijective();
 		}
 		
 		@Override
@@ -757,7 +823,7 @@ public class RangeMapping
 		@Override
 		public String toString()
 		{
-			return m_from + "->" + m_to;
+			return m_from + (isBijective() ? "\u2194" : ":") + m_to;
 		}
 	}
 }

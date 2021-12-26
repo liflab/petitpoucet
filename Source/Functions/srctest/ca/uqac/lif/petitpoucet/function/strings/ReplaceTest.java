@@ -57,11 +57,12 @@ public class ReplaceTest
 		String input = "abcfoog";
 		String output = (String) f.evaluate(input)[0];
 		assertEquals("abcbarg", output);
-		PartNode root = f.getExplanation(NthOutput.FIRST);
-		assertEquals(1, root.getOutputLinks(0).size());
-		PartNode child = (PartNode) root.getOutputLinks(0).get(0).getNode();
-		Part p = child.getPart();
-		assertEquals(NthInput.FIRST, p);
+		assertEquals(new RangeMapping(
+				new RangePair(0, 2, 0, 2),
+				new RangePair(3, 5, 3, 5, false),
+				new RangePair(6, 6, 6, 6)
+				), 
+				f.getMapping());
 	}
 	
 	@Test
@@ -115,7 +116,7 @@ public class ReplaceTest
 		assertEquals("abcbarbazg", output);
 		assertEquals(new RangeMapping(
 				new RangePair(0, 2, 0, 2),
-				new RangePair(3, 5, 3, 8),
+				new RangePair(3, 5, 3, 8, false),
 				new RangePair(6, 6, 9, 9)
 				), f.getMapping());
 	}
@@ -141,7 +142,9 @@ public class ReplaceTest
 		String output = (String) f.evaluate(input)[0];
 		assertEquals("ZabcZfoog", output);
 		assertEquals(new RangeMapping(
-				new RangePair(0, 2, 0, 4),
+				new RangePair(0, 2, 0, 0, false),
+				new RangePair(0, 2, 1, 3),
+				new RangePair(0, 2, 4, 4, false),
 				new RangePair(3, 6, 5, 8)
 				), f.getMapping());
 	}
@@ -156,5 +159,22 @@ public class ReplaceTest
 		assertEquals(new RangeMapping(
 				new RangePair(3 + CRLF_S, 5 + CRLF_S, 0, 2)
 				), f.getMapping());
+	}
+	
+	@Test
+	public void testMapping5()
+	{
+		Replace f = new Replace("(brown|lazy) (fox|dog)", "$2 $1");
+		String input  = "The quick brown fox.";
+		String output = (String) f.evaluate(input)[0];
+		assertEquals("The quick fox brown.", output);
+		RangeMapping expected = new RangeMapping(
+				new RangePair(0, 9, 0, 9), // OK
+				new RangePair(16, 18, 10, 12), // 16-24 au lieu de 16-18
+				new RangePair(10, 18, 13, 13, true), // OK
+				new RangePair(10, 14, 14, 18), // OK
+				new RangePair(19, 19, 19, 19) // OK
+				).sort();
+		assertEquals(expected, f.getMapping());
 	}
 }

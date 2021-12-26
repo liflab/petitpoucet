@@ -47,6 +47,10 @@ public class Range implements Part, Comparable<Range>
 	public Range(int start, int end)
 	{
 		super();
+		if (start > end)
+		{
+			throw new IndexOutOfBoundsException("End index smaller than start index");
+		}
 		m_startIndex = start;
 		m_endIndex = end;
 	}
