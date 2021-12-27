@@ -38,6 +38,12 @@ public class ComposedPart implements Part
 	
 	/**
 	 * Creates a flat composed designator out of a list of designators.
+	 * The head of the designator is the last of the list; that is, a list of
+	 * parts &pi;<sub>1</sub>, &pi;<sub>2</sub>, &pi;<sub>3</sub> is to be
+	 * interpreted as "part &pi;<sub>1</sub> of part &pi;<sub>2</sub> of
+	 * part &pi;<sub>3</sub>"; the "largest" part is &pi;<sub>3</sub>, and
+	 * &pi;<sub>1</sub> &compfn; &pi;<sub>2</sub> are further refinements of
+	 * that part. 
 	 * @param designators The list of designators
 	 * @return A new designator
 	 */
@@ -198,6 +204,18 @@ public class ComposedPart implements Part
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Extracts a part from a sub-list of the composed part.
+	 * @param start_index The start index
+	 * @param end_index The end index
+	 * @return The part corresponding to this interval
+	 */
+	public Part subPart(int start_index, int end_index)
+	{
+		List<Part> sub_parts = m_designators.subList(start_index, end_index);
+		return ComposedPart.compose(sub_parts);
 	}
 	
 	/**

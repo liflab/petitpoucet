@@ -67,4 +67,9 @@ public class InsertAt extends StringMappingFunction
 		return out.toString();
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Insert " + m_toInsert + " at " + m_index;
+	}
 }

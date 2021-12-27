@@ -109,9 +109,13 @@ public class Replace extends StringMappingFunction
 					out_len += match_start - last_pos;
 				}
 				int group_nb = Integer.parseInt(cg_mat.group(1));
-				output.append(mat.group(group_nb));
-				m_mapping.add(new Range(mat.start(group_nb), mat.start(group_nb) + mat.group(group_nb).length() - 1), new Range(out_len, out_len + mat.group(group_nb).length() - 1));
-				out_len += mat.group(group_nb).length();
+				if (!mat.group(group_nb).isEmpty())
+				{
+					output.append(mat.group(group_nb));
+					int output_end = out_len + mat.group(group_nb).length() - 1;
+					m_mapping.add(new Range(mat.start(group_nb), mat.start(group_nb) + mat.group(group_nb).length() - 1), new Range(out_len, output_end));
+					out_len += mat.group(group_nb).length();					
+				}
 				last_pos = cg_mat.end();
 			}
 			if (last_pos < m_to.length())

@@ -218,11 +218,15 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 				// No input mentioned
 				continue;
 			}
-			int circuit_input = getNestedInput((Node) pn.getSubject(), mentioned_input);
-			if (circuit_input >= 0)
+			Object o_subject = pn.getSubject();
+			if (o_subject instanceof Node)
 			{
-				PartNode leaf = factory.getPartNode(NthInput.replaceInBy(pn.getPart(), new NthInput(circuit_input)), this);
-				NodeConnector.connect(sub_node, i, leaf, 0);
+				int circuit_input = getNestedInput((Node) pn.getSubject(), mentioned_input);
+				if (circuit_input >= 0)
+				{
+					PartNode leaf = factory.getPartNode(NthInput.replaceInBy(pn.getPart(), new NthInput(circuit_input)), this);
+					NodeConnector.connect(sub_node, i, leaf, 0);
+				}				
 			}
 		}
 		return root;
@@ -278,7 +282,12 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 					continue;
 				}
 				// This node mentions the input of a function; what is this input connected to?
-				Node current_subject = (Node) pn.getSubject();
+				Object o_subject = pn.getSubject();
+				if (!(o_subject instanceof Node))
+				{
+					continue;
+				}
+				Node current_subject = (Node) o_subject;
 				Pin<? extends Node> pin = getPin(current_subject.getInputLinks(num_input));
 				if (pin == null)
 				{

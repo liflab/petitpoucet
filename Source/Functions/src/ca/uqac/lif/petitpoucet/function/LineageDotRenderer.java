@@ -385,10 +385,15 @@ public class LineageDotRenderer implements Renderer
 		{
 			new_prefix = m_prefix + "C" + n_id.replace("cluster_", "");
 		}
-		LineageDotRenderer sub_renderer = new LineageDotRenderer(inner_start, new_prefix, m_nestingLevel + 1, m_noCaptions);
+		LineageDotRenderer sub_renderer = getSubRenderer(inner_start, new_prefix, m_nestingLevel + 1, m_noCaptions);
 		sub_renderer.render(ps);
 		m_nodeIds.putAll(sub_renderer.m_nodeIds);
 		return "C" + n_id + "0";
+	}
+	
+	protected LineageDotRenderer getSubRenderer(Node inner_start, String new_prefix, int nesting_level, boolean captions)
+	{
+		return new LineageDotRenderer(inner_start, new_prefix, nesting_level, captions);
 	}
 
 	/**

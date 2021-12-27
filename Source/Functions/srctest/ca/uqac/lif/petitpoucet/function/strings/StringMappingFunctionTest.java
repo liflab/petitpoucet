@@ -17,7 +17,32 @@
  */
 package ca.uqac.lif.petitpoucet.function.strings;
 
+import static ca.uqac.lif.petitpoucet.ComposedPart.compose;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import ca.uqac.lif.dag.Node;
+import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.PartNode;
+import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.function.strings.RangeMapping.RangePair;
+
 public class StringMappingFunctionTest
 {
-
+	@Test
+	public void testExplanation1()
+	{
+		RangeMapping rm = new RangeMapping(
+				new RangePair(0, 34, 0, 34),
+				new RangePair(35, 43, 39, 47));
+		StringMappingFunction smf = new StringMappingFunction(rm, 44, 48);
+		PartNode root = smf.getExplanation(compose(new Range(35, 37), NthOutput.FIRST));
+		assertEquals(1, root.getOutputLinks(0).size());
+		Node n_leaf = root.getOutputLinks(0).get(0).getNode();
+		assertTrue(n_leaf instanceof PartNode);
+		PartNode leaf = (PartNode) n_leaf;
+		assertTrue(leaf.getPart() instanceof Part.Nothing);
+	}
 }

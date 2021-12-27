@@ -180,6 +180,11 @@ public class StringMappingFunction extends AtomicFunction
 				and.addChild(child);
 			}
 		}
+		else if (exps.isEmpty())
+		{
+			PartNode child = factory.getPartNode(ComposedPart.compose(new_p, Part.nothing), this);
+			root.addChild(child);
+		}
 		return root;
 	}
 	
@@ -234,6 +239,11 @@ public class StringMappingFunction extends AtomicFunction
 				PartNode child = factory.getPartNode(head_p, this);
 				and.addChild(child);
 			}
+		}
+		else if (exps.isEmpty())
+		{
+			PartNode child = factory.getPartNode(ComposedPart.compose(Part.nothing, new_p), this);
+			root.addChild(child);
 		}
 		return root;
 	}

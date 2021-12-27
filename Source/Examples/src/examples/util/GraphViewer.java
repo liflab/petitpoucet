@@ -168,7 +168,8 @@ public class GraphViewer
 			panel.add(m_label);
 			ImageIcon icon = new ImageIcon(image_bytes); 
 			m_label.setIcon(icon);
-			setSize(icon.getIconWidth(), icon.getIconHeight());
+			//setSize(icon.getIconWidth(), icon.getIconHeight());
+			pack();
 		}
 		
 		/**

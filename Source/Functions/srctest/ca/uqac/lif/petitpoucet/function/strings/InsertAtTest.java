@@ -67,4 +67,15 @@ public class InsertAtTest
 		assertEquals(new RangeMapping(
 				new RangePair(0, 4, 0, 4)), f.getMapping());
 	}
+	
+	@Test
+	public void test5()
+	{
+		InsertAt f = new InsertAt("big ", 35);
+		String out = (String) f.evaluate("The quick brown fox jumps over the lazy dog.")[0];
+		assertEquals("The quick brown fox jumps over the big lazy dog.", out);
+		assertEquals(new RangeMapping(
+				new RangePair(0, 34, 0, 34),
+				new RangePair(35, 43, 39, 47)), f.getMapping());
+	}
 }

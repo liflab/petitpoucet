@@ -22,6 +22,7 @@ import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
+import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.strings.Range;
 
 /**
@@ -42,7 +43,7 @@ public class StringExplainer
 	{
 		display(root, in, out, true);
 	}
-	
+
 	/**
 	 * Displays an explanation graph.
 	 * @param root The root of the graph
@@ -73,12 +74,17 @@ public class StringExplainer
 	{
 		if (n instanceof PartNode && n.getOutputLinks(0).isEmpty())
 		{
+			// Leaf
+
 			PartNode pn = (PartNode) n;
 			Part p = pn.getPart();
-			Range r = Range.mentionedRange(p);
-			if (r != null)
+			if (NthInput.mentionedInput(p) >= 0)
 			{
-				pn.addChild(f.getPartNode(Part.all, highlight(r, in, all)));
+				Range r = Range.mentionedRange(p);
+				if (r != null)
+				{
+					pn.addChild(f.getPartNode(Part.all, highlight(r, in, all)));
+				}
 			}
 		}
 		else

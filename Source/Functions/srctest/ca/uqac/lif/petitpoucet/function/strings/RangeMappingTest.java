@@ -184,6 +184,16 @@ public class RangeMappingTest
 		r = inversion.get(0);
 		assertEquals(new Range(0, 10), r);
 	}
+	
+	@Test
+	public void testTrackToInput9()
+	{
+		RangeMapping rp = new RangeMapping(
+				new RangePair(0, 34, 0, 34),
+				new RangePair(35, 43, 39, 47));
+		List<Range> inversion = rp.trackToInput(new Range(35, 37));
+		assertEquals(0, inversion.size());
+	}
 
 	@Test
 	public void testTrackToInputNonBijective1()

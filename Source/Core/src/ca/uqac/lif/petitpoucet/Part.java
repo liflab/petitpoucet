@@ -17,6 +17,9 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * An object that designates a part of another object
  * 
@@ -251,6 +254,48 @@ public interface Part
 		public boolean equals(Object o)
 		{
 			return o != null && o instanceof Self;
+		}
+		
+		/**
+		 * Given an arbitrary designator, replaces the first occurrence of
+		 * {@link Self} by another part.
+		 * @param from The original part
+		 * @param to The part to replace it with
+		 * @return The new designator, or the original object if it does
+		 * not contain {@code d}
+		 */
+		/*@ non_null @*/ public static Part replaceSelfBy(/*@ non_null @*/ Part from, Part to)
+		{
+			if (from instanceof Self)
+			{
+				return to;
+			}
+			if (from instanceof ComposedPart)
+			{
+				ComposedPart cd = (ComposedPart) from;
+				List<Part> desigs = new ArrayList<Part>();
+				boolean replaced = false;
+				for (int i = 0 ; i < cd.size(); i++)
+				{
+					Part in_d = cd.get(i);
+					if (in_d instanceof Self && !replaced)
+					{
+						desigs.add(to);
+						replaced = true;
+					}
+					else
+					{
+						desigs.add(in_d);
+					}
+				}
+				if (!replaced)
+				{
+					// Return input object if no replacement was done
+					return from;
+				}
+				return new ComposedPart(desigs);
+			}
+			return from;
 		}
 	}
 }
