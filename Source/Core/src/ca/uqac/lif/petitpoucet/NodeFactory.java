@@ -125,6 +125,18 @@ public class NodeFactory
 	}
 	
 	/**
+	 * Asks the factory whether a node for a given part of an object already
+	 * exists.
+	 * @param p The part
+	 * @param o The object
+	 * @return <tt>true</tt> if a node already exists, <tt>false</tt> otherwise
+	 */
+	public boolean hasNodeFor(Part p, Object o)
+	{
+		return m_partNodes.containsKey(new ObjectPart(p, o));
+	}
+	
+	/**
 	 * Class that uniquely defines an object part and a subject. Instances of
 	 * this class are used as keys by the node factory to uniquely identify
 	 * {@link PartNode}s.

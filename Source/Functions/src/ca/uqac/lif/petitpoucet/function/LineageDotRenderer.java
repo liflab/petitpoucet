@@ -314,11 +314,11 @@ public class LineageDotRenderer implements Renderer
 		m_nodeIds.put(current, n_id);
 		if (current instanceof OrNode)
 		{
-			ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∨</b></font>>,width=.25,fixedsize=\"true\",fillcolor=\"red\",textcolor=\"white\"];");
+			renderOrNode(ps, (OrNode) current, n_id);
 		}
 		else if (current instanceof AndNode)
 		{
-			ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∧</b></font>>,width=.25,fixedsize=\"true\",fillcolor=\"blue\",textcolor=\"white\"];");
+			renderAndNode(ps, (AndNode) current, n_id);
 		}
 		else if (current instanceof PartNode)
 		{
@@ -332,6 +332,16 @@ public class LineageDotRenderer implements Renderer
 		{
 			ps.println(m_indent + n_id + " [label=\"?\"];");
 		}
+	}
+	
+	protected void renderAndNode(PrintStream ps, AndNode node, String n_id)
+	{
+		ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∧</b></font>>,width=.25,fixedsize=\"true\",fillcolor=\"blue\",textcolor=\"white\"];");
+	}
+	
+	protected void renderOrNode(PrintStream ps, OrNode node, String n_id)
+	{
+		ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∨</b></font>>,width=.25,fixedsize=\"true\",fillcolor=\"red\",textcolor=\"white\"];");
 	}
 
 	/**
