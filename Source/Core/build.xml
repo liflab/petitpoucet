@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
     AntRun, a general-purpose Ant build script
-    Copyright (C) 2015-2021  Sylvain Hallé
+    Copyright (C) 2015-2022  Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
   xmlns:jacoco="antlib:org.jacoco.ant">
   
   <!-- The build script's version number. Do not edit! -->
-  <property name="antrun.version" value="1.7.2"/>
+  <property name="antrun.version" value="1.7.3"/>
   
   <!-- Load project properties from XML file -->
   <xmlproperty file="config.xml"/>
@@ -94,8 +94,11 @@
   <!-- Base name of the jar to produce (used by the "zip" target) -->
   <basename property="build.jar.basename" file="${build.jar.filename}" suffix=".jar"/>
   
-  <!-- The filename pattern to recognize test files -->
-  <property name="build.test.filenamepattern" value="**/*.java"/>
+  <!-- The filename pattern to recognize test source files -->
+  <property name="build.test.filenamepattern.src" value="**/*Test.java"/>
+  
+  <!-- The filename pattern to recognize test binary files -->
+  <property name="build.test.filenamepattern.bin" value="**/*Test.class"/>
   
   <!-- Location of the Java boot classpath. If this is not set, the compiler
        will resort to the default boot classpath. -->
@@ -201,10 +204,7 @@
       <classpath refid="build.classpath"/>
     </javac>
     <copy todir="${build.bindir}" includeemptydirs="false">
-      <fileset dir="${build.srcdir}">
-        <exclude name="**/*.java"/>
-        <exclude name="**/doc-files/**"/>
-      </fileset>
+      <fileset dir="${build.srcdir}" excludes="**/*.java,doc-files/**"/>
     </copy>
   </target>
   
@@ -223,8 +223,7 @@
       <classpath refid="build.classpath"/>
     </javac>
     <copy todir="${build.test.bindir}" includeemptydirs="false">
-      <fileset dir="${build.test.srcdir}" excludes="**/*.java"/>
-      <fileset dir="${build.test.srcdir}" excludes="**/doc-files/*.*"/>
+      <fileset dir="${build.test.srcdir}" excludes="**/*.java,doc-files/**"/>
     </copy>
   </target>
   
@@ -276,7 +275,12 @@
 	      <attribute name="Built-Date" value="${TODAY}"/>
           <attribute name="Implementation-Version" value="${build.version}"/>
 	  </manifest>
-	  <fileset dir="${build.bindir}"/>
+	  <fileset dir="${build.bindir}">
+	    <filename name="**/*"/>
+        <not>
+          <filename name="${build.test.filenamepattern.bin}"/>
+        </not>
+	  </fileset>
 	  <zipgroupfileset dir="${build.depdir}">
 	    <include name="**/*.jar" if="${build.jar.withdeps}"/>
 	  </zipgroupfileset>
