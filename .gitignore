@@ -12,10 +12,10 @@
 
 # Auto-generated folders
 **/doc/
-lib/
+**/lib/
 doxygen/
-/dep/
-/tests/
+**/dep/
+**/tests/
 /html/
 
 # JARS

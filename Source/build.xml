@@ -49,6 +49,11 @@
     <ant dir="Functions" target="clean" />
     <ant dir="Examples" target="clean" />
   </target>
+  
+  <target name="test">
+    <ant dir="Core" target="test" />
+    <ant dir="Functions" target="test" />
+  </target>
 
   <target name="download-rt8">
     <ant dir="Core" target="download-rt8" />
