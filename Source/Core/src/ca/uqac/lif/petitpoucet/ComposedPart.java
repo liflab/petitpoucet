@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -76,6 +76,11 @@ public class ComposedPart implements Part
 		if (l_designators.size() == 1)
 		{
 			return l_designators.get(0);
+		}
+		if (l_designators.contains(Part.nothing))
+		{
+			// Composing "nothing" with anything else is "nothing"
+			return Part.nothing;
 		}
 		return new ComposedPart(l_designators);
 	}
