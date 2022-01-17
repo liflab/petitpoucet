@@ -1,5 +1,6 @@
 Petit Poucet: a general purpose explainability library
 ======================================================
+[![Java CI](https://github.com/liflab/petitpoucet/actions/workflows/ant.yml/badge.svg)](https://github.com/liflab/petitpoucet/actions/workflows/ant.yml)
 
 *Explainability* is the process of linking part of the inputs given to a
 calculation to its output, in such a way that the selected inputs somehow
