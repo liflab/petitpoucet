@@ -86,7 +86,7 @@ public class GraphUtilities
 	 */
 	/*@ non_null @*/ public static List<Node> flatten(/*@ non_null @*/ List<Node> roots)
 	{
-		List<Node> flattened = new ArrayList<Node>(roots.size());
+		List<Node> flattened = new ArrayList<>(roots.size());
 		FlatteningCrawler previous_fc = null;
 		for (Node root : roots)
 		{
@@ -106,9 +106,9 @@ public class GraphUtilities
 	 */
 	/*@ non_null @*/ public static List<Node> squash(/*@ non_null @*/ List<Node> roots)
 	{
-		List<Node> squashed = new ArrayList<Node>(roots.size());
-		Set<Node> visited = new HashSet<Node>();
-		Map<Node,Node> duplicates = new HashMap<Node,Node>();
+		List<Node> squashed = new ArrayList<>(roots.size());
+		Set<Node> visited = new HashSet<>();
+		Map<Node,Node> duplicates = new HashMap<>();
 		for (Node root : roots)
 		{
 			squashed.add(squash(root, visited, duplicates));
@@ -146,7 +146,7 @@ public class GraphUtilities
 	 */
 	/*@ non_null @*/ public static Node squash(/*@ non_null @*/ Node root)
 	{
-		return squash(root, new HashSet<Node>(), new HashMap<Node,Node>());
+		return squash(root, new HashSet<>(), new HashMap<>());
 	}
 	
 	protected static void squash(Node parent, int pin_index, Pin<? extends Node> pin, Set<Node> visited, Map<Node,Node> duplicates)

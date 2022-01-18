@@ -141,7 +141,7 @@ public class Triangle
 	{
 		List<?> vector = Arrays.asList(1, 1, 1);
 		IsValidTriangle f = new IsValidTriangle();
-		if ((Boolean) f.evaluate(vector)[0])
+		if (Boolean.TRUE.equals(f.evaluate(vector)[0]))
 		{
 			System.out.println("The triangle is valid");
 		}

@@ -60,7 +60,7 @@ public class FunctionLineageGraphUtilities
 	 */
 	public static List<Node> simplify(List<Node> roots)
 	{
-		List<Node> out = new ArrayList<Node>(roots.size());
+		List<Node> out = new ArrayList<>(roots.size());
 		out = GraphUtilities.simplify(roots);
 		for (Node root : roots)
 		{
@@ -99,7 +99,7 @@ public class FunctionLineageGraphUtilities
 		{
 			// We must first put the pins into a separate list, as recursive calls
 			// may delete some of them from the original collection
-			List<Pin<? extends Node>> pins = new ArrayList<Pin<? extends Node>>(n.getOutputLinks(i).size());
+			List<Pin<? extends Node>> pins = new ArrayList<>(n.getOutputLinks(i).size());
 			pins.addAll(n.getOutputLinks(i));
 			for (Pin<? extends Node> pin : pins)
 			{

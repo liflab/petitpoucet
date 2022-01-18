@@ -53,15 +53,15 @@ public class Node implements Connectable, Duplicable
 	public Node(int in_arity, int out_arity)
 	{
 		super();
-		m_inputs = new HashMap<Integer,List<Pin<? extends Node>>>(in_arity);
+		m_inputs = new HashMap<>(in_arity);
 		for (int i = 0; i < in_arity; i++)
 		{
-			m_inputs.put(i, new ArrayList<Pin<? extends Node>>());
+			m_inputs.put(i, new ArrayList<>());
 		}
-		m_outputs = new HashMap<Integer,List<Pin<? extends Node>>>(out_arity);
+		m_outputs = new HashMap<>(out_arity);
 		for (int i = 0; i < out_arity; i++)
 		{
-			m_outputs.put(i, new ArrayList<Pin<? extends Node>>());
+			m_outputs.put(i, new ArrayList<>());
 		}
 	}
 	
@@ -166,7 +166,7 @@ public class Node implements Connectable, Duplicable
 		{
 			throw new IndexOutOfBoundsException();
 		}
-		return new Pin<Node>(this, index);
+		return new Pin<>(this, index);
 	}
 	
 	@Override
@@ -176,7 +176,7 @@ public class Node implements Connectable, Duplicable
 		{
 			throw new IndexOutOfBoundsException();
 		}
-		return new Pin<Node>(this, index);
+		return new Pin<>(this, index);
 	}
 	
 	@Override

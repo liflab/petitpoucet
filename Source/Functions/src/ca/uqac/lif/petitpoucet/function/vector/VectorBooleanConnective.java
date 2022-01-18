@@ -47,7 +47,7 @@ public abstract class VectorBooleanConnective extends VectorFunction
 	public VectorBooleanConnective()
 	{
 		super(1);
-		m_witnesses = new ArrayList<Boolean>();
+		m_witnesses = new ArrayList<>();
 	}
 	
 	@Override
@@ -97,7 +97,7 @@ public abstract class VectorBooleanConnective extends VectorFunction
 		}
 		for (int i = 0; i < m_witnesses.size(); i++)
 		{
-			if (m_witnesses.get(i))
+			if (Boolean.TRUE.equals(m_witnesses.get(i)))
 			{
 				ln.addChild(factory.getPartNode(ComposedPart.compose(new NthElement(i), NthInput.FIRST), this));
 			}

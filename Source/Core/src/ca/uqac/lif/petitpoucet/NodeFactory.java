@@ -55,8 +55,8 @@ public class NodeFactory
 	protected NodeFactory()
 	{
 		super();
-		m_partNodes = new HashMap<ObjectPart,PartNode>();
-		m_factories = new HashMap<ObjectPart,NodeFactory>();
+		m_partNodes = new HashMap<>();
+		m_factories = new HashMap<>();
 	}
 	
 	public NodeFactory getFactory(Part p, Object subject)
@@ -174,7 +174,7 @@ public class NodeFactory
 		@Override
 		public boolean equals(Object o)
 		{
-			if (o == null || !(o instanceof ObjectPart))
+			if (!(o instanceof ObjectPart))
 			{
 				return false;
 			}

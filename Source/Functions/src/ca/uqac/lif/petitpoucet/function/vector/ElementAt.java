@@ -35,7 +35,7 @@ public class ElementAt extends VectorFunction
 	/**
 	 * The position of the element to get in the input vector.
 	 */
-	public int m_position;
+	protected int m_position;
 	
 	/**
 	 * Gets a new instance of the function.

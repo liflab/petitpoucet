@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -138,9 +138,7 @@ public class IfThenElse extends AtomicFunction
 			Object o = m_inputPins[0].getValue();
 			if (!(o instanceof Boolean))
 			{
-				{
-					throw new InvalidArgumentTypeException("Expected a Boolean");
-				}
+				throw new InvalidArgumentTypeException("Expected a Boolean");
 			}
 			m_firstOperand = (Boolean) o;
 			m_evaluated = true;
@@ -162,10 +160,6 @@ public class IfThenElse extends AtomicFunction
 			}
 			Object[] outs = IfThenElse.this.getValue();
 			m_outputPins[0].setValue(outs[0]);
-			if (!m_evaluated)
-			{
-				throw new FunctionException("Cannot get value");
-			}
 			return m_value;
 		}
 		

@@ -63,8 +63,8 @@ public class Crawler
 	 */
 	public void crawl()
 	{
-		Queue<Node> to_visit = new ArrayDeque<Node>();
-		Set<Node> visited = new HashSet<Node>();
+		Queue<Node> to_visit = new ArrayDeque<>();
+		Set<Node> visited = new HashSet<>();
 		to_visit.add(m_start);
 		while (!to_visit.isEmpty())
 		{

@@ -83,7 +83,8 @@ public class Replace extends StringMappingFunction
 	@Override
 	protected String transformString(String input)
 	{
-		int pos = 0, out_len = 0;
+		int pos = 0;
+		int out_len = 0;
 		Pattern pat = Pattern.compile(m_from);
 		Matcher mat = pat.matcher(input);
 		StringBuilder output = new StringBuilder();

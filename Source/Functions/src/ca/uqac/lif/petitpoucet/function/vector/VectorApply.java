@@ -53,7 +53,7 @@ public class VectorApply extends ParameterizedVectorFunction
 	{
 		m_lastInstances.clear();
 		int min_len = getMinLength();
-		List<Object> out_list = new ArrayList<Object>(min_len);
+		List<Object> out_list = new ArrayList<>(min_len);
 		for (int i = 0; i < min_len; i++)
 		{
 			Object[] ins = new Object[in_lists.length];

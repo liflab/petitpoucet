@@ -48,7 +48,7 @@ public abstract class UnaryOperator extends AtomicFunction
 	public UnaryOperator()
 	{
 		super(1, 1);
-		m_witnesses = new ArrayList<Integer>();
+		m_witnesses = new ArrayList<>();
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public abstract class UnaryOperator extends AtomicFunction
 			throw new InvalidArgumentTypeException("Expected a list");
 		}
 		List<?> in_list = (List<?>) inputs[0];
-		List<Boolean> out_list = new ArrayList<Boolean>(in_list.size());
+		List<Boolean> out_list = new ArrayList<>(in_list.size());
 		m_witnesses.clear();
 		int last_witness = -1;
 		for (int i = 0; i < in_list.size(); i++)

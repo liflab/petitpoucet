@@ -18,6 +18,7 @@
 package ca.uqac.lif.petitpoucet.function.vector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -37,11 +38,8 @@ public class VectorTestUtilities
 	 */
 	public static List<?> getList(Object ... arguments)
 	{
-		List<Object> list = new ArrayList<Object>(arguments.length);
-		for (Object o : arguments)
-		{
-			list.add(o);
-		}
+		List<Object> list = new ArrayList<>(arguments.length);
+		list.addAll(Arrays.asList(arguments));
 		return list;
 	}
 	

@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -18,6 +18,7 @@
 package ca.uqac.lif.petitpoucet.function.strings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -88,10 +89,11 @@ public class RangeMapping
 	 */
 	/*@ non_null @*/ static List<Range> fragment(List<Range> list1, List<Range> list2)
 	{
-		List<Integer> indices = new ArrayList<Integer>();
+		List<Integer> indices = new ArrayList<>();
 		for (Range r : list1)
 		{
-			int start = r.getStart(), end = r.getEnd() + 1;
+			int start = r.getStart();
+			int end = r.getEnd() + 1;
 			if (!indices.contains(start))
 			{
 				indices.add(start);
@@ -103,7 +105,8 @@ public class RangeMapping
 		}
 		for (Range r : list2)
 		{
-			int start = r.getStart(), end = r.getEnd() + 1;
+			int start = r.getStart();
+			int end = r.getEnd() + 1;
 			if (!indices.contains(start))
 			{
 				indices.add(start);
@@ -114,7 +117,7 @@ public class RangeMapping
 			}
 		}
 		Collections.sort(indices);
-		List<Range> out_list = new ArrayList<Range>(indices.size());
+		List<Range> out_list = new ArrayList<>(indices.size());
 		for (int i = 0; i < indices.size() - 1; i++)
 		{
 			out_list.add(new Range(indices.get(i), indices.get(i + 1) - 1));
@@ -128,11 +131,8 @@ public class RangeMapping
 	public RangeMapping(RangePair ... pairs)
 	{
 		super();
-		m_mapping = new LinkedList<RangePair>();
-		for (RangePair rp : pairs)
-		{
-			m_mapping.add(rp);
-		}
+		m_mapping = new LinkedList<>();
+		m_mapping.addAll(Arrays.asList(pairs));
 		m_changed = true;
 		simplify();
 	}
@@ -144,7 +144,7 @@ public class RangeMapping
 	public RangeMapping(RangeMapping m)
 	{
 		super();
-		m_mapping = new LinkedList<RangePair>();
+		m_mapping = new LinkedList<>();
 		m_mapping.addAll(m.m_mapping);
 		m_changed = true;
 		simplify();
@@ -235,7 +235,7 @@ public class RangeMapping
 	 */
 	/*@ pure non_null @*/ public List<Range> trackToInput(/*@ null @*/ Range r)
 	{
-		List<Range> ranges = new ArrayList<Range>();
+		List<Range> ranges = new ArrayList<>();
 		if (r == null)
 		{
 			return ranges;
@@ -274,7 +274,7 @@ public class RangeMapping
 	 */
 	/*@ pure non_null @*/ public List<Range> trackToOutput()
 	{
-		List<Range> ranges = new ArrayList<Range>();
+		List<Range> ranges = new ArrayList<>();
 		for (RangePair rp : m_mapping)
 		{
 			Range r = rp.getTo();
@@ -303,7 +303,7 @@ public class RangeMapping
 	 */
 	/*@ pure non_null @*/ public List<Range> trackToOutput(/*@ null @*/ Range r)
 	{
-		List<Range> ranges = new ArrayList<Range>();
+		List<Range> ranges = new ArrayList<>();
 		if (r == null)
 		{
 			return ranges;
@@ -352,7 +352,7 @@ public class RangeMapping
 	 */
 	/*@ pure non_null @*/ protected List<Range> getFromRanges()
 	{
-		List<Range> ranges = new ArrayList<Range>();
+		List<Range> ranges = new ArrayList<>();
 		for (RangePair rp : m_mapping)
 		{
 			ranges.add(rp.getFrom());
@@ -366,7 +366,7 @@ public class RangeMapping
 	 */
 	/*@ pure non_null @*/ protected List<Range> getToRanges()
 	{
-		List<Range> ranges = new ArrayList<Range>();
+		List<Range> ranges = new ArrayList<>();
 		for (RangePair rp : m_mapping)
 		{
 			ranges.add(rp.getTo());
@@ -391,7 +391,7 @@ public class RangeMapping
 	 */
 	/*@ pure non_null @*/ protected List<RangePair> invertMapping(Range r)
 	{
-		List<RangePair> ranges = new ArrayList<RangePair>();
+		List<RangePair> ranges = new ArrayList<>();
 		if (r == null)
 		{
 			return ranges;
@@ -414,7 +414,7 @@ public class RangeMapping
 	 */
 	/*@ pure non_null @*/ public List<Range> trackToInput()
 	{
-		List<Range> ranges = new ArrayList<Range>();
+		List<Range> ranges = new ArrayList<>();
 		for (RangePair rp : m_mapping)
 		{
 			Range r = rp.getFrom();
@@ -594,7 +594,7 @@ public class RangeMapping
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o == null || !(o instanceof RangeMapping))
+		if (!(o instanceof RangeMapping))
 		{
 			return false;
 		}
@@ -611,6 +611,12 @@ public class RangeMapping
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return m_mapping.size();
 	}
 
 	@Override
@@ -806,7 +812,7 @@ public class RangeMapping
 		@Override
 		public boolean equals(Object o)
 		{
-			if (o == null || !(o instanceof RangePair))
+			if (!(o instanceof RangePair))
 			{
 				return false;
 			}

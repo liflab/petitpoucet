@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -20,6 +20,7 @@ package ca.uqac.lif.petitpoucet.function;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -130,8 +131,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 			return explainOutput(output_nb, part, factory);
 		}
 		// Nothing to do
-		PartNode root = factory.getPartNode(part, this);
-		return root;
+		return factory.getPartNode(part, this);
 	}
 	
 	/**
@@ -254,8 +254,8 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 */
 	protected NestedNode developToInput(Part start, Node subject, NodeFactory factory)
 	{
-		Queue<PartNode> to_explore = new ArrayDeque<PartNode>();
-		Set<PartNode> explored = new HashSet<PartNode>();
+		Queue<PartNode> to_explore = new ArrayDeque<>();
+		Set<PartNode> explored = new HashSet<>();
 		PartNode root = null;
 		if (subject instanceof ExplanationQueryable)
 		{
@@ -340,8 +340,8 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 */
 	protected NestedNode developToOutput(Part start, Node subject, NodeFactory factory)
 	{
-		Queue<PartNode> to_explore = new ArrayDeque<PartNode>();
-		Set<PartNode> explored = new HashSet<PartNode>();
+		Queue<PartNode> to_explore = new ArrayDeque<>();
+		Set<PartNode> explored = new HashSet<>();
 		PartNode root = null;
 		if (subject instanceof ExplanationQueryable)
 		{
@@ -408,13 +408,12 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 */
 	protected static Pin<? extends Node> getPin(Collection<Pin<? extends Node>> pins)
 	{
-		Pin<? extends Node> pin = null;
-		for (Pin<? extends Node> p : pins)
+		if (pins.isEmpty())
 		{
-			pin = p;
-			break;
+			return null;
 		}
-		return pin;
+		Iterator<Pin<? extends Node>> it = pins.iterator();
+		return it.next();
 	}
 
 	@Override
@@ -529,7 +528,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 		public void setValue(Object o)
 		{
 			Pin<? extends Node> pin = m_inputAssociations.get(m_index);
-			if (pin != null && pin instanceof FunctionPin)
+			if (pin instanceof FunctionPin)
 			{
 				((FunctionPin<?>) pin).setValue(o);
 			}
@@ -605,7 +604,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 			{
 				ins[i] = m_inputPins[i].getValue();
 				Pin<? extends Node> pin = m_inputAssociations.get(i);
-				if (pin != null && pin instanceof FunctionPin)
+				if (pin instanceof FunctionPin)
 				{
 					((FunctionPin<?>) pin).setValue(ins[i]);
 				}

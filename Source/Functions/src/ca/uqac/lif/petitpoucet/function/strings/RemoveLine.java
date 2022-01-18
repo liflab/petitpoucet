@@ -57,7 +57,8 @@ public class RemoveLine extends StringMappingFunction
 	@Override
 	protected String transformString(String s)
 	{
-		int pos = 0, line = 0;
+		int pos = 0;
+		int line = 0;
 		while (pos < s.length() && line < m_lineNb)
 		{
 			int next_pos = s.indexOf(CRLF, pos);
@@ -77,7 +78,8 @@ public class RemoveLine extends StringMappingFunction
 			return s;
 		}
 		int next_pos = s.indexOf(CRLF, pos);
-		int start = pos, end = next_pos + CRLF_S;
+		int start = pos;
+		int end = next_pos + CRLF_S;
 		if (next_pos < 0)
 		{
 			end = s.length() + 1;

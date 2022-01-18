@@ -51,7 +51,7 @@ public abstract class ParameterizedVectorFunction extends VectorOutputFunction
 	{
 		super(f.getInputArity());
 		m_function = f;
-		m_lastInstances = new ArrayList<Function>();
+		m_lastInstances = new ArrayList<>();
 	}
 
 	/**

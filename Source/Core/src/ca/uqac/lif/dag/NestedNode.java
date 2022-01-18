@@ -18,6 +18,7 @@
 package ca.uqac.lif.dag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,13 +81,13 @@ public class NestedNode extends Node
 	public NestedNode(int in_arity, int out_arity)
 	{
 		super(in_arity, out_arity);
-		m_internalNodes = new ArrayList<Node>();
-		m_inputAssociations = new HashMap<Integer,Pin<? extends Node>>();
+		m_internalNodes = new ArrayList<>();
+		m_inputAssociations = new HashMap<>();
 		for (int i = 0; i < getInputArity(); i++)
 		{
 			m_inputAssociations.put(i, null);
 		}
-		m_outputAssociations = new HashMap<Integer,Pin<? extends Node>>();
+		m_outputAssociations = new HashMap<>();
 		for (int i = 0; i < getOutputArity(); i++)
 		{
 			m_outputAssociations.put(i, null);
@@ -152,10 +153,7 @@ public class NestedNode extends Node
 	 */
 	public void addNodes(Node ... nodes)
 	{
-		for (int i = 0; i < nodes.length; i++)
-		{
-			m_internalNodes.add(nodes[i]);
-		}
+		m_internalNodes.addAll(Arrays.asList(nodes));
 	}
 	
 	/**
@@ -268,10 +266,10 @@ public class NestedNode extends Node
 		public CopyCrawler(/*@ non_null @*/ Node start, /*@ non_null @*/ NodeConnector connector, boolean with_state)
 		{
 			super(start);
-			m_copies = new HashMap<Node,Node>();
+			m_copies = new HashMap<>();
 			m_connector = connector;
 			m_withState = with_state;
-			m_expanded = new HashSet<Node>(m_internalNodes.size());
+			m_expanded = new HashSet<>(m_internalNodes.size());
 		}
 		
 		/**
@@ -352,8 +350,8 @@ public class NestedNode extends Node
 		public NestedNodeCrawler(/*@ non_null @*/ Node start)
 		{
 			super(start);
-			m_leaves = new ArrayList<Node>();
-			m_allNodes = new ArrayList<Node>();
+			m_leaves = new ArrayList<>();
+			m_allNodes = new ArrayList<>();
 		}
 		
 		@Override
@@ -366,7 +364,7 @@ public class NestedNode extends Node
 			boolean is_leaf = true;
 			for (int i = 0; i < n.getOutputArity(); i++)
 			{
-				if (n.getOutputLinks(i).size() > 0)
+				if (!n.getOutputLinks(i).isEmpty())
 				{
 					is_leaf = false;
 					break;

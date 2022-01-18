@@ -53,7 +53,7 @@ public class ComposedPart implements Part
 		{
 			return Part.nothing;
 		}
-		List<Part> l_designators = new ArrayList<Part>();
+		List<Part> l_designators = new ArrayList<>();
 		for (int i = 0; i < designators.length; i++)
 		{
 			if (designators[i] == null)
@@ -109,7 +109,7 @@ public class ComposedPart implements Part
 	public ComposedPart(Part... designators)
 	{
 		super();
-		m_designators = new ArrayList<Part>(designators.length);
+		m_designators = new ArrayList<>(designators.length);
 		for (Part d : designators)
 		{
 			add(d);
@@ -125,7 +125,7 @@ public class ComposedPart implements Part
 	public ComposedPart(List<Part> designators)
 	{
 		super();
-		m_designators = new ArrayList<Part>(designators.size());
+		m_designators = new ArrayList<>(designators.size());
 		for (Part d : designators)
 		{
 			add(d);
@@ -273,7 +273,7 @@ public class ComposedPart implements Part
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o == null || !(o instanceof ComposedPart))
+		if (!(o instanceof ComposedPart))
 		{
 			return false;
 		}

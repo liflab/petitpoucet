@@ -116,14 +116,14 @@ public class LineageDotRenderer implements Renderer
 		super();
 		m_idCounter = 0;
 		m_roots = roots;
-		m_nodeIds = new HashMap<Node,String>();
-		m_rendered = new HashSet<Node>();
-		m_expanded = new HashSet<Node>();
+		m_nodeIds = new HashMap<>();
+		m_rendered = new HashSet<>();
+		m_expanded = new HashSet<>();
 		m_prefix = prefix;
 		m_nestingLevel = nesting_level;
 		m_indent = getIndent(nesting_level);
 		m_noCaptions = no_captions;
-		m_leaves = new ArrayList<Node>();
+		m_leaves = new ArrayList<>();
 	}
 	
 	/**
@@ -262,7 +262,8 @@ public class LineageDotRenderer implements Renderer
 	 */
 	protected void renderTransition(PrintStream ps, Node from, int out_index, Pin<? extends Node> pin)
 	{
-		String source_id = "", dest_id = "";
+		String source_id = "";
+		String dest_id = "";
 		Node to = pin.getNode();
 		/*if (from instanceof DummyNode || to instanceof DummyNode)
 		{

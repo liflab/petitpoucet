@@ -57,7 +57,7 @@ public abstract class LeafCrawler extends Crawler
 		}
 		for (int i = 0; i < n.getOutputArity(); i++)
 		{
-			if (n.getOutputLinks(i).size() > 0)
+			if (!n.getOutputLinks(i).isEmpty())
 			{
 				return false;
 			}

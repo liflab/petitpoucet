@@ -17,6 +17,8 @@
  */
 package ca.uqac.lif.petitpoucet.function.booleans;
 
+import java.util.Arrays;
+
 import ca.uqac.lif.dag.LabelledNode;
 import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
@@ -127,10 +129,7 @@ public abstract class BooleanConnective extends AtomicFunction
 		bc.m_witnessValue = m_witnessValue;
 		if (with_state)
 		{
-			for (int i = 0; i < m_arguments.length; i++)
-			{
-				bc.m_arguments[i] = m_arguments[i];
-			}
+			bc.m_arguments = Arrays.copyOf(m_arguments, m_arguments.length);
 		}
 	}
 	

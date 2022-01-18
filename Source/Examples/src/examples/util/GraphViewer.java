@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -50,7 +50,7 @@ public class GraphViewer
 		BitmapJFrame window = new BitmapJFrame(getGraph(roots, no_captions));
 		window.setVisible(true);
 	}
-	
+
 	/**
 	 * Displays an explanation graph into a window. This method acts as a
 	 * primitive image viewer, used to display the result of the examples.
@@ -60,7 +60,7 @@ public class GraphViewer
 	{
 		display(roots, false);
 	}
-	
+
 	/**
 	 * Displays an explanation graph into a window. This method acts as a
 	 * primitive image viewer, used to display the result of the examples.
@@ -70,48 +70,45 @@ public class GraphViewer
 	{
 		display((List<Node>) Arrays.asList(root), false);
 	}
-	
+
 	/**
 	 * Saves a graph to a file.
 	 * @param roots The roots of the graph to display
 	 * @param filename The file where this graph will be saved
 	 * @param no_captions Set to {@code true} to hide non-leaf captions
+	 * @throws IOException If the file operation did not succeed
 	 */
-	public static void save(List<Node> roots, String filename, boolean no_captions)
+	public static void save(List<Node> roots, String filename, boolean no_captions) throws IOException
 	{
 		File outputFile = new File(filename);
-		try (FileOutputStream outputStream = new FileOutputStream(outputFile))
-		{
-		    outputStream.write(getGraph(roots, no_captions));
-		    outputStream.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		FileOutputStream outputStream = new FileOutputStream(outputFile);
+		outputStream.write(getGraph(roots, no_captions));
+		outputStream.close();
 	}
-	
+
 	/**
 	 * Saves a graph to a file.
 	 * @param root The root of the graph to display
 	 * @param filename The file where this graph will be saved
 	 * @param no_captions Set to {@code true} to hide non-leaf captions
+	 * @throws IOException If the file operation did not succeed
 	 */
-	public static void save(Node root, String filename, boolean no_captions)
+	public static void save(Node root, String filename, boolean no_captions) throws IOException
 	{
 		save(Arrays.asList(root), filename, no_captions);
 	}
-	
+
 	/**
 	 * Saves a graph to a file.
 	 * @param roots The roots of the graph to display
 	 * @param filename The file where this graph will be saved
+	 * @throws IOException If the file operation did not succeed
 	 */
-	public static void save(List<Node> roots, String filename)
+	public static void save(List<Node> roots, String filename) throws IOException
 	{
 		save(roots, filename, false);
 	}
-	
+
 	/**
 	 * Renders a graph as a DOT file.
 	 * @param roots The roots of the graph to render
@@ -127,7 +124,7 @@ public class GraphViewer
 		renderer.render(ps);
 		return baos.toString();
 	}
-	
+
 	/**
 	 * Renders a graph, calls DOT in the background and retrieves the binary
 	 * image it produces.
@@ -142,7 +139,7 @@ public class GraphViewer
 		runner.run();
 		return runner.getBytes();
 	}
-		
+
 	/**
 	 * Receives a byte array as an input, and shows it in a Swing
 	 * window as a picture.
@@ -171,14 +168,14 @@ public class GraphViewer
 			//setSize(icon.getIconWidth(), icon.getIconHeight());
 			pack();
 		}
-		
+
 		/**
 		 * Gets the frame associated to the object
 		 * @return The frame
 		 */
 		public JFrame getFrame()
 		{
-		  return m_frame;
+			return m_frame;
 		}
 	}
 }

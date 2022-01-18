@@ -45,7 +45,7 @@ public class VectorProduct extends VectorFunction
 	public VectorProduct()
 	{
 		super(1);
-		m_nulls = new ArrayList<Boolean>();
+		m_nulls = new ArrayList<>();
 	}
 	
 	@Override
@@ -61,14 +61,7 @@ public class VectorProduct extends VectorFunction
 			}
 			float v = ((Number) o).floatValue();
 			total *= v;
-			if (v == 0)
-			{
-				m_nulls.add(true);
-			}
-			else
-			{
-				m_nulls.add(false);
-			}
+			m_nulls.add(v == 0);
 		}
 		return total;
 	}
@@ -113,7 +106,7 @@ public class VectorProduct extends VectorFunction
 		}
 		for (int i = 0; i < m_nulls.size(); i++)
 		{
-			if (m_nulls.get(i))
+			if (Boolean.TRUE.equals(m_nulls.get(i)))
 			{
 				ln.addChild(factory.getPartNode(ComposedPart.compose(new NthElement(i), NthInput.FIRST), this));
 			}

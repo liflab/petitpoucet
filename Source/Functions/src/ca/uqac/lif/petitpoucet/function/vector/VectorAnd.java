@@ -49,14 +49,7 @@ public class VectorAnd extends VectorBooleanConnective
 			}
 			boolean b = (Boolean) o;
 			total = total && b;
-			if (!b)
-			{
-				m_witnesses.add(true);
-			}
-			else
-			{
-				m_witnesses.add(false);
-			}
+			m_witnesses.add(!b);
 		}
 		return total;
 	}

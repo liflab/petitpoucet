@@ -61,8 +61,8 @@ public class Split extends AtomicFunction
 	{
 		super(1, 1);
 		m_regex = regex;
-		m_offsets = new ArrayList<Integer>();
-		m_parts = new ArrayList<String>();
+		m_offsets = new ArrayList<>();
+		m_parts = new ArrayList<>();
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class Split extends AtomicFunction
 	{
 		String s = inputs[0].toString();
 		String[] parts = s.split(m_regex);
-		List<String> out_parts = new ArrayList<String>(parts.length);
+		List<String> out_parts = new ArrayList<>(parts.length);
 		int pos = 0;
 		for (int i = 0; i < parts.length; i++)
 		{
@@ -146,7 +146,7 @@ public class Split extends AtomicFunction
 			return d; // Nothing to do
 		}
 		ComposedPart cd = (ComposedPart) d;
-		List<Part> desigs = new ArrayList<Part>();
+		List<Part> desigs = new ArrayList<>();
 		for (int i = 0; i < cd.size(); i++)
 		{
 			desigs.add(cd.get(i));

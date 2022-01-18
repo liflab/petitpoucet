@@ -76,7 +76,7 @@ public class Pin<T extends Connectable>
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o == null || !(o instanceof Pin))
+		if (!(o instanceof Pin))
 		{
 			return false;
 		}

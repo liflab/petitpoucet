@@ -52,7 +52,7 @@ public class FlatteningCrawler
 	{
 		super();
 		m_start = start;
-		m_copies = new HashMap<Node,Node>();
+		m_copies = new HashMap<>();
 		m_connector = connector;
 	}
 	
@@ -72,7 +72,7 @@ public class FlatteningCrawler
 
 	public void crawl()
 	{
-		Set<Node> visited = new HashSet<Node>();
+		Set<Node> visited = new HashSet<>();
 		crawl(m_start, visited);
 	}
 

@@ -108,7 +108,7 @@ public class NthElement implements Part
 			return d; // Nothing to do
 		}
 		ComposedPart cd = (ComposedPart) d;
-		List<Part> desigs = new ArrayList<Part>();
+		List<Part> desigs = new ArrayList<>();
 		for (int i = 0; i < cd.size(); i++)
 		{
 			desigs.add(cd.get(i));

@@ -1,19 +1,19 @@
 /*
-  LabPal, a versatile environment for running experiments on a computer
-  Copyright (C) 2015-2017 Sylvain Hallé
+    Petit Poucet, a library for tracking links between objects.
+    Copyright (C) 2016-2022 Sylvain Hallé
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package examples.util;
 
@@ -88,7 +88,7 @@ public class CommandRunner extends Thread
 		private StreamGobbler(InputStream is, String name)
 		{
 			super();
-			m_contents = new Vector<Byte>();
+			m_contents = new Vector<>();
 			this.m_is = is;
 			m_name = name;
 		}
@@ -155,8 +155,7 @@ public class CommandRunner extends Thread
 				return new byte[0];
 			}
 		}
-		byte[] out = runner.getBytes();
-		return out;
+		return runner.getBytes();
 	}
 	
 	public static byte[] runAndGet(String command, String inputs)
@@ -206,6 +205,7 @@ public class CommandRunner extends Thread
 			{
 				process.destroy();
 			}
+			interrupt();
 		}
 		//System.err.println(new String(error_gobbler.getBytes()));
 	}
@@ -214,7 +214,7 @@ public class CommandRunner extends Thread
 	 * Gets the contents of stdout sent by the command as an array of bytes
 	 * @return The contents of stdout
 	 */
-	synchronized public byte[] getBytes()
+	public synchronized byte[] getBytes()
 	{
 		return m_stdoutGobbler.getBytes();
 	}
@@ -223,7 +223,7 @@ public class CommandRunner extends Thread
 	 * Gets the contents of stdout sent by the command as a string
 	 * @return The contents of stdout
 	 */
-	synchronized public String getString()
+	public synchronized String getString()
 	{
 		if (m_stdoutGobbler == null)
 		{
@@ -250,7 +250,7 @@ public class CommandRunner extends Thread
 	/**
 	 * Interrupts the execution of the command
 	 */
-	synchronized public void stopCommand()
+	public synchronized void stopCommand()
 	{
 		m_stop = true;
 	}

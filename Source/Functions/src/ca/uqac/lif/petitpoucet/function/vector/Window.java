@@ -59,7 +59,7 @@ public class Window extends ParameterizedVectorFunction
 	@Override
 	protected List<?> getVectorValue(List<?> ... in_lists)
 	{
-		List<Object> out_list = new ArrayList<Object>();
+		List<Object> out_list = new ArrayList<>();
 		for (int i = 0; i < in_lists[0].size() - m_width + 1; i++)
 		{
 			List<?> sub_list = in_lists[0].subList(i, i + m_width);
@@ -144,7 +144,7 @@ public class Window extends ParameterizedVectorFunction
 		}
 		ComposedPart cd = (ComposedPart) d;
 		boolean replaced = false;
-		List<Part> parts = new ArrayList<Part>();
+		List<Part> parts = new ArrayList<>();
 		for (int i = 0; i < cd.size(); i++)
 		{
 			Part in_d = cd.get(i);

@@ -115,7 +115,7 @@ public interface Part
 		@Override
 		public boolean equals(Object o)
 		{
-			return o != null && o instanceof All;
+			return o instanceof All;
 		}
 	}
 
@@ -164,7 +164,7 @@ public interface Part
 		@Override
 		public boolean equals(Object o)
 		{
-			return o != null && o instanceof Nothing;
+			return o instanceof Nothing;
 		}
 	}
 
@@ -211,7 +211,7 @@ public interface Part
 		@Override
 		public boolean equals(Object o)
 		{
-			return o != null && o instanceof Unknown;
+			return o instanceof Unknown;
 		}
 	}
 	
@@ -253,7 +253,7 @@ public interface Part
 		@Override
 		public boolean equals(Object o)
 		{
-			return o != null && o instanceof Self;
+			return o instanceof Self;
 		}
 		
 		/**
@@ -273,7 +273,7 @@ public interface Part
 			if (from instanceof ComposedPart)
 			{
 				ComposedPart cd = (ComposedPart) from;
-				List<Part> desigs = new ArrayList<Part>();
+				List<Part> desigs = new ArrayList<>();
 				boolean replaced = false;
 				for (int i = 0 ; i < cd.size(); i++)
 				{

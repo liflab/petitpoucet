@@ -50,7 +50,7 @@ public class Filter extends AtomicFunction
 	public Filter()
 	{
 		super(2, 1);
-		m_positions = new ArrayList<Integer>();
+		m_positions = new ArrayList<>();
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class Filter extends AtomicFunction
 		{
 			throw new InvalidArgumentException("Lists must be the same size");
 		}
-		List<Object> out_list = new ArrayList<Object>();
+		List<Object> out_list = new ArrayList<>();
 		for (int i = 0; i < list1.size(); i++)
 		{
 			Object o2 = list2.get(i);

@@ -56,7 +56,7 @@ public class Next extends AtomicFunction
 			throw new InvalidArgumentTypeException("Expected a list");
 		}
 		List<?> in_list = (List<?>) inputs[0];
-		List<Boolean> out_list = new ArrayList<Boolean>(in_list.size() - 1);
+		List<Boolean> out_list = new ArrayList<>(in_list.size() - 1);
 		for (int i = 1; i < in_list.size(); i++)
 		{
 			Object o = in_list.get(i);

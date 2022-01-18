@@ -66,7 +66,7 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 	public AtomicFunction(int in_arity, int out_arity)
 	{
 		super(in_arity, out_arity);
-		m_context = new HashMap<String,Object>();
+		m_context = new HashMap<>();
 		m_inputPins = new AtomicFunctionInputPin[in_arity];
 		for (int i = 0; i < in_arity; i++)
 		{

@@ -109,7 +109,8 @@ public class StringExplainer
 		if (all)
 		{
 			StringBuilder out = new StringBuilder();
-			int start = r.getStart(), end = r.getEnd();
+			int start = r.getStart();
+			int end = r.getEnd();
 			if (start > 0)
 			{
 				out.append("<font color=\"grey\">").append(s.substring(0, start)).append("</font>");

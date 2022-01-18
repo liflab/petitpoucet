@@ -89,7 +89,7 @@ public class WindowProductMultiQuery
 		List<?> result = (List<?>) win.evaluate(Arrays.asList(1, 0, 0, 3, 4, 5, 0, 6, 7))[0];
 		System.out.println(result);
 		NodeFactory factory = NodeFactory.getFactory();
-		List<Node> roots = new ArrayList<Node>();
+		List<Node> roots = new ArrayList<>();
 		for (int i = 0; i < result.size(); i++)
 		{
 			roots.add(win.getExplanation(compose(new NthElement(i), NthOutput.FIRST), factory));

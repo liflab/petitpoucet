@@ -139,7 +139,7 @@ public class Range implements Part, Comparable<Range>
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o == null || !(o instanceof Range))
+		if (!(o instanceof Range))
 		{
 			return false;
 		}
@@ -215,7 +215,7 @@ public class Range implements Part, Comparable<Range>
 	 */
 	public static Part removeRange(Part d)
 	{
-		List<Part> parts = new ArrayList<Part>();
+		List<Part> parts = new ArrayList<>();
 		boolean removed = false;
 		if (d instanceof ComposedPart)
 		{

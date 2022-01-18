@@ -163,7 +163,7 @@ public class NthInput implements Part
 		if (from instanceof ComposedPart)
 		{
 			ComposedPart cd = (ComposedPart) from;
-			List<Part> desigs = new ArrayList<Part>();
+			List<Part> desigs = new ArrayList<>();
 			boolean replaced = false;
 			for (int i = 0 ; i < cd.size(); i++)
 			{

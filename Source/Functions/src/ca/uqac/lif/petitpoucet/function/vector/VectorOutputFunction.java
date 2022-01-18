@@ -139,7 +139,7 @@ public abstract class VectorOutputFunction extends VectorFunction
 		}
 		ComposedPart cd = (ComposedPart) d;
 		boolean replaced = false;
-		List<Part> parts = new ArrayList<Part>();
+		List<Part> parts = new ArrayList<>();
 		for (int i = 0; i < cd.size(); i++)
 		{
 			Part in_d = cd.get(i);
@@ -174,7 +174,7 @@ public abstract class VectorOutputFunction extends VectorFunction
 		}
 		ComposedPart cd = (ComposedPart) d;
 		boolean replaced = false;
-		List<Part> parts = new ArrayList<Part>();
+		List<Part> parts = new ArrayList<>();
 		for (int i = 0; i < cd.size() - 1; i++)
 		{
 			Part in_d = cd.get(i);

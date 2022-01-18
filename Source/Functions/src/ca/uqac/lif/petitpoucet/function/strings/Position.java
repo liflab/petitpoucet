@@ -91,7 +91,7 @@ public class Position implements Comparable<Position>
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o == null || !(o instanceof Position))
+		if (!(o instanceof Position))
 		{
 			return false;
 		}
