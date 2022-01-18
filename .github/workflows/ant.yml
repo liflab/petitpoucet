@@ -24,7 +24,7 @@ jobs:
       run: ant -noinput -buildfile Source/build.xml
   test:
     name: Test
-    depends: build
+    needs: build
     run: ant -noinput -buildfile Source/build.xml test
   sonarcloud:
     name: SonarCloud
