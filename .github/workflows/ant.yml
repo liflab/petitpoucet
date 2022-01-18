@@ -25,6 +25,7 @@ jobs:
       run: ant -noinput -buildfile Source/build.xml test
   sonarcloud:
     name: SonarCloud
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
