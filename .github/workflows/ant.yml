@@ -11,6 +11,7 @@ on:
 
 jobs:
   build:
+    name: Compile
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -21,16 +22,15 @@ jobs:
         distribution: 'temurin'
     - name: Build with Ant
       run: ant -noinput -buildfile Source/build.xml
-    - name: Test with Ant
-      run: ant -noinput -buildfile Source/build.xml test
+  test:
+    name: Test
+    depends: build
+    run: ant -noinput -buildfile Source/build.xml test
   sonarcloud:
     name: SonarCloud
-    needs: build
+    needs: [build, test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
