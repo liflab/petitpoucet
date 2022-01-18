@@ -1,6 +1,8 @@
 Petit Poucet: a general purpose explainability library
 ======================================================
 [![Java CI](https://github.com/liflab/petitpoucet/actions/workflows/ant.yml/badge.svg)](https://github.com/liflab/petitpoucet/actions/workflows/ant.yml)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=liflab_petitpoucet&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=liflab_petitpoucet)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=liflab_petitpoucet&metric=coverage)](https://sonarcloud.io/summary/new_code?id=liflab_petitpoucet)
 
 *Explainability* is the process of linking part of the inputs given to a
 calculation to its output, in such a way that the selected inputs somehow
