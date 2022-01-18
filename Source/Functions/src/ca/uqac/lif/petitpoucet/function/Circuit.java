@@ -560,10 +560,6 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 					m_evaluated = true;
 					break;
 				}
-				else
-				{
-					System.out.println("EILLE");
-				}
 			}
 			if (!m_evaluated)
 			{
@@ -576,7 +572,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 		public CircuitInputPin duplicate(boolean with_state)
 		{
 			CircuitInputPin afip = new CircuitInputPin(m_index);
-			copyInto(afip, false);
+			this.copyInto(afip, false);
 			return afip;
 		}
 	}
@@ -635,7 +631,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 		public CircuitOutputPin duplicate(boolean with_state)
 		{
 			CircuitOutputPin afop = new CircuitOutputPin(m_index);
-			copyInto(afop, false);
+			this.copyInto(afop, false);
 			return afop;
 		}
 	}

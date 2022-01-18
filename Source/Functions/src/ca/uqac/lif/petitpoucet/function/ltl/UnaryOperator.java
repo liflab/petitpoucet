@@ -45,7 +45,7 @@ public abstract class UnaryOperator extends AtomicFunction
 	/**
 	 * Creates a new instance of unary operator.
 	 */
-	public UnaryOperator()
+	protected UnaryOperator()
 	{
 		super(1, 1);
 		m_witnesses = new ArrayList<>();

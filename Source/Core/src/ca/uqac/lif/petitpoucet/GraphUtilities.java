@@ -36,6 +36,14 @@ import ca.uqac.lif.dag.Pin;
 public class GraphUtilities
 {
 	/**
+	 * Private constructor.
+	 */
+	private GraphUtilities()
+	{
+		super();
+	}
+
+	/**
 	 * Simplifies a single-rooted lineage graph. This method is the combined
 	 * application of {@link #squash(Node) squash()} and
 	 * {@link #flatten(Node) flatten()}.
@@ -46,7 +54,7 @@ public class GraphUtilities
 	{
 		return squash(flatten(root));
 	}
-	
+
 	/**
 	 * Simplifies a list of lineage graphs. This method is the combined
 	 * application of {@link #squash(List)} and
@@ -58,7 +66,7 @@ public class GraphUtilities
 	{
 		return squash(flatten(roots));
 	}
-	
+
 	/**
 	 * Out of a single-rooted lineage graph, creates another graph where nested
 	 * nodes are exploded.
@@ -71,7 +79,7 @@ public class GraphUtilities
 		fc.crawl();
 		return fc.getRootCopy();
 	}
-	
+
 	/**
 	 * Out of a list of lineage graph roots, creates another set of graphs where
 	 * nested nodes are exploded.
@@ -97,7 +105,7 @@ public class GraphUtilities
 		}
 		return flattened;
 	}
-	
+
 	/**
 	 * Out of a list of lineage graphs, creates another graph where only
 	 * Boolean nodes and leaves are kept.
@@ -115,7 +123,7 @@ public class GraphUtilities
 		}
 		return squashed;
 	}
-	
+
 	/**
 	 * Out of a single-rooted lineage graph, creates another graph where only
 	 * Boolean nodes and leaves are kept.
@@ -137,7 +145,7 @@ public class GraphUtilities
 		}
 		return new_root;
 	}
-	
+
 	/**
 	 * Out of a single-rooted lineage graph, creates another graph where only
 	 * Boolean nodes and leaves are kept.
@@ -148,7 +156,7 @@ public class GraphUtilities
 	{
 		return squash(root, new HashSet<>(), new HashMap<>());
 	}
-	
+
 	protected static void squash(Node parent, int pin_index, Pin<? extends Node> pin, Set<Node> visited, Map<Node,Node> duplicates)
 	{
 		Node target = pin.getNode();
@@ -164,13 +172,10 @@ public class GraphUtilities
 		}
 		visited.add(parent);
 		Node out_parent = parent;
-		if (!(target instanceof AndNode) && !(target instanceof OrNode))
+		if (!(target instanceof AndNode) && !(target instanceof OrNode) && isLeaf(target))
 		{
-			if (isLeaf(target))
-			{
-				NodeConnector.connect(parent, pin_index, target_dup, pin.getIndex());
-				return;
-			}
+			NodeConnector.connect(parent, pin_index, target_dup, pin.getIndex());
+			return;
 		}
 		if (target instanceof AndNode && !(parent instanceof AndNode))
 		{
@@ -193,7 +198,7 @@ public class GraphUtilities
 			}
 		}
 	}
-	
+
 	/**
 	 * Determines if a node is a leaf.
 	 * @param n The node

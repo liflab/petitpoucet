@@ -101,7 +101,7 @@ public class PositionRange implements Part, Comparable<PositionRange>
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o == null || !(o instanceof PositionRange))
+		if (!(o instanceof PositionRange))
 		{
 			return false;
 		}

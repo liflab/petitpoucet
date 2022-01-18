@@ -44,7 +44,7 @@ public abstract class VectorBooleanConnective extends VectorFunction
 	/**
 	 * Creates a new vector Boolean connective.
 	 */
-	public VectorBooleanConnective()
+	protected VectorBooleanConnective()
 	{
 		super(1);
 		m_witnesses = new ArrayList<>();

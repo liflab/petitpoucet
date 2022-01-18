@@ -75,7 +75,7 @@ public class Filter extends AtomicFunction
 			{
 				throw new InvalidArgumentTypeException("Second list must contain Booleans");
 			}
-			if ((Boolean) o2)
+			if (Boolean.TRUE.equals(o2))
 			{
 				out_list.add(list1.get(i));
 				m_positions.add(i);

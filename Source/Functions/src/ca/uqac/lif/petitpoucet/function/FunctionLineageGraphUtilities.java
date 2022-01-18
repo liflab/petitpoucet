@@ -36,6 +36,14 @@ import ca.uqac.lif.petitpoucet.PartNode;
 public class FunctionLineageGraphUtilities
 {
 	/**
+	 * Private constructor.
+	 */
+	private FunctionLineageGraphUtilities()
+	{
+		super();
+	}
+
+	/**
 	 * Simplifies a lineage graph. In addition to the simplifications performed
 	 * by {@link GraphUtilities#simplify(Node)}, this method also deletes from
 	 * the graph all the leaves that do not refer to either an input or an output
@@ -49,7 +57,7 @@ public class FunctionLineageGraphUtilities
 		deleteConstantLeaves(new_graph);
 		return new_graph;
 	}
-	
+
 	/**
 	 * Simplifies a lineage graph. In addition to the simplifications performed
 	 * by {@link GraphUtilities#simplify(Node)}, this method also deletes from
@@ -60,8 +68,7 @@ public class FunctionLineageGraphUtilities
 	 */
 	public static List<Node> simplify(List<Node> roots)
 	{
-		List<Node> out = new ArrayList<>(roots.size());
-		out = GraphUtilities.simplify(roots);
+		List<Node> out = GraphUtilities.simplify(roots);
 		for (Node root : roots)
 		{
 			deleteConstantLeaves(root);
@@ -75,22 +82,19 @@ public class FunctionLineageGraphUtilities
 	 */
 	protected static void deleteConstantLeaves(Node n)
 	{
-		if (GraphUtilities.isLeaf(n))
+		if (GraphUtilities.isLeaf(n) && n instanceof PartNode)
 		{
-			if (n instanceof PartNode)
+			PartNode pn = (PartNode) n;
+			Part p = pn.getPart();
+			if (NthOutput.mentionedOutput(p) < 0 && NthInput.mentionedInput(p) < 0)
 			{
-				PartNode pn = (PartNode) n;
-				Part p = pn.getPart();
-				if (NthOutput.mentionedOutput(p) < 0 && NthInput.mentionedInput(p) < 0)
+				// No part mentioned in this node: hide it
+				for (int i = 0; i < n.getInputArity(); i++)
 				{
-					// No part mentioned in this node: hide it
-					for (int i = 0; i < n.getInputArity(); i++)
+					for (Pin<? extends Node> pin : n.getInputLinks(i))
 					{
-						for (Pin<? extends Node> pin : n.getInputLinks(i))
-						{
-							Node up_node = pin.getNode();
-							NodeConnector.cutFrom(up_node, pin.getIndex(), n, i);
-						}
+						Node up_node = pin.getNode();
+						NodeConnector.cutFrom(up_node, pin.getIndex(), n, i);
 					}
 				}
 			}

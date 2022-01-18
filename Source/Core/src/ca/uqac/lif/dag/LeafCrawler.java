@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -29,7 +29,7 @@ public abstract class LeafCrawler extends Crawler
 	 * Creates a new range fetcher.
 	 * @param start The starting point of the crawl
 	 */
-	public LeafCrawler(/*@ non_null @*/ Node start)
+	protected LeafCrawler(/*@ non_null @*/ Node start)
 	{
 		super(start);
 	}

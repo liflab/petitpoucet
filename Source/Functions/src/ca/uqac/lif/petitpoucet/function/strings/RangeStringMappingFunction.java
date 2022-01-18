@@ -21,7 +21,7 @@ public abstract class RangeStringMappingFunction extends StringMappingFunction
 	 * @param start The start index of the range
 	 * @param end The end index of the range
 	 */
-	public RangeStringMappingFunction(int start, int end)
+	protected RangeStringMappingFunction(int start, int end)
 	{
 		super();
 		m_start = start;

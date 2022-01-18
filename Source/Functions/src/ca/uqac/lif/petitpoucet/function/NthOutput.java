@@ -69,7 +69,7 @@ public class NthOutput implements Part
 	}
 
 	@Override
-	public Part head()
+	public NthOutput head()
 	{
 		return this;
 	}
@@ -77,7 +77,7 @@ public class NthOutput implements Part
 	@Override
 	public Part tail()
 	{
-		return Part.nothing;
+		return null;
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class NthOutput implements Part
 		if (from instanceof ComposedPart)
 		{
 			ComposedPart cd = (ComposedPart) from;
-			List<Part> desigs = new ArrayList<Part>();
+			List<Part> desigs = new ArrayList<>();
 			boolean replaced = false;
 			for (int i = 0 ; i < cd.size(); i++)
 			{

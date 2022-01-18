@@ -138,7 +138,7 @@ public class LineageDotRenderer implements Renderer
 	 */
 	public LineageDotRenderer(/*@ non_null @*/ Node root, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
 	{
-		this((List<Node>) Arrays.asList(root), prefix, nesting_level, no_captions);
+		this(Arrays.asList(root), prefix, nesting_level, no_captions);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class LineageDotRenderer implements Renderer
 	 */
 	public LineageDotRenderer(/*@ non_null @*/ Node ... roots)
 	{
-		this((List<Node>) Arrays.asList(roots), "", 0, false);
+		this(Arrays.asList(roots), "", 0, false);
 	}
 	
 	/**
@@ -245,7 +245,7 @@ public class LineageDotRenderer implements Renderer
 			Collection<Pin<? extends Node>> pins = current.getOutputLinks(i);
 			for (Pin<? extends Node> pin : pins)
 			{
-				Node target = (Node) pin.getNode();
+				Node target = pin.getNode();
 				render(ps, target);
 				renderTransition(ps, current, i, pin);
 			}
@@ -463,11 +463,11 @@ public class LineageDotRenderer implements Renderer
 	 */
 	protected static String getIndent(int nesting_level)
 	{
-		String out = "";
+		StringBuilder out = new StringBuilder();
 		for (int i = 0; i < nesting_level; i++)
 		{
-			out += "  ";
+			out.append("  ");
 		}
-		return out;
+		return out.toString();
 	}
 }

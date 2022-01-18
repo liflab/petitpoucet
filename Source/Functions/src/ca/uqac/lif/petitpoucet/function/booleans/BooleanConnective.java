@@ -59,7 +59,7 @@ public abstract class BooleanConnective extends AtomicFunction
 	 * connective
 	 * @param fail_fast Set to {@code true} to make it a fail-fast connective
 	 */
-	public BooleanConnective(int in_arity, boolean witness_value, boolean fail_fast)
+	protected BooleanConnective(int in_arity, boolean witness_value, boolean fail_fast)
 	{
 		super(in_arity, 1);
 		m_arguments = new boolean[in_arity];

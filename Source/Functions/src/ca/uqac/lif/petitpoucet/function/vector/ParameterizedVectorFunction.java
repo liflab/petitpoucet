@@ -47,7 +47,7 @@ public abstract class ParameterizedVectorFunction extends VectorOutputFunction
 	 */
 	/*@ non_null @*/ protected List<Function> m_lastInstances;
 
-	public ParameterizedVectorFunction(/*@ non_null @*/ Function f)
+	protected ParameterizedVectorFunction(/*@ non_null @*/ Function f)
 	{
 		super(f.getInputArity());
 		m_function = f;

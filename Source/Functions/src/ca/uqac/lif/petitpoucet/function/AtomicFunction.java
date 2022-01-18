@@ -63,7 +63,7 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 	 * @param in_arity The input arity of the function
 	 * @param out_arity The output arity of the function
 	 */
-	public AtomicFunction(int in_arity, int out_arity)
+	protected AtomicFunction(int in_arity, int out_arity)
 	{
 		super(in_arity, out_arity);
 		m_context = new HashMap<>();
@@ -239,10 +239,6 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 					m_evaluated = true;
 					break;
 				}
-				else
-				{
-					System.out.println("EILLE");
-				}
 			}
 			if (!m_evaluated)
 			{
@@ -255,7 +251,7 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 		public AtomicFunctionInputPin duplicate(boolean with_state)
 		{
 			AtomicFunctionInputPin afip = new AtomicFunctionInputPin(m_index);
-			copyInto(afip, false);
+			this.copyInto(afip, false);
 			return afip;
 		}
 	}
@@ -299,7 +295,7 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 		public AtomicFunctionOutputPin duplicate(boolean with_state)
 		{
 			AtomicFunctionOutputPin afop = new AtomicFunctionOutputPin(m_index);
-			copyInto(afop, false);
+			this.copyInto(afop, false);
 			return afop;
 		}
 	}

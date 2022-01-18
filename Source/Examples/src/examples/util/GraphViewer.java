@@ -30,6 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.petitpoucet.function.LineageDotRenderer;
@@ -39,6 +40,14 @@ import ca.uqac.lif.petitpoucet.function.LineageDotRenderer;
  */
 public class GraphViewer
 {
+	/**
+	 * Private constructor.
+	 */
+	private GraphViewer()
+	{
+		super();
+	}
+	
 	/**
 	 * Displays an explanation graph into a window. This method acts as a
 	 * primitive image viewer, used to display the result of the examples.
@@ -68,7 +77,7 @@ public class GraphViewer
 	 */
 	public static void display(Node root)
 	{
-		display((List<Node>) Arrays.asList(root), false);
+		display(Arrays.asList(root), false);
 	}
 
 	/**
@@ -81,9 +90,20 @@ public class GraphViewer
 	public static void save(List<Node> roots, String filename, boolean no_captions) throws IOException
 	{
 		File outputFile = new File(filename);
-		FileOutputStream outputStream = new FileOutputStream(outputFile);
-		outputStream.write(getGraph(roots, no_captions));
-		outputStream.close();
+		FileOutputStream outputStream = null;
+		try
+		{
+			outputStream = new FileOutputStream(outputFile);
+			outputStream.write(getGraph(roots, no_captions));
+		}
+		catch (IOException e)
+		{
+			throw e;
+		}
+		finally
+		{
+			outputStream.close();
+		}
 	}
 
 	/**
@@ -160,7 +180,7 @@ public class GraphViewer
 			super("Graph");
 			JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 			add(panel);
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			m_label = new JLabel();
 			panel.add(m_label);
 			ImageIcon icon = new ImageIcon(image_bytes); 

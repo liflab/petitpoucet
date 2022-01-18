@@ -58,7 +58,7 @@ public abstract class VectorOutputFunction extends VectorFunction
 	 * Creates a new instance of vector function.
 	 * @param in_arity The input arity of the function
 	 */
-	public VectorOutputFunction(int in_arity)
+	protected VectorOutputFunction(int in_arity)
 	{
 		super(in_arity);
 		m_lastOutputs = null;

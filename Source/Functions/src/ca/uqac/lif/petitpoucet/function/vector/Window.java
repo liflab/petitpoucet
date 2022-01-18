@@ -114,10 +114,9 @@ public class Window extends ParameterizedVectorFunction
 						else
 						{
 							// Leaf points to the whole input, which corresponds to all elements of the window
-							Node and = sub_node;
 							if (m_width > 1)
 							{
-								and = factory.getAndNode();
+								Node and = factory.getAndNode();
 								NodeConnector.connect(sub_node, i, and, 0);
 								for (int j = 0; j < m_width; j++)
 								{

@@ -114,7 +114,7 @@ public class CommandRunner extends Thread
 			}
 			catch (IOException ioe)
 			{
-				ioe.printStackTrace();
+				// Do nothing
 			}
 		}
 		

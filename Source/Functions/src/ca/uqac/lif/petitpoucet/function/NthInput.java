@@ -74,7 +74,7 @@ public class NthInput implements Part
 	}
 
 	@Override
-	public Part head()
+	public NthInput head()
 	{
 		return this;
 	}
@@ -82,7 +82,7 @@ public class NthInput implements Part
 	@Override
 	public Part tail()
 	{
-		return Part.nothing;
+		return null;
 	}
 	
 	@Override

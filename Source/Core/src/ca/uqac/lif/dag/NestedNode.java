@@ -301,11 +301,7 @@ public class NestedNode extends Node
 		@Override
 		public void visit(/*@ non_null @*/ Node n)
 		{
-			if (!m_copies.containsKey(n))
-			{
-				Node n_copy = n.duplicate(m_withState);
-				m_copies.put(n, n_copy);
-			}
+			m_copies.computeIfAbsent(n, k -> k.duplicate(m_withState));
 			for (int i = 0; i < n.getOutputArity(); i++)
 			{
 				List<Pin<? extends Node>> pins = n.getOutputLinks(i);

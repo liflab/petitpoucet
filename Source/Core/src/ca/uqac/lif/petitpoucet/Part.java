@@ -95,7 +95,7 @@ public interface Part
 		}
 
 		@Override
-		public Part head()
+		public All head()
 		{
 			return this;
 		}
@@ -144,7 +144,7 @@ public interface Part
 		}
 
 		@Override
-		public Part head()
+		public Nothing head()
 		{
 			return this;
 		}
@@ -191,7 +191,7 @@ public interface Part
 		}
 
 		@Override
-		public Part head()
+		public Unknown head()
 		{
 			return this;
 		}
@@ -233,7 +233,7 @@ public interface Part
 		}
 
 		@Override
-		public Part head()
+		public Self head()
 		{
 			return this;
 		}
