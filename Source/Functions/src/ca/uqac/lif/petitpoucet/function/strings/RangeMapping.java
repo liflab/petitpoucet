@@ -87,7 +87,7 @@ public class RangeMapping
 	 * @param list2 The second list of ranges; assumed to be sorted
 	 * @return The list of ranges resulting from the merging described above
 	 */
-	/*@ non_null @*/ static List<Range> fragment(List<Range> list1, List<Range> list2)
+	/*@ non_null @*/ public static List<Range> fragment(List<Range> list1, List<Range> list2)
 	{
 		List<Integer> indices = new ArrayList<>();
 		for (Range r : list1)
@@ -123,6 +123,21 @@ public class RangeMapping
 			out_list.add(new Range(indices.get(i), indices.get(i + 1) - 1));
 		}
 		return out_list;
+	}
+	
+	/**
+	 * Operates like {@link #fragment(List, List)}, but with only two ranges.
+	 * @param r1 The first range
+	 * @param r2 The second range
+	 * @return The list of ranges resulting from the merging described above
+	 */
+	/*@ non_null @*/ public static List<Range> fragment(Range r1, Range r2)
+	{
+		List<Range> list1 = new ArrayList<Range>(1);
+		list1.add(r1);
+		List<Range> list2 = new ArrayList<Range>(1);
+		list2.add(r2);
+		return fragment(list1, list2);
 	}
 	
 	/**

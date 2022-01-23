@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@ import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
-import ca.uqac.lif.petitpoucet.function.NthInput;
+import ca.uqac.lif.petitpoucet.function.NthOutput;
 
 /**
  * Multiplies all arguments of the input.
@@ -139,7 +139,7 @@ public class Multiplication extends AtomicFunction implements ExplanationQueryab
 		{
 			if (m_nulls[i])
 			{
-				ln.addChild(factory.getPartNode(new NthInput(i), this));
+				ln.addChild(factory.getPartNode(NthOutput.replaceOutByIn(part, i), this));
 			}
 		}
 		return root;

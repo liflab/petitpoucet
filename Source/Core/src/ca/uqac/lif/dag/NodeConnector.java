@@ -36,7 +36,7 @@ public class NodeConnector
 	 * @param n2 The second node
 	 * @param i2 The index of the output pin on {@code n2}
 	 */
-	public static void disconnect(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
+	public static void disconnect(/*@ non_null @*/ Connectable n1, int i1, /*@ non_null @*/ Connectable n2, int i2)
 	{
 		instance.disconnectFrom(n1, i1, n2, i2);
 	}
@@ -50,7 +50,7 @@ public class NodeConnector
 	 * @param n2 The second node
 	 * @param i2 The index of the output pin on {@code n2}
 	 */
-	public static void cutFrom(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
+	public static void cutFrom(/*@ non_null @*/ Connectable n1, int i1, /*@ non_null @*/ Connectable n2, int i2)
 	{
 		n1.removeFromOutput(i1, n2.getInputPin(i2));
 	}
@@ -62,7 +62,7 @@ public class NodeConnector
 	 * @param n2 The second node
 	 * @param i2 The index of the output pin on {@code n2}
 	 */
-	public static void connect(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
+	public static void connect(/*@ non_null @*/ Connectable n1, int i1, /*@ non_null @*/ Connectable n2, int i2)
 	{
 		instance.connectTo(n1, i1, n2, i2);
 	}
@@ -74,7 +74,7 @@ public class NodeConnector
 	 * @param n2 The second node
 	 * @param i2 The index of the output pin on {@code n2}
 	 */
-	public void connectTo(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
+	public void connectTo(/*@ non_null @*/ Connectable n1, int i1, /*@ non_null @*/ Connectable n2, int i2)
 	{
 		Pin<? extends Node> out_p1 = n1.getOutputPin(i1);
 		Pin<? extends Node> in_p2 = n2.getInputPin(i2);
@@ -95,7 +95,7 @@ public class NodeConnector
 	 * @param n2 The second node
 	 * @param i2 The index of the output pin on {@code n2}
 	 */
-	public void disconnectFrom(/*@ non_null @*/ Node n1, int i1, /*@ non_null @*/ Node n2, int i2)
+	public void disconnectFrom(/*@ non_null @*/ Connectable n1, int i1, /*@ non_null @*/ Connectable n2, int i2)
 	{
 		n1.removeFromOutput(i1, n2.getInputPin(i2));
 		n2.removeFromInput(i2, n1.getOutputPin(i1));

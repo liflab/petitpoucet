@@ -22,6 +22,7 @@ import java.util.List;
 
 import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.function.NthInput;
 
 /**
  * Part representing a contiguous sequence of characters in a string.
@@ -234,5 +235,47 @@ public class Range implements Part, Comparable<Range>
 			}
 		}
 		return ComposedPart.compose(parts);
+	}
+	
+	/**
+	 * Given an arbitrary designator, replaces the first occurrence of
+	 * {@link NthInput} by another part.
+	 * @param from The original part
+	 * @param to The part to replace it with
+	 * @return The new designator. The input object is not modified if it does
+	 * not contain {@code d}
+	 */
+	/*@ non_null @*/ public static Part replaceRangeBy(/*@ non_null @*/ Part from, Part to)
+	{
+		if (from instanceof Range)
+		{
+			return to;
+		}
+		if (from instanceof ComposedPart)
+		{
+			ComposedPart cd = (ComposedPart) from;
+			List<Part> desigs = new ArrayList<>();
+			boolean replaced = false;
+			for (int i = 0 ; i < cd.size(); i++)
+			{
+				Part in_d = cd.get(i);
+				if (in_d instanceof Range && !replaced)
+				{
+					desigs.add(to);
+					replaced = true;
+				}
+				else
+				{
+					desigs.add(in_d);
+				}
+			}
+			if (!replaced)
+			{
+				// Return input object if no replacement was done
+				return from;
+			}
+			return new ComposedPart(desigs);
+		}
+		return from;
 	}
 }
