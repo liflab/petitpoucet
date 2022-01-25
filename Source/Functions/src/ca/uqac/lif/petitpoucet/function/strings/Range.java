@@ -30,6 +30,13 @@ import ca.uqac.lif.petitpoucet.function.NthInput;
  */
 public class Range implements Part, Comparable<Range>
 {
+	
+	public static Range rangeOf(String word, String s)
+	{
+		int start = s.indexOf(word);
+		return new Range(start, word.length() - 1);
+	}
+	
 	/**
 	 * The start position of the range.
 	 */

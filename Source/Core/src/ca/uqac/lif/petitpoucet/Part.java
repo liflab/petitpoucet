@@ -43,14 +43,14 @@ public interface Part
 	 * 
 	 * @return The designator
 	 */
-	public Part head();
+	/*@ non_null @*/ public Part head();
 
 	/**
 	 * Returns a designator from which the first operation is removed
 	 * 
 	 * @return The designator
 	 */
-	public Part tail();
+	/*@ null @*/ public Part tail();
 
 	/**
 	 * An instance of the "identity" designator
