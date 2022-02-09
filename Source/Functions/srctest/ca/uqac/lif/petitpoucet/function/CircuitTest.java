@@ -152,6 +152,40 @@ public class CircuitTest
 		Object[] out = c_dup.evaluate(2, 3, 4);
 		assertEquals(20, ((Number) out[0]).intValue());
 	}
+	
+	@Test
+	public void testDuplicate4()
+	{
+		// This circuit calculates x > 3
+		Circuit c = new Circuit(1, 1);
+		IsGreaterThan gt = new IsGreaterThan();
+		Constant three = new Constant(3);
+		c.associateInput(0, gt.getInputPin(0));
+		NodeConnector.connect(three, 0, gt, 1);
+		c.associateOutput(0, gt.getOutputPin(0));
+		c.addNodes(three, gt);
+		Circuit c_dup = c.duplicate();
+		Object[] out = c_dup.evaluate(3);
+		assertFalse(((Boolean) out[0]).booleanValue());
+	}
+	
+	@Test
+	public void testDuplicate5()
+	{
+			// This circuit calculates x > 3
+			Circuit c = new Circuit(1, 1);
+			Identity a = new Identity(1);
+			IsGreaterThan gt = new IsGreaterThan();
+			Constant three = new Constant(3);
+			c.associateInput(0, a.getInputPin(0));
+			NodeConnector.connect(a, 0, gt, 0);
+			NodeConnector.connect(three, 0, gt, 1);
+			c.associateOutput(0, gt.getOutputPin(0));
+			c.addNodes(a, three, gt);
+			Circuit c_dup = c.duplicate();
+			Object[] out = c_dup.evaluate(3);
+			assertFalse(((Boolean) out[0]).booleanValue());
+	}
 
 	@Test
 	public void testExplain1()

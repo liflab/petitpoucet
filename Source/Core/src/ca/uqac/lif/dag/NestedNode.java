@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -39,19 +39,19 @@ public class NestedNode extends Node
 	 * The internal nodes contained within this node.
 	 */
 	protected List<Node> m_internalNodes;
-	
+
 	/**
 	 * A map storing associations between the node's input pins and an input
 	 * pin of some internal node.
 	 */
 	protected Map<Integer,Pin<? extends Node>> m_inputAssociations;
-	
+
 	/**
 	 * A map storing associations between the node's output pins and an output
 	 * pin of some internal node.
 	 */
 	protected Map<Integer,Pin<? extends Node>> m_outputAssociations;
-	
+
 	/**
 	 * Creates a new nested node from a tree of connected nodes.
 	 * @param root The root of the tree
@@ -72,7 +72,7 @@ public class NestedNode extends Node
 		}
 		return nn;
 	}
-	
+
 	/**
 	 * Creates a new empty nested node.
 	 * @param in_arity The node's input arity
@@ -93,7 +93,7 @@ public class NestedNode extends Node
 			m_outputAssociations.put(i, null);
 		}
 	}
-	
+
 	/**
 	 * Associates an input pin of the nested node to an input pin of one of its
 	 * internal nodes.
@@ -104,7 +104,7 @@ public class NestedNode extends Node
 	{
 		m_inputAssociations.put(i, p);
 	}
-	
+
 	/**
 	 * Gets the input pin of the internal node associated to a given input pin
 	 * of the nested node.
@@ -115,7 +115,7 @@ public class NestedNode extends Node
 	{
 		return m_inputAssociations.get(i);
 	}
-	
+
 	/**
 	 * Associates an input pin of the nested node to an output pin of one of its
 	 * internal nodes.
@@ -126,7 +126,7 @@ public class NestedNode extends Node
 	{
 		m_outputAssociations.put(i, p);
 	}
-	
+
 	/**
 	 * Gets the output pin of the internal node associated to a given output pin
 	 * of the nested node.
@@ -137,7 +137,7 @@ public class NestedNode extends Node
 	{
 		return m_outputAssociations.get(i);
 	}
-	
+
 	/**
 	 * Adds nodes to the internal nodes of this nested node.
 	 * @param nodes The nodes to add
@@ -146,7 +146,7 @@ public class NestedNode extends Node
 	{
 		m_internalNodes.addAll(nodes);
 	}
-	
+
 	/**
 	 * Adds nodes to the internal nodes of this nested node.
 	 * @param nodes The nodes to add
@@ -155,7 +155,7 @@ public class NestedNode extends Node
 	{
 		m_internalNodes.addAll(Arrays.asList(nodes));
 	}
-	
+
 	/**
 	 * Gets the nested node input to which the n-th input of an inner node
 	 * is associated with.
@@ -176,7 +176,7 @@ public class NestedNode extends Node
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Gets the nested node output to which the n-th output of an inner node
 	 * is associated with.
@@ -197,7 +197,7 @@ public class NestedNode extends Node
 		}
 		return -1;
 	}
-	
+
 	@Override
 	public NestedNode duplicate(boolean with_state)
 	{
@@ -205,7 +205,7 @@ public class NestedNode extends Node
 		copyInto(nn, with_state);
 		return nn;
 	}
-	
+
 	protected void copyInto(NestedNode nn, boolean with_state)
 	{
 		super.copyInto(nn, with_state);
@@ -216,7 +216,7 @@ public class NestedNode extends Node
 			c.copyInto(nn);
 		}
 	}
-	
+
 	/**
 	 * Gets an instance of node connector. This connector is used to connect
 	 * nodes when creating a duplicate of the nested node. Descendants of this
@@ -228,7 +228,7 @@ public class NestedNode extends Node
 	{
 		return NodeConnector.instance;
 	}
-	
+
 	/**
 	 * A crawler that creates copies of all visited nodes and connects them in
 	 * the same way as the originals.
@@ -239,23 +239,23 @@ public class NestedNode extends Node
 		 * A map associating original nodes to their corresponding copy.
 		 */
 		/*@ non_null @*/ protected Map<Node,Node> m_copies;
-		
+
 		/**
 		 * The set of nodes that have been expanded (i.e. their output links
 		 * have been visited).
 		 */
 		/*@ non_null @*/ protected Set<Node> m_expanded;
-		
+
 		/**
 		 * A connector used to connect nodes.
 		 */
 		/*@ non_null @*/ protected NodeConnector m_connector;
-		
+
 		/**
 		 * Whether node duplication is stateful.
 		 */
 		/*@ non_null @*/ protected boolean m_withState;
-		
+
 		/**
 		 * Creates a new crawler.
 		 * @param start The starting point of the crawl
@@ -271,7 +271,7 @@ public class NestedNode extends Node
 			m_withState = with_state;
 			m_expanded = new HashSet<>(m_internalNodes.size());
 		}
-		
+
 		/**
 		 * Copies the content of the cloned nodes into a nested node.
 		 * @param nn The node to copy the contents into
@@ -292,12 +292,12 @@ public class NestedNode extends Node
 				nn.m_outputAssociations.put(e.getKey(), target.getOutputPin(pin.getIndex()));
 			}
 		}
-		
+
 		public Node getCopyOf(Node n)
 		{
 			return m_copies.get(n);
 		}
-		
+
 		@Override
 		public void visit(/*@ non_null @*/ Node n)
 		{
@@ -308,18 +308,23 @@ public class NestedNode extends Node
 				for (Pin<? extends Node> pin : pins)
 				{
 					Node target = pin.getNode();
+					Node target_copy = null;
 					if (!m_expanded.contains(target))
 					{
 						m_expanded.add(target);
-						Node target_copy = target.duplicate(m_withState);
+						target_copy = target.duplicate(m_withState);
 						m_copies.put(target, target_copy);
-						m_connector.connectTo(m_copies.get(n), i, target_copy, pin.getIndex());
 					}
+					else
+					{
+						target_copy = m_copies.get(target);
+					}
+					m_connector.connectTo(m_copies.get(n), i, target_copy, pin.getIndex());
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * A crawler visiting all inner nodes of the nested node. It can then return
 	 * the list of all such nodes, or the list of all "leaf" nodes (downstream
@@ -331,14 +336,14 @@ public class NestedNode extends Node
 		 * The list of nodes that are leaves.
 		 */
 		/*@ non_null @*/ protected List<Node> m_leaves;
-		
+
 		/**
 		 * The list of all visited nodes. A list is used instead of a set, so that
 		 * enumerations of the visited elements are always in the same order at
 		 * each execution.
 		 */
 		/*@ non_null @*/ protected List<Node> m_allNodes;
-		
+
 		/**
 		 * Creates a new crawler.
 		 * @param start The starting point of the crawl
@@ -349,7 +354,7 @@ public class NestedNode extends Node
 			m_leaves = new ArrayList<>();
 			m_allNodes = new ArrayList<>();
 		}
-		
+
 		@Override
 		public void visit(/*@ non_null @*/ Node n)
 		{
@@ -371,7 +376,7 @@ public class NestedNode extends Node
 				m_leaves.add(n);
 			}
 		}
-		
+
 		/**
 		 * Gets the list of visited nodes that are leaves.
 		 * @return The leaves
@@ -380,7 +385,7 @@ public class NestedNode extends Node
 		{
 			return m_leaves;
 		}
-		
+
 		/**
 		 * Gets the list of all visited nodes.
 		 * @return The nodes
