@@ -42,4 +42,10 @@ public interface Function extends Connectable, Contextualizable, Duplicable
 	 * class.
 	 */
 	public void reset();
+	
+	@Override
+	public Function duplicate(boolean with_state);
+	
+	@Override
+	public Function duplicate();
 }

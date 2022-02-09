@@ -267,4 +267,24 @@ public class StringMappingFunction extends AtomicFunction
 	{
 		return new StringMappingFunction(m_mapping.reverse(), m_outLength, m_inLength);
 	}
+	
+	@Override
+	public StringMappingFunction duplicate(boolean with_state)
+	{
+		StringMappingFunction smf = new StringMappingFunction();
+		copyInto(smf, with_state);
+		return smf;
+	}
+	
+	public void copyInto(StringMappingFunction smf, boolean with_state)
+	{
+		super.copyInto(smf, with_state);
+		if (with_state)
+		{
+			smf.m_inLength = m_inLength;
+			smf.m_outLength = m_outLength;
+			smf.m_mapping.clear();
+			smf.m_mapping.addAll(m_mapping.getPairs());
+		}
+	}
 }

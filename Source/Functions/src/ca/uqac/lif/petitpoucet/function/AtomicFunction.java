@@ -188,9 +188,12 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 	}
 	
 	@Override
+	public abstract AtomicFunction duplicate(boolean with_state);
+	
+	@Override
 	public AtomicFunction duplicate()
 	{
-		return (AtomicFunction) duplicate(false);
+		return duplicate(false);
 	}
 
 	/**

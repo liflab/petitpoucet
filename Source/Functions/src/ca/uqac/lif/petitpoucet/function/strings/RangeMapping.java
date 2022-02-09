@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import ca.uqac.lif.util.Duplicable;
+
 /**
  * A set of associations between elements of two ordered lists, called the
  * "input" and the "output". A range mapping stores these associations in
@@ -35,7 +37,7 @@ import java.util.List;
  * associating input ranges to sets of output ranges, and the other
  * associating output ranges to sets of input ranges.
  */
-public class RangeMapping
+public class RangeMapping implements Duplicable
 {
 	/**
 	 * The (sorted) list of associations between ranges of characters.
@@ -606,6 +608,16 @@ public class RangeMapping
 		return rm;
 	}
 	
+	/**
+	 * Clears the contents of this range mapping.
+	 * @return This range mapping
+	 */
+	public RangeMapping clear()
+	{
+		m_mapping.clear();
+		return this;
+	}
+	
 	@Override
 	public boolean equals(Object o)
 	{
@@ -846,5 +858,22 @@ public class RangeMapping
 		{
 			return m_from + (isBijective() ? "\u2194" : ":") + m_to;
 		}
+	}
+	
+	@Override
+	public RangeMapping duplicate()
+	{
+		return duplicate(false);
+	}
+	
+	@Override
+	public RangeMapping duplicate(boolean with_state)
+	{
+		RangeMapping rm = new RangeMapping(this);
+		if (with_state)
+		{
+			rm.m_changed = m_changed;
+		}
+		return rm;
 	}
 }
