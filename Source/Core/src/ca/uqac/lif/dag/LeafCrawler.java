@@ -17,6 +17,9 @@
  */
 package ca.uqac.lif.dag;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import ca.uqac.lif.petitpoucet.PartNode;
 
 /**
@@ -70,4 +73,29 @@ public abstract class LeafCrawler extends Crawler
 	 * @param n The node
 	 */
 	protected abstract void visitLeaf(Node n);
+	
+	/**
+	 * A simple leaf crawler that fetches the leaves of a DAG.
+	 */
+	public static class LeafFetcher extends LeafCrawler
+	{
+		/*@ non_null @*/protected Set<Node> m_leaves;
+		
+		public LeafFetcher(/*@ non_null @*/ Node start) 
+		{
+			super(start);
+			m_leaves = new HashSet<Node>();
+		}
+
+		@Override
+		protected void visitLeaf(Node n)
+		{
+			m_leaves.add(n);
+		}
+		
+		/*@ pure non_null @*/ public Set<Node> getLeaves()
+		{
+			return m_leaves;
+		}
+	}
 }

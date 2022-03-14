@@ -252,7 +252,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 * @return The nested node containing the explanation graph of the entire
 	 * circuit. 
 	 */
-	protected NestedNode developToInput(Part start, Node subject, NodeFactory factory)
+	protected static NestedNode developToInput(Part start, Node subject, NodeFactory factory)
 	{
 		Queue<PartNode> to_explore = new ArrayDeque<>();
 		Set<PartNode> explored = new HashSet<>();
@@ -338,7 +338,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 * @return The nested node containing the explanation graph of the entire
 	 * circuit. 
 	 */
-	protected NestedNode developToOutput(Part start, Node subject, NodeFactory factory)
+	protected static NestedNode developToOutput(Part start, Node subject, NodeFactory factory)
 	{
 		Queue<PartNode> to_explore = new ArrayDeque<>();
 		Set<PartNode> explored = new HashSet<>();
