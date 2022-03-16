@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -174,19 +174,28 @@ public class GraphUtilities
 		Node out_parent = parent;
 		if (!(target instanceof AndNode) && !(target instanceof OrNode) && isLeaf(target))
 		{
+			// Don't skip over a leaf node
 			NodeConnector.connect(parent, pin_index, target_dup, pin.getIndex());
 			return;
 		}
-		if (target instanceof AndNode && !(parent instanceof AndNode))
+		if (target instanceof AndNode || target instanceof OrNode)
 		{
-			NodeConnector.connect(parent, pin_index, target_dup, pin.getIndex());
-			out_parent = target_dup;
+			boolean is_nary = target.getOutputNodeCount() > 1;
+			if (target instanceof AndNode && is_nary && !(parent instanceof AndNode))
+			{
+				// Don't skip over an AND node of arity > 1 if parent is something else
+				NodeConnector.connect(parent, pin_index, target_dup, pin.getIndex());
+				out_parent = target_dup;
+			}
+			if (target instanceof OrNode && is_nary && !(parent instanceof OrNode))
+			{
+				// Don't skip over an OR node of arity > 1 if parent is something else
+				NodeConnector.connect(parent, pin_index, target_dup, pin.getIndex());
+				out_parent = target_dup;
+			}
 		}
-		if (target instanceof OrNode && !(parent instanceof OrNode))
-		{
-			NodeConnector.connect(parent, pin_index, target_dup, pin.getIndex());
-			out_parent = target_dup;
-		}
+		// Otherwise, out_parent = parent, meaning that children of target will be
+		// connected to parent of current node (i.e current is skipped over)
 		if (!visited.contains(target))
 		{
 			for (int i = 0; i < target.getOutputArity(); i++)

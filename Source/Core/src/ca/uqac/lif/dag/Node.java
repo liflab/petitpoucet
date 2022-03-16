@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -75,6 +75,28 @@ public class Node implements Connectable, Duplicable
 	/*@ pure @*/ public int getOutputArity()
 	{
 		return m_outputs.size();
+	}
+	
+	@Override
+	/*@ pure @*/ public int getInputNodeCount()
+	{
+		int total = 0;
+		for (int i = 0; i < getInputArity(); i++)
+		{
+			total += getInputLinks(i).size();
+		}
+		return total;
+	}
+	
+	@Override
+	/*@ pure @*/ public int getOutputNodeCount()
+	{
+		int total = 0;
+		for (int i = 0; i < getOutputArity(); i++)
+		{
+			total += getOutputLinks(i).size();
+		}
+		return total;
 	}
 	
 	@Override

@@ -40,6 +40,20 @@ public interface Connectable
 	/*@ pure @*/ public int getOutputArity();
 	
 	/**
+	 * Gets the total number of nodes that are connected to an input
+	 * pin of this node.
+	 * @return The number of nodes
+	 */
+	/*@ pure @*/ public int getInputNodeCount();
+	
+	/**
+	 * Gets the total number of nodes that are connected to an output
+	 * pin of this node.
+	 * @return The number of nodes
+	 */
+	/*@ pure @*/ public int getOutputNodeCount();
+	
+	/**
 	 * Gets the output pins of other nodes that are connected to a given
 	 * input pin of this node.
 	 * @param index The index of the current node's input pin
