@@ -143,6 +143,7 @@ public class NthElement implements Part
 				if (in_d instanceof NthElement)
 				{
 					index = ((NthElement) in_d).getIndex();
+					break;
 				}
 			}
 		}

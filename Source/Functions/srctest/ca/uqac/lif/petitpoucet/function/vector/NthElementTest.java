@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -59,5 +59,12 @@ public class NthElementTest
 		Part cd = ComposedPart.compose(NthInput.FIRST, NthOutput.FIRST);
 		Part d = NthElement.replaceNthOutputByNthInput(cd, 10);
 		assertEquals(cd, d);
+	}
+	
+	@Test
+	public void testMentionedElement1()
+	{
+		Part cd = ComposedPart.compose(new NthElement(0), new NthElement(25), NthOutput.FIRST);
+		assertEquals(25, NthElement.mentionedElement(cd));
 	}
 }
