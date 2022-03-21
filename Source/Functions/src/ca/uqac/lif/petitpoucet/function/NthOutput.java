@@ -152,7 +152,7 @@ public class NthOutput implements Part
 				// Return input object if no replacement was done
 				return from;
 			}
-			return new ComposedPart(desigs);
+			return ComposedPart.compose(desigs);
 		}
 		return from;
 	}

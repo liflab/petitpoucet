@@ -162,4 +162,27 @@ public class NumbersTest
 		IsGreaterThan f = new IsGreaterThan();
 		f.evaluate(3, "foo");
 	}
+	
+	@Test
+	public void testIsLessThan1()
+	{
+		IsLessThan f = new IsLessThan();
+		Boolean b = (Boolean) f.evaluate(-2, 3)[0];
+		assertEquals(true, b);
+	}
+	
+	@Test
+	public void testIsLessThan2()
+	{
+		IsLessThan f = new IsLessThan();
+		Boolean b = (Boolean) f.evaluate(3, -2)[0];
+		assertEquals(false, b);
+	}
+	
+	@Test (expected = InvalidArgumentTypeException.class)
+	public void testIsLessThan3()
+	{
+		IsLessThan f = new IsLessThan();
+		f.evaluate(3, "foo");
+	}
 }

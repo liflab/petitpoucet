@@ -18,15 +18,15 @@
 package ca.uqac.lif.petitpoucet.function.number;
 
 /**
- * Determines if a number is greater than another one.
+ * Determines if a number is less than or equal to another one.
  * @author Sylvain Hallé
  */
-public class IsGreaterThan extends NumberComparison
+public class IsLessOrEqual extends NumberComparison
 {
 	/**
 	 * Creates a new instance of the function.
 	 */
-	public IsGreaterThan()
+	public IsLessOrEqual()
 	{
 		super();
 	}
@@ -34,13 +34,13 @@ public class IsGreaterThan extends NumberComparison
 	@Override
 	public String toString()
 	{
-		return "&gt;";
+		return "&le;";
 	}
 	
 	@Override
-	public IsGreaterThan duplicate(boolean with_state)
+	public IsLessOrEqual duplicate(boolean with_state)
 	{
-		IsGreaterThan f = new IsGreaterThan();
+		IsLessOrEqual f = new IsLessOrEqual();
 		copyInto(f, with_state);
 		return f;
 	}
@@ -48,6 +48,6 @@ public class IsGreaterThan extends NumberComparison
 	@Override
 	protected boolean compare(Number n1, Number n2)
 	{
-		return n1.doubleValue() > n2.doubleValue();
+		return n1.doubleValue() <= n2.doubleValue();
 	}
 }
