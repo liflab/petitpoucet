@@ -71,4 +71,10 @@ public class SomeObject extends BooleanObjectQuantifier
 		return true;
 	}
 
+	
+	@Override
+	public String toString()
+	{
+		return "\u2203";
+	}
 }

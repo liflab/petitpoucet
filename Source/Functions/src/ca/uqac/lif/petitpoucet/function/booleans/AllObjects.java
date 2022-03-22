@@ -71,4 +71,9 @@ public class AllObjects extends BooleanObjectQuantifier
 		return false;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "\u2200";
+	}
 }

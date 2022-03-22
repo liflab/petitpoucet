@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -112,5 +112,29 @@ public class Crawler
 	public void visit(Node n)
 	{
 		// Do nothing. Override.
+	}
+	
+	/**
+	 * Sets if a crawler can traverse edges in the backward direction.
+	 * @param b Set to <tt>true</tt> to allow crawling backwards, <tt>false</tt>
+	 * otherwise
+	 * @return This crawler
+	 */
+	/*@ non_null @*/ public Crawler allowBackward(boolean b)
+	{
+		m_allowBackward = b;
+		return this;
+	}
+	
+	/**
+	 * Sets if a crawler can traverse edges in the forward direction.
+	 * @param b Set to <tt>true</tt> to allow crawling forward, <tt>false</tt>
+	 * otherwise
+	 * @return This crawler
+	 */
+	/*@ non_null @*/ public Crawler allowForward(boolean b)
+	{
+		m_allowForward = b;
+		return this;
 	}
 }

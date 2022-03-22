@@ -24,17 +24,20 @@ import ca.uqac.lif.petitpoucet.PartNode;
 
 /**
  * A crawler that traverses an explanation graph and fetches all the ranges
- * mentioned in leaf nodes.
+ * mentioned in leaf nodes. By default, the leaf crawler only traverses edges
+ * in the forward direction from its starting point. This can be overridden
+ * using {@link #allowBackward(boolean)}.
  */
 public abstract class LeafCrawler extends Crawler
 {
 	/**
-	 * Creates a new range fetcher.
+	 * Creates a new leaf crawler.
 	 * @param start The starting point of the crawl
 	 */
 	protected LeafCrawler(/*@ non_null @*/ Node start)
 	{
 		super(start);
+		m_allowBackward = false;
 	}
 	
 	@Override
