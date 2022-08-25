@@ -204,7 +204,7 @@ public class Triangle
 	}
 	
 	/**
-	 * Determines if all three elements of of vector are positive numbers.
+	 * Determines if all three elements of vector are positive numbers.
 	 * Graphically, the circuit can be represented as:
 	 * <p>
 	 * <img src="{@docRoot}/doc-files/circuits/Triangle.AllNumbers.png" alt="Circuit">
