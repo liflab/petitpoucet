@@ -81,13 +81,16 @@ public abstract class BooleanObjectQuantifier extends ObjectQuantifier
 		}
 		for (int i = 0; i < m_conditions.size(); i++)
 		{
+			System.out.println("Condition " + i);
 			FunctionIndex fi = m_conditions.get(i);
 			Function func = fi.m_function;
 			NodeFactory sub_factory = f.getFactory(p, func);
 			PartNode sub_root = ((ExplanationQueryable) func).getExplanation(p, sub_factory);
 			to_add.addChild(sub_root);
 			LeafFetcher lf = new LeafFetcher(sub_root);
+			System.out.print("Leaves");
 			lf.crawl();
+			System.out.print(" end");
 			for (Node leaf : lf.getLeaves())
 			{
 				if (!(leaf instanceof PartNode))
