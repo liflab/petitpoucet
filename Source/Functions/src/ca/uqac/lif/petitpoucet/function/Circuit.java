@@ -441,6 +441,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 				throw new FunctionException("Invalid circuit");
 			}
 			out[i] = ((FunctionPin<?>) pin).getValue();
+			m_outputPins[i].setValue(out[i]);
 		}
 		return out;
 	}
@@ -454,6 +455,14 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 			{
 				((Function) n).reset();
 			}
+		}
+		for (CircuitInputPin p : m_inputPins)
+		{
+			p.reset();
+		}
+		for (CircuitOutputPin p : m_outputPins)
+		{
+			p.reset();
 		}
 	}
 	

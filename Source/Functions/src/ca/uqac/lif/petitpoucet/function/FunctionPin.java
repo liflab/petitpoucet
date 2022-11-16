@@ -53,6 +53,11 @@ public abstract class FunctionPin<T extends Connectable> extends Pin<T> implemen
 		m_evaluated = true;
 		m_value = v;
 	}
+	
+	/*@ pure @*/ public boolean isEvaluated()
+	{
+		return m_evaluated;
+	}
 
 	@Override
 	public FunctionPin<T> duplicate()

@@ -26,6 +26,7 @@ import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.PartNode;
+import ca.uqac.lif.petitpoucet.function.booleans.And;
 import ca.uqac.lif.petitpoucet.function.number.Addition;
 import ca.uqac.lif.petitpoucet.function.number.IsGreaterThan;
 import ca.uqac.lif.petitpoucet.function.number.Multiplication;
@@ -104,6 +105,48 @@ public class CircuitTest
 		Circuit gt_0_dup = gt_0.duplicate();
 		Boolean result = (Boolean) gt_0_dup.evaluate(1)[0];
 		assertEquals(true, result);
+	}
+	
+	@Test
+	public void testReset1()
+	{
+		Circuit add = new Circuit(1, 1);
+		{
+			Fork f = new Fork(2);
+			Addition a = new Addition(2);
+			add.addNodes(f, a);
+			NodeConnector.connect(f, 0, a, 0);
+			NodeConnector.connect(f, 1, a, 1);
+			add.associateInput(0, f.getInputPin(0));
+			add.associateOutput(0, a.getOutputPin(0));
+		}
+		Number n = (Number) add.evaluate(1)[0];
+		assertEquals(2, n.intValue());
+		assertTrue(add.getOutputPin(0).isEvaluated());
+		add.reset();
+		assertFalse(add.getOutputPin(0).isEvaluated());
+		n = (Number) add.evaluate(2)[0];
+		assertEquals(4, n.intValue());
+	}
+	
+	@Test
+	public void testReset2()
+	{
+		Circuit add = new Circuit(1, 1);
+		{
+			Fork f = new Fork(2);
+			And a = new And(2);
+			add.addNodes(f, a);
+			NodeConnector.connect(f, 0, a, 0);
+			NodeConnector.connect(f, 1, a, 1);
+			add.associateInput(0, f.getInputPin(0));
+			add.associateOutput(0, a.getOutputPin(0));
+		}
+		Number n = (Number) add.evaluate()[0];
+		assertEquals(2, n.intValue());
+		add.reset();
+		n = (Number) add.evaluate(2)[0];
+		assertEquals(4, n.intValue());
 	}
 
 	@Test
