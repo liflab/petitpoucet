@@ -541,6 +541,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 			{
 				((FunctionPin<?>) pin).setValue(o);
 			}
+			m_value = o;
 			m_evaluated = true;
 		}
 

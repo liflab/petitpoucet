@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2022 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,7 @@ import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
 import ca.uqac.lif.dag.Pin;
 import ca.uqac.lif.petitpoucet.PartNode;
-import ca.uqac.lif.petitpoucet.function.booleans.And;
+import ca.uqac.lif.petitpoucet.function.Circuit.CircuitInputPin;
 import ca.uqac.lif.petitpoucet.function.number.Addition;
 import ca.uqac.lif.petitpoucet.function.number.IsGreaterThan;
 import ca.uqac.lif.petitpoucet.function.number.Multiplication;
@@ -89,7 +89,7 @@ public class CircuitTest
 		Object[] out = c.evaluate(2, 3);
 		assertEquals(1, ((Number) out[0]).intValue());
 	}
-	
+
 	@Test
 	public void test5()
 	{
@@ -106,7 +106,7 @@ public class CircuitTest
 		Boolean result = (Boolean) gt_0_dup.evaluate(1)[0];
 		assertEquals(true, result);
 	}
-	
+
 	@Test
 	public void testReset1()
 	{
@@ -125,26 +125,6 @@ public class CircuitTest
 		assertTrue(add.getOutputPin(0).isEvaluated());
 		add.reset();
 		assertFalse(add.getOutputPin(0).isEvaluated());
-		n = (Number) add.evaluate(2)[0];
-		assertEquals(4, n.intValue());
-	}
-	
-	@Test
-	public void testReset2()
-	{
-		Circuit add = new Circuit(1, 1);
-		{
-			Fork f = new Fork(2);
-			And a = new And(2);
-			add.addNodes(f, a);
-			NodeConnector.connect(f, 0, a, 0);
-			NodeConnector.connect(f, 1, a, 1);
-			add.associateInput(0, f.getInputPin(0));
-			add.associateOutput(0, a.getOutputPin(0));
-		}
-		Number n = (Number) add.evaluate()[0];
-		assertEquals(2, n.intValue());
-		add.reset();
 		n = (Number) add.evaluate(2)[0];
 		assertEquals(4, n.intValue());
 	}
@@ -195,7 +175,7 @@ public class CircuitTest
 		Object[] out = c_dup.evaluate(2, 3, 4);
 		assertEquals(20, ((Number) out[0]).intValue());
 	}
-	
+
 	@Test
 	public void testDuplicate4()
 	{
@@ -211,23 +191,23 @@ public class CircuitTest
 		Object[] out = c_dup.evaluate(3);
 		assertFalse(((Boolean) out[0]).booleanValue());
 	}
-	
+
 	@Test
 	public void testDuplicate5()
 	{
-			// This circuit calculates x > 3
-			Circuit c = new Circuit(1, 1);
-			Identity a = new Identity(1);
-			IsGreaterThan gt = new IsGreaterThan();
-			Constant three = new Constant(3);
-			c.associateInput(0, a.getInputPin(0));
-			NodeConnector.connect(a, 0, gt, 0);
-			NodeConnector.connect(three, 0, gt, 1);
-			c.associateOutput(0, gt.getOutputPin(0));
-			c.addNodes(a, three, gt);
-			Circuit c_dup = c.duplicate();
-			Object[] out = c_dup.evaluate(3);
-			assertFalse(((Boolean) out[0]).booleanValue());
+		// This circuit calculates x > 3
+		Circuit c = new Circuit(1, 1);
+		Identity a = new Identity(1);
+		IsGreaterThan gt = new IsGreaterThan();
+		Constant three = new Constant(3);
+		c.associateInput(0, a.getInputPin(0));
+		NodeConnector.connect(a, 0, gt, 0);
+		NodeConnector.connect(three, 0, gt, 1);
+		c.associateOutput(0, gt.getOutputPin(0));
+		c.addNodes(a, three, gt);
+		Circuit c_dup = c.duplicate();
+		Object[] out = c_dup.evaluate(3);
+		assertFalse(((Boolean) out[0]).booleanValue());
 	}
 
 	@Test
@@ -363,5 +343,24 @@ public class CircuitTest
 		assertTrue(inputs[0]);
 		assertTrue(inputs[1]);
 		assertFalse(inputs[2]);
+	}
+
+	@Test
+	public void testSetValue1()
+	{
+		// This circuit calculates (x+y)*z
+		Circuit c = new Circuit(3, 1);
+		Addition a = new Addition(2);
+		Multiplication m = new Multiplication(2);
+		CircuitInputPin cip = c.getInputPin(0);
+		cip.setValue(42);
+		assertEquals(true, cip.isEvaluated());
+		assertEquals(42, cip.getValue());
+		c.addNodes(a, m);
+		c.associateInput(0, a.getInputPin(0));
+		c.associateInput(1, a.getInputPin(1));
+		c.associateInput(2, m.getInputPin(1));
+		NodeConnector.connect(a, 0, m, 0);
+		c.associateOutput(0, m.getOutputPin(0));
 	}
 }
