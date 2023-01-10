@@ -431,6 +431,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 				throw new FunctionException("Invalid circuit");
 			}
 			((FunctionPin<?>) pin).setValue(inputs[i]);
+			m_inputPins[i].setValue(inputs[i]);
 		}
 		Object[] out = new Object[getOutputArity()];
 		for (int i = 0; i < out.length; i++)
