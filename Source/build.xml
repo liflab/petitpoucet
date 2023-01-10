@@ -49,16 +49,16 @@
     <ant dir="Functions" target="clean" />
     <ant dir="Examples" target="clean" />
   </target>
+
+  <target name="wipe">
+    <ant dir="Core" target="wipe" />
+    <ant dir="Functions" target="wipe" />
+    <ant dir="Examples" target="wipe" />
+  </target>
   
   <target name="test">
     <ant dir="Core" target="test" />
     <ant dir="Functions" target="test" />
-  </target>
-
-  <target name="download-rt8">
-    <ant dir="Core" target="download-rt8" />
-    <copy file="Core/rt.jar" todir="Functions" />
-    <copy file="Core/rt.jar" todir="Examples" />
   </target>
   
   <target name="javadoc">
