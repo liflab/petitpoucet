@@ -68,7 +68,7 @@ public class PartNode extends LabelledNode
 	 * Sets the subject contained in this node.
 	 * @param p The part
 	 */
-	public void setSubject(Part p)
+	public void setSubject(Object p)
 	{
 		((Object[]) m_label)[1] = p;
 	}
