@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -45,6 +45,15 @@ public class LabelledNode extends Node
 	/*@ null @*/ public Object getLabel()
 	{
 		return m_label;
+	}
+	
+	/**
+	 * Sets the label associated to this node.
+	 * @param label The label
+	 */
+	public void setLabel(Object label)
+	{
+		m_label = label;
 	}
 	
 	@Override
