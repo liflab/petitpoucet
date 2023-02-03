@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2022 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -18,6 +18,9 @@
 package examples.util;
 
 import java.awt.FlowLayout;
+import java.awt.Image;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,7 +50,7 @@ public class GraphViewer
 	{
 		super();
 	}
-	
+
 	/**
 	 * Displays an explanation graph into a window. This method acts as a
 	 * primitive image viewer, used to display the result of the examples.
@@ -94,8 +97,8 @@ public class GraphViewer
 		try
 		{
 			outputStream = new FileOutputStream(outputFile);
-		    outputStream.write(getGraph(roots, no_captions));
-		    outputStream.close();
+			outputStream.write(getGraph(roots, no_captions));
+			outputStream.close();
 		}
 		catch (IOException e)
 		{
@@ -172,31 +175,66 @@ public class GraphViewer
 		 */
 		private static final long serialVersionUID = 1L;
 
-		protected transient JFrame m_frame;
+		protected transient JPanel m_panel;
 
 		protected transient JLabel m_label;
+		
+		protected transient ImageIcon m_imageIcon;
 
 		public BitmapJFrame(byte[] image_bytes)
 		{
 			super("Graph");
-			JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-			add(panel);
+			m_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+			add(m_panel);
 			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			m_label = new JLabel();
-			panel.add(m_label);
-			ImageIcon icon = new ImageIcon(image_bytes); 
-			m_label.setIcon(icon);
+			m_panel.add(m_label);
+			m_imageIcon = new ImageIcon(image_bytes); 
+			m_label.setIcon(m_imageIcon);
 			//setSize(icon.getIconWidth(), icon.getIconHeight());
 			pack();
+			addComponentListener(new ResizeListener());
 		}
 
 		/**
-		 * Gets the frame associated to the object
-		 * @return The frame
+		 * Gets the panel associated to the object
+		 * @return The panel
 		 */
-		public JFrame getFrame()
+		public JPanel getPanel()
 		{
-			return m_frame;
+			return m_panel;
+		}
+
+		protected class ResizeListener implements ComponentListener
+		{
+			@Override
+			public void componentHidden(ComponentEvent e)
+			{
+				// Do nothing
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e)
+			{
+				// Do nothing
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				int w = m_panel.getWidth();
+				int h = m_panel.getHeight();
+				if (w > 0 && h > 0)
+				{
+					m_label.setIcon(new ImageIcon(m_imageIcon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH)));
+				}
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e)
+			{
+				// Do nothing
+			}
 		}
 	}
 }
