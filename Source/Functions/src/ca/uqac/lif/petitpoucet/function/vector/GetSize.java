@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -18,6 +18,13 @@
 package ca.uqac.lif.petitpoucet.function.vector;
 
 import java.util.List;
+
+import ca.uqac.lif.petitpoucet.ComposedPart;
+import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.PartNode;
+import ca.uqac.lif.petitpoucet.function.NthInput;
+import ca.uqac.lif.petitpoucet.function.NthOutput;
 
 /**
  * Calculates the size of the input vector.
@@ -44,6 +51,20 @@ public class GetSize extends VectorFunction
 	public String toString()
 	{
 		return "Size";
+	}
+	
+	@Override
+	public PartNode getExplanation(Part p, NodeFactory f)
+	{
+		PartNode root = f.getPartNode(p, this);
+		if (NthOutput.mentionedOutput(p) != 0)
+		{
+			root.addChild(f.getUnknownNode());
+			return root;
+		}
+		Part new_part = NthOutput.replaceOutBy(p, ComposedPart.compose(Size.instance, NthInput.FIRST));
+		root.addChild(f.getPartNode(new_part, this));
+		return root;
 	}
 	
 	@Override
