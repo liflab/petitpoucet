@@ -32,7 +32,7 @@ public class PartNode extends LabelledNode
 	 * @param part The part
 	 * @param subject The object this part refers to. This object can be null.
 	 */
-	PartNode(/*@ non_null @*/ Part part, /*@ null @*/ Object subject)
+	protected PartNode(/*@ non_null @*/ Part part, /*@ null @*/ Object subject)
 	{
 		super(new Object[] {part, subject});
 	}
