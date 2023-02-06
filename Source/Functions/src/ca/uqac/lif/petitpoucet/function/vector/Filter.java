@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -22,7 +22,6 @@ import java.util.List;
 
 import ca.uqac.lif.dag.LabelledNode;
 import ca.uqac.lif.petitpoucet.ComposedPart;
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
@@ -31,6 +30,7 @@ import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 
 /**
  * Filters the elements of a list based on the Boolean values of another.
@@ -115,7 +115,7 @@ public class Filter extends AtomicFunction
 	}
 
 	@Override
-	public PartNode getExplanation(Part d, NodeFactory factory)
+	public PartNode getExplanation(Part d, RelationNodeFactory factory)
 	{
 		PartNode root = factory.getPartNode(d, this);
 		int output_nb = NthOutput.mentionedOutput(d);
@@ -160,7 +160,7 @@ public class Filter extends AtomicFunction
 	 * @param j The position of the element in the input
 	 * @param factory The factory used to obtain node instances
 	 */
-	protected void appendExplanation(LabelledNode root, int j, NodeFactory factory)
+	protected void appendExplanation(LabelledNode root, int j, RelationNodeFactory factory)
 	{
 		LabelledNode in_and = factory.getAndNode();
 		{

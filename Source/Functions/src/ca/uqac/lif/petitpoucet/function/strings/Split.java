@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.ComposedPart;
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 import ca.uqac.lif.petitpoucet.function.vector.NthElement;
 
 /**
@@ -90,7 +90,7 @@ public class Split extends AtomicFunction
 	}
 	
 	@Override
-	public PartNode getExplanation(Part d, NodeFactory factory)
+	public PartNode getExplanation(Part d, RelationNodeFactory factory)
 	{
 		PartNode root = factory.getPartNode(d, this);
 		if (NthOutput.mentionedOutput(d) != 0)

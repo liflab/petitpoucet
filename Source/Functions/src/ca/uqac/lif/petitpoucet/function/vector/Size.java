@@ -15,50 +15,63 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.function.ltl;
+package ca.uqac.lif.petitpoucet.function.vector;
+
+import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.PartNode;
-import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
-import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 
 /**
- * The LTL "globally" modality.
- * @author Sylvain Hallé
+ * Designator related to the size of a vector.
  */
-public class Globally extends UnaryOperator
+public class Size implements Part
 {
 	/**
-	 * Creates a new instance of the operator.
+	 * A single publicly visible instance of the part.
 	 */
-	public Globally()
+	public static final Size instance = new Size();
+	
+	/**
+	 * Creates a new designator instance.
+	 */
+	protected Size()
 	{
 		super();
 	}
 	
 	@Override
-	protected Object[] getValue(Object... inputs) throws InvalidNumberOfArgumentsException
+	public boolean appliesTo(Object o)
 	{
-		return getValue(false, inputs);
+		return o instanceof List;
 	}
 
 	@Override
-	public PartNode getExplanation(Part d, RelationNodeFactory factory)
+	public Part head()
 	{
-		return getExplanation(d, factory, false);
+		return this;
 	}
 
 	@Override
-	public Globally duplicate(boolean with_state)
+	public Part tail()
 	{
-		Globally g = new Globally();
-		copyInto(g, with_state);
-		return g;
+		return null;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return "G";
+		return "Size";
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return 0;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		return o instanceof Size;
 	}
 }

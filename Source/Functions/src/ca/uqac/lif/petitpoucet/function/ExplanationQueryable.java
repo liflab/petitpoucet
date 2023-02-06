@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -17,7 +17,6 @@
  */
 package ca.uqac.lif.petitpoucet.function;
 
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.Queryable;
@@ -51,5 +50,5 @@ public interface ExplanationQueryable extends Queryable
 	 * may or may not be attached to this root, depending on the subject and
 	 * the explanation.
 	 */
-	/*@ non_null @*/ public PartNode getExplanation(/*@ non_null @*/ Part part, /*@ non_null @*/ NodeFactory factory);
+	/*@ non_null @*/ public PartNode getExplanation(/*@ non_null @*/ Part part, /*@ non_null @*/ RelationNodeFactory factory);
 }

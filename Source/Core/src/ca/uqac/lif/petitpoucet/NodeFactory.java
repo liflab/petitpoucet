@@ -59,7 +59,14 @@ public class NodeFactory
 		m_factories = new HashMap<>();
 	}
 	
-	public NodeFactory getFactory(Part p, Object subject)
+	/**
+	 * Gets a derived factory instance to generate nodes pertaining to a
+	 * specific pair of part and object.
+	 * @param p The part
+	 * @param subject The object
+	 * @return The factory instance
+	 */
+	/*@ non_null @*/ public NodeFactory getFactory(Part p, Object subject)
 	{
 		ObjectPart op = new ObjectPart(p, subject);
 		if (m_factories.containsKey(op))

@@ -20,11 +20,11 @@ package ca.uqac.lif.petitpoucet.function.vector;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.ComposedPart;
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 
 /**
  * Calculates the size of the input vector.
@@ -54,7 +54,7 @@ public class GetSize extends VectorFunction
 	}
 	
 	@Override
-	public PartNode getExplanation(Part p, NodeFactory f)
+	public PartNode getExplanation(Part p, RelationNodeFactory f)
 	{
 		PartNode root = f.getPartNode(p, this);
 		if (NthOutput.mentionedOutput(p) != 0)

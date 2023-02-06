@@ -31,9 +31,10 @@ import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
-import ca.uqac.lif.petitpoucet.function.number.Addition;
-import ca.uqac.lif.petitpoucet.function.number.Multiplication;
 
+/**
+ * Unit tests for basic arithmetic functions.
+ */
 public class NumbersTest
 {
 	@Test

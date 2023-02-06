@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -17,10 +17,10 @@
  */
 package ca.uqac.lif.petitpoucet.function.ltl;
 
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 
 /**
  * The LTL "eventually" modality.
@@ -43,7 +43,7 @@ public class Eventually extends UnaryOperator
 	}
 
 	@Override
-	public PartNode getExplanation(Part d, NodeFactory factory)
+	public PartNode getExplanation(Part d, RelationNodeFactory factory)
 	{
 		return getExplanation(d, factory, true);
 	}

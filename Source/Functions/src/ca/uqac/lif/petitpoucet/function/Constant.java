@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -17,7 +17,6 @@
  */
 package ca.uqac.lif.petitpoucet.function;
 
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 
@@ -56,7 +55,7 @@ public class Constant extends AtomicFunction
 	}
 	
 	@Override
-	public PartNode getExplanation(Part part, NodeFactory factory)
+	public PartNode getExplanation(Part part, RelationNodeFactory factory)
 	{
 		PartNode root = factory.getPartNode(part, this);
 		int index = NthOutput.mentionedOutput(part);

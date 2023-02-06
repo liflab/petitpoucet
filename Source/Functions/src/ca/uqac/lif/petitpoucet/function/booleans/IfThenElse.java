@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2022 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -18,7 +18,6 @@
 package ca.uqac.lif.petitpoucet.function.booleans;
 
 import ca.uqac.lif.dag.LabelledNode;
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
@@ -28,6 +27,7 @@ import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 
 /**
  * Function with three arguments that acts as an if-then-else construct. It
@@ -76,7 +76,7 @@ public class IfThenElse extends AtomicFunction
 	}
 	
 	@Override
-	public PartNode getExplanation(Part d, NodeFactory factory)
+	public PartNode getExplanation(Part d, RelationNodeFactory factory)
 	{
 		PartNode root = factory.getPartNode(d, this);
 		int out_index = NthOutput.mentionedOutput(d);

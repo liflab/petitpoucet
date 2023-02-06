@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2022 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -118,7 +118,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	}
 
 	@Override
-	public PartNode getExplanation(Part part, NodeFactory factory)
+	public PartNode getExplanation(Part part, RelationNodeFactory factory)
 	{
 		int input_nb = NthInput.mentionedInput(part);
 		if (input_nb >= 0 && input_nb < getInputArity())
@@ -142,12 +142,12 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 * @param factory A factory to generate explainability nodes
 	 * @return The root of the generated tree
 	 */
-	/*@ non_null @*/ protected PartNode explainInput(int input_nb, Part part, NodeFactory factory)
+	/*@ non_null @*/ protected PartNode explainInput(int input_nb, Part part, RelationNodeFactory factory)
 	{
 		PartNode root = factory.getPartNode(part, this);
 		Pin<? extends Node> start_pin = m_inputAssociations.get(input_nb);
 		Part start_part = NthInput.replaceInBy(part, new NthInput(start_pin.getIndex()));
-		NodeFactory in_factory = factory.getFactory(part, this);
+		RelationNodeFactory in_factory = factory.getFactory(part, this);
 		NestedNode sub_node = developToOutput(start_part, start_pin.getNode(), in_factory);
 		if (sub_node == null)
 		{
@@ -189,12 +189,12 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 * @param factory A factory to generate explainability nodes
 	 * @return The root of the generated tree
 	 */
-	/*@ non_null @*/ protected PartNode explainOutput(int output_nb, Part part, NodeFactory factory)
+	/*@ non_null @*/ protected PartNode explainOutput(int output_nb, Part part, RelationNodeFactory factory)
 	{
 		PartNode root = factory.getPartNode(part, this);
 		Pin<? extends Node> start_pin = m_outputAssociations.get(output_nb);
 		Part start_part = NthOutput.replaceOutBy(part, new NthOutput(start_pin.getIndex()));
-		NodeFactory in_factory = factory.getFactory(part, this);
+		RelationNodeFactory in_factory = factory.getFactory(part, this);
 		NestedNode sub_node = developToInput(start_part, start_pin.getNode(), in_factory);
 		if (sub_node == null)
 		{
@@ -252,7 +252,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 * @return The nested node containing the explanation graph of the entire
 	 * circuit. 
 	 */
-	protected static NestedNode developToInput(Part start, Node subject, NodeFactory factory)
+	protected static NestedNode developToInput(Part start, Node subject, RelationNodeFactory factory)
 	{
 		Queue<PartNode> to_explore = new ArrayDeque<>();
 		Set<PartNode> explored = new HashSet<>();
@@ -338,7 +338,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	 * @return The nested node containing the explanation graph of the entire
 	 * circuit. 
 	 */
-	protected static NestedNode developToOutput(Part start, Node subject, NodeFactory factory)
+	protected static NestedNode developToOutput(Part start, Node subject, RelationNodeFactory factory)
 	{
 		Queue<PartNode> to_explore = new ArrayDeque<>();
 		Set<PartNode> explored = new HashSet<>();
@@ -509,7 +509,7 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 	@Override
 	public PartNode getExplanation(Part part)
 	{
-		return getExplanation(part, NodeFactory.getFactory());
+		return getExplanation(part, RelationNodeFactory.getFactory());
 	}
 	
 	@Override

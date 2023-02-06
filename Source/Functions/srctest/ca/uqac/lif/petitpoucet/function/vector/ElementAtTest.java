@@ -31,6 +31,9 @@ import ca.uqac.lif.petitpoucet.function.FunctionException;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 
+/**
+ * Unit tests for {@link ElementAt}.
+ */
 public class ElementAtTest
 {
 	@Test

@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.dag.NestedNode;
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.Function;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 
 /**
  * A function that applies another function repeatedly on elements of an input
@@ -62,7 +62,7 @@ public abstract class ParameterizedVectorFunction extends VectorOutputFunction
 	 * @param factory A factory to obtain node instances
 	 * @return A nested node corresponding to the explanation tree
 	 */
-	/*@ null @*/ protected NestedNode getSubNode(Part p, int elem_index, NodeFactory factory)
+	/*@ null @*/ protected NestedNode getSubNode(Part p, int elem_index, RelationNodeFactory factory)
 	{
 		Function f = m_lastInstances.get(elem_index);
 		if (!(f instanceof ExplanationQueryable))

@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -25,12 +25,12 @@ import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
 import ca.uqac.lif.dag.Pin;
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.Function;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 
 /**
  * Applies a m:1 function to m-uples of elements at matching positions in
@@ -70,7 +70,7 @@ public class VectorApply extends ParameterizedVectorFunction
 	}
 
 	@Override
-	/*@ non_null @*/ public PartNode getExplanation(Part part, NodeFactory factory)
+	/*@ non_null @*/ public PartNode getExplanation(Part part, RelationNodeFactory factory)
 	{
 		PartNode root = factory.getPartNode(part, this);
 		int index = NthOutput.mentionedOutput(part);

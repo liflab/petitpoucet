@@ -20,13 +20,13 @@ package ca.uqac.lif.petitpoucet.function.ltl;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 import ca.uqac.lif.petitpoucet.function.vector.NthElement;
 
 /**
@@ -71,7 +71,7 @@ public class Next extends AtomicFunction
 	}
 	
 	@Override
-	public PartNode getExplanation(Part d, NodeFactory factory)
+	public PartNode getExplanation(Part d, RelationNodeFactory factory)
 	{
 		PartNode root = factory.getPartNode(d, this);
 		int out_pos = NthOutput.mentionedOutput(d);

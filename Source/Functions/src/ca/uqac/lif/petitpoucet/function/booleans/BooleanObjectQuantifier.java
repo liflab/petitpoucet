@@ -29,6 +29,7 @@ import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.ExplanationQueryable;
 import ca.uqac.lif.petitpoucet.function.Function;
 import ca.uqac.lif.petitpoucet.function.NthInput;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 import ca.uqac.lif.petitpoucet.function.vector.ObjectQuantifier;
 import ca.uqac.lif.petitpoucet.function.vector.VectorOutputFunction;
 
@@ -64,7 +65,7 @@ public abstract class BooleanObjectQuantifier extends ObjectQuantifier
 	}
 	
 	@Override
-	public PartNode getExplanation(Part p, NodeFactory f)
+	public PartNode getExplanation(Part p, RelationNodeFactory f)
 	{
 		PartNode root = f.getPartNode(p, this);
 		if (m_conditions.isEmpty())
@@ -84,7 +85,7 @@ public abstract class BooleanObjectQuantifier extends ObjectQuantifier
 			System.out.println("Condition " + i);
 			FunctionIndex fi = m_conditions.get(i);
 			Function func = fi.m_function;
-			NodeFactory sub_factory = f.getFactory(p, func);
+			RelationNodeFactory sub_factory = f.getFactory(p, func);
 			PartNode sub_root = ((ExplanationQueryable) func).getExplanation(p, sub_factory);
 			to_add.addChild(sub_root);
 			LeafFetcher lf = new LeafFetcher(sub_root);
