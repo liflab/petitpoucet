@@ -103,6 +103,7 @@ public class Equals extends AtomicFunction
 	 */
 	protected boolean areEqual(Object o1, Object o2) throws FunctionException
 	{
+		m_lastEqualsEvaluation = null;
 		if (o1 == null && o2 == null)
 		{
 			return true;
@@ -111,17 +112,6 @@ public class Equals extends AtomicFunction
 		{
 			return false;
 		}
-		if (o1 instanceof ExplainableEquals)
-		{
-			ExplainableEquals ee = (ExplainableEquals) o1;
-			m_lastEqualsEvaluation = ee.getEqualsFunction();
-			Object out = m_lastEqualsEvaluation.evaluate(o1, o2)[0];
-			if (!(out instanceof Boolean))
-			{
-				throw new FunctionException("Equal function of " + o1 + " does not return a Boolean");
-			}
-			return (Boolean) out;
-		}
 		if (o1 instanceof Number && o2 instanceof Number)
 		{
 			return ((Number) o1).floatValue() == ((Number) o2).floatValue();
@@ -129,6 +119,14 @@ public class Equals extends AtomicFunction
 		if (o1 instanceof String && o2 instanceof String)
 		{
 			m_lastEqualsEvaluation = new StringEquals();
+		}
+		if (o1 instanceof ExplainableEquals)
+		{
+			ExplainableEquals ee = (ExplainableEquals) o1;
+			m_lastEqualsEvaluation = ee.getEqualsFunction();
+		}
+		if (m_lastEqualsEvaluation != null)
+		{
 			Object out = m_lastEqualsEvaluation.evaluate(o1, o2)[0];
 			if (!(out instanceof Boolean))
 			{
