@@ -173,12 +173,12 @@ public class StringEquals extends AtomicFunction
 			root.addChild(factory.getUnknownNode());
 			return root;
 		}
-		LabelledNode and = root;
+		LabelledNode or = root;
 		if (num_ranges > 1)
 		{
-			LabelledNode n_and = factory.getAndNode();
-			root.addChild(n_and);
-			and = n_and;
+			LabelledNode n_or = factory.getOrNode();
+			root.addChild(n_or);
+			or = n_or;
 		}
 		if (m_differentRanges != null)
 		{
@@ -187,16 +187,16 @@ public class StringEquals extends AtomicFunction
 				LabelledNode in_and = factory.getAndNode();
 				in_and.addChild(factory.getPartNode(ComposedPart.compose(r, NthInput.FIRST), this));
 				in_and.addChild(factory.getPartNode(ComposedPart.compose(r, NthInput.SECOND), this));
-				and.addChild(in_and);
+				or.addChild(in_and);
 			}
 		}
 		if (m_excessFirst != null)
 		{
-			and.addChild(factory.getPartNode(ComposedPart.compose(m_excessFirst, NthInput.FIRST), this));
+			or.addChild(factory.getPartNode(ComposedPart.compose(m_excessFirst, NthInput.FIRST), this));
 		}
 		if (m_excessSecond != null)
 		{
-			and.addChild(factory.getPartNode(ComposedPart.compose(m_excessSecond, NthInput.SECOND), this));
+			or.addChild(factory.getPartNode(ComposedPart.compose(m_excessSecond, NthInput.SECOND), this));
 		}
 		return root;
 	}
