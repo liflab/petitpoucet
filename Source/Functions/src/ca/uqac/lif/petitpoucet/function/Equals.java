@@ -21,6 +21,7 @@ import ca.uqac.lif.dag.LeafCrawler.LeafFetcher;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
+import ca.uqac.lif.petitpoucet.function.strings.StringEquals;
 
 /**
  * Checks the equality between two values. Two objects <tt>x</tt> and
@@ -28,8 +29,8 @@ import ca.uqac.lif.petitpoucet.PartNode;
  * <ol>
  * <li><tt>null</tt> is equal to <tt>null</tt> but not to anything else</li>
  * <li>two numbers are equal if their float value is equal</li>
- * <li>two strings are equal if they contain the same sequence of
- * characters</li>
+ * <li>equality between two strings is evaluated according to
+ * the {@link StringEquals} function</li>
  * <li>if none of these cases apply, the result of <tt>x.equals(y)</tt> is
  * returned</li>
  * </ol>
@@ -61,7 +62,7 @@ public class Equals extends AtomicFunction
 	@Override
 	protected Object[] getValue(Object... inputs) throws InvalidNumberOfArgumentsException
 	{
-		return new Object[] {isEqualTo(inputs[0], inputs[1])};
+		return new Object[] {areEqual(inputs[0], inputs[1])};
 	}
 	
 	/**
@@ -114,7 +115,7 @@ public class Equals extends AtomicFunction
 		{
 			ExplainableEquals ee = (ExplainableEquals) o1;
 			m_lastEqualsEvaluation = ee.getEqualsFunction();
-			Object out = m_lastEqualsEvaluation.evaluate(o2)[0];
+			Object out = m_lastEqualsEvaluation.evaluate(o1, o2)[0];
 			if (!(out instanceof Boolean))
 			{
 				throw new FunctionException("Equal function of " + o1 + " does not return a Boolean");
@@ -127,7 +128,13 @@ public class Equals extends AtomicFunction
 		}
 		if (o1 instanceof String && o2 instanceof String)
 		{
-			return ((String) o1).compareTo((String) o2) == 0;
+			m_lastEqualsEvaluation = new StringEquals();
+			Object out = m_lastEqualsEvaluation.evaluate(o1, o2)[0];
+			if (!(out instanceof Boolean))
+			{
+				throw new FunctionException("Equal function of " + o1 + " does not return a Boolean");
+			}
+			return (Boolean) out;
 		}
 		return o1.equals(o2);
 	}
@@ -158,7 +165,8 @@ public class Equals extends AtomicFunction
 			}
 			PartNode pn = (PartNode) n;
 			Part pn_p = pn.getPart();
-			if (pn.getSubject() != m_lastEqualsEvaluation || NthInput.mentionedInput(pn_p) != 0)
+			int input_nb = NthInput.mentionedInput(pn_p);
+			if (pn.getSubject() != m_lastEqualsEvaluation || (input_nb != 0 && input_nb != 1))
 			{
 				continue;
 			}
@@ -206,7 +214,7 @@ public class Equals extends AtomicFunction
 	 * one instead writes:
 	 * <pre>
 	 * Function f = x.getEqualsFunction();
-	 * boolean b = f.evaluate(y);</pre>
+	 * boolean b = f.evaluate(x, y);</pre>
 	 * The advantage of this method is that the result can be explained as for
 	 * any other function; thus:
 	 * <pre>
@@ -217,9 +225,9 @@ public class Equals extends AtomicFunction
 	public static interface ExplainableEquals
 	{
 		/**
-		 * Gets an "equals" function for this object. This function must be a 1:1
-		 * function returning a Boolean, and accepting an arbitrary 
-		 * <tt>Object</tt> as its argument. 
+		 * Gets an "equals" function for this object. This function must be a 2:1
+		 * function returning a Boolean, and accepting two arbitrary 
+		 * <tt>Object</tt>s as its arguments. 
 		 * @return The function, or <tt>null</tt> if no such method is defined for
 		 * this object
 		 */
