@@ -17,11 +17,14 @@
  */
 package ca.uqac.lif.petitpoucet.function;
 
+import java.util.List;
+
 import ca.uqac.lif.dag.LeafCrawler.LeafFetcher;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.strings.StringEquals;
+import ca.uqac.lif.petitpoucet.function.vector.VectorEquals;
 
 /**
  * Checks the equality between two values. Two objects <tt>x</tt> and
@@ -116,9 +119,13 @@ public class Equals extends AtomicFunction
 		{
 			return ((Number) o1).floatValue() == ((Number) o2).floatValue();
 		}
-		if (o1 instanceof String && o2 instanceof String)
+		if (o1 instanceof String)
 		{
 			m_lastEqualsEvaluation = new StringEquals();
+		}
+		if (o1 instanceof List)
+		{
+			m_lastEqualsEvaluation = new VectorEquals();
 		}
 		if (o1 instanceof ExplainableEquals)
 		{
