@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -22,8 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import ca.uqac.lif.dag.Node;
-import ca.uqac.lif.petitpoucet.NodeFactory;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
+import ca.uqac.lif.petitpoucet.function.RelationNodeFactory;
 import ca.uqac.lif.petitpoucet.function.vector.NthElement;
 import ca.uqac.lif.petitpoucet.function.vector.VectorProduct;
 import ca.uqac.lif.petitpoucet.function.vector.Window;
@@ -88,7 +88,7 @@ public class WindowProductMultiQuery
 		Window win = new Window(new VectorProduct(), 3);
 		List<?> result = (List<?>) win.evaluate(Arrays.asList(1, 0, 0, 3, 4, 5, 0, 6, 7))[0];
 		System.out.println(result);
-		NodeFactory factory = NodeFactory.getFactory();
+		RelationNodeFactory factory = RelationNodeFactory.getFactory();
 		List<Node> roots = new ArrayList<>();
 		for (int i = 0; i < result.size(); i++)
 		{
