@@ -27,7 +27,7 @@ import ca.uqac.lif.petitpoucet.function.vector.VectorEquals;
 import static ca.uqac.lif.petitpoucet.function.FunctionLineageGraphUtilities.simplify;
 import static examples.util.GraphViewer.display;
 
-public class VectorComparison
+public class VectorComparison1
 {
 	public static void main(String[] args)
 	{
