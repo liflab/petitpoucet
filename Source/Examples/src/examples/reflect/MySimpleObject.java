@@ -39,14 +39,17 @@ import static ca.uqac.lif.dag.NodeConnector.connect;
  * <p>
  * This function implements in the form of a circuit what the
  * {@link #equals(Object)} method does: it checks that the two objects are of
- * type {@link MyObject}, and then checks that their two fields <tt>foo</tt>
- * and <tt>bar</tt> are equal. Although considerably more verbose, this
- * function presents the advantage that a <tt>false</tt> result can be
+ * type {@link MySimpleObject}, and then checks that their two fields
+ * <tt>foo</tt> and <tt>bar</tt> are equal. Although considerably more verbose,
+ * this function presents the advantage that a <tt>false</tt> result can be
  * explained, and point at the precise parts of the two objects that differ.
+ * <p>
+ * Names in red denote the corresponding variables in the code of
+ * {@link #getEqualsFunction()}.
  * 
- * @see ObjectEquals
+ * @see SimpleObjectEquals
  */
-public class MyObject implements ExplainableEquals
+public class MySimpleObject implements ExplainableEquals
 {
 	/**
 	 * The string field.
@@ -63,7 +66,7 @@ public class MyObject implements ExplainableEquals
 	 * @param bar The int field
 	 * @param foo The string field
 	 */
-	public MyObject(int bar, String foo)
+	public MySimpleObject(int bar, String foo)
 	{
 		super();
 		this.bar = bar;
@@ -73,11 +76,11 @@ public class MyObject implements ExplainableEquals
 	@Override
 	public boolean equals(Object o)
 	{
-		if (!(o instanceof MyObject))
+		if (!(o instanceof MySimpleObject))
 		{
 			return false;
 		}
-		MyObject m = (MyObject) o;
+		MySimpleObject m = (MySimpleObject) o;
 		return bar == m.bar && foo.compareTo(m.foo) == 0;
 	}
 	
@@ -86,14 +89,14 @@ public class MyObject implements ExplainableEquals
 	{
 		Circuit c = new Circuit(2, 1, "MyObject.=");
 		Fork f1 = new Fork(2);
-		InstanceOf o1 = new InstanceOf(MyObject.class);
+		InstanceOf o1 = new InstanceOf(MySimpleObject.class);
 		connect(f1, 0, o1, 0);
 		Fork f1_1 = new Fork(2);
 		connect(f1, 1, f1_1, 0);
 		GetField foo1 = new GetField("foo");
 		connect(f1_1, 0, foo1, 0);
 		Fork f2 = new Fork(2);
-		InstanceOf o2 = new InstanceOf(MyObject.class);
+		InstanceOf o2 = new InstanceOf(MySimpleObject.class);
 		connect(f2, 1, o2, 0);
 		Fork f2_2 = new Fork(2);
 		connect(f2, 1, f2_2, 0);

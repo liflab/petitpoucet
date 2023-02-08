@@ -35,7 +35,7 @@ import java.io.IOException;
  * (3, "hello") and (4, "hello"), respectively, the following graph is
  * produced:
  * <p>
- * <img src="{@docRoot}/doc-files/reflect/ObjectEquals-bar.png" alt="Explanation graph" />
+ * <img src="{@docRoot}/doc-files/reflect/SimpleObjectEquals-bar.png" alt="Explanation graph" />
  * <p>
  * One can see that the objects differ in the value of their field
  * <tt>bar</tt>, which is what the graph illustrates.
@@ -43,7 +43,7 @@ import java.io.IOException;
  * If the two objects are instantiated with the arguments (3, "hello") and
  * (3, "Hello"), one rather gets:
  * <p>
- * <img src="{@docRoot}/doc-files/reflect/ObjectEquals-foo.png" alt="Explanation graph" />
+ * <img src="{@docRoot}/doc-files/reflect/SimpleObjectEquals-foo.png" alt="Explanation graph" />
  * <p>
  * This time, the objects differ in the value of their field <tt>bar</tt>. The
  * graph also points to the specific part of this field that differs; the part
@@ -52,7 +52,7 @@ import java.io.IOException;
  * Finally, objects can differ in multiple ways. Using the arguments
  * (3, "hello") and (4, "HellO"), one obtains:
  * <p>
- * <img src="{@docRoot}/doc-files/reflect/ObjectEquals-foobar.png" alt="Explanation graph" />
+ * <img src="{@docRoot}/doc-files/reflect/SimpleObjectEquals-foobar.png" alt="Explanation graph" />
  * <p>
  * This time, three differences are identified: the first character of field
  * <tt>foo</tt>, the fourth and fifth characters of <tt>foo</tt>, and the
@@ -60,12 +60,12 @@ import java.io.IOException;
  * sufficient to conclude that the objects are different, so each pair of
  * "evidence" is located as alternatives under an "or" node.
  */
-public class ObjectEquals
+public class SimpleObjectEquals
 {
 	public static void main(String[] args) throws IOException
 	{
-		MyObject o1 = new MyObject(3, "hello");
-		MyObject o2 = new MyObject(4, "HelLO");
+		MySimpleObject o1 = new MySimpleObject(3, "hello");
+		MySimpleObject o2 = new MySimpleObject(4, "HelLO");
 		Equals eq = new Equals();
 		boolean b = (Boolean) eq.evaluate(o1, o2)[0];
 		System.out.println("Objects are " + (b ? "equal" : "different"));
