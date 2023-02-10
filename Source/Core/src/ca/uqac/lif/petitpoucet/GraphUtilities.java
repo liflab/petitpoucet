@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2022 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -258,7 +258,8 @@ public class GraphUtilities
 		}
 		if (root instanceof AndNode)
 		{
-			// And node: "distribute" clause lists (TODO)
+			// And node: "distribute" clause lists
+			return Clause.distribute(list_clauses);
 		}
 		return clauses;
 	}
