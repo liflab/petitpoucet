@@ -23,7 +23,7 @@
   xmlns:jacoco="antlib:org.jacoco.ant">
   
   <!-- The build script's version number. Do not edit! -->
-  <property name="antrun.version" value="1.8"/>
+  <property name="antrun.version" value="1.8.1"/>
   
   <!-- Load project properties from XML file -->
   <xmlproperty file="config.xml"/>
@@ -177,7 +177,7 @@
       <classpath refid="build.classpath"/>
     </javac>
     <copy todir="${build.bindir}" includeemptydirs="false">
-      <fileset dir="${build.srcdir}" excludes="**/*.java,doc-files/**"/>
+      <fileset dir="${build.srcdir}" excludes="**/*.java,doc-files/**/*"/>
     </copy>
   </target>
   
@@ -194,8 +194,8 @@
       includeantruntime="false">
       <classpath refid="build.classpath"/>
     </javac>
-    <copy todir="${build.test.bindir}" includeemptydirs="false">
-      <fileset dir="${build.test.srcdir}" excludes="**/*.java,doc-files/**"/>
+    <copy todir="${build.test.bindir}" includeemptydirs="false">  
+      <fileset dir="${build.test.srcdir}" excludes="**/*.java,doc-files/**/*"/>
     </copy>
   </target>
   
