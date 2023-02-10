@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import ca.uqac.lif.petitpoucet.AndNode;
 import ca.uqac.lif.petitpoucet.ComposedPart;
+import ca.uqac.lif.petitpoucet.OrNode;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
@@ -40,17 +41,17 @@ public class StringEqualsTest
 		assertFalse(b);
 		PartNode root = eq.getExplanation(NthOutput.FIRST);
 		assertEquals(1, root.getOutputLinks(0).size());
-		AndNode and = (AndNode) root.getOutputLinks(0).get(0).getNode();
-		assertEquals(2, and.getOutputLinks(0).size());
+		OrNode or = (OrNode) root.getOutputLinks(0).get(0).getNode();
+		assertEquals(2, or.getOutputLinks(0).size());
 		{
-			AndNode in_and = (AndNode) and.getOutputLinks(0).get(0).getNode();
+			AndNode in_and = (AndNode) or.getOutputLinks(0).get(0).getNode();
 			PartNode pn_1 = (PartNode) in_and.getOutputLinks(0).get(0).getNode();
 			assertEquals(ComposedPart.compose(new Range(2, 2), NthInput.FIRST), pn_1.getPart());
 			PartNode pn_2 = (PartNode) in_and.getOutputLinks(0).get(1).getNode();
 			assertEquals(ComposedPart.compose(new Range(2, 2), NthInput.SECOND), pn_2.getPart());
 		}
 		{
-			AndNode in_and = (AndNode) and.getOutputLinks(0).get(1).getNode();
+			AndNode in_and = (AndNode) or.getOutputLinks(0).get(1).getNode();
 			PartNode pn_1 = (PartNode) in_and.getOutputLinks(0).get(0).getNode();
 			assertEquals(ComposedPart.compose(new Range(5, 7), NthInput.FIRST), pn_1.getPart());
 			PartNode pn_2 = (PartNode) in_and.getOutputLinks(0).get(1).getNode();
@@ -90,17 +91,17 @@ public class StringEqualsTest
 		assertFalse(b);
 		PartNode root = eq.getExplanation(NthOutput.FIRST);
 		assertEquals(1, root.getOutputLinks(0).size());
-		AndNode and = (AndNode) root.getOutputLinks(0).get(0).getNode();
-		assertEquals(2, and.getOutputLinks(0).size());
+		OrNode or = (OrNode) root.getOutputLinks(0).get(0).getNode();
+		assertEquals(2, or.getOutputLinks(0).size());
 		{
-			AndNode in_and = (AndNode) and.getOutputLinks(0).get(0).getNode();
+			AndNode in_and = (AndNode) or.getOutputLinks(0).get(0).getNode();
 			PartNode pn_1 = (PartNode) in_and.getOutputLinks(0).get(0).getNode();
 			assertEquals(ComposedPart.compose(new Range(5, 7), NthInput.FIRST), pn_1.getPart());
 			PartNode pn_2 = (PartNode) in_and.getOutputLinks(0).get(1).getNode();
 			assertEquals(ComposedPart.compose(new Range(5, 7), NthInput.SECOND), pn_2.getPart());
 		}
 		{
-			PartNode pn_1 = (PartNode) and.getOutputLinks(0).get(1).getNode();
+			PartNode pn_1 = (PartNode) or.getOutputLinks(0).get(1).getNode();
 			assertEquals(ComposedPart.compose(new Range(9, 11), NthInput.SECOND), pn_1.getPart());
 		}
 	}
