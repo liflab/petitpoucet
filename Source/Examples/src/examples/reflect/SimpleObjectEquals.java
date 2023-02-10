@@ -64,11 +64,16 @@ public class SimpleObjectEquals
 {
 	public static void main(String[] args) throws IOException
 	{
+		/* Create two instances of MySimpleObject with slightly different content */
 		MySimpleObject o1 = new MySimpleObject(3, "hello");
 		MySimpleObject o2 = new MySimpleObject(4, "HelLO");
+		
+		/* Evaluate object equality and print a message */
 		Equals eq = new Equals();
 		boolean b = (Boolean) eq.evaluate(o1, o2)[0];
 		System.out.println("Objects are " + (b ? "equal" : "different"));
+		
+		/* Calculate and display the explanation */
 		PartNode root = eq.getExplanation(NthOutput.FIRST);
 		display(simplify(root));
 	}

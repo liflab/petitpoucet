@@ -224,4 +224,42 @@ public class GraphUtilities
 		}
 		return true;
 	}
+	
+	/*@ non_null @*/ public static List<Clause> asDnf(/*@ non_null @*/ Node root)
+	{
+		List<Clause> clauses = new ArrayList<Clause>();
+		if (root instanceof PartNode && isLeaf(root))
+		{
+			// Leaf: create a singleton clause with it and return
+			Clause clause = new Clause();
+			clause.add((PartNode) root);
+			clauses.add(clause);
+			return clauses;
+		}
+		// Non-leaf node: first recursively get list of clauses from each child
+		List<List<Clause>> list_clauses = new ArrayList<List<Clause>>();
+		for (int i = 0; i < root.getOutputArity(); i++)
+		{
+			List<Pin<? extends Node>> pins = root.getOutputLinks(i);
+			for (Pin<? extends Node> pin : pins)
+			{
+				Node child = pin.getNode();
+				list_clauses.add(asDnf(child));
+			}
+		}
+		if (root instanceof OrNode)
+		{
+			// Or node: merge all clause lists into one and return
+			for (List<Clause> l_clauses : list_clauses)
+			{
+				clauses.addAll(l_clauses);
+			}
+			return clauses;
+		}
+		if (root instanceof AndNode)
+		{
+			// And node: "distribute" clause lists (TODO)
+		}
+		return clauses;
+	}
 }

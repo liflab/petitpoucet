@@ -55,13 +55,18 @@ public class NestedObjectEquals
 {
 	public static void main(String[] args) throws IOException
 	{
+		/* Create two instances of MyNestedObject with slightly different content */
 		MyNestedObject o1 = new MyNestedObject("Object")
 				.add(new MySimpleObject(3, "foo"), new MySimpleObject(42, "bar"));
 		MyNestedObject o2 = new MyNestedObject("object")
 				.add(new MySimpleObject(3, "foo"), new MySimpleObject(42, "bAR"));
+		
+		/* Evaluate object equality and print a message */
 		Equals eq = new Equals();
 		boolean b = (Boolean) eq.evaluate(o1, o2)[0];
 		System.out.println("Objects are " + (b ? "equal" : "different"));
+		
+		/* Calculate and display the explanation */
 		PartNode root = eq.getExplanation(NthOutput.FIRST);
 		display(simplify(root));
 	}
