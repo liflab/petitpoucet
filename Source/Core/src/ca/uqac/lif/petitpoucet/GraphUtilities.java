@@ -244,9 +244,9 @@ public class GraphUtilities
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Converts a lineage graph into a flattened list of clauses. This is best
+	 * Converts a lineage graph into a flattened set of clauses. This is best
 	 * explained by seeing the graph as a Boolean formula, with the leaves of
 	 * the graph corresponding to its ground terms. The method transforms such a
 	 * graph into a formula in disjunctive normal form (DNF).
@@ -258,7 +258,7 @@ public class GraphUtilities
 	 * the application of the method would result in the following list of
 	 * clauses:
 	 * <blockquote>
-	 * [{a,b}, {c,d,f}, {c,e,f}]
+	 * {{a,b}, {c,d,f}, {c,e,f}}
 	 * </blockquote>
 	 * Intuitively, the graph describes two top-level alternatives (root "or"
 	 * node): the first (left branch) is composed of the nodes a and b taken
@@ -269,9 +269,9 @@ public class GraphUtilities
 	 * @param root The root of the lineage graph
 	 * @return The list of clauses
 	 */
-	/*@ non_null @*/ public static List<Clause> asDnf(/*@ non_null @*/ Node root)
+	/*@ non_null @*/ public static Set<Clause> asDnf(/*@ non_null @*/ Node root)
 	{
-		List<Clause> clauses = new ArrayList<Clause>();
+		Set<Clause> clauses = new HashSet<Clause>();
 		if (root instanceof PartNode && isLeaf(root))
 		{
 			// Leaf: create a singleton clause with it and return
@@ -280,8 +280,8 @@ public class GraphUtilities
 			clauses.add(clause);
 			return clauses;
 		}
-		// Non-leaf node: first recursively get list of clauses from each child
-		List<List<Clause>> list_clauses = new ArrayList<List<Clause>>();
+		// Non-leaf node: first recursively get set of clauses from each child
+		List<Set<Clause>> list_clauses = new ArrayList<Set<Clause>>();
 		for (int i = 0; i < root.getOutputArity(); i++)
 		{
 			List<Pin<? extends Node>> pins = root.getOutputLinks(i);
@@ -291,19 +291,15 @@ public class GraphUtilities
 				list_clauses.add(asDnf(child));
 			}
 		}
-		if (root instanceof OrNode)
-		{
-			// Or node: merge all clause lists into one and return
-			for (List<Clause> l_clauses : list_clauses)
-			{
-				clauses.addAll(l_clauses);
-			}
-			return clauses;
-		}
 		if (root instanceof AndNode)
 		{
 			// And node: "distribute" clause lists
 			return Clause.distribute(list_clauses);
+		}
+		// Or node: merge all clause lists into one and return
+		for (Set<Clause> l_clauses : list_clauses)
+		{
+			clauses.addAll(l_clauses);
 		}
 		return clauses;
 	}
