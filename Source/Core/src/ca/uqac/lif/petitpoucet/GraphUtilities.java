@@ -69,7 +69,13 @@ public class GraphUtilities
 
 	/**
 	 * Out of a single-rooted lineage graph, creates another graph where nested
-	 * nodes are exploded.
+	 * nodes are exploded. For example, given the following graph:
+	 * <p>
+	 * <img src="{@docRoot}/doc-files/Flatten-before.png" alt="Lineage graph before" />
+	 * <p>
+	 * the application of the method would result in the following graph:
+	 * <p>
+	 * <img src="{@docRoot}/doc-files/Flatten-after.png" alt="Lineage graph after" />
 	 * @param root The root of the original graph
 	 * @return The root of the simplified graph
 	 */
@@ -148,7 +154,21 @@ public class GraphUtilities
 
 	/**
 	 * Out of a single-rooted lineage graph, creates another graph where only
-	 * Boolean nodes and leaves are kept.
+	 * Boolean nodes and leaves are kept. For example, given the following graph:
+	 * <p>
+	 * <img src="{@docRoot}/doc-files/Squash-before.png" alt="Lineage graph before" />
+	 * <p>
+	 * the application of the method would result in the following graph:
+	 * <p>
+	 * <img src="{@docRoot}/doc-files/Squash-after.png" alt="Lineage graph after" />
+	 * <p>
+	 * The method does not simply remove intermediate non-Boolean nodes. In the
+	 * graph above, this would result in a &and; node (top-left) being connected
+	 * to another &and; node (the child of node j). When such a situation occurs,
+	 * the leaves of the second are appended directly to the parent &and; node.
+	 * An identical procedure is applied for the case of an &or; node having an
+	 * &or; child.
+	 * 
 	 * @param root The root of the original graph
 	 * @return The root of the squashed graph
 	 */
@@ -225,6 +245,30 @@ public class GraphUtilities
 		return true;
 	}
 	
+	/**
+	 * Converts a lineage graph into a flattened list of clauses. This is best
+	 * explained by seeing the graph as a Boolean formula, with the leaves of
+	 * the graph corresponding to its ground terms. The method transforms such a
+	 * graph into a formula in disjunctive normal form (DNF).
+	 * <p>
+	 * For example, given the following abstract lineage graph:
+	 * <p>
+	 * <img src="{@docRoot}/doc-files/AsDnf-example.png" alt="Lineage graph" />
+	 * <p>
+	 * the application of the method would result in the following list of
+	 * clauses:
+	 * <blockquote>
+	 * [{a,b}, {c,d,f}, {c,e,f}]
+	 * </blockquote>
+	 * Intuitively, the graph describes two top-level alternatives (root "or"
+	 * node): the first (left branch) is composed of the nodes a and b taken
+	 * together, producing the clause {a,b}. The second (right branch) is
+	 * composed of nodes c and f, along with either d or e (second "or" node),
+	 * thus producing the two other clauses {c,d,f} and {c,e,f}.
+	 * 
+	 * @param root The root of the lineage graph
+	 * @return The list of clauses
+	 */
 	/*@ non_null @*/ public static List<Clause> asDnf(/*@ non_null @*/ Node root)
 	{
 		List<Clause> clauses = new ArrayList<Clause>();
