@@ -25,9 +25,11 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.uqac.lif.dag.FlatteningCrawler;
+import ca.uqac.lif.dag.MathSet;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
 import ca.uqac.lif.dag.Pin;
+import ca.uqac.lif.petitpoucet.NodeFactory.ObjectPart;
 
 /**
  * Utility methods for transforming lineage graphs.
@@ -271,12 +273,14 @@ public class GraphUtilities
 	 */
 	/*@ non_null @*/ public static Set<Clause> asDnf(/*@ non_null @*/ Node root)
 	{
-		Set<Clause> clauses = new HashSet<Clause>();
+		Set<Clause> clauses = new MathSet<Clause>();
 		if (root instanceof PartNode && isLeaf(root))
 		{
+			PartNode pn = (PartNode) root;
+			ObjectPart op = new ObjectPart(pn.getPart(), pn.getSubject());
 			// Leaf: create a singleton clause with it and return
 			Clause clause = new Clause();
-			clause.add((PartNode) root);
+			clause.add(op);
 			clauses.add(clause);
 			return clauses;
 		}

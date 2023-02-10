@@ -188,5 +188,11 @@ public class NodeFactory
 			ObjectPart op = (ObjectPart) o;
 			return m_part.equals(op.m_part) && m_subject.equals(op.m_subject);
 		}
+		
+		@Override
+		public String toString()
+		{
+			return m_part + " of " + m_subject;
+		}
 	}
 }

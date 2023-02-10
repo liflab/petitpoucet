@@ -28,6 +28,7 @@ import ca.uqac.lif.dag.LabelledNode;
 import ca.uqac.lif.dag.NestedNode;
 import ca.uqac.lif.dag.Node;
 import ca.uqac.lif.dag.NodeConnector;
+import ca.uqac.lif.petitpoucet.NodeFactory.ObjectPart;
 
 /**
  * Unit tests for {@link GraphUtilities}.
@@ -484,8 +485,8 @@ public class GraphUtilitiesTest
 		}
 		Set<Clause> clauses = GraphUtilities.asDnf(and);
 		assertEquals(2, clauses.size());
-		assertTrue(clauses.contains(getClause(factory, PART_A, PART_B, PART_F, PART_G)));
-		assertTrue(clauses.contains(getClause(factory, PART_C, PART_D, PART_E, PART_F, PART_G)));
+		assertTrue(clauses.contains(getClause(PART_A, PART_B, PART_F, PART_G)));
+		assertTrue(clauses.contains(getClause(PART_C, PART_D, PART_E, PART_F, PART_G)));
 	}
 
 	@Test
@@ -514,10 +515,10 @@ public class GraphUtilitiesTest
 		}
 		Set<Clause> clauses = GraphUtilities.asDnf(or);
 		assertEquals(4, clauses.size());
-		assertTrue(clauses.contains(getClause(factory, PART_A, PART_B)));
-		assertTrue(clauses.contains(getClause(factory, PART_C, PART_D, PART_E)));
-		assertTrue(clauses.contains(getClause(factory, PART_C, PART_D, PART_F)));
-		assertTrue(clauses.contains(getClause(factory, PART_C, PART_D, PART_G)));
+		assertTrue(clauses.contains(getClause(PART_A, PART_B)));
+		assertTrue(clauses.contains(getClause(PART_C, PART_D, PART_E)));
+		assertTrue(clauses.contains(getClause(PART_C, PART_D, PART_F)));
+		assertTrue(clauses.contains(getClause(PART_C, PART_D, PART_G)));
 	}
 
 	/**
@@ -555,12 +556,12 @@ public class GraphUtilitiesTest
 		return n.getOutputLinks(0).get(child_index).getNode();
 	}
 
-	protected static Clause getClause(NodeFactory factory, Part ... parts)
+	protected static Clause getClause(Part ... parts)
 	{
 		Clause c = new Clause();
 		for (Part p : parts)
 		{
-			c.add(getNode(factory, p));
+			c.add(new ObjectPart(p, OBJECT));
 		}
 		return c;
 	}

@@ -19,13 +19,15 @@ package ca.uqac.lif.petitpoucet;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import ca.uqac.lif.dag.MathSet;
+import ca.uqac.lif.petitpoucet.NodeFactory.ObjectPart;
 
 /**
  * A collection of part nodes designating parts of one or more objects. A
@@ -35,12 +37,12 @@ import java.util.function.Predicate;
  * 
  * @author Sylvain Hallé
  */
-public class Clause implements Set<PartNode>
+public class Clause implements Set<ObjectPart>
 {
 	/**
 	 * The parts.
 	 */
-	protected final Set<PartNode> m_parts;
+	protected final Set<ObjectPart> m_parts;
 	
 	/**
 	 * Distributes the content of two lists of clauses.
@@ -50,7 +52,7 @@ public class Clause implements Set<PartNode>
 	 */
 	/*@ non_null @*/ protected static Set<Clause> distributePair(/*@ non_null @*/ Set<Clause> list1, /*@ non_null @*/ Set<Clause> list2)
 	{
-		Set<Clause> distributed = new HashSet<Clause>(list1.size() * list2.size());
+		Set<Clause> distributed = new MathSet<Clause>();
 		for (Clause c1 : list1)
 		{
 			for (Clause c2 : list2)
@@ -65,7 +67,7 @@ public class Clause implements Set<PartNode>
 	{
 		if (lists.isEmpty())
 		{
-			return new HashSet<Clause>();
+			return new MathSet<Clause>();
 		}
 		if (lists.size() == 1)
 		{
@@ -89,11 +91,11 @@ public class Clause implements Set<PartNode>
 	 * Creates a new clause by providing the parts it contains.
 	 * @param nodes The parts
 	 */
-	public Clause(PartNode ... nodes)
+	public Clause(ObjectPart ... nodes)
 	{
 		super();
-		m_parts = new HashSet<PartNode>();
-		for (PartNode pn : nodes)
+		m_parts = new MathSet<ObjectPart>();
+		for (ObjectPart pn : nodes)
 		{
 			m_parts.add(pn);
 		}
@@ -120,10 +122,10 @@ public class Clause implements Set<PartNode>
 	 */
 	/*@ pure non_null @*/ public Set<Object> mentionedObjects()
 	{
-		Set<Object> objects = new HashSet<Object>();
-		for (PartNode pn : m_parts)
+		Set<Object> objects = new MathSet<Object>();
+		for (ObjectPart pn : m_parts)
 		{
-			objects.add(pn.getSubject());
+			objects.add(pn.m_subject);
 		}
 		return objects;
 	}
@@ -140,7 +142,7 @@ public class Clause implements Set<PartNode>
 		{
 			return false;
 		}
-		for (PartNode pn : m_parts)
+		for (ObjectPart pn : m_parts)
 		{
 			if (!c.contains(pn))
 			{
@@ -154,7 +156,7 @@ public class Clause implements Set<PartNode>
 	public int hashCode()
 	{
 		int h = 0;
-		for (PartNode pn : m_parts)
+		for (ObjectPart pn : m_parts)
 		{
 			h += pn.hashCode();
 		}
@@ -162,7 +164,7 @@ public class Clause implements Set<PartNode>
 	}
 
 	@Override
-	public void forEach(Consumer<? super PartNode> action)
+	public void forEach(Consumer<? super ObjectPart> action)
 	{
 		m_parts.forEach(action);
 	}
@@ -186,7 +188,7 @@ public class Clause implements Set<PartNode>
 	}
 
 	@Override
-	public Iterator<PartNode> iterator()
+	public Iterator<ObjectPart> iterator()
 	{
 		return m_parts.iterator();
 	}
@@ -204,7 +206,7 @@ public class Clause implements Set<PartNode>
 	}
 
 	@Override
-	public boolean add(PartNode e)
+	public boolean add(ObjectPart e)
 	{
 		return m_parts.add(e);
 	}
@@ -222,7 +224,7 @@ public class Clause implements Set<PartNode>
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends PartNode> c)
+	public boolean addAll(Collection<? extends ObjectPart> c)
 	{
 		return m_parts.addAll(c);
 	}
@@ -240,7 +242,7 @@ public class Clause implements Set<PartNode>
 	}
 
 	@Override
-	public boolean removeIf(Predicate<? super PartNode> filter)
+	public boolean removeIf(Predicate<? super ObjectPart> filter)
 	{
 		return m_parts.removeIf(filter);
 	}
@@ -252,7 +254,7 @@ public class Clause implements Set<PartNode>
 	}
 
 	@Override
-	public Spliterator<PartNode> spliterator()
+	public Spliterator<ObjectPart> spliterator()
 	{
 		return m_parts.spliterator();
 	}
@@ -263,7 +265,7 @@ public class Clause implements Set<PartNode>
 		StringBuilder out = new StringBuilder();
 		out.append("{");
 		boolean first = true;
-		for (PartNode pn : m_parts)
+		for (ObjectPart pn : m_parts)
 		{
 			if (first)
 			{
