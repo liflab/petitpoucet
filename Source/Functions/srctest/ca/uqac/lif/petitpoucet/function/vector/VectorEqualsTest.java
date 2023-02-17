@@ -78,4 +78,15 @@ public class VectorEqualsTest
 		assertEquals(ComposedPart.compose(new NthElement(3), NthInput.SECOND), child_1.getPart());
 		assertEquals(eq, child_1.getSubject());
 	}
+	
+	@Test
+	public void test3()
+	{
+		int[] list1 = new int[] {1, 2, 3};
+		int[] list2 = new int[] {1, 2, 3};
+		VectorEquals eq = new VectorEquals();
+		boolean b = (Boolean) eq.evaluate(list1, list2)[0];
+		assertEquals(true, b);
+		
+	}
 }

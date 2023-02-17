@@ -110,15 +110,15 @@ public class VectorEquals extends AtomicFunction
 	{
 		m_comparisons.clear();
 		m_unequalIndices.clear();
-		m_isListFirst = inputs[0] instanceof List;
-		m_isListSecond = inputs[1] instanceof List;
+		m_isListFirst = VectorFunction.isAcceptableType(inputs[0]);
+		m_isListSecond = VectorFunction.isAcceptableType(inputs[1]);
 		if (!m_isListFirst || !m_isListSecond)
 		{
 			m_sizeDifference = 0;
 			return new Object[] {false};
 		}
-		List<?> list1 = (List<?>) inputs[0];
-		List<?> list2 = (List<?>) inputs[1];
+		List<?> list1 = VectorFunction.convertToList(inputs[0]);
+		List<?> list2 = VectorFunction.convertToList(inputs[1]);
 		int min_len = Math.min(list1.size(), list2.size());
 		for (int i = 0; i < min_len; i++)
 		{

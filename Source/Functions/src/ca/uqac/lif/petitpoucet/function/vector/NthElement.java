@@ -57,7 +57,7 @@ public class NthElement implements Part
 	@Override
 	public boolean appliesTo(Object o)
 	{
-		return o instanceof List;
+		return o instanceof List || (o != null && o.getClass().isArray());
 	}
 
 	@Override

@@ -17,6 +17,8 @@
  */
 package ca.uqac.lif.petitpoucet.function.vector;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Part;
@@ -59,13 +61,14 @@ public abstract class VectorFunction extends AtomicFunction
 	@Override
 	protected final Object[] getValue(Object ... inputs) throws InvalidArgumentTypeException
 	{
-		if (!(inputs[0] instanceof List))
-		{
-			throw new InvalidArgumentTypeException("Expected a list");
-		}
 		for (int i = 0; i < m_lastInputs.length; i++)
 		{
-			m_lastInputs[i] = (List<?>) inputs[i];
+			List<?> to_process = convertToList(inputs[i]);
+			if (to_process == null)
+			{
+				throw new InvalidArgumentTypeException("Expected a list");
+			}
+			m_lastInputs[i] = to_process;
 		}
 		return new Object[] {getOutputValue(m_lastInputs)};
 	}
@@ -116,5 +119,45 @@ public abstract class VectorFunction extends AtomicFunction
 	}
 
 	protected abstract Object getOutputValue(List<?> ... inputs);
+	
+	/**
+	 * Converts an object into a generic list. If the object is already a list,
+	 * it is returned as is. If the object is an array, the contents of the
+	 * array are put into a list and returned. Otherwise, the method returns
+	 * null. This is a helper method so that functions in this package can
+	 * tolerate arrays as their input instead of lists.
+	 * @param o The object to convert into a list
+	 * @return The llist
+	 */
+	/*@ null @*/ public static List<?> convertToList(Object o)
+	{
+		if (o instanceof List)
+		{
+			return (List<?>) o;
+		}
+		if (o != null && o.getClass().isArray())
+		{
+			int len = Array.getLength(o);
+			List<Object> list = new ArrayList<Object>(len);
+			for (int i = 0; i < len; i++)
+			{
+				list.add(Array.get(o, i));
+			}
+			return list;
+		}
+		return null;
+	}
+	
+	/**
+	 * Determines if an object is of an acceptable input type for a vector
+	 * function.
+	 * @param o The object
+	 * @return <tt>true</tt> if the object has an acceptable type, <tt>false</tt>
+	 * otherwise
+	 */
+	public static boolean isAcceptableType(Object o)
+	{
+		return o instanceof List || (o != null && o.getClass().isArray());
+	}
 
 }
