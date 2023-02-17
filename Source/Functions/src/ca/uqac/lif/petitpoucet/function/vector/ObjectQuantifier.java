@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2022 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -46,11 +46,11 @@ public abstract class ObjectQuantifier extends AtomicFunction
 	@Override
 	protected Object[] getValue(Object... inputs) throws InvalidNumberOfArgumentsException
 	{
-		if (!(inputs[0] instanceof List))
+		List<?> list = VectorFunction.convertToList(inputs[0]);
+		if (list == null)
 		{
-			throw new InvalidArgumentException("Argument should be a list");
+			throw new InvalidArgumentException("Argument should be a list or an array");
 		}
-		List<?> list = (List<?>) inputs[0];
 		Object[] values = new Object[list.size()];
 		Function[] conditions = new Function[list.size()];
 		for (int i = 0; i < list.size(); i++)
