@@ -123,7 +123,7 @@ public class Equals extends AtomicFunction
 		{
 			m_lastEqualsEvaluation = new StringEquals();
 		}
-		if (o1 instanceof List)
+		if (o1 instanceof List || (o1 != null && o1.getClass().isArray()))
 		{
 			m_lastEqualsEvaluation = new VectorEquals();
 		}
