@@ -46,6 +46,11 @@
     <bindir>bintest</bindir>
   </test>
   
+  <!-- All test reports merged into one -->
+  <report>
+    <junitdir>../tests</junitdir>
+  </report>
+  
   <!-- Output jar -->
   <jar>
     <filename>../petitpoucet-core.jar</filename>
