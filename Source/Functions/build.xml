@@ -302,10 +302,18 @@
     <fail if="test.failed"/>
   </target>
   
+   
+  <!-- Target: report
+       Generates JUnit HTML report and code coverage report with JaCoCo
+  -->
+  <target name="report" depends="junit-report,jacoco-report" description="Generate test and coverage reports">
+    <!-- Just call the dependencies -->
+  </target>
+  
   <!-- Target: junit-report
        Generates JUnit HTML report and code coverage report with JaCoCo
   -->
-  <target name="junit-report" depends="init" description="Generate test and coverage reports">
+  <target name="junit-report" depends="init" description="Generate unit test reports">
     <!-- Don't run if no report fiels are present -->
     <fail message="No test report files seem to be present. Run ant test first.">
       <condition>
