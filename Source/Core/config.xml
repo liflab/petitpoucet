@@ -59,7 +59,7 @@
   
   <!-- Output jar -->
   <jar>
-    <filename>../petitpoucet-core.jar</filename>
+    <filename>../petitpoucet-core</filename>
     <withdoc>false</withdoc>
     <withdeps>true</withdeps>
   </jar>

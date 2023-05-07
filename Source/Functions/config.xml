@@ -58,7 +58,7 @@
   
   <!-- Output jar -->
   <jar>
-    <filename>../petitpoucet-functions.jar</filename>
+    <filename>../petitpoucet-functions</filename>
     <withdoc>false</withdoc>
     <withdeps>true</withdeps>
   </jar>
