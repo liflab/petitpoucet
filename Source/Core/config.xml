@@ -26,7 +26,10 @@
   <name>Petit Poucet Core</name>
   
   <!-- The project's version number -->
-  <version>0.3-alpha</version>
+  <version>2.3</version>
+
+  <!-- The project's package (with a trailing slash) -->
+  <package>ca/uqac/lif/petitpoucet/</package>
   
   <!-- The project's author. Currently this only
   shows up in the footer of the Javadoc documentation. -->
@@ -34,6 +37,9 @@
   
   <!-- The project's main class -->
   <!--<mainclass>ca.uqac.lif.petitpoucet.Main</mainclass>-->
+
+  <!-- The target JDK version -->
+  <targetjdk>8</targetjdk>
   
   <!-- Installation folders -->
   <srcdir>src</srcdir>

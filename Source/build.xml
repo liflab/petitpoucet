@@ -42,12 +42,30 @@
     <!-- Compile core -->
     <ant dir="Core" target="jar" />
     <!-- Copy core to other projects -->
-    <copy file="petitpoucet-core.jar" todir="Functions/lib" />
-    <copy file="petitpoucet-core.jar" todir="Examples/lib" />
+    <copy todir="Functions/lib">
+      <fileset dir=".">
+        <include name="petitpoucet-core*.jar"/>
+        <exclude name="*javadoc.jar"/>
+        <exclude name="*sources.jar"/>
+      </fileset>
+    </copy>
+    <copy todir="Examples/lib">
+      <fileset dir=".">
+        <include name="petitpoucet-core*.jar"/>
+        <exclude name="*javadoc.jar"/>
+        <exclude name="*sources.jar"/>
+      </fileset>
+    </copy>
     <!-- Compile Functions -->
     <ant dir="Functions" target="jar" />
     <!-- Copy Functions to other projects -->
-    <copy file="petitpoucet-functions.jar" todir="Examples/lib" />
+    <copy todir="Examples/lib">
+      <fileset dir=".">
+        <include name="petitpoucet-functions*.jar"/>
+        <exclude name="*javadoc.jar"/>
+        <exclude name="*sources.jar"/>
+      </fileset>
+    </copy>
     <!-- Compile Examples -->
     <ant dir="Examples" target="jar" />
   </target>
