@@ -2,7 +2,6 @@ package ca.uqac.lif.petitpoucet.functions;
 
 import ca.uqac.lif.petitpoucet.DesignatedObject;
 import ca.uqac.lif.petitpoucet.Designator;
-import ca.uqac.lif.petitpoucet.functions.Constant;
 import ca.uqac.lif.petitpoucet.graph.render.TraceabilityNodeDotRenderer;
 
 public class FunctionTraceabilityNodeRenderer extends TraceabilityNodeDotRenderer
