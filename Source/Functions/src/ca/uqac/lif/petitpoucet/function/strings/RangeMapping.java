@@ -66,7 +66,7 @@ public class RangeMapping implements Duplicable
 		{
 			List<Range> ranges_up = rm1.trackToInput(r);
 			List<Range> ranges_down = rm2.trackToOutput(r);
-			if (!(ranges_up.isEmpty() && ranges_down.isEmpty()))
+			if (!ranges_up.isEmpty() && !ranges_down.isEmpty())
 			{
 				rm_out.add(new RangePair(ranges_up.get(0), ranges_down.get(0)));
 			}

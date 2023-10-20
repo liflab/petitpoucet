@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -360,6 +360,20 @@ public class RangeMappingTest
 		assertEquals(new RangeMapping(
 				new RangePair(new Range(0, 1), new Range(2, 3)),
 				new RangePair(new Range(2, 3), new Range(5, 6))
+				), rm_c);
+	}
+	
+	@Test
+	public void testCompose2()
+	{
+		RangeMapping rm1 = new RangeMapping(
+				new RangePair(new Range(0, 1), new Range(0, 1)),
+				new RangePair(new Range(2, 3), new Range(4, 5)));
+		RangeMapping rm2 = new RangeMapping(
+				new RangePair(new Range(0, 1), new Range(2, 3)));
+		RangeMapping rm_c = RangeMapping.compose(rm1, rm2);
+		assertEquals(new RangeMapping(
+				new RangePair(new Range(0, 1), new Range(2, 3))
 				), rm_c);
 	}
 }
