@@ -31,9 +31,11 @@ import ca.uqac.lif.petitpoucet.function.number.IsGreaterThan;
 import ca.uqac.lif.petitpoucet.function.reflect.InstanceOf;
 import ca.uqac.lif.petitpoucet.function.vector.ElementAt;
 import ca.uqac.lif.petitpoucet.function.vector.GetSize;
+import examples.util.GraphViewer;
 
 import static ca.uqac.lif.dag.NodeConnector.connect;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -137,9 +139,9 @@ import java.util.List;
  */
 public class Triangle
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
-		List<?> vector = Arrays.asList(1, 1, 1);
+		List<?> vector = Arrays.asList(-3, 2, -1);
 		IsValidTriangle f = new IsValidTriangle();
 		if (Boolean.TRUE.equals(f.evaluate(vector)[0]))
 		{
@@ -150,7 +152,8 @@ public class Triangle
 			System.out.println("The triangle is invalid");
 		}
 		Node graph = f.getExplanation(NthOutput.FIRST);
-		display(graph);
+		GraphViewer.save(graph, "/tmp/graph.svg", false);
+		//display(graph);
 	}
 	
 	/**

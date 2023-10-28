@@ -86,4 +86,29 @@ public class PartNode extends LabelledNode
 		copyInto(pn, with_state);
 		return pn;
 	}
+	
+	/* ---- This part is deliberately commented out. PartNodes must be considered
+	 * distinct, even when they refer to the same part and the same subject.
+	 * Otherwise, problems occur on operations such as flattening and copying,
+	 * where a node and its copy will be mistakenly confused for one another.
+	 * If you really wish to implement this behavior, the implementation of
+	 * e.g. FlatteningCrawler.crawl must be adjusted accordingly.
+	 
+	@Override
+	public int hashCode()
+	{
+		return getPart().hashCode() + getSubject().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (!(o instanceof PartNode))
+		{
+			return false;
+		}
+		PartNode pn = (PartNode) o;
+		return getPart().equals(pn.getPart()) && getSubject().equals(pn.getSubject());
+	}
+	*/
 }

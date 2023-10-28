@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -36,6 +36,15 @@ public interface Function extends Connectable, Contextualizable, Duplicable
 	 * The size of this array must be equal to the function's output arity. 
 	 */
 	/*@ non_null @*/ public Object[] evaluate(/*@ non_null @*/ Object ... inputs);
+	
+	/**
+	 * Evaluates a function on multiple input arguments passed as an array.
+	 * @param inputs The input arguments. The size of the array must be equal
+	 * to the function's input arity.
+	 * @return An array containing the output values produced by the function.
+	 * The size of this array must be equal to the function's output arity. 
+	 */
+	/*@ non_null @*/ public Object[] evaluateArray(/*@ non_null @*/ Object[] inputs);
 	
 	/**
 	 * Resets the state of the function to that of a fresh instance of the

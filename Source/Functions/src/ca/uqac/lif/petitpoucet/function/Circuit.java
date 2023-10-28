@@ -415,9 +415,15 @@ public class Circuit extends NestedNode implements Function, Duplicable, Explana
 		Iterator<Pin<? extends Node>> it = pins.iterator();
 		return it.next();
 	}
-
+	
 	@Override
 	public Object[] evaluate(Object ... inputs)
+	{
+		return evaluateArray(inputs);
+	}
+
+	@Override
+	public Object[] evaluateArray(Object[] inputs)
 	{
 		if (inputs.length != getInputArity())
 		{

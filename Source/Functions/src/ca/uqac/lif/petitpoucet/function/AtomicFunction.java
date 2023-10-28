@@ -142,6 +142,12 @@ public abstract class AtomicFunction extends Node implements Function, Duplicabl
 	@Override
 	public Object[] evaluate(Object ... inputs)
 	{
+		return evaluateArray(inputs);
+	}
+	
+	@Override
+	public Object[] evaluateArray(Object[] inputs)
+	{
 		if (inputs.length != getInputArity())
 		{
 			throw new InvalidNumberOfArgumentsException();

@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2021 Sylvain Hallé
+    Copyright (C) 2016-2023 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -21,12 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.dag.LabelledNode;
+import ca.uqac.lif.petitpoucet.ComposedPart;
 import ca.uqac.lif.petitpoucet.NodeFactory;
+import ca.uqac.lif.petitpoucet.OrNode;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.PartNode;
 import ca.uqac.lif.petitpoucet.function.AtomicFunction;
 import ca.uqac.lif.petitpoucet.function.InvalidArgumentTypeException;
 import ca.uqac.lif.petitpoucet.function.InvalidNumberOfArgumentsException;
+import ca.uqac.lif.petitpoucet.function.NthInput;
 import ca.uqac.lif.petitpoucet.function.NthOutput;
 import ca.uqac.lif.petitpoucet.function.vector.NthElement;
 
@@ -41,7 +44,12 @@ public abstract class UnaryOperator extends AtomicFunction
 	 * function's verdict, the last time the function was called.
 	 */
 	/*@ non_null @*/ protected List<Integer> m_witnesses;
-	
+
+	/**
+	 * The size of the input list, the last time the function was called.
+	 */
+	protected int m_lastSize;
+
 	/**
 	 * Creates a new instance of unary operator.
 	 */
@@ -49,8 +57,9 @@ public abstract class UnaryOperator extends AtomicFunction
 	{
 		super(1, 1);
 		m_witnesses = new ArrayList<>();
+		m_lastSize = -1;
 	}
-	
+
 	/**
 	 * A generic form of {@link #getExplanation(Part, NodeFactory)} parameterized
 	 * by the Boolean value used by the operator as a witness for explanations.
@@ -72,14 +81,28 @@ public abstract class UnaryOperator extends AtomicFunction
 		if (element_nb < 0)
 		{
 			LabelledNode and = root;
-			if (m_witnesses.size() > 1)
+			if (m_witnesses.isEmpty())
 			{
-				and = factory.getAndNode();
-				root.addChild(and);
+				OrNode or = factory.getOrNode();
+				root.addChild(or);
+				for (int i = 0; i < m_lastSize; i++)
+				{
+					Part new_p = ComposedPart.compose(new NthElement(i), NthInput.FIRST);
+					or.addChild(factory.getPartNode(new_p, this));
+				}
 			}
-			for (int pos : m_witnesses)
+			else
 			{
-				and.addChild(factory.getPartNode(NthElement.replaceNthOutputByNthInput(d, pos), this));
+				if (m_witnesses.size() > 1)
+				{
+					and = factory.getAndNode();
+					root.addChild(and);
+				}
+				for (int pos : m_witnesses)
+				{
+					Part new_p = ComposedPart.compose(new NthElement(pos), NthInput.FIRST);
+					and.addChild(factory.getPartNode(new_p, this));
+				}
 			}
 		}
 		else
@@ -103,6 +126,7 @@ public abstract class UnaryOperator extends AtomicFunction
 			throw new InvalidArgumentTypeException("Expected a list");
 		}
 		List<?> in_list = (List<?>) inputs[0];
+		m_lastSize = in_list.size();
 		List<Boolean> out_list = new ArrayList<>(in_list.size());
 		m_witnesses.clear();
 		int last_witness = -1;
@@ -126,7 +150,7 @@ public abstract class UnaryOperator extends AtomicFunction
 		}
 		return new Object[] {out_list};
 	}
-	
+
 	protected void copyInto(UnaryOperator o, boolean with_state)
 	{
 		super.copyInto(o, with_state);
