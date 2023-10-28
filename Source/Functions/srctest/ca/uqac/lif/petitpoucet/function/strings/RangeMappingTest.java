@@ -376,4 +376,18 @@ public class RangeMappingTest
 				new RangePair(new Range(0, 1), new Range(2, 3))
 				), rm_c);
 	}
+	
+	@Test
+	public void testCompose3()
+	{
+		RangeMapping rm1 = new RangeMapping(
+				new RangePair(new Range(0, 0), new Range(0, 0)),
+				new RangePair(new Range(4, 7), new Range(0, 0)));
+		RangeMapping rm2 = new RangeMapping(
+				new RangePair(new Range(0, 0), new Range(0, 0)));
+		RangeMapping rm_c = RangeMapping.compose(rm1, rm2);
+		assertEquals(new RangeMapping(
+				new RangePair(new Range(0, 0), new Range(0, 0)),
+				new RangePair(new Range(4, 7), new Range(0, 0))), rm_c);
+	}
 }
