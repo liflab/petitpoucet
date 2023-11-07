@@ -199,7 +199,10 @@ public class Range implements Part, Comparable<Range>
 	/*@ null @*/ public static Range mentionedRange(Part d)
 	{
 		Range r = null;
-		if (d instanceof ComposedPart)
+		if(d instanceof Range){
+			r = (Range)d;
+		}
+		else if (d instanceof ComposedPart)
 		{
 			ComposedPart cd = (ComposedPart) d;
 			for (int i = cd.size() - 1; i >= 0; i--)
