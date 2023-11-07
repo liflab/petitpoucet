@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import ca.uqac.lif.petitpoucet.Part;
+
 /**
  * Unit tests for {@link Range}.
  */
@@ -94,5 +96,12 @@ public class RangeTest
 		boolean o = false;
 		assertEquals(o, r1.overlaps(r2));
 		assertEquals(o, r2.overlaps(r1));
+	}
+	
+	@Test
+	public void testMentionedRange()
+	{
+		Range r = new Range(3, 8);
+		assertEquals(r, Range.mentionedRange((Part)r));
 	}
 }
