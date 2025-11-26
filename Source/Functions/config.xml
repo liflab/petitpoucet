@@ -26,7 +26,7 @@
   <name>Petit Poucet Functions</name>
   
   <!-- The project's version number -->
-  <version>2.3.2</version>
+  <version>2.3.3</version>
 
   <!-- The project's package (with a trailing slash) -->
   <package>ca/uqac/lif/petitpoucet/functions/</package>
@@ -38,7 +38,7 @@
   <!-- The project's main class -->
   <!--<mainclass>ca.uqac.lif.petitpoucet.Main</mainclass>-->
 
-  <targetjdk>8</targetjdk>
+  <targetjdk>11</targetjdk>
   
   <!-- Installation folders -->
   <srcdir>src</srcdir>
