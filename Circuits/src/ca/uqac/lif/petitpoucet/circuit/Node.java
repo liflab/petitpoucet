@@ -21,13 +21,14 @@ package ca.uqac.lif.petitpoucet.circuit;
 import static ca.uqac.lif.petitpoucet.CompositePart.compose;
 
 import ca.uqac.lif.petitpoucet.CompositePart;
+import ca.uqac.lif.petitpoucet.Duplicable;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 
-public abstract class Node implements Connectable, Computable, Explainable
+public abstract class Node implements Connectable, Computable, Duplicable, Explainable
 {
 	protected final UpstreamConnection[] m_ins;
 	
@@ -59,6 +60,8 @@ public abstract class Node implements Connectable, Computable, Explainable
 		}
 		return m_outputArguments[index];
 	}
+	
+	public abstract Node duplicate(boolean with_state);
 	
 	protected abstract void evaluate(Object[] input, Object[] output);
 	
@@ -116,10 +119,31 @@ public abstract class Node implements Connectable, Computable, Explainable
 	public Vertex explain(Part p, VertexFactory f) throws ExplanationException
 	{
 		Part p_tail = tail(p);
+		int index = checkHead(p);
+		return explain(index, p_tail, f);
+	}
+	
+	protected int checkHead(Part p) throws ExplanationException
+	{
+		Part p_head = head(p);
+		if (!(p_head instanceof OutputPart))
+		{
+			throw new ExplanationException("Expected an output part");
+		}
+		OutputPart op = (OutputPart) p_head;
+		if (op.getIndex() < 0 || op.getIndex() >= getOutputArity())
+		{
+			throw new ExplanationException("Output index out of bounds");
+		}
+		return op.getIndex();
+	}
+	
+	protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+	{
 		AndVertex a = f.getAnd();
 		for (int i = 0; i < getInputArity(); i++)
 		{
-			Part in_p = compose(p_tail, new InputPart(i));
+			Part in_p = compose(tail, new InputPart(i));
 			a.addChild(f.getPart(in_p, this));
 		}
 		return a;

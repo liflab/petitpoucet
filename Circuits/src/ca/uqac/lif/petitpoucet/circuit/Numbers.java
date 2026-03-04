@@ -18,7 +18,137 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
-public class Numbers
-{
+import java.util.ArrayList;
+import java.util.List;
 
+import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.VertexFactory;
+
+public abstract class Numbers extends Node
+{
+	public Numbers(int in_arity)
+	{
+		super(in_arity, 1);
+	}
+	
+	@Override
+	protected void evaluate(Object[] input, Object[] output)
+	{
+		float[] operands = new float[input.length];
+		for (int i = 0; i < operands.length; i++)
+		{
+			Object o = input[i];
+			if (!(o instanceof Number))
+			{
+				throw new IllegalArgumentException("Expected a number");
+			}
+			operands[i] = ((Number) o).floatValue();
+		}
+		float v = evaluate(operands);
+		output[0] = v;
+	}
+	
+	protected abstract float evaluate(float[] operands);
+	
+	public static class Addition extends Numbers
+	{
+		public Addition(int in_arity)
+		{
+			super(in_arity);
+		}
+
+		@Override
+		protected float evaluate(float[] operands)
+		{
+			float t = 0;
+			for (float x : operands)
+			{
+				t += x;
+			}
+			return t;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "+";
+		}
+		
+		@Override
+		public Addition duplicate(boolean with_state)
+		{
+			return new Addition(getInputArity());
+		}
+	}
+	
+	public static class Multiplication extends Numbers
+	{
+		protected List<Integer> m_zeros;
+		
+		public Multiplication(int in_arity)
+		{
+			super(in_arity);
+			m_zeros = null;
+		}
+
+		@Override
+		protected float evaluate(float[] operands)
+		{
+			float t = 1;
+			for (int i = 0; i < operands.length; i++)
+			{
+				float x = operands[i];
+				t *= x;
+				if (x == 0)
+				{
+					if (m_zeros == null)
+					{
+						m_zeros = new ArrayList<>();
+					}
+					m_zeros.add(i);
+				}
+			}
+			return t;
+		}
+		
+		@Override
+		public Vertex explain(Part p, VertexFactory f) throws ExplanationException
+		{
+			checkHead(p);
+			if (m_zeros != null)
+			{
+				if (m_zeros.size() == 1)
+				{
+					return f.getPart(new InputPart(m_zeros.get(0)), this);
+				}
+				Vertex o = f.getOr();
+				for (int z : m_zeros)
+				{
+					o.addChild(f.getPart(new InputPart(z), this));
+				}
+				return o;
+			}
+			return super.explain(p, f);
+		}
+		
+		@Override
+		public void reset()
+		{
+			super.reset();
+			m_zeros = null;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "\u00d7";
+		}
+
+		@Override
+		public Multiplication duplicate(boolean with_state)
+		{
+			return new Multiplication(getInputArity());
+		}
+	}
 }

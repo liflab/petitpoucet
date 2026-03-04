@@ -18,43 +18,54 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
+import java.util.List;
+
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.CompositePart;
 
-public class Constant extends Node
+public abstract class Lists
 {
-	protected final Object m_value;
-
-	public Constant(Object o)
+	public static class ElementAt extends Node
 	{
-		super(0, 1);
-		m_value = o;
-	}
-
-	@Override
-	protected void evaluate(Object[] input, Object[] output)
-	{
-		output[0] = m_value;
-	}
-
-	@Override
-	protected Vertex explain(int out_index, Part p, VertexFactory f)
-	{
-		return f.getPart(new ConstantValue(), m_value);
-	}
-	
-	@Override
-	public Constant duplicate(boolean with_state)
-	{
-		return new Constant(m_value);
-	}
-	
-	public class ConstantValue implements Part
-	{
-		public Object getValue()
+		protected final int m_index;
+		
+		public ElementAt(int index)
 		{
-			return m_value;
+			super(1, 1);
+			m_index = index;
+		}
+
+		@Override
+		public ElementAt duplicate(boolean with_state)
+		{
+			return new ElementAt(m_index);
+		}
+
+		@Override
+		protected void evaluate(Object[] input, Object[] output)
+		{
+			List<?> in = (List<?>) input[0];
+			output[0] = in.get(m_index);
+		}
+		
+		@Override
+		protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+		{
+			Part p = CompositePart.compose(tail, new CompositePart(new NthElement(m_index), new Connectable.InputPart(0)));
+			return f.getPart(p, this);
+		}
+	}
+	
+	public static class NthElement implements Part
+	{
+		protected final int m_index;
+		
+		public NthElement(int index)
+		{
+			super();
+			m_index = index;
 		}
 		
 		@Override
@@ -64,20 +75,21 @@ public class Constant extends Node
 		}
 		
 		@Override
-		public String toString()
+		public int hashCode()
 		{
-			return m_value.toString();
+			return m_index;
 		}
 		
 		@Override
-		public int hashCode()
-		{
-			return m_value.hashCode();
-		}
-		
 		public boolean equals(Object o)
 		{
-			return o instanceof ConstantValue && ((ConstantValue) o).getValue() == m_value;
+			return o instanceof NthElement && ((NthElement) o).m_index == m_index;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "#" + m_index;
 		}
 	}
 }

@@ -96,6 +96,12 @@ public interface Connectable
 		}
 		
 		@Override
+		public String toString()
+		{
+			return "i" + m_index;
+		}
+		
+		@Override
 		public InputPart duplicate(boolean with_state)
 		{
 			// Object is immutable, so the same instance is OK
@@ -132,6 +138,12 @@ public interface Connectable
 				return false;
 			}
 			return m_index == ((OutputPart) o).m_index;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "o" + m_index;
 		}
 		
 		@Override

@@ -22,6 +22,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import static ca.uqac.lif.petitpoucet.Vertex.and;
+import static ca.uqac.lif.petitpoucet.Vertex.or;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
@@ -30,6 +32,7 @@ import ca.uqac.lif.petitpoucet.Vertex;
 /**
  * Unit tests for {@link Node}.
  */
+@SuppressWarnings("unused")
 public class NodeTest
 {
 	@Test
@@ -51,7 +54,23 @@ public class NodeTest
 		DummyNode dn = new DummyNode();
 		assertEquals("a", dn.compute(0));
 		Vertex v = dn.explain(new Connectable.OutputPart(0));
-		assertTrue(Vertex.same(v, tree()));
+		assertTrue(Vertex.same(v, and()));
+	}
+	
+	@Test(expected = ExplanationException.class)
+	public void test3() throws ExplanationException
+	{
+		DummyNode dn = new DummyNode();
+		assertEquals("a", dn.compute(0));
+		dn.explain(new Connectable.OutputPart(1));
+	}
+	
+	@Test(expected = ExplanationException.class)
+	public void test4() throws ExplanationException
+	{
+		DummyNode dn = new DummyNode();
+		assertEquals("a", dn.compute(0));
+		dn.explain(new Connectable.InputPart(1));
 	}
 	
 	protected static class DummyNode extends Node
@@ -68,6 +87,12 @@ public class NodeTest
 		{
 			output[0] = "a";
 			m_evaluateCount++;
+		}
+
+		@Override
+		public Node duplicate(boolean with_state)
+		{
+			return new DummyNode();
 		}
 	}
 }
