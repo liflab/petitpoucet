@@ -56,7 +56,7 @@ public class ListsTest
 		Connectable.connect(new Constant(Arrays.asList("a", "b", "c")), 0, f, 0);
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0));
-		e.print(System.out);
+		e.render(System.out);
 		assertTrue(Vertex.same(e, tree(factory.getPart(new CompositePart(new NthElement(0), new Connectable.InputPart(0)), f))));
 	}
 }

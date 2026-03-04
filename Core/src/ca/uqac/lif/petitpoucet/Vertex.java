@@ -33,7 +33,7 @@ import java.util.Set;
  * of the graph, while the last type is used to represent the parts of the graph.
  * @author Sylvain Hallé
  */
-public abstract class Vertex
+public abstract class Vertex implements Renderer
 {
 	/**
 	 * The list of children of this vertex, if any.
@@ -245,27 +245,28 @@ public abstract class Vertex
 	 * useful for debugging purposes.
 	 * @param ps The print stream to which to print the graph
 	 */
-	public void print(PrintStream ps)
+	@Override
+	public void render(PrintStream ps)
 	{
-		print(ps, "");
+		render(ps, "");
 	}
 
 	/**
 	 * Prints the subgraph rooted in this vertex to the given print stream. The
 	 * output is indented to show the structure of the graph. This method is
 	 * useful for debugging purposes. This method is called by
-	 * {@link #print(PrintStream)}, and should not be called directly.
+	 * {@link #render(PrintStream)}, and should not be called directly.
 	 * @param sb The print stream to which to print the graph
 	 * @param indent The indentation to use for the current vertex; this
 	 * parameter is used to indent the output to show the structure of the graph
 	 */
-	protected void print(PrintStream sb, String indent)
+	protected void render(PrintStream sb, String indent)
 	{
 		sb.append(indent).append("*").append(toString()).append("\n");
 		indent += "  ";
 		for (Vertex v : m_children)
 		{
-			v.print(sb, indent);
+			v.render(sb, indent);
 		}
 	}
 
