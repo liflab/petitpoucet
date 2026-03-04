@@ -70,6 +70,12 @@ public abstract class Lists
 			Part p = CompositePart.compose(tail, new CompositePart(new NthElement(m_index), new Connectable.InputPart(0)));
 			return f.getPart(p, this);
 		}
+		
+		@Override
+		public String toString()
+		{
+			return "\u2208@(" + m_index + ")";
+		}
 	}
 	
 	/**

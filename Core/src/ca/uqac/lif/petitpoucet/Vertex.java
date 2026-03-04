@@ -211,7 +211,7 @@ public abstract class Vertex
 	{
 		return m_children;
 	}
-	
+
 	/**
 	 * Gets the list of parents of this vertex. The list is modifiable, but it is not
 	 * recommended to modify it directly, as it may cause inconsistencies in the graph.
@@ -338,6 +338,17 @@ public abstract class Vertex
 	 */
 	public static class AndVertex extends Vertex
 	{
+		/**
+		 * Creates a new AND vertex with no children and no parents.
+		 * The constructor is package-private to prevent external code from
+		 * creating AND vertices directly, as they should be created through
+		 * the {@link VertexFactory} class.
+		 */
+		/* package */ AndVertex()
+		{
+			super();
+		}
+		
 		@Override
 		public String toString()
 		{
@@ -350,6 +361,17 @@ public abstract class Vertex
 	 */
 	public static class OrVertex extends Vertex
 	{
+		/**
+		 * Creates a new OR vertex with no children and no parents.
+		 * The constructor is package-private to prevent external code from
+		 * creating OR vertices directly, as they should be created through
+		 * the {@link VertexFactory} class.
+		 */
+		/* package */ OrVertex()
+		{
+			super();
+		}
+
 		@Override
 		public String toString()
 		{
@@ -375,10 +397,13 @@ public abstract class Vertex
 
 		/**
 		 * Creates a new part vertex with the given part and source.
+		 * The constructor is package-private to prevent external code from
+		 * creating part vertices directly, as they should be created through
+		 * the {@link VertexFactory} class.
 		 * @param p The part represented by this vertex. This parameter cannot be null.
 		 * @param s The source of the part represented by this vertex. This parameter can be null.
 		 */
-		public PartVertex(/*@ non_null @*/ Part p, /*@ null @*/ Object s)
+		/* package */ PartVertex(/*@ non_null @*/ Part p, /*@ null @*/ Object s)
 		{
 			super();
 			m_part = p;

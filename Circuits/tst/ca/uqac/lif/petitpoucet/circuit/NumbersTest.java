@@ -30,6 +30,7 @@ import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.VertexFactory;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 
 /**
@@ -63,6 +64,7 @@ public class NumbersTest
 	@Test
 	public void testMultiplication2() throws ExplanationException
 	{
+		VertexFactory factory = new VertexFactory();
 		Numbers.Multiplication f = new Numbers.Multiplication(3);
 		Connectable.connect(new Constant(2), 0, f, 0);
 		Connectable.connect(new Constant(0), 0, f, 1);
@@ -70,12 +72,13 @@ public class NumbersTest
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
 		Vertex e = f.explain(new Connectable.OutputPart(0));
-		assertTrue(same(e, tree(new PartVertex(new Connectable.InputPart(1), f))));
+		assertTrue(same(e, tree(factory.getPart(new Connectable.InputPart(1), f))));
 	}
 	
 	@Test
 	public void testMultiplication3() throws ExplanationException
 	{
+		VertexFactory factory = new VertexFactory();
 		Numbers.Multiplication f = new Numbers.Multiplication(3);
 		Connectable.connect(new Constant(0), 0, f, 0);
 		Connectable.connect(new Constant(6), 0, f, 1);
@@ -84,8 +87,8 @@ public class NumbersTest
 		assertEquals(0, v, 0.01);
 		Vertex e = f.explain(new Connectable.OutputPart(0));
 		assertTrue(same(e, tree(or(
-				new PartVertex(new Connectable.InputPart(0), f),
-				new PartVertex(new Connectable.InputPart(2), f)
+				factory.getPart(new Connectable.InputPart(0), f),
+				factory.getPart(new Connectable.InputPart(2), f)
 				))));
 	}
 }
