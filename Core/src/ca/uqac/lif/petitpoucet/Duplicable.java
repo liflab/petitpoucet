@@ -18,10 +18,25 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+/**
+ * Interface implemented by objects that can create a copy of themselves.
+ * The copy can either by stateless (by default) or stateful.
+ * @author Sylvain Hallé
+ */
 public interface Duplicable
 {
+	/**
+	 * Creates a copy of the object.
+	 * @param with_state Set to {@code true} for a stateful copy, {@link false}
+	 * otherwise.
+	 * @return The copy
+	 */
 	public Object duplicate(boolean with_state);
 	
+	/**
+	 * Creates a stateless copy of the object.
+	 * @return The copy
+	 */
 	public default Object duplicate()
 	{
 		return duplicate(false);

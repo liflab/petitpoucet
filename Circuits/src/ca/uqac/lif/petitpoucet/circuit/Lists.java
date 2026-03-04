@@ -25,12 +25,26 @@ import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 import ca.uqac.lif.petitpoucet.CompositePart;
 
+/**
+ * Utility class providing basic operations on lists.
+ * @author Sylvain Hallé
+ */
 public abstract class Lists
 {
+	/**
+	 * Extracts an element at a given index from a list.
+	 */
 	public static class ElementAt extends Node
 	{
+		/**
+		 * The index to extract.
+		 */
 		protected final int m_index;
 		
+		/**
+		 * Creates a new instance of the function.
+		 * @param index The index to extract
+		 */
 		public ElementAt(int index)
 		{
 			super(1, 1);
@@ -58,10 +72,20 @@ public abstract class Lists
 		}
 	}
 	
+	/**
+	 * A {@link Part} designating a specific element inside a list.
+	 */
 	public static class NthElement implements Part
 	{
+		/**
+		 * The index in the list.
+		 */
 		protected final int m_index;
 		
+		/**
+		 * Creates a new instance of the part.
+		 * @param index The index in the list
+		 */
 		public NthElement(int index)
 		{
 			super();

@@ -24,11 +24,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A vertex in a directed acyclic graph. This class is used to represent the
+ * structure of the graph, and to perform operations on it. The graph is assumed
+ * to have a single root. The vertices are of three types:
+ * {@link AndVertex}, {@link OrVertex},
+ * and {@link PartVertex}. The first two types are used to represent the structure
+ * of the graph, while the last type is used to represent the parts of the graph.
+ * @author Sylvain Hallé
+ */
 public abstract class Vertex
 {
-	protected final List<Vertex> m_children;
+	/**
+	 * The list of children of this vertex, if any.
+	 */
+	/*@ non_null @*/ protected final List<Vertex> m_children;
 
-	protected final List<Vertex> m_parents;
+	/**
+	 * The list of parents of this vertex, if any.
+	 */
+	/*@ non_null @*/ protected final List<Vertex> m_parents;
 
 	/**
 	 * Removes a vertex <i>v</i> from a graph, by connecting all its children
@@ -58,11 +73,28 @@ public abstract class Vertex
 		}
 	}
 
+	/**
+	 * Simplifies a graph by removing all Boolean vertices that have only one
+	 * child, or that have the same type as their parent.
+	 * @param v The vertex to simplify; the method will simplify the subgraph
+	 * rooted in this vertex
+	 */
 	public static void simplify(Vertex v)
 	{
 		simplifyRecursive(v, null);
 	}
 
+	/**
+	 * Recursively simplifies a graph by removing all Boolean vertices that have
+	 * only one child, or that have the same type as their parent. This method is
+	 * called by {@link #simplify(Vertex)}, and should not be called directly.
+	 * @param current The vertex to simplify; the method will simplify the subgraph
+	 * rooted in this vertex
+	 * @param parent The parent of the current vertex; this parameter is used to
+	 * determine if the current vertex has the same type as its parent
+	 * @return {@code true} if the current vertex should be squished, {@code false}
+	 * otherwise
+	 */
 	protected static boolean simplifyRecursive(Vertex current, Vertex parent)
 	{
 		boolean squish_me = false;
@@ -140,16 +172,29 @@ public abstract class Vertex
 		return root;
 	}
 
+	/**
+	 * Utility method to create trees of vertices with an AND vertex as root.
+	 * @param children The children to attach to the root
+	 * @return The root of the tree
+	 */
 	public static Vertex and(Vertex ... children)
 	{
 		return tree(new AndVertex(), children);
 	}
 
+	/**
+	 * Utility method to create trees of vertices with an OR vertex as root.
+	 * @param children The children to attach to the root
+	 * @return The root of the tree
+	 */
 	public static Vertex or(Vertex ... children)
 	{
 		return tree(new OrVertex(), children);
 	}
 
+	/**
+	 * Creates a new vertex with no children and no parents.
+	 */
 	public Vertex()
 	{
 		super();
@@ -157,16 +202,32 @@ public abstract class Vertex
 		m_parents = new ArrayList<>();
 	}
 
+	/**
+	 * Gets the list of children of this vertex. The list is modifiable, but it is not
+	 * recommended to modify it directly, as it may cause inconsistencies in the graph.
+	 * @return The list of children of this vertex
+	 */
 	public List<Vertex> getChildren()
 	{
 		return m_children;
 	}
-
+	
+	/**
+	 * Gets the list of parents of this vertex. The list is modifiable, but it is not
+	 * recommended to modify it directly, as it may cause inconsistencies in the graph.
+	 * @return The list of parents of this vertex
+	 */
 	public List<Vertex> getParents()
 	{
 		return m_parents;
 	}
 
+	/**
+	 * Finds the root of the graph to which this vertex belongs. This method
+	 * assumes that the graph has a single root, and that there are no
+	 * cycles in the graph.
+	 * @return The root of the graph to which this vertex belongs
+	 */
 	public Vertex findRoot()
 	{
 		if (m_parents.isEmpty())
@@ -178,11 +239,26 @@ public abstract class Vertex
 		return m_parents.get(0).findRoot();
 	}
 
+	/**
+	 * Prints the subgraph rooted in this vertex to the given print stream. The
+	 * output is indented to show the structure of the graph. This method is
+	 * useful for debugging purposes.
+	 * @param ps The print stream to which to print the graph
+	 */
 	public void print(PrintStream ps)
 	{
 		print(ps, "");
 	}
 
+	/**
+	 * Prints the subgraph rooted in this vertex to the given print stream. The
+	 * output is indented to show the structure of the graph. This method is
+	 * useful for debugging purposes. This method is called by
+	 * {@link #print(PrintStream)}, and should not be called directly.
+	 * @param sb The print stream to which to print the graph
+	 * @param indent The indentation to use for the current vertex; this
+	 * parameter is used to indent the output to show the structure of the graph
+	 */
 	protected void print(PrintStream sb, String indent)
 	{
 		sb.append(indent).append("*").append(toString()).append("\n");
@@ -193,6 +269,11 @@ public abstract class Vertex
 		}
 	}
 
+	/**
+	 * Finds the leaves of the subgraph rooted in this vertex. The leaves are the
+	 * vertices that have no children.
+	 * @return The set of leaves of the subgraph rooted in this vertex
+	 */
 	public Set<Vertex> findLeaves()
 	{
 		Set<Vertex> leaves = new HashSet<>();
@@ -200,6 +281,15 @@ public abstract class Vertex
 		return leaves;
 	}
 
+	/**
+	 * Finds the leaves of the subgraph rooted in the given vertex, and adds them to
+	 * the given set. This method is called by {@link #findLeaves()}, and should
+	 * not be called directly.
+	 * @param leaves The set to which to add the leaves; this parameter is used to
+	 * accumulate the leaves as they are found
+	 * @param current The vertex to explore; this parameter is used to explore
+	 * the graph recursively
+	 */
 	protected void findLeaves(Set<Vertex> leaves, Vertex current)
 	{
 		if (m_children.isEmpty())
@@ -213,22 +303,39 @@ public abstract class Vertex
 		}
 	}
 
+	/**
+	 * Gets the number of children of this vertex.
+	 * @return The number of children of this vertex
+	 */
 	public int childCount()
 	{
 		return m_children.size();
 	}
 
+	/**
+	 * Gets the number of parents of this vertex.
+	 * @return The number of parents of this vertex
+	 */
 	public int parentCount()
 	{
 		return m_parents.size();
 	}
 
+	/**
+	 * Adds a child to this vertex. This method also adds this vertex as a parent
+	 * of the child. It is not recommended to modify the list of children or parents
+	 * directly, as it may cause inconsistencies in the graph.
+	 * @param v The vertex to add as a child of this vertex
+	 */
 	public void addChild(Vertex v)
 	{
 		v.m_parents.add(this);
 		m_children.add(v);
 	}
 
+	/**
+	 * An AND vertex. This vertex represents a conjunction of its children.
+	 */
 	public static class AndVertex extends Vertex
 	{
 		@Override
@@ -238,6 +345,9 @@ public abstract class Vertex
 		}
 	}
 
+	/**
+	 * An OR vertex. This vertex represents a disjunction of its children.
+	 */
 	public static class OrVertex extends Vertex
 	{
 		@Override
@@ -247,13 +357,28 @@ public abstract class Vertex
 		}
 	}
 
+	/**
+	 * A part vertex. This vertex represents a part of an object, and is identified
+	 * by the part and the source of the part.
+	 */
 	public static class PartVertex extends Vertex
 	{
-		protected final Part m_part;
+		/**
+		 * The part represented by this vertex.
+		 */
+		/*@ non_null @*/ protected final Part m_part;
 
-		protected final Object m_subject;
+		/**
+		 * The source of the part represented by this vertex.
+		 */
+		/*@ null @*/ protected final Object m_subject;
 
-		public PartVertex(Part p, Object s)
+		/**
+		 * Creates a new part vertex with the given part and source.
+		 * @param p The part represented by this vertex. This parameter cannot be null.
+		 * @param s The source of the part represented by this vertex. This parameter can be null.
+		 */
+		public PartVertex(/*@ non_null @*/ Part p, /*@ null @*/ Object s)
 		{
 			super();
 			m_part = p;

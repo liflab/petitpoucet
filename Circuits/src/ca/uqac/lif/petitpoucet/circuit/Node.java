@@ -28,14 +28,39 @@ import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 
+/**
+ * A node in a circuit. A node has a fixed number of inputs and outputs, and
+ * computes its output values from its input values. The output values are
+ * cached until the node is reset.
+ * @see Connectable
+ * @see Computable
+ * @author Sylvain Hallé
+ */
 public abstract class Node implements Connectable, Computable, Duplicable, Explainable
 {
-	protected final UpstreamConnection[] m_ins;
+	/**
+	 * The connections to the upstream nodes. The length of this array is the input
+	 * arity of the node.
+	 */
+	/*@ non_null @*/ protected final UpstreamConnection[] m_ins;
 	
-	protected final DownstreamConnection[] m_outs;
+	/**
+	 * The connections to the downstream nodes. The length of this array is the output
+	 * arity of the node.
+	 */
+	/*@ non_null @*/ protected final DownstreamConnection[] m_outs;
 	
-	protected Object[] m_outputArguments;
+	/**
+	 * The cached output values. This is set to null when the node is reset, and
+	 * recomputed when the node is computed again.
+	 */
+	/*@ null @*/ protected Object[] m_outputArguments;
 	
+	/**
+	 * Creates a new node with the given input and output arities.
+	 * @param in_arity The input arity of the node
+	 * @param out_arity The output arity of the node
+	 */
 	public Node(int in_arity, int out_arity)
 	{
 		super();
@@ -61,9 +86,19 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		return m_outputArguments[index];
 	}
 	
+	@Override
 	public abstract Node duplicate(boolean with_state);
 	
-	protected abstract void evaluate(Object[] input, Object[] output);
+	/**
+	 * Evaluates the node's output values from its input values. This method is called
+	 * when the node is computed for the first time after a reset. The input values are
+	 * passed in the {@code input} array, and the output values must be stored in
+	 * the {@code output} array.
+	 * @param input The input values, in the order of the node's inputs
+	 * @param output The output values, in the order of the node's outputs.
+	 * This array is pre-allocated and must be filled by this method.
+	 */
+	protected abstract void evaluate(/*@ non_null @*/ Object[] input, /*@ non_null @*/ Object[] output);
 	
 	@Override
 	public void reset()
@@ -123,6 +158,14 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		return explain(index, p_tail, f);
 	}
 	
+	/**
+	 * Checks that the head of the part is an output part with a valid index,
+	 * and returns the index of the output part.
+	 * @param p The part to check
+	 * @return The index of the output part
+	 * @throws ExplanationException If the head of the part is not an output part,
+	 * or if the index is out of bounds
+	 */
 	protected int checkHead(Part p) throws ExplanationException
 	{
 		Part p_head = head(p);
@@ -138,6 +181,18 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		return op.getIndex();
 	}
 	
+	/**
+	 * Explains the output of this node at the given index, given the tail of
+	 * the part. The default implementation is to create an AND vertex with one
+	 * child for each input, where the child is the explanation of
+	 * the input part corresponding to the input index. Subclasses can override
+	 * this method to provide a different explanation.
+	 * @param out_index The index of the output to explain
+	 * @param tail The tail of the part
+	 * @param f The vertex factory to use to create the explanation vertices
+	 * @return A vertex explaining the output of this node at the given index
+	 * @throws ExplanationException
+	 */
 	protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 	{
 		AndVertex a = f.getAnd();
@@ -155,8 +210,16 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		// By default, do nothing
 	}
 	
+	/**
+	 * A connection to an upstream node.
+	 */
 	public static class UpstreamConnection extends Connection
 	{
+		/**
+		 * Creates a new upstream connection to the given node and index.
+		 * @param c The node to connect to
+		 * @param i The index of the output of the node to connect to
+		 */
 		public UpstreamConnection(Connectable c, int i)
 		{
 			super(c, i);
@@ -169,8 +232,16 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 	}
 	
+	/**
+	 * A connection to an downstream node.
+	 */
 	public static class DownstreamConnection extends Connection
 	{
+		/**
+		 * Creates a new downstream connection to the given node and index.
+		 * @param c The node to connect to
+		 * @param i The index of the input of the node to connect to
+		 */
 		public DownstreamConnection(Connectable c, int i)
 		{
 			super(c, i);
@@ -183,6 +254,13 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 	}
 	
+	/**
+	 * Returns the head of the part, which is the first part of the composition. If
+	 * the part is a composite part, returns the head of the composite part. Otherwise,
+	 * returns the part itself.
+	 * @param p The part to get the head of
+	 * @return The head of the part
+	 */
 	protected static Part head(Part p)
 	{
 		if (p instanceof CompositePart)
@@ -192,6 +270,13 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		return p;
 	}
 	
+	/**
+	 * Returns the tail of the part, which is the second part of the composition. If
+	 * the part is a composite part, returns the tail of the composite part. Otherwise,
+	 * returns null.
+	 * @param p The part to get the tail of
+	 * @return The tail of the part, or null if the part is not a composite part
+	 */
 	protected static Part tail(Part p)
 	{
 		if (p instanceof CompositePart)

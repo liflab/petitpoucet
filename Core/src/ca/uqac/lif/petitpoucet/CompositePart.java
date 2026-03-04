@@ -21,10 +21,27 @@ package ca.uqac.lif.petitpoucet;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A {@link Part} that is made of several other parts. The class provides methods to
+ * extract the head and tail of the composite part, as well as to add new
+ * parts to the composition.
+ * @author Sylvain Hallé
+ */
 public class CompositePart implements Part
 {
+	/**
+	 * The list of components of the composite part.
+	 */
 	protected final List<Part> m_components;
 	
+	/**
+	 * Composes two parts together. If the first part is a composite part, the second
+	 * part is added to it. Otherwise, a new composite part is created with the two
+	 * parts as components.
+	 * @param tail The first part
+	 * @param head The second part
+	 * @return The composition of the two parts
+	 */
 	public static Part compose(Part tail, Part head)
 	{
 		if (tail == null)
@@ -39,6 +56,10 @@ public class CompositePart implements Part
 		return new CompositePart(tail, head);
 	}
 	
+	/**
+	 * Creates a new composite part with the given components.
+	 * @param parts The components of the composite part
+	 */
 	public CompositePart(Part ... parts)
 	{
 		super();
@@ -49,6 +70,10 @@ public class CompositePart implements Part
 		}
 	}
 	
+	/**
+	 * Creates a new composite part with the given components.
+	 * @param parts The components of the composite part
+	 */
 	public CompositePart(List<? extends Part> parts)
 	{
 		super();
@@ -56,6 +81,11 @@ public class CompositePart implements Part
 		m_components.addAll(parts);
 	}
 	
+	/**
+	 * Adds a part to the composite part. If the part is itself a composite part,
+	 * its components are added to the current composite part instead.
+	 * @param p The part to add
+	 */
 	public void add(Part p)
 	{
 		if (p instanceof CompositePart)
@@ -113,11 +143,20 @@ public class CompositePart implements Part
 		return false;
 	}
 	
+	/**
+	 * Gets the number of components in the composite part.
+	 * @return The number of components
+	 */
 	/*@ pure @*/ public int size()
 	{
 		return m_components.size();
 	}
 	
+	/**
+	 * Gets the head of the composite part, which is the <em>last</em> component.
+	 * If the composite part is empty, returns {@code null}.
+	 * @return The head of the composite part
+	 */
 	/*@ pure null @*/ public Part head()
 	{
 		if (m_components.isEmpty())
@@ -127,6 +166,13 @@ public class CompositePart implements Part
 		return m_components.get(m_components.size() - 1);
 	}
 	
+	/**
+	 * Gets the tail of the composite part, which is the composition of all components
+	 * except the head. If the composite part has only one component, returns a
+	 * duplicate of that component. If the composite part is empty, returns
+	 * {@code null}.
+	 * @return The tail of the composite part
+	 */
 	/*@ pure null @*/ public Part tail()
 	{
 		if (m_components.size() <= 1)

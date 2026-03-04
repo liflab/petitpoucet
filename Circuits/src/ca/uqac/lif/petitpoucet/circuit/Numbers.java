@@ -25,8 +25,16 @@ import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 
+/**
+ * Utility class providing basic arithmetic operations.
+ * @author Sylvain Hallé
+ */
 public abstract class Numbers extends Node
 {
+	/**
+	 * Creates a new instance of the class.
+	 * @param in_arity The input arity; the output arity is assumed to be 1
+	 */
 	public Numbers(int in_arity)
 	{
 		super(in_arity, 1);
@@ -49,10 +57,23 @@ public abstract class Numbers extends Node
 		output[0] = v;
 	}
 	
+	/**
+	 * Calculates the return value of the function, given the numerical operands
+	 * passed as arguments.
+	 * @param operands The operands
+	 * @return The return value
+	 */
 	protected abstract float evaluate(float[] operands);
 	
+	/**
+	 * Implementation of addition on floating point numbers.
+	 */
 	public static class Addition extends Numbers
 	{
+		/**
+		 * Creates a new instance of the function.
+		 * @param in_arity The input arity of this instance
+		 */
 		public Addition(int in_arity)
 		{
 			super(in_arity);
@@ -82,10 +103,21 @@ public abstract class Numbers extends Node
 		}
 	}
 	
+	/**
+	 * Implementation of multiplication on floating point numbers.
+	 */
 	public static class Multiplication extends Numbers
 	{
-		protected List<Integer> m_zeros;
+		/**
+		 * The list of indices in the arguments where the value is 0.
+		 * This is used to provide the explanation for the output result.
+		 */
+		/*@ null @*/ protected List<Integer> m_zeros;
 		
+		/**
+		 * Creates a new instance of the function.
+		 * @param in_arity The input arity of this instance
+		 */
 		public Multiplication(int in_arity)
 		{
 			super(in_arity);

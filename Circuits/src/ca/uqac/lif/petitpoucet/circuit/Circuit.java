@@ -23,13 +23,32 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A circuit is a node that contains other nodes. It has a fixed number of
+ * inputs and outputs, which are connected to the nodes it contains. The circuit
+ * evaluates by connecting its inputs to the nodes it contains, triggering their
+ * evaluation, and fetching the outputs from the nodes it contains. The circuit
+ * can be duplicated, which creates a new circuit with the same structure but
+ * different nodes. The circuit can also be reset, which resets all the nodes it
+ * contains.
+ * @author Sylvain Hallé
+ */
 public class Circuit extends Node
 {
-	protected final Set<Node> m_nodes;
+	/**
+	 * The nodes contained in this circuit.
+	 */
+	/*@ non_null @*/ protected final Set<Node> m_nodes;
 
-	protected final UpstreamConnection[] m_inputAssociations;
+	/** 
+	 * The associations between the circuit's inputs and the nodes it contains.
+	 */
+	/*@ non_null @*/ protected final UpstreamConnection[] m_inputAssociations;
 
-	protected final DownstreamConnection[] m_outputAssociations;
+	/** 
+	 * The associations between the circuit's outputs and the nodes it contains.
+	 */
+	/*@ non_null @*/ protected final DownstreamConnection[] m_outputAssociations;
 
 	public Circuit(int in_arity, int out_arity)
 	{
@@ -39,16 +58,38 @@ public class Circuit extends Node
 		m_outputAssociations = new DownstreamConnection[out_arity];
 	}
 
-	public void associateInput(int i, Node n, int j)
+	/**
+	 * Associates an input of the circuit with an input of a node contained in the
+	 * circuit. This means that when the circuit is evaluated, the value of the
+	 * input will be connected to the input of the node.
+	 * @param i the index of the input of the circuit
+	 * @param n the node contained in the circuit
+	 * @param j the index of the input of the node
+	 */
+	public void associateInput(int i, /*@ non_null @*/ Node n, int j)
 	{
 		m_inputAssociations[i] = new UpstreamConnection(n, j);
 	}
 
-	public void associateOutput(int i, Node n, int j)
+	/**
+	 * Associates an output of the circuit with an output of a node contained in the
+	 * circuit. This means that when the circuit is evaluated, the value of the
+	 * output will be fetched from the output of the node.
+	 * @param i the index of the output of the circuit
+	 * @param n the node contained in the circuit
+	 * @param j the index of the output of the node
+	 */
+	public void associateOutput(int i, /*@ non_null @*/ Node n, int j)
 	{
 		m_outputAssociations[i] = new DownstreamConnection(n, j);
 	}
 
+	/**
+	 * Adds nodes to the circuit. The nodes must be connected to the circuit's
+	 * inputs and outputs using the {@link #associateInput(int, Node, int)} and
+	 * {@link #associateOutput(int, Node, int)} methods.
+	 * @param nodes The nodes to add to the circuit
+	 */
 	public void add(Node ... nodes)
 	{
 		for (Node n : nodes)
@@ -58,7 +99,7 @@ public class Circuit extends Node
 	}
 
 	@Override
-	public Circuit duplicate(boolean with_state)
+	/*@ non_null @*/ public Circuit duplicate(boolean with_state)
 	{
 		Circuit g = new Circuit(getInputArity(), getOutputArity());
 		Map<Node,Node> fromto = new HashMap<>();
@@ -135,5 +176,4 @@ public class Circuit extends Node
 			n.reset();
 		}
 	}
-
 }

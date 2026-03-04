@@ -22,10 +22,21 @@ import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 
+/**
+ * A node that always outputs the same value.
+ * @author Sylvain Hallé
+ */
 public class Constant extends Node
 {
+	/**
+	 * The value to output.
+	 */
 	protected final Object m_value;
 
+	/**
+	 * Creates a new constant node.
+	 * @param o The value to output
+	 */
 	public Constant(Object o)
 	{
 		super(0, 1);
@@ -50,8 +61,15 @@ public class Constant extends Node
 		return new Constant(m_value);
 	}
 	
+	/**
+	 * A part that represents the value of a constant node.
+	 */
 	public class ConstantValue implements Part
 	{
+		/**
+		 * Gets the value of this constant.
+		 * @return The value of this constant
+		 */
 		public Object getValue()
 		{
 			return m_value;

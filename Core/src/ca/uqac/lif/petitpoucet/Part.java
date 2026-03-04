@@ -18,6 +18,12 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+/**
+ * Interface implemented by objects designating a part of another object.
+ * The interface provides no new methods, but serves as a marker for objects
+ * that can be used as parts in the explanation graph.
+ * @author Sylvain Hallé
+ */
 public interface Part extends Duplicable
 {
 	@Override

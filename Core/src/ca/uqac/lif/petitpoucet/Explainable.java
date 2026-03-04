@@ -18,17 +18,47 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+/**
+ * Interface implemented by objects that can provide an explanation for some
+ * part of their output.
+ * @author Sylvain Hallé
+ */
 public interface Explainable
 {
+	/**
+	 * Explains a part of the output of the object, by returning a vertex that
+	 * can be used to trace back the origin of the part. The default implementation
+	 * of this method uses a {@link VertexFactory} to create the vertex, but
+	 * subclasses can override this method to use a custom factory.
+	 * @param p The part to explain
+	 * @return A vertex that can be used to trace back the origin of the part
+	 * @throws ExplanationException If an error occurs during the calculation of
+	 * the explanation
+	 */
 	public default Vertex explain(Part p) throws ExplanationException
 	{
 		return explain(p, new VertexFactory());
 	}
 	
+	/**
+	 * Explains a part of the output of the object, by returning a vertex that
+	 * can be used to trace back the origin of the part. The method uses a
+	 * {@link VertexFactory} provided as an argument to create the vertex, which
+	 * can be used to create custom vertices.
+	 * @param p The part to explain
+	 * @param f The factory to use to create the vertex
+	 * @return A vertex that can be used to trace back the origin of the part
+	 * @throws ExplanationException If an error occurs during the calculation
+	 * of the explanation
+	 */
 	public Vertex explain(Part p, VertexFactory f) throws ExplanationException;
 	
 	public void hint(Part p);
 	
+	/**
+	 * Exception raised when an error occurs in the calculation of the
+	 * explanation.
+	 */
 	public static class ExplanationException extends Exception
 	{
 		/**
@@ -36,11 +66,19 @@ public interface Explainable
 		 */
 		private static final long serialVersionUID = 1L;
 		
+		/**
+		 * Creates a new instance of the exception.
+		 * @param t The cause of the exception
+		 */
 		public ExplanationException(Throwable t)
 		{
 			super(t);
 		}
 		
+		/**
+		 * Creates a new instance of the exception.
+		 * @param s The message of the exception
+		 */
 		public ExplanationException(String s)
 		{
 			super(s);
