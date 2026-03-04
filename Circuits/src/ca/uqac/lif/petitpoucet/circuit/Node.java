@@ -230,6 +230,20 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		{
 			return (Node) m_connectable;
 		}
+		
+		@Override
+		public int hashCode()
+		{
+			return m_index;
+		}
+		
+		@Override
+		public boolean equals(Object o)
+		{
+			return o instanceof UpstreamConnection &&
+					((UpstreamConnection) o).m_connectable.equals(m_connectable) &&
+					((UpstreamConnection) o).m_index == m_index;
+		}
 	}
 	
 	/**
@@ -251,6 +265,20 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		public Node getObject()
 		{
 			return (Node) m_connectable;
+		}
+		
+		@Override
+		public int hashCode()
+		{
+			return m_index;
+		}
+		
+		@Override
+		public boolean equals(Object o)
+		{
+			return o instanceof DownstreamConnection &&
+					((DownstreamConnection) o).m_connectable.equals(m_connectable) &&
+					((DownstreamConnection) o).m_index == m_index;
 		}
 	}
 	

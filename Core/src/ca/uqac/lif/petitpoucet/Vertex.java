@@ -277,7 +277,7 @@ public abstract class Vertex
 	public Set<Vertex> findLeaves()
 	{
 		Set<Vertex> leaves = new HashSet<>();
-		findLeaves(leaves, this);
+		findLeaves(leaves);
 		return leaves;
 	}
 
@@ -287,11 +287,13 @@ public abstract class Vertex
 	 * not be called directly.
 	 * @param leaves The set to which to add the leaves; this parameter is used to
 	 * accumulate the leaves as they are found
-	 * @param current The vertex to explore; this parameter is used to explore
-	 * the graph recursively
 	 */
-	protected void findLeaves(Set<Vertex> leaves, Vertex current)
+	protected void findLeaves(Set<Vertex> leaves)
 	{
+		if (leaves.contains(this))
+		{
+			return;
+		}
 		if (m_children.isEmpty())
 		{
 			leaves.add(this);
@@ -299,7 +301,7 @@ public abstract class Vertex
 		}
 		for (Vertex v : m_children)
 		{
-			findLeaves(leaves, v);
+			v.findLeaves(leaves);
 		}
 	}
 
@@ -430,6 +432,24 @@ public abstract class Vertex
 		public String toString()
 		{
 			return m_part + "(" + m_subject + ")";
+		}
+
+		/**
+		 * Gets the part represented by this vertex.
+		 * @return The part
+		 */
+		/*@ pure non_null @*/ public Part getPart()
+		{
+			return m_part;
+		}
+		
+		/**
+		 * Gets the subject represented by this vertex.
+		 * @return The subject
+		 */
+		/*@ pure null @*/ public Object getSubject()
+		{
+			return m_subject;
 		}
 	}
 }

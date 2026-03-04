@@ -22,9 +22,20 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import static ca.uqac.lif.petitpoucet.Vertex.and;
+import static ca.uqac.lif.petitpoucet.Vertex.or;
+import static ca.uqac.lif.petitpoucet.Vertex.tree;
+
+import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.circuit.Connectable.InputPart;
+import ca.uqac.lif.petitpoucet.circuit.Connectable.OutputPart;
+
 /**
  * Unit tests for {@link Circuit}.
  */
+@SuppressWarnings("unused")
 public class CircuitTest
 {
 	@Test
@@ -43,7 +54,7 @@ public class CircuitTest
 		float v = (Float) circ.compute(0);
 		assertEquals(5, v, 0.1);
 	}
-	
+
 	@Test
 	public void test2()
 	{
@@ -67,7 +78,7 @@ public class CircuitTest
 		float v = (Float) circ.compute(0);
 		assertEquals(25, v, 0.1);
 	}
-	
+
 	@Test
 	public void testDuplicate1()
 	{
@@ -85,7 +96,7 @@ public class CircuitTest
 		float v = (Float) c2.compute(0);
 		assertEquals(5, v, 0.1);
 	}
-	
+
 	@Test
 	public void test3()
 	{
@@ -110,4 +121,90 @@ public class CircuitTest
 		float v = (Float) circ2.compute(0);
 		assertEquals(25, v, 0.1);
 	}
+
+	@Test
+	public void testExplain1() throws ExplanationException
+	{
+		VertexFactory factory = new VertexFactory(); 
+		Circuit circ = new Circuit(2, 1);
+		Numbers.Addition add = new Numbers.Addition(2);
+		circ.add(add);
+		circ.associateInput(0, add, 0);
+		circ.associateInput(1, add, 1);
+		circ.associateOutput(0, add, 0);
+		Connectable.connect(new Constant(2), 0, circ, 0);
+		Connectable.connect(new Constant(3), 0, circ, 1);
+		Object o = circ.compute();
+		assertEquals(5f, o);
+		Vertex e = circ.explain(new Connectable.OutputPart(0));
+		//e.print(System.out);
+		assertTrue(Vertex.same(e, tree(
+				factory.getPart(new OutputPart(0), circ),
+				tree(factory.getPart(new OutputPart(0), add),
+						tree(factory.getAnd(),
+								tree(factory.getPart(new InputPart(0), add), factory.getPart(new InputPart(0), circ)),	
+								tree(factory.getPart(new InputPart(1), add), factory.getPart(new InputPart(1), circ))	
+								)))));
+
+	}
+
+	@Test
+	public void testExplain2() throws ExplanationException
+	{
+		VertexFactory factory = new VertexFactory(); 
+		Circuit circ = new Circuit(2, 1);
+		Numbers.Multiplication add = new Numbers.Multiplication(2);
+		circ.add(add);
+		circ.associateInput(0, add, 0);
+		circ.associateInput(1, add, 1);
+		circ.associateOutput(0, add, 0);
+		Connectable.connect(new Constant(0), 0, circ, 0);
+		Connectable.connect(new Constant(3), 0, circ, 1);
+		Object o = circ.compute();
+		assertEquals(0f, o);
+		Vertex e = circ.explain(new Connectable.OutputPart(0));
+		//e.print(System.out);
+		assertTrue(Vertex.same(e, tree(
+				factory.getPart(new OutputPart(0), circ),
+				tree(factory.getPart(new OutputPart(0), add),
+						tree(factory.getPart(new InputPart(0), add), factory.getPart(new InputPart(0), circ))	
+						))));
+
+	}
+
+	@Test
+	public void testExplain3() throws ExplanationException
+	{
+		VertexFactory factory = new VertexFactory(); 
+		Circuit circ = new Circuit(3, 1);
+		Numbers.Addition add = new Numbers.Addition(2);
+		circ.associateInput(0, add, 0);
+		circ.associateInput(1, add, 1);
+		Numbers.Multiplication mul = new Numbers.Multiplication(2);
+		Connectable.connect(add, 0, mul, 0);
+		circ.associateInput(2,  mul, 1);
+		circ.associateOutput(0, mul, 0);
+		circ.add(add, mul);
+		Connectable.connect(new Constant(2), 0, circ, 0);
+		Connectable.connect(new Constant(3), 0, circ, 1);
+		Connectable.connect(new Constant(4), 0, circ, 2);
+		Object o = circ.compute();
+		assertEquals(20f, o);
+		Vertex e = circ.explain(new Connectable.OutputPart(0));
+		//e.print(System.out);
+		assertTrue(Vertex.same(e, tree(
+				factory.getPart(new OutputPart(0), circ),
+				tree(factory.getPart(new OutputPart(0), mul),
+						tree(factory.getAnd(),
+								tree(factory.getPart(new InputPart(0), mul),
+										tree(factory.getPart(new OutputPart(0), add),
+												tree(factory.getAnd(), 
+														tree(factory.getPart(new InputPart(0), add), factory.getPart(new InputPart(0), circ)),
+														tree(factory.getPart(new InputPart(1), add), factory.getPart(new InputPart(1), circ))))),	
+								tree(factory.getPart(new InputPart(1), mul),
+										factory.getPart(new InputPart(2), circ))	
+								)))));
+
+	}
+
 }

@@ -19,7 +19,9 @@
 package ca.uqac.lif.petitpoucet;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
@@ -43,11 +45,11 @@ public class VertexFactory
 	/*@ null @*/ protected final VertexFactory m_parent;
 	
 	/**
-	 * The list of sub-factories created from this factory. This list is used to keep
+	 * The sub-factories created from this factory. This map is used to keep
 	 * track of the sub-factories created from this factory, so that they can be properly
 	 * disposed of when this factory is disposed of. This list is never null, but can be empty.
 	 */
-	/*@ non_null @*/ protected final List<VertexFactory> m_children;
+	/*@ non_null @*/ protected final Map<Object,VertexFactory> m_children;
 	
 	/**
 	 * The list of vertices created by this factory. This list is used to keep track of the
@@ -75,7 +77,7 @@ public class VertexFactory
 	{
 		super();
 		m_parent = vf;
-		m_children = new ArrayList<>();
+		m_children = new IdentityHashMap<>();
 		m_vertices = new ArrayList<>();
 	}
 	
@@ -132,14 +134,30 @@ public class VertexFactory
 	}
 	
 	/**
-	 * Creates a new sub-factory. This method creates a new vertex factory that shares the same
-	 * vertices as this factory, but can create new vertices without disturbing this factory.
-	 * @return A new sub-factory.
+	 * Creates a new sub-factory associated to a given object.
+	 * @param key The object to associate to the sub-factory. This parameter
+	 * cannot be null.
+	 * @return The corresponding sub-factory
 	 */
-	/*@ non_null @*/ public VertexFactory subfactory()
+	/*@ non_null @*/ public VertexFactory subfactory(Object key)
 	{
+		if (m_children.containsKey(key))
+		{
+			return m_children.get(key);
+		}
 		VertexFactory vf = new VertexFactory(this);
-		m_children.add(vf);
+		m_children.put(key, vf);
 		return vf;
+	}
+	
+	/**
+	 * Determines if the factory already contains a given part vertex.
+	 * @param p The part to look for
+	 * @param o The object to look for
+	 * @return {@code true} if the vertex is present, {@code false} otherwise
+	 */
+	/*@ pure @*/ public boolean contains(Part p, Object o)
+	{
+		return m_vertices.contains(new PartVertex(p, o));
 	}
 }

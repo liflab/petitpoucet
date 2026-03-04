@@ -23,6 +23,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import ca.uqac.lif.petitpoucet.CompositePart;
+import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.VertexFactory;
+
 /**
  * A circuit is a node that contains other nodes. It has a fixed number of
  * inputs and outputs, which are connected to the nodes it contains. The circuit
@@ -31,6 +37,12 @@ import java.util.Set;
  * can be duplicated, which creates a new circuit with the same structure but
  * different nodes. The circuit can also be reset, which resets all the nodes it
  * contains.
+ * <p>
+ * The circuit also takes care of most of the heavy lifting of the explanation
+ * process. When an explanation is requested for an output of the circuit, it
+ * propagates the request to the node that produces the output, and then extends
+ * the explanation by connecting the inputs of the node to the inputs of the
+ * circuit, and the outputs of the node to the outputs of the circuit.
  * @author Sylvain Hallé
  */
 public class Circuit extends Node
@@ -49,13 +61,37 @@ public class Circuit extends Node
 	 * The associations between the circuit's outputs and the nodes it contains.
 	 */
 	/*@ non_null @*/ protected final DownstreamConnection[] m_outputAssociations;
-
+	
+	/**
+	 * An optional name given to the circuit.
+	 */
+	/*@ non_null @*/ protected final String m_name;
+	
+	/**
+	 * Creates a new circuit with the given input and output arities, and a
+	 * default name.
+	 * @param in_arity The input arity of the circuit
+	 * @param out_arity The output arity of the circuit
+	 */
 	public Circuit(int in_arity, int out_arity)
+	{
+		this(in_arity, out_arity, "Circuit");
+	}
+
+	/**
+	 * Creates a new circuit with the given input and output arities, and an
+	 * optional name.
+	 * @param in_arity The input arity of the circuit
+	 * @param out_arity The output arity of the circuit
+	 * @param name An optional name for the circuit
+	 */
+	public Circuit(int in_arity, int out_arity, String name)
 	{
 		super(in_arity, out_arity);
 		m_nodes = new HashSet<>();
 		m_inputAssociations = new UpstreamConnection[in_arity];
 		m_outputAssociations = new DownstreamConnection[out_arity];
+		m_name = name;
 	}
 
 	/**
@@ -168,6 +204,96 @@ public class Circuit extends Node
 	}
 
 	@Override
+	protected Vertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
+	{
+		VertexFactory subf = f.subfactory(this);
+		DownstreamConnection c = m_outputAssociations[index];
+		Node n = c.getObject();
+		int n_index = c.getIndex();
+		Part start = CompositePart.compose(tail, new OutputPart(n_index));
+		Vertex v = propagateExplanation(n, start, subf);
+		extendLeaves(v, f);
+		Vertex root = f.getPart(CompositePart.compose(tail, new OutputPart(index)), this);
+		root.addChild(v);
+		return root;
+	}
+
+	protected void extendLeaves(Vertex v, VertexFactory f)
+	{
+		Set<Vertex> leaves = v.findLeaves();
+		for (Vertex leaf : leaves)
+		{
+			if (!(leaf instanceof PartVertex))
+			{
+				continue;
+			}
+			PartVertex pv = (PartVertex) leaf;
+			Part head = head(pv.getPart());
+			if (!(head instanceof InputPart))
+			{
+				continue;
+			}
+			InputPart ip = (InputPart) head;
+			Object o = pv.getSubject();
+			if (!m_nodes.contains(o))
+			{
+				continue;
+			}
+			Node subject = (Node) o;
+			for (int i = 0; i < m_inputAssociations.length; i++)
+			{
+				UpstreamConnection conn = m_inputAssociations[i];
+				if (conn.getObject() == subject && conn.getIndex() == ip.getIndex())
+				{
+					Part out_part = CompositePart.compose(tail(pv.getPart()), new InputPart(i));
+					pv.addChild(f.getPart(out_part, this));
+				}
+			}
+		}
+	}
+
+	protected Vertex propagateExplanation(Node n, Part p, VertexFactory f) throws ExplanationException
+	{
+		if (!(head(p) instanceof OutputPart))
+		{
+			throw new ExplanationException("Expected an output part");
+		}
+		Vertex root = f.getPart(p, n);
+		Vertex explanation = n.explain(p, f);
+		root.addChild(explanation);
+		Set<Vertex> leaves = explanation.findLeaves();
+		for (Vertex leaf : leaves)
+		{
+			if (!(leaf instanceof PartVertex))
+			{
+				continue;
+			}
+			PartVertex pv = (PartVertex) leaf;
+			Part n_p = head(pv.getPart());
+			if (!(n_p instanceof InputPart))
+			{
+				continue;
+			}
+			InputPart ip = (InputPart) n_p;
+			UpstreamConnection c = n.getUpstream(ip.getIndex());
+			Part out_part = CompositePart.compose(tail(pv.getPart()), new OutputPart(c.getIndex()));
+			if (f.contains(out_part, c.getObject()))
+			{
+				Vertex to_attach = f.getPart(out_part, c.getObject());
+				leaf.addChild(to_attach);
+				continue;
+			}
+			else if (m_nodes.contains(c.getObject()))
+			{
+				Vertex to_attach = propagateExplanation(c.getObject(), out_part, f);
+				leaf.addChild(to_attach);
+			}
+		}
+		return root;
+
+	}
+
+	@Override
 	public void reset()
 	{
 		super.reset();
@@ -175,5 +301,11 @@ public class Circuit extends Node
 		{
 			n.reset();
 		}
+	}
+	
+	@Override
+	/*@ pure non_null @*/ public String toString()
+	{
+		return m_name;
 	}
 }
