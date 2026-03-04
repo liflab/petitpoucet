@@ -140,6 +140,16 @@ public abstract class Vertex
 		return root;
 	}
 
+	public static Vertex and(Vertex ... children)
+	{
+		return tree(new AndVertex(), children);
+	}
+
+	public static Vertex or(Vertex ... children)
+	{
+		return tree(new OrVertex(), children);
+	}
+
 	public Vertex()
 	{
 		super();
@@ -167,12 +177,12 @@ public abstract class Vertex
 		 * we can reach it regardless of which parent we expand. */
 		return m_parents.get(0).findRoot();
 	}
-	
+
 	public void print(PrintStream ps)
 	{
 		print(ps, "");
 	}
-	
+
 	protected void print(PrintStream sb, String indent)
 	{
 		sb.append(indent).append("*").append(toString()).append("\n");
