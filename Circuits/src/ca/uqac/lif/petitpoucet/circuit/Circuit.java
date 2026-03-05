@@ -20,6 +20,7 @@ package ca.uqac.lif.petitpoucet.circuit;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -216,19 +217,20 @@ public class Circuit extends Node
 		Node n = c.getObject();
 		int n_index = c.getIndex();
 		Part start = CompositePart.compose(tail, new OutputPart(n_index));
-		Vertex v = propagateExplanation(n, start, subf);
+		propagateExplanation(n, start, subf);
 		Subgraph sg = subf.subgraph();
 		extendLeaves(sg, f);
 		Vertex root = f.getPart(CompositePart.compose(tail, new OutputPart(index)), this);
-		root.addChild(v);
+		root.addChild(sg);
 		return root;
 	}
 
 	protected void extendLeaves(Subgraph v, VertexFactory f)
 	{
-		Set<Vertex> leaves = v.findLeaves();
-		for (Vertex leaf : leaves)
+		List<Vertex> leaves = v.findLeaves();
+		for (int j = 0; j < leaves.size(); j++)
 		{
+			Vertex leaf = leaves.get(j);
 			if (!(leaf instanceof PartVertex))
 			{
 				continue;
@@ -252,7 +254,7 @@ public class Circuit extends Node
 				if (conn.getObject() == subject && conn.getIndex() == ip.getIndex())
 				{
 					Part out_part = CompositePart.compose(tail(pv.getPart()), new InputPart(i));
-					v.addChild(f.getPart(out_part, this), leaf);
+					v.addChild(f.getPart(out_part, this), j);
 				}
 			}
 		}
@@ -267,7 +269,7 @@ public class Circuit extends Node
 		Vertex root = f.getPart(p, n);
 		Vertex explanation = n.explain(p, f);
 		root.addChild(explanation);
-		Set<Vertex> leaves = explanation.findLeaves();
+		List<Vertex> leaves = explanation.findLeaves();
 		for (Vertex leaf : leaves)
 		{
 			if (!(leaf instanceof PartVertex))

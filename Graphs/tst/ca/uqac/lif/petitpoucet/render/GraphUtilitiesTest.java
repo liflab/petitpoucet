@@ -16,20 +16,21 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package ca.uqac.lif.petitpoucet.render;
 
+import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.render.GraphUtilities;
 
 /**
  * Unit tests for {@link GraphUtilities}.
@@ -55,11 +56,11 @@ public class GraphUtilitiesTest
 						tree(part("c", o))
 						));
 		GraphUtilities.squish(a);
-		assertTrue(Vertex.same(t1, tree(part("a", o),
+		s_factory.clear();
+		assertEqualGraphs(t1, tree(part("a", o),
 						tree(part("b", o)),
 						tree(part("c", o))
-						)));
-		
+						));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -102,9 +103,10 @@ public class GraphUtilitiesTest
 						),
 				part("d", o));
 		GraphUtilities.squish(b);
-		assert(Vertex.same(t, tree(part("a", o),
+		s_factory.clear();
+		assertEqualGraphs(t, tree(part("a", o),
 										part("c", o),
-				part("d", o))));
+				part("d", o)));
 	}
 	
 	@Test
@@ -120,12 +122,38 @@ public class GraphUtilitiesTest
 						tree(part("d", o))
 						));
 		GraphUtilities.simplify(t);
-		assertTrue(Vertex.same(t, tree(part("a", o),
+		assertEqualGraphs(t, tree(part("a", o),
 				tree(and(),
 								part("b", o),
 								part("c", o),
 						tree(part("d", o))
-						))));
+						)));
+	}
+	
+	@Test
+	public void testSimplifySubgraph1()
+	{
+		Object o = new Object();
+		tree(part("a", o),
+				tree(and(),
+						tree(and(),
+								part("b", o),
+								part("c", o)
+								),
+						tree(part("d", o))
+						));
+		Subgraph sg = s_factory.subgraph();
+		GraphUtilities.simplify(sg);
+		s_factory.clear();
+		Vertex expected = tree(part("a", o),
+				tree(and(),
+						part("b", o),
+						part("c", o),
+				tree(part("d", o))
+				));
+		sg.render(System.out);
+		expected.render(System.out);
+		assertEqualGraphs(sg.findRoot(), expected);
 	}
 	
 	@Test
@@ -136,8 +164,9 @@ public class GraphUtilitiesTest
 				tree(and(),
 								part("b", o)));
 		GraphUtilities.simplify(t);
-		assertTrue(Vertex.same(t, tree(part("a", o),
-								part("b", o))));
+		s_factory.clear();
+		assertEqualGraphs(t, tree(part("a", o),
+								part("b", o)));
 	}
 	
 	@Test
@@ -153,14 +182,15 @@ public class GraphUtilitiesTest
 						tree(part("d", o))
 						));
 		GraphUtilities.simplify(t);
-		assertTrue(Vertex.same(t, tree(part("a", o),
+		s_factory.clear();
+		assertEqualGraphs(t, tree(part("a", o),
 				tree(and(),
 						tree(or(),
 								part("b", o),
 								part("c", o)
 								),
 						tree(part("d", o))
-						))));
+						)));
 	}
 	
 	@Test
@@ -176,12 +206,13 @@ public class GraphUtilitiesTest
 						tree(part("d", o))
 						));
 		GraphUtilities.simplify(t);
-		assertTrue(Vertex.same(t, tree(part("a", o),
+		s_factory.clear();
+		assertEqualGraphs(t, tree(part("a", o),
 				tree(or(),
 								part("b", o),
 								part("c", o),
 						tree(part("d", o))
-						))));
+						)));
 	}
 	
 	@Test
@@ -192,8 +223,9 @@ public class GraphUtilitiesTest
 				tree(or(),
 								part("b", o)));
 		GraphUtilities.simplify(t);
-		assertTrue(Vertex.same(t, tree(part("a", o),
-								part("b", o))));
+		s_factory.clear();
+		assertEqualGraphs(t, tree(part("a", o),
+								part("b", o)));
 	}
 	
 	@Test
@@ -209,14 +241,15 @@ public class GraphUtilitiesTest
 						tree(part("d", o))
 						));
 		GraphUtilities.simplify(t);
-		assertTrue(Vertex.same(t, tree(part("a", o),
+		s_factory.clear();
+		assertEqualGraphs(t, tree(part("a", o),
 				tree(or(),
 						tree(and(),
 								part("b", o),
 								part("c", o)
 								),
 						tree(part("d", o))
-						))));
+						)));
 	}
 	
 	protected static AndVertex and()

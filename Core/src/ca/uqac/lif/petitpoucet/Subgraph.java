@@ -21,6 +21,7 @@ package ca.uqac.lif.petitpoucet;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Subgraph extends Vertex
@@ -38,7 +39,9 @@ public class Subgraph extends Vertex
 	/**
 	 * The set of all leaves contained in this subgraph.
 	 */
-	/*@ non_null @*/ protected final Set<Vertex> m_leaves; 
+	/*@ non_null @*/ protected final List<Vertex> m_leaves; 
+	
+	/*@ non_null @*/ protected final Vertex[] m_outputConnections;
 	
 	/**
 	 * Creates a new subgraph.
@@ -52,16 +55,28 @@ public class Subgraph extends Vertex
 		m_vertices = new HashSet<>(vertices.size());
 		m_vertices.addAll(vertices);
 		m_leaves = m_root.findLeaves();
+		m_outputConnections = new Vertex[m_leaves.size()];
+		
 	}
 	
 	@Override
-	public void render(PrintStream ps)
+	public void render(PrintStream ps, String indent, int nesting)
 	{
-		m_root.render(ps);
+		ps.print(indent);
+		for (int i = 0; i <= nesting + 1; i++)
+		{
+			ps.print("*");
+		}
+		ps.println();
+		m_root.render(ps, indent + "  ", nesting + 1);
+		for (Vertex v : m_children)
+		{
+			v.render(ps, indent + "  ", nesting);
+		}
 	}
 	
 	@Override
-	/*@ pure non_null @*/ public Set<Vertex> findLeaves()
+	/*@ pure non_null @*/ public List<Vertex> findLeaves()
 	{
 		return m_leaves;
 	}
@@ -78,14 +93,10 @@ public class Subgraph extends Vertex
 	 * @param v The vertex to add as a child
 	 * @param leaf The leaf vertex to which it should be attached
 	 */
-	public void addChild(/*@ non_null @*/ Vertex v, /*@ non_null @*/ Vertex leaf)
+	public void addChild(/*@ non_null @*/ Vertex v, int index)
 	{
-		if (!m_leaves.contains(leaf))
-		{
-			throw new IllegalArgumentException("Attempting to add a child to a non-leaf vertex");
-		}
 		super.addChild(v);
-		leaf.addChild(v);
+		m_outputConnections[index] = v;
 	}
 
 	@Override

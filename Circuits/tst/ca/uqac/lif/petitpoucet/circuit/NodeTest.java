@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 import static ca.uqac.lif.petitpoucet.Vertex.and;
 import static ca.uqac.lif.petitpoucet.Vertex.or;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
@@ -55,7 +56,7 @@ public class NodeTest
 		DummyNode dn = new DummyNode();
 		assertEquals("a", dn.compute(0));
 		Vertex v = dn.explain(new Connectable.OutputPart(0));
-		assertTrue(Vertex.same(v, and()));
+		assertEqualGraphs(v, and());
 	}
 	
 	@Test(expected = ExplanationException.class)

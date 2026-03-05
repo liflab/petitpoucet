@@ -22,6 +22,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
+import static ca.uqac.lif.petitpoucet.Assertions.assertNotEqualGraphs;
 import ca.uqac.lif.petitpoucet.CompositePartTest.DummyPart;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
@@ -42,7 +44,7 @@ public class VertexTest
 		assertTrue(p1.getParents().isEmpty());
 		assertEquals(0, p1.childCount());
 		assertEquals(0, p1.parentCount());
-		assertNotSame(p1, p2);
+		assertEqualGraphs(p1, p2);
 		assertEquals(p1, p2);
 	}
 	
@@ -53,7 +55,7 @@ public class VertexTest
 		PartVertex p1 = new PartVertex(new DummyPart("a"), o1);
 		PartVertex p2 = new PartVertex(new DummyPart("a"), new Object());
 		assertNotSame(p1, p2);
-		assertNotEquals(p1, p2);
+		assertNotEqualGraphs(p1, p2);
 	}
 	
 	@Test
@@ -91,7 +93,7 @@ public class VertexTest
 		PartVertex q1 = new PartVertex(new DummyPart("a"), o1);
 		PartVertex q2 = new PartVertex(new DummyPart("b"), o1);
 		q1.addChild(q2);
-		assertTrue(Vertex.same(p1, q1));
+		assertEqualGraphs(p1, q1);
 	}
 	
 	@Test
@@ -106,7 +108,7 @@ public class VertexTest
 		PartVertex q3 = new PartVertex(new DummyPart("c"), o1);
 		q1.addChild(q2);
 		q1.addChild(q3);
-		assertFalse(Vertex.same(p1, q1));
+		assertNotSame(p1, q1);
 	}
 	
 	protected static PartVertex part(String label, Object o)

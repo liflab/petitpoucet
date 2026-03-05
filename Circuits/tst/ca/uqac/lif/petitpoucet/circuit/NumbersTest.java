@@ -23,9 +23,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 import static ca.uqac.lif.petitpoucet.Vertex.and;
 import static ca.uqac.lif.petitpoucet.Vertex.or;
-import static ca.uqac.lif.petitpoucet.Vertex.same;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
@@ -73,7 +73,7 @@ public class NumbersTest
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
 		Vertex e = f.explain(new Connectable.OutputPart(0));
-		assertTrue(same(e, tree(factory.getPart(new Connectable.InputPart(1), f))));
+		assertEqualGraphs(e, tree(factory.getPart(new Connectable.InputPart(1), f)));
 	}
 	
 	@Test
@@ -87,9 +87,9 @@ public class NumbersTest
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
 		Vertex e = f.explain(new Connectable.OutputPart(0));
-		assertTrue(same(e, tree(or(
+		assertEqualGraphs(e, tree(or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(2), f)
-				))));
+				)));
 	}
 }

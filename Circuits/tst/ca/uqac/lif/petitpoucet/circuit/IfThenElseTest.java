@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 import static ca.uqac.lif.petitpoucet.Vertex.and;
 import static ca.uqac.lif.petitpoucet.Vertex.or;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
@@ -74,9 +75,9 @@ public class IfThenElseTest
 		Connectable.connect(new Constant("b"), 0, f, 2);
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0));
-		assertTrue(Vertex.same(e, or(
+		assertEqualGraphs(e, or(
 				factory.getPart(new Connectable.InputPart(0), f),
-				factory.getPart(new Connectable.InputPart(1), f))));
+				factory.getPart(new Connectable.InputPart(1), f)));
 	}
 	
 	@Test
@@ -89,8 +90,8 @@ public class IfThenElseTest
 		Connectable.connect(new Constant("b"), 0, f, 2);
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0));
-		assertTrue(Vertex.same(e, or(
+		assertEqualGraphs(e, or(
 				factory.getPart(new Connectable.InputPart(0), f),
-				factory.getPart(new Connectable.InputPart(2), f))));
+				factory.getPart(new Connectable.InputPart(2), f)));
 	}
 }

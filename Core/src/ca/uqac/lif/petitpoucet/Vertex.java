@@ -20,9 +20,7 @@ package ca.uqac.lif.petitpoucet;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A vertex in a directed acyclic graph. This class is used to represent the
@@ -44,35 +42,6 @@ public abstract class Vertex implements Renderer
 	 * The list of parents of this vertex, if any.
 	 */
 	/*@ non_null @*/ protected final List<Vertex> m_parents;
-
-
-	/**
-	 * Determines if the subgraph rooted in vertex <i>v</i><sub>1</sub> is the
-	 * same as the subgraph rooted in vertex <i>v</i><sub>2</sub>.
-	 * @param v1 The first root
-	 * @param v2 The second root
-	 * @return {@code true} if the subgraphs are the same, {@code false}
-	 * otherwise
-	 */
-	public static boolean same(Vertex v1, Vertex v2)
-	{
-		if (v1 instanceof PartVertex && v2 instanceof PartVertex && !v1.equals(v2))
-		{
-			return false;
-		}
-		if (v1.childCount() != v2.childCount())
-		{
-			return false;
-		}
-		for (int i = 0; i < v1.childCount(); i++)
-		{
-			if (!same(v1.m_children.get(i), v2.m_children.get(i)))
-			{
-				return false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Utility method to create trees of vertices.
@@ -165,7 +134,7 @@ public abstract class Vertex implements Renderer
 	@Override
 	public void render(PrintStream ps)
 	{
-		render(ps, "");
+		render(ps, "", 0);
 	}
 
 	/**
@@ -177,13 +146,19 @@ public abstract class Vertex implements Renderer
 	 * @param indent The indentation to use for the current vertex; this
 	 * parameter is used to indent the output to show the structure of the graph
 	 */
-	protected void render(PrintStream sb, String indent)
+	protected void render(PrintStream sb, String indent, int nesting)
 	{
-		sb.append(indent).append("*").append(toString()).append("\n");
+		sb.print(indent);
+		for (int i = 0; i <= nesting; i++)
+		{
+			sb.print("*");
+		}
+		sb.print(toString());
+		sb.println();
 		indent += "  ";
 		for (Vertex v : m_children)
 		{
-			v.render(sb, indent);
+			v.render(sb, indent, nesting);
 		}
 	}
 
@@ -192,9 +167,9 @@ public abstract class Vertex implements Renderer
 	 * vertices that have no children.
 	 * @return The set of leaves of the subgraph rooted in this vertex
 	 */
-	public Set<Vertex> findLeaves()
+	public List<Vertex> findLeaves()
 	{
-		Set<Vertex> leaves = new HashSet<>();
+		List<Vertex> leaves = new ArrayList<>();
 		findLeaves(leaves);
 		return leaves;
 	}
@@ -206,7 +181,7 @@ public abstract class Vertex implements Renderer
 	 * @param leaves The set to which to add the leaves; this parameter is used to
 	 * accumulate the leaves as they are found
 	 */
-	protected void findLeaves(Set<Vertex> leaves)
+	protected void findLeaves(List<Vertex> leaves)
 	{
 		if (leaves.contains(this))
 		{

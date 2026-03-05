@@ -26,6 +26,7 @@ import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 
 /**
@@ -160,6 +161,10 @@ public class GraphUtilities
 			{
 				squish_me = true;
 			}
+		}
+		if (current instanceof Subgraph)
+		{
+			simplifyRecursive(((Subgraph) current).findRoot(), null);
 		}
 		List<Vertex> children = new ArrayList<>();
 		children.addAll(current.getChildren());

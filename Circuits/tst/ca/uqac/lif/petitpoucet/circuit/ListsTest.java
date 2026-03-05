@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.CompositePart;
@@ -58,6 +59,6 @@ public class ListsTest
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0));
 		e.render(System.out);
-		assertTrue(Vertex.same(e, tree(factory.getPart(new CompositePart(new NthElement(0), new Connectable.InputPart(0)), f))));
+		assertEqualGraphs(e, tree(factory.getPart(new CompositePart(new NthElement(0), new Connectable.InputPart(0)), f)));
 	}
 }
