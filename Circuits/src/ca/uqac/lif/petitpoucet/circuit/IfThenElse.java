@@ -19,6 +19,7 @@
 package ca.uqac.lif.petitpoucet.circuit;
 
 import ca.uqac.lif.petitpoucet.CompositePart;
+import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;

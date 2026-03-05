@@ -27,10 +27,11 @@ import static ca.uqac.lif.petitpoucet.Vertex.or;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.circuit.Connectable.InputPart;
-import ca.uqac.lif.petitpoucet.circuit.Connectable.OutputPart;
+import ca.uqac.lif.petitpoucet.Connectable.InputPart;
+import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 
 /**
  * Unit tests for {@link Circuit}.

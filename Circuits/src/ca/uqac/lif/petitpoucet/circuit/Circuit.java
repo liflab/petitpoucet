@@ -23,8 +23,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static ca.uqac.lif.petitpoucet.CompositePart.head;
+import static ca.uqac.lif.petitpoucet.CompositePart.tail;
+
 import ca.uqac.lif.petitpoucet.CompositePart;
+import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
@@ -212,13 +217,14 @@ public class Circuit extends Node
 		int n_index = c.getIndex();
 		Part start = CompositePart.compose(tail, new OutputPart(n_index));
 		Vertex v = propagateExplanation(n, start, subf);
-		extendLeaves(v, f);
+		Subgraph sg = subf.subgraph();
+		extendLeaves(sg, f);
 		Vertex root = f.getPart(CompositePart.compose(tail, new OutputPart(index)), this);
 		root.addChild(v);
 		return root;
 	}
 
-	protected void extendLeaves(Vertex v, VertexFactory f)
+	protected void extendLeaves(Subgraph v, VertexFactory f)
 	{
 		Set<Vertex> leaves = v.findLeaves();
 		for (Vertex leaf : leaves)
@@ -246,7 +252,7 @@ public class Circuit extends Node
 				if (conn.getObject() == subject && conn.getIndex() == ip.getIndex())
 				{
 					Part out_part = CompositePart.compose(tail(pv.getPart()), new InputPart(i));
-					pv.addChild(f.getPart(out_part, this));
+					v.addChild(f.getPart(out_part, this), leaf);
 				}
 			}
 		}

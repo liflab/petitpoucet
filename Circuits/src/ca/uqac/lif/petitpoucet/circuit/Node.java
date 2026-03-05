@@ -19,8 +19,10 @@
 package ca.uqac.lif.petitpoucet.circuit;
 
 import static ca.uqac.lif.petitpoucet.CompositePart.compose;
+import static ca.uqac.lif.petitpoucet.CompositePart.head;
+import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
-import ca.uqac.lif.petitpoucet.CompositePart;
+import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Duplicable;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Part;
@@ -84,6 +86,12 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 			evaluate(arguments, m_outputArguments);
 		}
 		return m_outputArguments[index];
+	}
+	
+	@Override
+	public Node duplicate()
+	{
+		return duplicate(false);
 	}
 	
 	@Override
@@ -280,37 +288,5 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 					((DownstreamConnection) o).m_connectable.equals(m_connectable) &&
 					((DownstreamConnection) o).m_index == m_index;
 		}
-	}
-	
-	/**
-	 * Returns the head of the part, which is the first part of the composition. If
-	 * the part is a composite part, returns the head of the composite part. Otherwise,
-	 * returns the part itself.
-	 * @param p The part to get the head of
-	 * @return The head of the part
-	 */
-	protected static Part head(Part p)
-	{
-		if (p instanceof CompositePart)
-		{
-			return ((CompositePart) p).head();
-		}
-		return p;
-	}
-	
-	/**
-	 * Returns the tail of the part, which is the second part of the composition. If
-	 * the part is a composite part, returns the tail of the composite part. Otherwise,
-	 * returns null.
-	 * @param p The part to get the tail of
-	 * @return The tail of the part, or null if the part is not a composite part
-	 */
-	protected static Part tail(Part p)
-	{
-		if (p instanceof CompositePart)
-		{
-			return ((CompositePart) p).tail();
-		}
-		return null;
 	}
 }

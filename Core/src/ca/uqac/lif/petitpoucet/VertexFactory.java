@@ -150,6 +150,11 @@ public class VertexFactory
 		return vf;
 	}
 	
+	public Subgraph subgraph()
+	{
+		return new Subgraph(m_vertices.get(0).findRoot(), m_vertices);
+	}
+	
 	/**
 	 * Determines if the factory already contains a given part vertex.
 	 * @param p The part to look for
@@ -159,5 +164,24 @@ public class VertexFactory
 	/*@ pure @*/ public boolean contains(Part p, Object o)
 	{
 		return m_vertices.contains(new PartVertex(p, o));
+	}
+	
+	/**
+	 * Determines if the factory already contains a given part vertex.
+	 * @param v The vertex
+	 * @return {@code true} if the vertex is present, {@code false} otherwise
+	 */
+	/*@ pure @*/ public boolean contains(Vertex v)
+	{
+		return m_vertices.contains(v);
+	}
+	
+	/**
+	 * Clears all nodes in the factory.
+	 */
+	public void clear()
+	{
+		m_children.clear();
+		m_vertices.clear();
 	}
 }

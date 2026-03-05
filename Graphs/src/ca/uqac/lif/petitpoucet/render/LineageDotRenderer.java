@@ -15,18 +15,23 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.render;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.uqac.lif.petitpoucet.CompositePart;
+import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.Renderer;
+import ca.uqac.lif.petitpoucet.Subgraph;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
@@ -61,7 +66,7 @@ public class LineageDotRenderer implements Renderer
 	 * rendered). Used internally by the renderer to avoid expanding the same
 	 * node when encountered multiple times in the traversal of the graph.
 	 */
-	/*@ non_null @*/ protected Set<Node> m_expanded;
+	/*@ non_null @*/ protected Set<Vertex> m_expanded;
 
 	/**
 	 * The prefix to give to each node ID in the graph.
@@ -72,7 +77,7 @@ public class LineageDotRenderer implements Renderer
 	 * The prefix to give to each node ID in the graph.
 	 */
 	/*@ non_null @*/ protected String m_indent;
-	
+
 	/**
 	 * The nodes that corresponds to he leaves of the graph.
 	 */
@@ -118,7 +123,7 @@ public class LineageDotRenderer implements Renderer
 		m_noCaptions = no_captions;
 		m_leaves = new ArrayList<>();
 	}
-	
+
 	/**
 	 * Creates a new instance of renderer.
 	 * @param root The node used as the starting point for the rendering. This
@@ -143,7 +148,7 @@ public class LineageDotRenderer implements Renderer
 	{
 		this(Arrays.asList(roots), "", 0, false);
 	}
-	
+
 	/**
 	 * Creates a new instance of renderer. 
 	 * @param roots The nodes used as the starting point for the rendering. These
@@ -153,7 +158,7 @@ public class LineageDotRenderer implements Renderer
 	{
 		this(roots, "", 0, false);
 	}
-	
+
 	/**
 	 * Sets whether to hide captions of non-leaf nodes.
 	 * @param b Set to {@code true} to hide captions, {@code false} otherwise
@@ -193,7 +198,7 @@ public class LineageDotRenderer implements Renderer
 			ps.println(m_indent + "}");
 		}
 	}
-	
+
 	protected void printRanks(PrintStream ps)
 	{
 		ps.println("edge [style=invis];");
@@ -233,15 +238,11 @@ public class LineageDotRenderer implements Renderer
 		}
 		renderNode(ps, current);
 		m_expanded.add(current);
-		for (int i = 0; i < current.getOutputArity(); i++)
+		for (int i = 0; i < current.childCount(); i++)
 		{
-			Collection<Pin<? extends Vertex>> pins = current.getOutputLinks(i);
-			for (Pin<? extends Node> pin : pins)
-			{
-				Vertex target = pin.getNode();
-				render(ps, target);
-				renderTransition(ps, current, i, pin);
-			}
+			Vertex target = current.getChildren().get(i);
+			render(ps, target);
+			renderTransition(ps, current, i, target);
 		}
 	}
 
@@ -249,35 +250,26 @@ public class LineageDotRenderer implements Renderer
 	 * Renders a transition between two nodes of the graph.
 	 * @param ps The print stream where the transition should be printed
 	 * @param from The source node
-	 * @param out_index The index of the output pin on the source node
-	 * corresponding
-	 * @param pin The pin on the destination node of this transition
+	 * @param from The destination node
 	 */
-	protected void renderTransition(PrintStream ps, Vertex from, int out_index, Pin<? extends Vertex> pin)
+	protected void renderTransition(PrintStream ps, Vertex from, int out_index, Vertex to)
 	{
 		String source_id = "";
 		String dest_id = "";
-		Vertex to = pin.getNode();
-		/*if (from instanceof DummyNode || to instanceof DummyNode)
+		if (from instanceof Subgraph)
 		{
-			return;
-		}*/
-		if (from instanceof NestedNode)
-		{
-			NestedNode nn_from = (NestedNode) from;
-			Pin<? extends Node> inner_pin = nn_from.getAssociatedOutput(out_index);
-			Node inner_node = inner_pin.getNode();
+			Subgraph nn_from = (Subgraph) from;
+			Vertex inner_node = nn_from.getChildren().get(out_index);
 			source_id = m_nodeIds.get(inner_node);
 		}
 		else
 		{
 			source_id = m_nodeIds.get(from);
 		}
-		if (to instanceof NestedNode)
+		if (to instanceof Subgraph)
 		{
-			NestedNode nn_to = (NestedNode) to;
-			Pin<? extends Node> inner_pin = nn_to.getAssociatedInput(pin.getIndex());
-			Node inner_node = inner_pin.getNode();
+			Subgraph nn_to = (Subgraph) to;
+			Vertex inner_node = nn_to.findRoot();
 			dest_id = m_nodeIds.get(inner_node);
 		}
 		else
@@ -318,21 +310,21 @@ public class LineageDotRenderer implements Renderer
 		{
 			renderPartNode(ps, (PartVertex) current, n_id);
 		}
-		else if (current instanceof Circuit)
+		else if (current instanceof Subgraph)
 		{
-			renderNestedNode(ps, (Circuit) current, n_id);
+			renderNestedNode(ps, (Subgraph) current, n_id);
 		}
 		else
 		{
 			ps.println(m_indent + n_id + " [label=\"?\"];");
 		}
 	}
-	
+
 	protected void renderAndNode(PrintStream ps, AndVertex node, String n_id)
 	{
 		ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∧</b></font>>,width=.25,fixedsize=\"true\",fillcolor=\"blue\",textcolor=\"white\"];");
 	}
-	
+
 	protected void renderOrNode(PrintStream ps, OrVertex node, String n_id)
 	{
 		ps.println(m_indent + n_id + " [shape=\"circle\",label=<<font color='white'><b>∨</b></font>>,width=.25,fixedsize=\"true\",fillcolor=\"red\",textcolor=\"white\"];");
@@ -356,15 +348,7 @@ public class LineageDotRenderer implements Renderer
 		}
 		else
 		{
-			String message;
-			if (d instanceof All)
-			{
-				message = o.toString();
-			}
-			else
-			{
-				message = d.toString() + " of " + o.toString();
-			}
+			String message = d.toString() + " of " + o.toString();
 			ps.println(m_indent + n_id + " [height=0.25,label=<" + message + ">,fillcolor=\"" + color + "\"];");
 		}
 	}
@@ -377,9 +361,9 @@ public class LineageDotRenderer implements Renderer
 	 * @param n_id The unique ID given to that node
 	 * @return The ID of the nested node corresponding to the cluster
 	 */
-	protected String renderNestedNode(PrintStream ps, Circuit current, String n_id)
+	protected String renderNestedNode(PrintStream ps, Subgraph current, String n_id)
 	{
-		Node inner_start = current.getAssociatedInput(0).getNode();
+		Vertex inner_start = current.findRoot();
 		String new_prefix = "";
 		if (m_prefix.isEmpty())
 		{
@@ -394,7 +378,7 @@ public class LineageDotRenderer implements Renderer
 		m_nodeIds.putAll(sub_renderer.m_nodeIds);
 		return "C" + n_id + "0";
 	}
-	
+
 	protected LineageDotRenderer getSubRenderer(Vertex inner_start, String new_prefix, int nesting_level, boolean captions)
 	{
 		return new LineageDotRenderer(inner_start, new_prefix, nesting_level, captions);
@@ -436,12 +420,12 @@ public class LineageDotRenderer implements Renderer
 	 */
 	protected static String getPartNodeColor(Part p)
 	{
-		
-		if (NthInput.mentionedInput(p) >= 0)
+		Part head = CompositePart.head(p);
+		if (head instanceof Connectable.InputPart)
 		{
 			return "Tomato";
 		}
-		if (NthOutput.mentionedOutput(p) >= 0)
+		if (head instanceof Connectable.OutputPart)
 		{
 			return "GreenYellow";
 		}

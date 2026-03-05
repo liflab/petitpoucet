@@ -30,6 +30,38 @@ import java.util.List;
 public class CompositePart implements Part
 {
 	/**
+	 * Returns the head of the part, which is the first part of the composition. If
+	 * the part is a composite part, returns the head of the composite part. Otherwise,
+	 * returns the part itself.
+	 * @param p The part to get the head of
+	 * @return The head of the part
+	 */
+	public static Part head(Part p)
+	{
+		if (p instanceof CompositePart)
+		{
+			return ((CompositePart) p).head();
+		}
+		return p;
+	}
+	
+	/**
+	 * Returns the tail of the part, which is the second part of the composition. If
+	 * the part is a composite part, returns the tail of the composite part. Otherwise,
+	 * returns null.
+	 * @param p The part to get the tail of
+	 * @return The tail of the part, or null if the part is not a composite part
+	 */
+	public static Part tail(Part p)
+	{
+		if (p instanceof CompositePart)
+		{
+			return ((CompositePart) p).tail();
+		}
+		return null;
+	}
+	
+	/**
 	 * The list of components of the composite part.
 	 */
 	protected final List<Part> m_components;
