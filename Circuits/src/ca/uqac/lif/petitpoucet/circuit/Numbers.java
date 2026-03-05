@@ -202,4 +202,24 @@ public abstract class Numbers extends Node
 			}
 		}
 	}
+	
+	public static class Double extends Numbers
+	{
+		public Double()
+		{
+			super(1);
+		}
+
+		@Override
+		public Double duplicate(boolean with_state)
+		{
+			return new Double();
+		}
+
+		@Override
+		protected float evaluate(float[] operands)
+		{
+			return operands[0] * 2;
+		}
+	}
 }

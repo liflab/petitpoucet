@@ -18,11 +18,14 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 
@@ -76,6 +79,102 @@ public abstract class Lists
 		public String toString()
 		{
 			return "\u2208@(" + m_index + ")";
+		}
+	}
+	
+	public static class Apply extends Node
+	{
+		/*@ non_null @*/ protected final Node m_f;
+		
+		public Apply(/*@ non_null @*/ Node f)
+		{
+			super(1, 1);
+			if (f.getInputArity() != 1)
+			{
+				throw new IllegalArgumentException("Function must have an arity of 1");
+			}
+			if (f.getOutputArity() != 1)
+			{
+				throw new IllegalArgumentException("Function must have an arity of 1");
+			}
+			m_f = f;
+		}
+
+		@Override
+		public Apply duplicate(boolean with_state)
+		{
+			return new Apply(m_f.duplicate(with_state));
+		}
+
+		@Override
+		protected void evaluate(Object[] input, Object[] output)
+		{
+			List<?> in_list = (List<?>) input[0];
+			List<Object> out_list = new ArrayList<>(in_list.size());
+			for (Object o : in_list)
+			{
+				Constant c = new Constant(o);
+				Connectable.connect(c, 0, m_f, 0);
+				m_f.reset();
+				out_list.add(m_f.compute());
+			}
+			output[0] = out_list;
+		}
+		
+		@Override
+		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+		{
+			// TODO
+			return null;
+		}
+		
+		public Application getApplication(int index)
+		{
+			return new Application(index);
+		}
+		
+		public class Application
+		{
+			protected final int m_index;
+			
+			protected Application(int index)
+			{
+				super();
+				m_index = index;
+			}
+			
+			public Node getNode()
+			{
+				return Apply.this;
+			}
+			
+			public int getIndex()
+			{
+				return m_index;
+			}
+			
+			@Override
+			public int hashCode()
+			{
+				return m_index + Apply.this.hashCode();
+			}
+			
+			@Override
+			public boolean equals(Object o)
+			{
+				if (!(o instanceof Application))
+				{
+					return false;
+				}
+				Application a = (Application) o;
+				return a.getIndex() == m_index && a.getNode() == getNode();
+			}
+			
+			@Override
+			public String toString()
+			{
+				return Application.this.toString() + "@" + m_index;
+			}
 		}
 	}
 	
