@@ -301,9 +301,9 @@ public class GraphUtilities
 	 * @param root The root of the lineage graph
 	 * @return The list of clauses
 	 */
-	/*@ non_null @*/ public static Set<Clause> asDnf(/*@ non_null @*/ Vertex root)
+	/*@ non_null @*/ public static MathSet<Clause> asDnf(/*@ non_null @*/ Vertex root)
 	{
-		Set<Clause> clauses = new MathSet<>();
+		MathSet<Clause> clauses = new MathSet<>();
 		if (root instanceof PartVertex && isLeaf(root))
 		{
 			PartVertex pn = (PartVertex) root;
@@ -314,7 +314,7 @@ public class GraphUtilities
 			return clauses;
 		}
 		// Non-leaf node: first recursively get set of clauses from each child
-		List<Set<Clause>> list_clauses = new ArrayList<Set<Clause>>();
+		List<MathSet<Clause>> list_clauses = new ArrayList<MathSet<Clause>>();
 		for (Vertex child : root.getChildren())
 		{
 			list_clauses.add(asDnf(child));
@@ -325,7 +325,7 @@ public class GraphUtilities
 			return Clause.distribute(list_clauses);
 		}
 		// Or node: merge all clause lists into one and return
-		for (Set<Clause> l_clauses : list_clauses)
+		for (MathSet<Clause> l_clauses : list_clauses)
 		{
 			clauses.addAll(l_clauses);
 		}

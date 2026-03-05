@@ -49,9 +49,9 @@ public class Clause implements Set<PartVertex>
 	 * @param list2 The second list of clauses
 	 * @return The distributed list of clauses
 	 */
-	/*@ non_null @*/ protected static Set<Clause> distributePair(/*@ non_null @*/ Set<Clause> list1, /*@ non_null @*/ Set<Clause> list2)
+	/*@ non_null @*/ protected static MathSet<Clause> distributePair(/*@ non_null @*/ Set<Clause> list1, /*@ non_null @*/ Set<Clause> list2)
 	{
-		Set<Clause> distributed = new MathSet<Clause>();
+		MathSet<Clause> distributed = new MathSet<Clause>();
 		for (Clause c1 : list1)
 		{
 			for (Clause c2 : list2)
@@ -62,7 +62,7 @@ public class Clause implements Set<PartVertex>
 		return distributed;
 	}
 	
-	/*@ non_null @*/ public static Set<Clause> distribute(List<Set<Clause>> lists)
+	/*@ non_null @*/ public static MathSet<Clause> distribute(List<MathSet<Clause>> lists)
 	{
 		if (lists.isEmpty())
 		{
@@ -72,7 +72,7 @@ public class Clause implements Set<PartVertex>
 		{
 			return lists.get(0);
 		}
-		Set<Clause> old_list = lists.get(0);
+		MathSet<Clause> old_list = lists.get(0);
 		for (int i = 1; i < lists.size(); i++)
 		{
 			old_list = distributePair(old_list, lists.get(i));
@@ -81,7 +81,7 @@ public class Clause implements Set<PartVertex>
 	}
 	
 	@SafeVarargs
-	/*@ non_null @*/ public static Set<Clause> distribute(Set<Clause> ... lists)
+	/*@ non_null @*/ public static Set<Clause> distribute(MathSet<Clause> ... lists)
 	{
 		return distribute(Arrays.asList(lists));
 	}

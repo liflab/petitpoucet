@@ -20,6 +20,7 @@ package ca.uqac.lif.petitpoucet.render;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -151,8 +152,8 @@ public class GraphUtilitiesTest
 						part("c", o),
 				tree(part("d", o))
 				));
-		sg.render(System.out);
-		expected.render(System.out);
+		//sg.render(System.out);
+		//expected.render(System.out);
 		assertEqualGraphs(sg.findRoot(), expected);
 	}
 	
@@ -252,6 +253,44 @@ public class GraphUtilitiesTest
 						)));
 	}
 	
+	@Test
+	public void testDnf1()
+	{
+		Object o = new DummyObject("o");
+		Vertex t = tree(part("a", o),
+				tree(or(),
+						tree(and(),
+								part("b", o),
+								part("c", o)
+								),
+						tree(part("d", o))
+						));
+		MathSet<Clause> dnf = GraphUtilities.asDnf(t);
+		MathSet<Clause> expected = new MathSet<>();
+		expected.add(new Clause(part("d", o)));
+		expected.add(new Clause(part("b", o), part("c", o)));
+		assertEquals(expected, dnf);
+	}
+	
+	@Test
+	public void testDnf2()
+	{
+		Object o = new DummyObject("o");
+		Vertex t = tree(part("a", o),
+				tree(and(),
+						tree(or(),
+								part("b", o),
+								part("c", o)
+								),
+						tree(part("d", o))
+						));
+		MathSet<Clause> dnf = GraphUtilities.asDnf(t);
+		MathSet<Clause> expected = new MathSet<>();
+		expected.add(new Clause(part("b", o), part("d", o)));
+		expected.add(new Clause(part("c", o), part("d", o)));
+		assertEquals(expected, dnf);
+	}
+	
 	protected static AndVertex and()
 	{
 		return s_factory.getAnd();
@@ -302,6 +341,23 @@ public class GraphUtilitiesTest
 		public boolean equals(Object o)
 		{
 			return o instanceof DummyPart && ((DummyPart) o).m_label.compareTo(m_label) == 0;
+		}
+	}
+	
+	public static class DummyObject
+	{
+		protected final String m_label;
+		
+		public DummyObject(String label)
+		{
+			super();
+			m_label = label;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return m_label;
 		}
 	}
 }
