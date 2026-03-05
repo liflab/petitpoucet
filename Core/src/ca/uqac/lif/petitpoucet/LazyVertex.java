@@ -18,7 +18,7 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-public interface AbstractVertex
+public interface LazyVertex extends AbstractVertex
 {
-
+	public Vertex concretize();
 }

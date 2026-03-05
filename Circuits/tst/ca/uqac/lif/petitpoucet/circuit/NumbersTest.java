@@ -29,6 +29,7 @@ import static ca.uqac.lif.petitpoucet.Vertex.or;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
@@ -72,7 +73,7 @@ public class NumbersTest
 		Connectable.connect(new Constant(4), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
-		Vertex e = f.explain(new Connectable.OutputPart(0));
+		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, tree(factory.getPart(new Connectable.InputPart(1), f)));
 	}
 	
@@ -86,7 +87,7 @@ public class NumbersTest
 		Connectable.connect(new Constant(0), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
-		Vertex e = f.explain(new Connectable.OutputPart(0));
+		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, tree(or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(2), f)

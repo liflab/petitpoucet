@@ -28,6 +28,7 @@ import static ca.uqac.lif.petitpoucet.Vertex.or;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Vertex;
 
@@ -55,7 +56,7 @@ public class NodeTest
 	{
 		DummyNode dn = new DummyNode();
 		assertEquals("a", dn.compute(0));
-		Vertex v = dn.explain(new Connectable.OutputPart(0));
+		AbstractVertex v = dn.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(v, and());
 	}
 	

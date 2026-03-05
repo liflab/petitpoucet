@@ -33,8 +33,25 @@ public abstract class Assertions
 	 * @param v2 The second root
 	 * otherwise
 	 */
-	public static void assertEqualGraphs(Vertex v1, Vertex v2)
+	public static void assertEqualGraphs(AbstractVertex a1, AbstractVertex a2)
 	{
+		Vertex v1, v2;
+		if (a1 instanceof LazyVertex)
+		{
+			v1 = ((LazyVertex) a1).concretize();
+		}
+		else
+		{
+			v1 = (Vertex) a1;
+		}
+		if (a2 instanceof LazyVertex)
+		{
+			v2 = ((LazyVertex) a2).concretize();
+		}
+		else
+		{
+			v2 = (Vertex) a2;
+		}
 		if (v1 instanceof PartVertex && v2 instanceof PartVertex && !v1.equals(v2))
 		{
 			throw new AssertionError(v1 + " != " + v2);
@@ -55,7 +72,7 @@ public abstract class Assertions
 		}
 		for (int i = 0; i < v1.childCount(); i++)
 		{
-			assertEqualGraphs(v1.m_children.get(i), v2.m_children.get(i));
+			assertEqualGraphs(v1.getChildren().get(i), v2.getChildren().get(i));
 		}
 	}
 	

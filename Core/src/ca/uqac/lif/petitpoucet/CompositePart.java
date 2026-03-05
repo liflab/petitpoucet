@@ -19,7 +19,6 @@
 package ca.uqac.lif.petitpoucet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -75,27 +74,31 @@ public class CompositePart implements Part
 	 * @param head ... The other parts
 	 * @return The composition of the parts
 	 */
-	public static Part compose(Part tail, Part ... head)
+	public static Part compose(Part ... parts)
 	{
-		if (tail == null)
+		List<Part> new_parts = new ArrayList<>();
+		for (Part p : parts)
 		{
-			return compose(head[0], Arrays.copyOfRange(head, 1, head.length));
-		}
-		if (tail instanceof CompositePart)
-		{
-			for (Part h : head)
+			if (p == null)
+				continue;
+			if (p instanceof CompositePart)
 			{
-				((CompositePart) tail).add(h);
+				new_parts.addAll(((CompositePart) p).m_components);
 			}
-			return tail;
+			else
+			{
+				new_parts.add(p);
+			}
 		}
-		CompositePart out = new CompositePart();
-		out.add(tail);
-		for (Part h : head)
+		if (new_parts.isEmpty())
 		{
-			out.add(h);
+			return null;
 		}
-		return out;
+		if (new_parts.size() == 1)
+		{
+			return new_parts.get(0);
+		}
+		return new CompositePart(new_parts);
 	}
 
 	/**

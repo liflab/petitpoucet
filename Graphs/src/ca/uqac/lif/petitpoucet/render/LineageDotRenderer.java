@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Renderer;
 import ca.uqac.lif.petitpoucet.Subgraph;
@@ -109,11 +111,22 @@ public class LineageDotRenderer implements Renderer
 	 * should be printed. If set to {@code true}, these nodes will simply be
 	 * rendered as colored circles.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ List<Vertex> roots, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
+	public LineageDotRenderer(/*@ non_null @*/ List<AbstractVertex> roots, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
 	{
 		super();
 		m_idCounter = 0;
-		m_roots = roots;
+		m_roots = new ArrayList<>(roots.size());
+		for (AbstractVertex a : roots)
+		{
+			if (a instanceof LazyVertex)
+			{
+				m_roots.add(((LazyVertex) a).concretize());
+			}
+			else
+			{
+				m_roots.add((Vertex) a);
+			}
+		}
 		m_nodeIds = new HashMap<>();
 		m_rendered = new HashSet<>();
 		m_expanded = new HashSet<>();
@@ -134,7 +147,7 @@ public class LineageDotRenderer implements Renderer
 	 * should be printed. If set to {@code true}, these nodes will simply be
 	 * rendered as colored circles.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ Vertex root, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
+	public LineageDotRenderer(/*@ non_null @*/ AbstractVertex root, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
 	{
 		this(Arrays.asList(root), prefix, nesting_level, no_captions);
 	}
@@ -144,7 +157,7 @@ public class LineageDotRenderer implements Renderer
 	 * @param roots The nodes used as the starting point for the rendering. These
 	 * are typically the roots of a directed acyclic graph.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ Vertex ... roots)
+	public LineageDotRenderer(/*@ non_null @*/ AbstractVertex ... roots)
 	{
 		this(Arrays.asList(roots), "", 0, false);
 	}
@@ -154,7 +167,7 @@ public class LineageDotRenderer implements Renderer
 	 * @param roots The nodes used as the starting point for the rendering. These
 	 * are typically the roots of a directed acyclic graph.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ List<Vertex> roots)
+	public LineageDotRenderer(/*@ non_null @*/ List<AbstractVertex> roots)
 	{
 		this(roots, "", 0, false);
 	}
@@ -259,7 +272,7 @@ public class LineageDotRenderer implements Renderer
 		if (from instanceof Subgraph)
 		{
 			Subgraph nn_from = (Subgraph) from;
-			Vertex inner_node = nn_from.getChildren().get(out_index);
+			AbstractVertex inner_node = nn_from.getChildren().get(out_index);
 			source_id = m_nodeIds.get(inner_node);
 		}
 		else
@@ -269,7 +282,7 @@ public class LineageDotRenderer implements Renderer
 		if (to instanceof Subgraph)
 		{
 			Subgraph nn_to = (Subgraph) to;
-			Vertex inner_node = nn_to.findRoot();
+			AbstractVertex inner_node = nn_to.findRoot();
 			dest_id = m_nodeIds.get(inner_node);
 		}
 		else
@@ -363,7 +376,7 @@ public class LineageDotRenderer implements Renderer
 	 */
 	protected String renderNestedNode(PrintStream ps, Subgraph current, String n_id)
 	{
-		Vertex inner_start = current.findRoot();
+		AbstractVertex inner_start = current.findRoot();
 		String new_prefix = "";
 		if (m_prefix.isEmpty())
 		{
@@ -379,7 +392,7 @@ public class LineageDotRenderer implements Renderer
 		return "C" + n_id + "0";
 	}
 
-	protected LineageDotRenderer getSubRenderer(Vertex inner_start, String new_prefix, int nesting_level, boolean captions)
+	protected LineageDotRenderer getSubRenderer(AbstractVertex inner_start, String new_prefix, int nesting_level, boolean captions)
 	{
 		return new LineageDotRenderer(inner_start, new_prefix, nesting_level, captions);
 	}

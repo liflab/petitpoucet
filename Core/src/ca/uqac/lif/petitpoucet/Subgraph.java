@@ -56,7 +56,6 @@ public class Subgraph extends Vertex
 		m_vertices.addAll(vertices);
 		m_leaves = m_root.findLeaves();
 		m_outputConnections = new Vertex[m_leaves.size()];
-		
 	}
 	
 	@Override
@@ -87,16 +86,9 @@ public class Subgraph extends Vertex
 		throw new UnsupportedOperationException("A leaf must be specified");
 	}
 	
-	/**
-	 * Adds a child vertex to the current subgraph, by attaching it to one of
-	 * its leaves.
-	 * @param v The vertex to add as a child
-	 * @param leaf The leaf vertex to which it should be attached
-	 */
-	public void addChild(/*@ non_null @*/ Vertex v, int index)
+	public void addChild(Vertex v, int j)
 	{
-		super.addChild(v);
-		m_outputConnections[index] = v;
+		m_outputConnections[j] = v;
 	}
 
 	@Override

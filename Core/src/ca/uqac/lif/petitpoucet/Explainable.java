@@ -35,7 +35,7 @@ public interface Explainable
 	 * @throws ExplanationException If an error occurs during the calculation of
 	 * the explanation
 	 */
-	public default Vertex explain(Part p) throws ExplanationException
+	public default AbstractVertex explain(Part p) throws ExplanationException
 	{
 		return explain(p, new VertexFactory());
 	}
@@ -51,7 +51,7 @@ public interface Explainable
 	 * @throws ExplanationException If an error occurs during the calculation
 	 * of the explanation
 	 */
-	public Vertex explain(Part p, VertexFactory f) throws ExplanationException;
+	public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException;
 	
 	public void hint(Part p);
 	

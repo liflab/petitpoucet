@@ -27,10 +27,10 @@ import org.junit.Test;
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 import ca.uqac.lif.petitpoucet.circuit.Lists.ElementAt;
 import ca.uqac.lif.petitpoucet.circuit.Lists.NthElement;
@@ -57,8 +57,7 @@ public class ListsTest
 		ElementAt f = new ElementAt(0);
 		Connectable.connect(new Constant(Arrays.asList("a", "b", "c")), 0, f, 0);
 		f.compute();
-		Vertex e = f.explain(new Connectable.OutputPart(0));
-		e.render(System.out);
+		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, tree(factory.getPart(new CompositePart(new NthElement(0), new Connectable.InputPart(0)), f)));
 	}
 }

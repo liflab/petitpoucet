@@ -25,13 +25,13 @@ import java.util.List;
 /**
  * A vertex in a directed acyclic graph. This class is used to represent the
  * structure of the graph, and to perform operations on it. The graph is assumed
- * to have a single root. The vertices are of three types:
- * {@link AndVertex}, {@link OrVertex},
- * and {@link PartVertex}. The first two types are used to represent the structure
- * of the graph, while the last type is used to represent the parts of the graph.
+ * to have a single root. The vertices are of three concrete types:
+ * {@link AndVertex}, {@link OrVertex}, {@link PartVertex}, {@link Subgraph}
+ * and {@link ProxyVertex}. The first two types are used to represent the structure
+ * of the graph, while the third type is used to represent the parts of the graph.
  * @author Sylvain Hallé
  */
-public abstract class Vertex implements Renderer
+public abstract class Vertex implements AbstractVertex, Renderer
 {
 	/**
 	 * The list of children of this vertex, if any.
@@ -131,7 +131,6 @@ public abstract class Vertex implements Renderer
 	 * useful for debugging purposes.
 	 * @param ps The print stream to which to print the graph
 	 */
-	@Override
 	public void render(PrintStream ps)
 	{
 		render(ps, "", 0);
@@ -161,7 +160,7 @@ public abstract class Vertex implements Renderer
 			v.render(sb, indent, nesting);
 		}
 	}
-
+	
 	/**
 	 * Finds the leaves of the subgraph rooted in this vertex. The leaves are the
 	 * vertices that have no children.
@@ -216,10 +215,15 @@ public abstract class Vertex implements Renderer
 		return m_parents.size();
 	}
 
-	@Override
+	/**
+	 * Adds a child to this vertex. This method also adds this vertex as a parent
+	 * of the child. It is not recommended to modify the list of children or parents
+	 * directly, as it may cause inconsistencies in the graph.
+	 * @param v The AbstractVertex to add as a child of this vertex
+	 */
 	public void addChild(Vertex v)
 	{
-		v.m_parents.add(this);
+		v.getParents().add(this);
 		m_children.add(v);
 	}
 
@@ -238,7 +242,7 @@ public abstract class Vertex implements Renderer
 		{
 			super();
 		}
-		
+
 		@Override
 		public String toString()
 		{
@@ -330,7 +334,7 @@ public abstract class Vertex implements Renderer
 		{
 			return m_part;
 		}
-		
+
 		/**
 		 * Gets the subject represented by this vertex.
 		 * @return The subject

@@ -29,6 +29,7 @@ import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Subgraph;
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
@@ -139,8 +140,7 @@ public class CircuitTest
 		Connectable.connect(new Constant(3), 0, circ, 1);
 		Object o = circ.compute();
 		assertEquals(5f, o);
-		Vertex e = circ.explain(new Connectable.OutputPart(0));
-		e.render(System.out);
+		AbstractVertex e = circ.explain(new Connectable.OutputPart(0));
 		Vertex expected_inside = 
 				tree(factory.getPart(new OutputPart(0), add),
 						tree(factory.getAnd(),
@@ -170,7 +170,7 @@ public class CircuitTest
 		Connectable.connect(new Constant(3), 0, circ, 1);
 		Object o = circ.compute();
 		assertEquals(0f, o);
-		Vertex e = circ.explain(new Connectable.OutputPart(0));
+		AbstractVertex e = circ.explain(new Connectable.OutputPart(0));
 		//e.print(System.out);
 		Vertex expected = tree(factory.getPart(new OutputPart(0), add),
 				factory.getPart(new InputPart(0), add));
@@ -199,7 +199,7 @@ public class CircuitTest
 		Connectable.connect(new Constant(4), 0, circ, 2);
 		Object o = circ.compute();
 		assertEquals(20f, o);
-		Vertex e = circ.explain(new OutputPart(0));
+		AbstractVertex e = circ.explain(new OutputPart(0));
 		//e.print(System.out);
 		Vertex expected = tree(factory.getPart(new OutputPart(0), mul),
 				tree(factory.getAnd(),
