@@ -216,12 +216,7 @@ public abstract class Vertex implements Renderer
 		return m_parents.size();
 	}
 
-	/**
-	 * Adds a child to this vertex. This method also adds this vertex as a parent
-	 * of the child. It is not recommended to modify the list of children or parents
-	 * directly, as it may cause inconsistencies in the graph.
-	 * @param v The vertex to add as a child of this vertex
-	 */
+	@Override
 	public void addChild(Vertex v)
 	{
 		v.m_parents.add(this);

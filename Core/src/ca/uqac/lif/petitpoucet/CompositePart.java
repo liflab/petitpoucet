@@ -19,6 +19,7 @@
 package ca.uqac.lif.petitpoucet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public class CompositePart implements Part
 		}
 		return p;
 	}
-	
+
 	/**
 	 * Returns the tail of the part, which is the second part of the composition. If
 	 * the part is a composite part, returns the tail of the composite part. Otherwise,
@@ -60,34 +61,43 @@ public class CompositePart implements Part
 		}
 		return null;
 	}
-	
+
 	/**
 	 * The list of components of the composite part.
 	 */
 	protected final List<Part> m_components;
-	
+
 	/**
 	 * Composes two parts together. If the first part is a composite part, the second
 	 * part is added to it. Otherwise, a new composite part is created with the two
 	 * parts as components.
 	 * @param tail The first part
-	 * @param head The second part
-	 * @return The composition of the two parts
+	 * @param head ... The other parts
+	 * @return The composition of the parts
 	 */
-	public static Part compose(Part tail, Part head)
+	public static Part compose(Part tail, Part ... head)
 	{
 		if (tail == null)
 		{
-			return head;
+			return compose(head[0], Arrays.copyOfRange(head, 1, head.length));
 		}
 		if (tail instanceof CompositePart)
 		{
-			((CompositePart) tail).add(head);
+			for (Part h : head)
+			{
+				((CompositePart) tail).add(h);
+			}
 			return tail;
 		}
-		return new CompositePart(tail, head);
+		CompositePart out = new CompositePart();
+		out.add(tail);
+		for (Part h : head)
+		{
+			out.add(h);
+		}
+		return out;
 	}
-	
+
 	/**
 	 * Creates a new composite part with the given components.
 	 * @param parts The components of the composite part
@@ -101,7 +111,7 @@ public class CompositePart implements Part
 			add(p);
 		}
 	}
-	
+
 	/**
 	 * Creates a new composite part with the given components.
 	 * @param parts The components of the composite part
@@ -112,7 +122,7 @@ public class CompositePart implements Part
 		m_components = new ArrayList<>();
 		m_components.addAll(parts);
 	}
-	
+
 	/**
 	 * Adds a part to the composite part. If the part is itself a composite part,
 	 * its components are added to the current composite part instead.
@@ -133,7 +143,7 @@ public class CompositePart implements Part
 			m_components.add(p);
 		}
 	}
-	
+
 	@Override
 	/*@ pure @*/ public int hashCode()
 	{
@@ -144,7 +154,7 @@ public class CompositePart implements Part
 		}
 		return h;
 	}
-	
+
 	@Override
 	/*@ pure @*/ public boolean equals(Object o)
 	{
@@ -174,7 +184,7 @@ public class CompositePart implements Part
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Gets the number of components in the composite part.
 	 * @return The number of components
@@ -183,7 +193,7 @@ public class CompositePart implements Part
 	{
 		return m_components.size();
 	}
-	
+
 	/**
 	 * Gets the head of the composite part, which is the <em>last</em> component.
 	 * If the composite part is empty, returns {@code null}.
@@ -197,7 +207,7 @@ public class CompositePart implements Part
 		}
 		return m_components.get(m_components.size() - 1);
 	}
-	
+
 	/**
 	 * Gets the tail of the composite part, which is the composition of all components
 	 * except the head. If the composite part has only one component, returns a
@@ -222,7 +232,7 @@ public class CompositePart implements Part
 		}
 		return cp;
 	}
-	
+
 	@Override
 	/*@ pure @*/ public String toString()
 	{
@@ -239,7 +249,7 @@ public class CompositePart implements Part
 		sb.append("\u27e9");
 		return sb.toString();
 	}
-	
+
 	@Override
 	public CompositePart duplicate(boolean with_state)
 	{
