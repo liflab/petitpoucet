@@ -22,9 +22,11 @@ import static ca.uqac.lif.petitpoucet.CompositePart.compose;
 import static ca.uqac.lif.petitpoucet.CompositePart.head;
 import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Duplicable;
 import ca.uqac.lif.petitpoucet.Explainable;
+import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
@@ -159,7 +161,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	}
 	
 	@Override
-	public Vertex explain(Part p, VertexFactory f) throws ExplanationException
+	public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
 	{
 		Part p_tail = tail(p);
 		int index = checkHead(p);
@@ -201,21 +203,35 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	 * @return A vertex explaining the output of this node at the given index
 	 * @throws ExplanationException
 	 */
-	protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+	protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 	{
-		AndVertex a = f.getAnd();
-		for (int i = 0; i < getInputArity(); i++)
-		{
-			Part in_p = compose(tail, new InputPart(i));
-			a.addChild(f.getPart(in_p, this));
-		}
-		return a;
+		return new NodeLazyVertex(f, tail);
 	}
 	
 	@Override
 	public void hint(Part p)
 	{
 		// By default, do nothing
+	}
+	
+	public class NodeLazyVertex extends LazyVertex
+	{
+		public NodeLazyVertex(VertexFactory f, Part p)
+		{
+			super(f, p);
+		}
+
+		@Override
+		public Vertex concretize()
+		{
+			AndVertex a = m_factory.getAnd();
+			for (int i = 0; i < getInputArity(); i++)
+			{
+				Part in_p = compose(m_part, new InputPart(i));
+				a.addChild(m_factory.getPart(in_p, Node.this));
+			}
+			return a;
+		}
 	}
 	
 	/**

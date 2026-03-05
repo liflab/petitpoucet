@@ -21,6 +21,7 @@ package ca.uqac.lif.petitpoucet.circuit;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
@@ -103,7 +104,7 @@ public abstract class Booleans extends Node
 		}
 		
 		@Override
-		public Vertex explain(Part p, VertexFactory f) throws ExplanationException
+		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
 		{
 			checkHead(p);
 			if (m_falseInputs != null)
@@ -181,7 +182,7 @@ public abstract class Booleans extends Node
 		}
 		
 		@Override
-		public Vertex explain(Part p, VertexFactory f) throws ExplanationException
+		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
 		{
 			checkHead(p);
 			if (m_trueInputs != null)

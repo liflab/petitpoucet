@@ -28,8 +28,10 @@ import static ca.uqac.lif.petitpoucet.CompositePart.head;
 import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
 import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
@@ -67,12 +69,12 @@ public class Circuit extends Node
 	 * The associations between the circuit's outputs and the nodes it contains.
 	 */
 	/*@ non_null @*/ protected final DownstreamConnection[] m_outputAssociations;
-	
+
 	/**
 	 * An optional name given to the circuit.
 	 */
 	/*@ non_null @*/ protected final String m_name;
-	
+
 	/**
 	 * Creates a new circuit with the given input and output arities, and a
 	 * default name.
@@ -210,19 +212,43 @@ public class Circuit extends Node
 	}
 
 	@Override
-	protected Vertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
+	protected AbstractVertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
 	{
-		VertexFactory subf = f.subfactory(this);
-		DownstreamConnection c = m_outputAssociations[index];
-		Node n = c.getObject();
-		int n_index = c.getIndex();
-		Part start = CompositePart.compose(tail, new OutputPart(n_index));
-		propagateExplanation(n, start, subf);
-		Subgraph sg = subf.subgraph();
-		extendLeaves(sg, f);
-		Vertex root = f.getPart(CompositePart.compose(tail, new OutputPart(index)), this);
-		root.addChild(sg);
-		return root;
+		return new CircuitLazyVertex(f, tail, index);
+	}
+
+	protected class CircuitLazyVertex extends LazyVertex
+	{
+		protected final int m_index;
+
+		public CircuitLazyVertex(VertexFactory f, Part p, int index)
+		{
+			super(f, p);
+			m_index = index;
+		}
+
+		@Override
+		public Vertex concretize()
+		{
+			VertexFactory subf = m_factory.subfactory(this);
+			DownstreamConnection c = m_outputAssociations[m_index];
+			Node n = c.getObject();
+			int n_index = c.getIndex();
+			Part start = CompositePart.compose(m_part, new OutputPart(n_index));
+			try
+			{
+				propagateExplanation(n, start, subf);
+			}
+			catch (ExplanationException e)
+			{
+				return null;
+			}
+			Subgraph sg = subf.subgraph();
+			extendLeaves(sg, m_factory);
+			Vertex root = m_factory.getPart(CompositePart.compose(m_part, new OutputPart(m_index)), Circuit.this);
+			root.addChild(sg);
+			return root;
+		}
 	}
 
 	protected void extendLeaves(Subgraph v, VertexFactory f)
@@ -267,7 +293,16 @@ public class Circuit extends Node
 			throw new ExplanationException("Expected an output part");
 		}
 		Vertex root = f.getPart(p, n);
-		Vertex explanation = n.explain(p, f);
+		AbstractVertex a_explanation = n.explain(p, f);
+		Vertex explanation;
+		if (a_explanation instanceof LazyVertex)
+		{
+			explanation = ((LazyVertex) a_explanation).concretize();
+		}
+		else
+		{
+			explanation = (Vertex) a_explanation;
+		}
 		root.addChild(explanation);
 		List<Vertex> leaves = explanation.findLeaves();
 		for (Vertex leaf : leaves)
@@ -310,7 +345,7 @@ public class Circuit extends Node
 			n.reset();
 		}
 	}
-	
+
 	@Override
 	/*@ pure non_null @*/ public String toString()
 	{

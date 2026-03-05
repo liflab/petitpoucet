@@ -21,6 +21,8 @@ package ca.uqac.lif.petitpoucet.circuit;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
@@ -39,7 +41,7 @@ public abstract class Numbers extends Node
 	{
 		super(in_arity, 1);
 	}
-	
+
 	@Override
 	protected void evaluate(Object[] input, Object[] output)
 	{
@@ -56,7 +58,7 @@ public abstract class Numbers extends Node
 		float v = evaluate(operands);
 		output[0] = v;
 	}
-	
+
 	/**
 	 * Calculates the return value of the function, given the numerical operands
 	 * passed as arguments.
@@ -64,7 +66,7 @@ public abstract class Numbers extends Node
 	 * @return The return value
 	 */
 	protected abstract float evaluate(float[] operands);
-	
+
 	/**
 	 * Implementation of addition on floating point numbers.
 	 */
@@ -89,20 +91,20 @@ public abstract class Numbers extends Node
 			}
 			return t;
 		}
-		
+
 		@Override
 		public String toString()
 		{
 			return "+";
 		}
-		
+
 		@Override
 		public Addition duplicate(boolean with_state)
 		{
 			return new Addition(getInputArity());
 		}
 	}
-	
+
 	/**
 	 * Implementation of multiplication on floating point numbers.
 	 */
@@ -113,7 +115,7 @@ public abstract class Numbers extends Node
 		 * This is used to provide the explanation for the output result.
 		 */
 		/*@ null @*/ protected List<Integer> m_zeros;
-		
+
 		/**
 		 * Creates a new instance of the function.
 		 * @param in_arity The input arity of this instance
@@ -143,34 +145,25 @@ public abstract class Numbers extends Node
 			}
 			return t;
 		}
-		
+
 		@Override
-		public Vertex explain(Part p, VertexFactory f) throws ExplanationException
+		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
 		{
 			checkHead(p);
-			if (m_zeros != null)
-			{
-				if (m_zeros.size() == 1)
-				{
-					return f.getPart(new InputPart(m_zeros.get(0)), this);
-				}
-				Vertex o = f.getOr();
-				for (int z : m_zeros)
-				{
-					o.addChild(f.getPart(new InputPart(z), this));
-				}
-				return o;
-			}
-			return super.explain(p, f);
+			if (m_zeros == null)
+				return super.explain(p, f);
+			Integer[] zeros = new Integer[m_zeros.size()];
+			m_zeros.toArray(zeros);
+			return new MultiplicationNullLazyVertex(zeros, f, p);
 		}
-		
+
 		@Override
 		public void reset()
 		{
 			super.reset();
 			m_zeros = null;
 		}
-		
+
 		@Override
 		public String toString()
 		{
@@ -181,6 +174,32 @@ public abstract class Numbers extends Node
 		public Multiplication duplicate(boolean with_state)
 		{
 			return new Multiplication(getInputArity());
+		}
+
+		public class MultiplicationNullLazyVertex extends LazyVertex
+		{
+			protected final Integer[] m_zeros;
+
+			public MultiplicationNullLazyVertex(Integer[] zeros, VertexFactory f, Part p)
+			{
+				super(f, p);
+				m_zeros = zeros;
+			}
+
+			@Override
+			public Vertex concretize()
+			{
+				if (m_zeros.length == 1)
+				{
+					return m_factory.getPart(new InputPart(m_zeros[0]), Multiplication.this);
+				}
+				Vertex o = m_factory.getOr();
+				for (int z : m_zeros)
+				{
+					o.addChild(m_factory.getPart(new InputPart(z), Multiplication.this));
+				}
+				return o;
+			}
 		}
 	}
 }

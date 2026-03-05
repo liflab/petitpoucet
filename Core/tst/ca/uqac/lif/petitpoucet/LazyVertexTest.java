@@ -18,18 +18,16 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-public abstract class LazyVertex implements AbstractVertex
+import org.junit.Test;
+
+/**
+ * Unit tests for {@link LazyVertex}.
+ */
+public class LazyVertexTest
 {
-	protected final VertexFactory m_factory;
-	
-	protected final Part m_part;
-	
-	public LazyVertex(VertexFactory f, Part p)
+	@Test
+	public void test1()
 	{
-		super();
-		m_factory = f;
-		m_part = p;
+		
 	}
-	
-	public abstract Vertex concretize();
 }
