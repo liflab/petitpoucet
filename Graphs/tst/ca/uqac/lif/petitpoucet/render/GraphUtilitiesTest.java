@@ -254,6 +254,54 @@ public class GraphUtilitiesTest
 	}
 	
 	@Test
+	public void collapseTest1()
+	{
+		Object o = new DummyObject("o");
+		Vertex t = tree(part("a", o),
+				tree(or(),
+						tree(and(),
+								part("b", o),
+								part("c", o)
+								),
+						tree(part("d", o))
+						));
+		GraphUtilities.collapse(t);
+		s_factory.clear();
+		assertEqualGraphs(t, tree(part("a", o),
+				tree(or(),
+						tree(and(),
+								part("b", o),
+								part("c", o)
+								),
+						tree(part("d", o))
+						)));
+	}
+	
+	@Test
+	public void collapseTest2()
+	{
+		Object o = new DummyObject("o");
+		Vertex t = tree(part("a", o),
+				tree(or(),
+						tree(and(),
+								tree(part("b", o), part("e", o)),
+								part("c", o)
+								),
+						tree(part("d", o))
+						));
+		GraphUtilities.collapse(t);
+		s_factory.clear();
+		assertEqualGraphs(t, tree(part("a", o),
+				tree(or(),
+						tree(and(),
+								part("e", o),
+								part("c", o)
+								),
+						tree(part("d", o))
+						)));
+	}
+	
+	@Test
 	public void testDnf1()
 	{
 		Object o = new DummyObject("o");
