@@ -112,7 +112,7 @@ public class LineageDotRenderer implements Renderer
 	 * should be printed. If set to {@code true}, these nodes will simply be
 	 * rendered as colored circles.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ List<AbstractVertex> roots, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
+	public LineageDotRenderer(/*@ non_null @*/ List<? extends AbstractVertex> roots, /*@ non_null @*/ String prefix, int nesting_level, boolean no_captions)
 	{
 		super();
 		m_idCounter = 0;
@@ -175,7 +175,7 @@ public class LineageDotRenderer implements Renderer
 	 * @param roots The nodes used as the starting point for the rendering. These
 	 * are typically the roots of a directed acyclic graph.
 	 */
-	public LineageDotRenderer(/*@ non_null @*/ List<AbstractVertex> roots)
+	public LineageDotRenderer(/*@ non_null @*/ List<? extends AbstractVertex> roots)
 	{
 		this(roots, "", 0, false);
 	}
@@ -280,7 +280,7 @@ public class LineageDotRenderer implements Renderer
 		if (from instanceof Subgraph)
 		{
 			Subgraph nn_from = (Subgraph) from;
-			AbstractVertex inner_node = nn_from.getChildren().get(out_index);
+			AbstractVertex inner_node = nn_from.findLeaves().get(out_index);
 			source_id = m_nodeIds.get(inner_node);
 		}
 		else
