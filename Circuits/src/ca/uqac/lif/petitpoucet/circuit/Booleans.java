@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
@@ -58,6 +59,21 @@ public abstract class Booleans extends Node
 	}
 	
 	protected abstract boolean getValue(boolean[] arguments);
+	
+	protected abstract static class IndexLazyVertex extends LazyVertex
+	{
+		/*@ non_null @*/ protected final int[] m_indices;
+		
+		public IndexLazyVertex(VertexFactory f, Part p, List<Integer> indices)
+		{
+			super(f, p);
+			m_indices = new int[indices.size()];
+			for (int i = 0; i < indices.size(); i++)
+			{
+				m_indices[i] = indices.get(i);
+			}
+		}
+	}
 	
 	/**
 	 * A Boolean AND operator.
@@ -109,16 +125,7 @@ public abstract class Booleans extends Node
 			checkHead(p);
 			if (m_falseInputs != null)
 			{
-				if (m_falseInputs.size() == 1)
-				{
-					return f.getPart(new InputPart(m_falseInputs.get(0)), this);
-				}
-				Vertex o = f.getOr();
-				for (int z : m_falseInputs)
-				{
-					o.addChild(f.getPart(new InputPart(z), this));
-				}
-				return o;
+				return new AndFalseLazyVertex(f, p, m_falseInputs);
 			}
 			return super.explain(p, f);
 		}
@@ -134,6 +141,29 @@ public abstract class Booleans extends Node
 		public String toString()
 		{
 			return "\u2227";
+		}
+		
+		protected class AndFalseLazyVertex extends IndexLazyVertex
+		{
+			public AndFalseLazyVertex(VertexFactory f, Part p, List<Integer> indices)
+			{
+				super(f, p, indices);
+			}
+
+			@Override
+			public Vertex concretize(Part p) throws ExplanationException
+			{
+				if (m_indices.length == 1)
+				{
+					return m_factory.getPart(new InputPart(m_indices[0]), And.this);
+				}
+				Vertex o = m_factory.getOr();
+				for (int z : m_indices)
+				{
+					o.addChild(m_factory.getPart(new InputPart(z), And.this));
+				}
+				return o;
+			}
 		}
 	}
 	
@@ -187,16 +217,7 @@ public abstract class Booleans extends Node
 			checkHead(p);
 			if (m_trueInputs != null)
 			{
-				if (m_trueInputs.size() == 1)
-				{
-					return f.getPart(new InputPart(m_trueInputs.get(0)), this);
-				}
-				Vertex o = f.getOr();
-				for (int z : m_trueInputs)
-				{
-					o.addChild(f.getPart(new InputPart(z), this));
-				}
-				return o;
+				return new OrTrueLazyVertex(f, p, m_trueInputs);
 			}
 			return super.explain(p, f);
 		}
@@ -212,6 +233,29 @@ public abstract class Booleans extends Node
 		public String toString()
 		{
 			return "\u2228";
+		}
+		
+		protected class OrTrueLazyVertex extends IndexLazyVertex
+		{
+			public OrTrueLazyVertex(VertexFactory f, Part p, List<Integer> indices)
+			{
+				super(f, p, indices);
+			}
+
+			@Override
+			public Vertex concretize(Part p) throws ExplanationException
+			{
+				if (m_indices.length == 1)
+				{
+					return m_factory.getPart(new InputPart(m_indices[0]), Or.this);
+				}
+				Vertex o = m_factory.getOr();
+				for (int z : m_indices)
+				{
+					o.addChild(m_factory.getPart(new InputPart(z), Or.this));
+				}
+				return o;
+			}
 		}
 	}
 }
