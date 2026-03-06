@@ -27,6 +27,7 @@ import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.circuit.Circuit;
 import ca.uqac.lif.petitpoucet.circuit.Numbers;
 
+
 /**
  * Evaluates a circuit corresponding to the function (x+y)×z. Graphically, this
  * circuit can be represented as:
@@ -35,28 +36,30 @@ import ca.uqac.lif.petitpoucet.circuit.Numbers;
  * 
  * <h3>Explanation</h3>
  * 
- * The program evaluates this circuit on the input x=2, y=3, z=0, and then
+ * The program evaluates this circuit on the input x=2, y=-2, z=0, and then
  * requests the explanation graph corresponding to the resulting output.
  * 
  * <h4>Full graph</h4>
  * The full explanation graph corresponding to that explanation is the
  * following. 
  * <p>
- * <img src="{@docRoot}/doc-files/number/ArithmeticCircuit2-full.png" alt="Full graph">
+ * <img src="{@docRoot}/doc-files/number/ArithmeticCircuit3-full.png" alt="Full graph">
  * <p>
- * One can see that the circuit's output depends only on the value of z.
+ * One can see that the circuit's output value (0) can be explained in two
+ * alternate ways: either by the fact that z=0 (rightmost leaf), or by the fact that 
+ * x=2 <em>and</em> y=2 (leftmost and center leaves).
  * 
  * <h4>Simplified graph</h4>
  * 
  * The simplified graph only keeps the leaves and intermediate Boolean nodes:
  * <p>
- * <img src="{@docRoot}/doc-files/number/ArithmeticCircuit2-small.png" alt="Simplified graph">
+ * <img src="{@docRoot}/doc-files/number/ArithmeticCircuit3-small.png" alt="Simplified graph">
  * 
  * @author Sylvain Hallé
  * @see ArithmeticCircuit1
- * @see ArithmeticCircuit3
+ * @see ArithmeticCircuit2
  */
-public class ArithmeticCircuit2
+public class ArithmeticCircuit3
 {
 	public static void main(String[] args) throws ExplanationException
 	{
@@ -69,7 +72,7 @@ public class ArithmeticCircuit2
 		c.associateInput(2, m, 1);
 		Connectable.connect(a, 0, m, 0);
 		c.associateOutput(0, m, 0);
-		Number result = (Number) c.evaluate(2, 3, 0);
+		Number result = (Number) c.evaluate(2, -2, 0);
 		System.out.println(result);
 		AbstractVertex full_graph = c.explain(new OutputPart(0));
 		display(full_graph);
