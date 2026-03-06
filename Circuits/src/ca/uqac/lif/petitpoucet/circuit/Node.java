@@ -223,7 +223,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 
 		@Override
-		public Vertex concretize(Part part)
+		public Vertex concretize(Part part, int options)
 		{
 			if (getInputArity() == 1)
 			{

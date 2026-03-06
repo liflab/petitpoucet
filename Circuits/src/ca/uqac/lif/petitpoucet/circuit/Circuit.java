@@ -231,7 +231,7 @@ public class Circuit extends Node
 		}
 
 		@Override
-		public Vertex concretize(Part part)
+		public Vertex concretize(Part part, int options)
 		{
 			VertexFactory subf = m_factory.subfactory(this);
 			DownstreamConnection c = m_outputAssociations[m_index];

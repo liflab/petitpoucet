@@ -26,8 +26,10 @@ import static ca.uqac.lif.petitpoucet.CompositePart.head;
 import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
 import ca.uqac.lif.petitpoucet.Part;
+import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
@@ -113,15 +115,93 @@ public abstract class Lists
 		protected void evaluate(Object[] input, Object[] output)
 		{
 			List<?> in_list = (List<?>) input[0];
-			List<Object> out_list = new ArrayList<>(in_list.size() - m_width);
-			for (int i = 0; i < in_list.size() - m_width; i++)
+			List<Object> out_list = new ArrayList<>(in_list.size() - m_width + 1);
+			for (int i = 0; i <= in_list.size() - m_width; i++)
 			{
-				List<?> window = in_list.subList(i, i + m_width);
+				Object[] window = new Object[m_width];
+				for (int j = 0; j < m_width; j++)
+				{
+					window[j] = in_list.get(i + j);
+				}
 				Object[] out = new Object[1];
 				register(out, window);
 				out_list.add(out[0]);
 			}
 			output[0] = out_list;
+		}
+		
+		@Override
+		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
+		{
+			return new WindowLazyVertex(f, tail, options);
+		}
+
+		@Override
+		public String toString()
+		{
+			return "\u03c9";
+		}
+		
+		protected class WindowLazyVertex extends ParameterLazyVertex
+		{
+			public WindowLazyVertex(VertexFactory f, Part p, int options)
+			{
+				super(f, p, options);
+			}
+			
+			@Override
+			public Node getInstance()
+			{
+				return Window.this;
+			}
+			
+			@Override
+			public Vertex concretize(Part p, int options) throws ExplanationException
+			{
+				Part t_head = head(p);
+				if (t_head instanceof NthElement)
+				{
+					return explainElement(((NthElement) t_head).getIndex(), tail(p));
+				}
+				return AbstractVertex.get(Window.super.explain(0, p, m_factory, options));
+			}
+			
+			@Override
+			protected Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph add_to, Vertex inner)
+			{
+				for (int i = 0; i < children.size(); i++)
+				{
+					Vertex child = children.get(i);
+					if (!(child instanceof PartVertex))
+					{
+						continue;
+					}
+					PartVertex pv = (PartVertex) child;
+					Part p = pv.getPart();
+					Part p_head = head(p);
+					if (!(p_head instanceof InputPart))
+					{
+						continue;
+					}
+					Part new_part = compose(tail(p), new NthElement(index + i), new InputPart(0));
+					if (add_to == null)
+					{
+						child.addChild(m_factory.getPart(new_part, getInstance()));
+					}
+					else
+					{
+						add_to.addChild(m_factory.getPart(new_part, getInstance()), i);
+					}
+				}
+				Vertex root = m_factory.getPart(compose(new_p, new OutputPart(0)), m_f);
+				if (inner instanceof Subgraph)
+				{
+					((Subgraph) inner).pushRoot(root);
+					return inner;
+				}
+				root.addChild(inner);
+				return root;
+			}
 		}
 	}
 
@@ -161,7 +241,7 @@ public abstract class Lists
 			for (Object o : in_list)
 			{
 				Object[] out = new Object[1];
-				register(out, o);
+				register(out, new Object[] {o});
 				out_list.add(out[0]);
 			}
 			output[0] = out_list;
@@ -193,14 +273,51 @@ public abstract class Lists
 			}
 			
 			@Override
-			public Vertex concretize(Part p) throws ExplanationException
+			public Vertex concretize(Part p, int options) throws ExplanationException
 			{
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
 				{
 					return explainElement(((NthElement) t_head).getIndex(), tail(p));
 				}
-				return AbstractVertex.get(Apply.super.explain(0, p, m_factory, m_options));
+				return AbstractVertex.get(Apply.super.explain(0, p, m_factory, options));
+			}
+
+			@Override
+			protected Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph add_to, Vertex inner)
+			{
+				for (int i = 0; i < children.size(); i++)
+				{
+					Vertex child = children.get(i);
+					if (!(child instanceof PartVertex))
+					{
+						continue;
+					}
+					PartVertex pv = (PartVertex) child;
+					Part p = pv.getPart();
+					Part p_head = head(p);
+					if (!(p_head instanceof InputPart))
+					{
+						continue;
+					}
+					Part new_part = compose(tail(p), new NthElement(index), new InputPart(0));
+					if (add_to == null)
+					{
+						child.addChild(m_factory.getPart(new_part, getInstance()));
+					}
+					else
+					{
+						add_to.addChild(m_factory.getPart(new_part, getInstance()), i);
+					}
+				}
+				Vertex root = m_factory.getPart(compose(new_p, new OutputPart(0)), m_f);
+				if (inner instanceof Subgraph)
+				{
+					((Subgraph) inner).pushRoot(root);
+					return inner;
+				}
+				root.addChild(inner);
+				return root;
 			}
 		}
 	}

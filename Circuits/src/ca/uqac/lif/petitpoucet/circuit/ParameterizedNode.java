@@ -18,10 +18,6 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
-import static ca.uqac.lif.petitpoucet.CompositePart.compose;
-import static ca.uqac.lif.petitpoucet.CompositePart.head;
-import static ca.uqac.lif.petitpoucet.CompositePart.tail;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +28,6 @@ import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
-import ca.uqac.lif.petitpoucet.circuit.Lists.NthElement;
 
 /**
  * A node that takes another one as a parameter.
@@ -61,7 +55,7 @@ public abstract class ParameterizedNode extends Node
 		m_explanations = new ArrayList<>();
 	}
 	
-	protected void register(Object[] outputs, Object ... inputs)
+	protected void register(Object[] outputs, Object[] inputs)
 	{
 		m_f.reset();
 		for (int i = 0; i < inputs.length; i++)
@@ -118,7 +112,7 @@ public abstract class ParameterizedNode extends Node
 			AbstractVertex in_e = m_explanations.get(index);
 			if (in_e instanceof LazyVertex)
 			{
-				((LazyVertex) in_e).concretize(new_p);
+				((LazyVertex) in_e).concretize(new_p, m_options);
 				inner = ((LazyVertex) in_e).subgraph();
 			}
 			else
@@ -136,43 +130,10 @@ public abstract class ParameterizedNode extends Node
 			{
 				children = inner.getChildren();
 			}
-			for (int i = 0; i < children.size(); i++)
-			{
-				Vertex child = children.get(i);
-				if (!(child instanceof PartVertex))
-				{
-					continue;
-				}
-				PartVertex pv = (PartVertex) child;
-				Part p = pv.getPart();
-				Part p_head = head(p);
-				if (!(p_head instanceof InputPart))
-				{
-					continue;
-				}
-				InputPart op = (InputPart) p_head;
-				if (op.getIndex() != 0)
-				{
-					throw new ExplanationException("Expected input 0");
-				}
-				Part new_part = compose(tail(p), new NthElement(index), new InputPart(0));
-				if (add_to == null)
-				{
-					child.addChild(m_factory.getPart(new_part, getInstance()));
-				}
-				else
-				{
-					add_to.addChild(m_factory.getPart(new_part, getInstance()), i);
-				}
-			}
-			Vertex root = m_factory.getPart(compose(new_p, new OutputPart(0)), m_f);
-			if (inner instanceof Subgraph)
-			{
-				((Subgraph) inner).pushRoot(root);
-				return inner;
-			}
-			root.addChild(inner);
+			Vertex root = extendLeaves(new_p, index, children, add_to, inner);
 			return root;
 		}
+		
+		protected abstract Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph add_to, Vertex inner);
 	}
 }

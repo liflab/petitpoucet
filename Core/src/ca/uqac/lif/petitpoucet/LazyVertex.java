@@ -71,7 +71,20 @@ public abstract class LazyVertex implements AbstractVertex
 	 * @throws ExplanationException Thrown if an error occurs in the calculation
 	 * of the explanation
 	 */
-	public abstract Vertex concretize(Part p) throws ExplanationException;
+	public Vertex concretize(Part p) throws ExplanationException
+	{
+		return concretize(p, m_options);
+	}
+	
+	/**
+	 * Calculates the explanation for a given part.
+	 * @param p The part to explain
+	 * @param options
+	 * @return The root of the lineage graph.
+	 * @throws ExplanationException Thrown if an error occurs in the calculation
+	 * of the explanation
+	 */
+	public abstract Vertex concretize(Part p, int options) throws ExplanationException;
 	
 	/**
 	 * Calculates the explanation.

@@ -152,9 +152,9 @@ public abstract class Booleans extends Node
 			}
 
 			@Override
-			public Vertex concretize(Part p) throws ExplanationException
+			public Vertex concretize(Part p, int options) throws ExplanationException
 			{
-				if (m_indices.length == 1 || Explainable.shouldCut(m_options))
+				if (m_indices.length == 1 || Explainable.shouldCut(options))
 				{
 					return m_factory.getPart(new InputPart(m_indices[0]), And.this);
 				}
@@ -244,9 +244,9 @@ public abstract class Booleans extends Node
 			}
 
 			@Override
-			public Vertex concretize(Part p) throws ExplanationException
+			public Vertex concretize(Part p, int options) throws ExplanationException
 			{
-				if (m_indices.length == 1 || Explainable.shouldCut(m_options))
+				if (m_indices.length == 1 || Explainable.shouldCut(options))
 				{
 					return m_factory.getPart(new InputPart(m_indices[0]), Or.this);
 				}

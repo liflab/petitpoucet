@@ -188,9 +188,9 @@ public abstract class Numbers extends Node
 			}
 
 			@Override
-			public Vertex concretize(Part part)
+			public Vertex concretize(Part part, int options)
 			{
-				if (m_zeros.length == 1 || Explainable.shouldCut(m_options))
+				if (m_zeros.length == 1 || Explainable.shouldCut(options))
 				{
 					return m_factory.getPart(new InputPart(m_zeros[0]), Multiplication.this);
 				}
