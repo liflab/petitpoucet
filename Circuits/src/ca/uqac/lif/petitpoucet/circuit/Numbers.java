@@ -187,7 +187,7 @@ public abstract class Numbers extends Node
 			}
 
 			@Override
-			public Vertex concretize()
+			public Vertex concretize(Part part)
 			{
 				if (m_zeros.length == 1)
 				{
@@ -220,6 +220,12 @@ public abstract class Numbers extends Node
 		protected float evaluate(float[] operands)
 		{
 			return operands[0] * 2;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "\u00d72";
 		}
 	}
 }

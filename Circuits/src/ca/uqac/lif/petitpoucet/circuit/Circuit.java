@@ -228,13 +228,13 @@ public class Circuit extends Node
 		}
 
 		@Override
-		public Vertex concretize()
+		public Vertex concretize(Part part)
 		{
 			VertexFactory subf = m_factory.subfactory(this);
 			DownstreamConnection c = m_outputAssociations[m_index];
 			Node n = c.getObject();
 			int n_index = c.getIndex();
-			Part start = CompositePart.compose(m_part, new OutputPart(n_index));
+			Part start = CompositePart.compose(part, new OutputPart(n_index));
 			try
 			{
 				propagateExplanation(n, start, subf);
@@ -245,7 +245,7 @@ public class Circuit extends Node
 			}
 			Subgraph sg = subf.subgraph();
 			extendLeaves(sg, m_factory);
-			Vertex root = m_factory.getPart(CompositePart.compose(m_part, new OutputPart(m_index)), Circuit.this);
+			Vertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
 			root.addChild(sg);
 			return root;
 		}
@@ -293,16 +293,7 @@ public class Circuit extends Node
 			throw new ExplanationException("Expected an output part");
 		}
 		Vertex root = f.getPart(p, n);
-		AbstractVertex a_explanation = n.explain(p, f);
-		Vertex explanation;
-		if (a_explanation instanceof LazyVertex)
-		{
-			explanation = ((LazyVertex) a_explanation).concretize();
-		}
-		else
-		{
-			explanation = (Vertex) a_explanation;
-		}
+		Vertex explanation = AbstractVertex.get(n.explain(p, f));
 		root.addChild(explanation);
 		List<Vertex> leaves = explanation.findLeaves();
 		for (Vertex leaf : leaves)

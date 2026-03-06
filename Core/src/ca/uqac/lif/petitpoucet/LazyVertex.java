@@ -35,7 +35,7 @@ public abstract class LazyVertex implements AbstractVertex
 	/**
 	 * The part to be explained.
 	 */
-	protected final Part m_part;
+	private final Part m_part;
 	
 	/**
 	 * Creates a new lazy vertex.
@@ -50,10 +50,31 @@ public abstract class LazyVertex implements AbstractVertex
 	}
 	
 	/**
+	 * Gets the explanation of this vertex enclosed in a subgraph.
+	 * @return The subgraph
+	 */
+	public Subgraph subgraph()
+	{
+		return m_factory.subgraph();
+	}
+	
+	/**
+	 * Calculates the explanation for a given part.
+	 * @param p The part to explain
+	 * @return The root of the lineage graph.
+	 * @throws ExplanationException Thrown if an error occurs in the calculation
+	 * of the explanation
+	 */
+	public abstract Vertex concretize(Part p) throws ExplanationException;
+	
+	/**
 	 * Calculates the explanation.
 	 * @return The root of the lineage graph.
 	 * @throws ExplanationException Thrown if an error occurs in the calculation
 	 * of the explanation
 	 */
-	public abstract Vertex concretize() throws ExplanationException;
+	public Vertex concretize() throws ExplanationException
+	{
+		return concretize(m_part);
+	}
 }

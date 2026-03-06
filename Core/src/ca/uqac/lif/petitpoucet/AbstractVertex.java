@@ -18,7 +18,16 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+
 public interface AbstractVertex
 {
-
+	public static Vertex get(AbstractVertex v) throws ExplanationException
+	{
+		if (v instanceof LazyVertex)
+		{
+			return ((LazyVertex) v).concretize();
+		}
+		return (Vertex) v;
+	}
 }

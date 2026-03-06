@@ -39,22 +39,8 @@ public abstract class Assertions
 		Vertex v1, v2;
 		try
 		{
-		if (a1 instanceof LazyVertex)
-		{
-			v1 = ((LazyVertex) a1).concretize();
-		}
-		else
-		{
-			v1 = (Vertex) a1;
-		}
-		if (a2 instanceof LazyVertex)
-		{
-			v2 = ((LazyVertex) a2).concretize();
-		}
-		else
-		{
-			v2 = (Vertex) a2;
-		}
+			v1 = AbstractVertex.get(a1);
+			v2 = AbstractVertex.get(a2);
 		}
 		catch (ExplanationException e)
 		{
@@ -83,7 +69,7 @@ public abstract class Assertions
 			assertEqualGraphs(v1.getChildren().get(i), v2.getChildren().get(i));
 		}
 	}
-	
+
 	/**
 	 * Asserts that the subgraph rooted in vertex <i>v</i><sub>1</sub> is
 	 * <em>not</em> the

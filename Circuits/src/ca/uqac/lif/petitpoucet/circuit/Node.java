@@ -222,12 +222,17 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 
 		@Override
-		public Vertex concretize()
+		public Vertex concretize(Part part)
 		{
+			if (getInputArity() == 1)
+			{
+				Part in_p = compose(part, new InputPart(0));
+				return m_factory.getPart(in_p, Node.this);
+			}
 			AndVertex a = m_factory.getAnd();
 			for (int i = 0; i < getInputArity(); i++)
 			{
-				Part in_p = compose(m_part, new InputPart(i));
+				Part in_p = compose(part, new InputPart(i));
 				a.addChild(m_factory.getPart(in_p, Node.this));
 			}
 			return a;

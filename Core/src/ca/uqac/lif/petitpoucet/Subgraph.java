@@ -19,6 +19,7 @@
 package ca.uqac.lif.petitpoucet;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -29,20 +30,20 @@ public class Subgraph extends Vertex
 	/**
 	 * The root of the subgraph.
 	 */
-	/*@ non_null @*/ protected final Vertex m_root;
-	
+	/*@ non_null @*/ protected Vertex m_root;
+
 	/**
 	 * The set of all vertices contained in this subgraph.
 	 */
 	/*@ non_null @*/ protected final Set<Vertex> m_vertices;
-	
+
 	/**
 	 * The set of all leaves contained in this subgraph.
 	 */
 	/*@ non_null @*/ protected final List<Vertex> m_leaves; 
-	
+
 	/*@ non_null @*/ protected final Vertex[] m_outputConnections;
-	
+
 	/**
 	 * Creates a new subgraph.
 	 * @param root The root of the subgraph
@@ -57,7 +58,14 @@ public class Subgraph extends Vertex
 		m_leaves = m_root.findLeaves();
 		m_outputConnections = new Vertex[m_leaves.size()];
 	}
-	
+
+	public void pushRoot(Vertex v)
+	{
+		v.addChild(m_root);
+		m_root = v;
+		m_vertices.add(v);
+	}
+
 	@Override
 	public void render(PrintStream ps, String indent, int nesting)
 	{
@@ -68,24 +76,36 @@ public class Subgraph extends Vertex
 		}
 		ps.println();
 		m_root.render(ps, indent + "  ", nesting + 1);
-		for (Vertex v : m_children)
+		for (Vertex v : m_outputConnections)
 		{
 			v.render(ps, indent + "  ", nesting);
 		}
 	}
-	
+
+	@Override
+	public List<Vertex> getChildren()
+	{
+		return Arrays.asList(m_outputConnections);
+	}
+
+	@Override
+	public int childCount()
+	{
+		return m_outputConnections.length;
+	}
+
 	@Override
 	/*@ pure non_null @*/ public List<Vertex> findLeaves()
 	{
 		return m_leaves;
 	}
-	
+
 	@Override
 	public void addChild(Vertex v)
 	{
 		throw new UnsupportedOperationException("A leaf must be specified");
 	}
-	
+
 	public void addChild(Vertex v, int j)
 	{
 		m_outputConnections[j] = v;
