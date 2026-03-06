@@ -7,7 +7,6 @@ import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.circuit.Circuit;
-import ca.uqac.lif.petitpoucet.circuit.Constant;
 import ca.uqac.lif.petitpoucet.circuit.Numbers;
 
 /**
@@ -53,10 +52,7 @@ public class ArithmeticCircuit1
 		c.associateInput(2, m, 1);
 		Connectable.connect(a, 0, m, 0);
 		c.associateOutput(0, m, 0);
-		Connectable.connect(new Constant(2), 0, c, 0);
-		Connectable.connect(new Constant(3), 0, c, 1);
-		Connectable.connect(new Constant(4), 0, c, 2);
-		Number result = (Number) c.compute();
+		Number result = (Number) c.evaluate(2, 3, 4);
 		System.out.println(result);
 		AbstractVertex full_graph = c.explain(new OutputPart(0));
 		display(full_graph);

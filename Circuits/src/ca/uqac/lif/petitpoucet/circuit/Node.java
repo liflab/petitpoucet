@@ -90,6 +90,15 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		return m_outputArguments[index];
 	}
 	
+	public Object evaluate(Object ... inputs)
+	{
+		for (int i = 0; i < inputs.length; i++)
+		{
+			Connectable.connect(new Constant(inputs[i]), 0, this, i);
+		}
+		return compute();
+	}
+	
 	@Override
 	public Node duplicate()
 	{
