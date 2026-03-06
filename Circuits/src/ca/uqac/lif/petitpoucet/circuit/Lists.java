@@ -28,8 +28,6 @@ import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-import ca.uqac.lif.petitpoucet.circuit.Lists.NthElement;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
@@ -86,6 +84,46 @@ public abstract class Lists
 			return "\u2208@(" + m_index + ")";
 		}
 	}
+	
+	public static class Window extends ParameterizedNode
+	{
+		/**
+		 * The width on which to apply the window
+		 */
+		protected final int m_width;
+		
+		/**
+		 * Creates a new instance of the function.
+		 * @param width The width of the window
+		 * @param f The function to apply on each window
+		 */
+		public Window(int width, Node f)
+		{
+			super(1, 1, f);
+			m_width = width;
+		}
+
+		@Override
+		public Window duplicate(boolean with_state)
+		{
+			return new Window(m_width, m_f);
+		}
+
+		@Override
+		protected void evaluate(Object[] input, Object[] output)
+		{
+			List<?> in_list = (List<?>) input[0];
+			List<Object> out_list = new ArrayList<>(in_list.size() - m_width);
+			for (int i = 0; i < in_list.size() - m_width; i++)
+			{
+				List<?> window = in_list.subList(i, i + m_width);
+				Object[] out = new Object[1];
+				register(out, window);
+				out_list.add(out[0]);
+			}
+			output[0] = out_list;
+		}
+	}
 
 	/**
 	 * Applies a function to every element of a list.
@@ -122,21 +160,9 @@ public abstract class Lists
 			List<Object> out_list = new ArrayList<>(in_list.size());
 			for (Object o : in_list)
 			{
-				Constant c = new Constant(o);
-				Connectable.connect(c, 0, m_f, 0);
-				m_f.reset();
-				out_list.add(m_f.compute());
-				try
-				{
-					VertexFactory f = new VertexFactory();
-					AbstractVertex e = m_f.explain(new OutputPart(0), f);
-					m_explanations.add(e);
-				}
-				catch (ExplanationException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Object[] out = new Object[1];
+				register(out, o);
+				out_list.add(out[0]);
 			}
 			output[0] = out_list;
 		}
@@ -174,7 +200,7 @@ public abstract class Lists
 				{
 					return explainElement(((NthElement) t_head).getIndex(), tail(p));
 				}
-				return AbstractVertex.get(getInstance().explain(0, p, m_factory, m_options));
+				return AbstractVertex.get(Apply.super.explain(0, p, m_factory, m_options));
 			}
 		}
 	}
