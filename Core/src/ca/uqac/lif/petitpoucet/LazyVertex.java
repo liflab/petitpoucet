@@ -38,15 +38,21 @@ public abstract class LazyVertex implements AbstractVertex
 	private final Part m_part;
 	
 	/**
+	 * The options to use when generating the explanation.
+	 */
+	protected final int m_options;
+	
+	/**
 	 * Creates a new lazy vertex.
 	 * @param f The factory that will be used to create nodes
 	 * @param p The part to be explained
 	 */
-	public LazyVertex(VertexFactory f, Part p)
+	public LazyVertex(VertexFactory f, Part p, int options)
 	{
 		super();
 		m_factory = f;
 		m_part = p;
+		m_options = options;
 	}
 	
 	/**

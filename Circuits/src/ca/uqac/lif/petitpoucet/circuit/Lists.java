@@ -75,7 +75,7 @@ public abstract class Lists
 		}
 
 		@Override
-		protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+		protected Vertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
 		{
 			Part p = compose(tail, new CompositePart(new NthElement(m_index), new Connectable.InputPart(0)));
 			return f.getPart(p, this);
@@ -155,9 +155,9 @@ public abstract class Lists
 		}
 
 		@Override
-		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
 		{
-			return new ApplyLazyVertex(f, tail);
+			return new ApplyLazyVertex(f, tail, options);
 		}
 
 		@Override
@@ -168,9 +168,9 @@ public abstract class Lists
 
 		protected class ApplyLazyVertex extends LazyVertex
 		{
-			public ApplyLazyVertex(VertexFactory f, Part p)
+			public ApplyLazyVertex(VertexFactory f, Part p, int options)
 			{
-				super(f, p);
+				super(f, p, options);
 			}
 
 			@Override
@@ -181,7 +181,7 @@ public abstract class Lists
 				{
 					return explainElement(((NthElement) t_head).getIndex(), tail(p));
 				}
-				return AbstractVertex.get(Apply.super.explain(0, p, m_factory));
+				return AbstractVertex.get(Apply.super.explain(0, p, m_factory, m_options));
 			}
 
 			/**

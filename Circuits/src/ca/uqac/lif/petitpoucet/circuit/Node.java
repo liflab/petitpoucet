@@ -161,11 +161,11 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	}
 	
 	@Override
-	public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
+	public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException
 	{
 		Part p_tail = tail(p);
 		int index = checkHead(p);
-		return explain(index, p_tail, f);
+		return explain(index, p_tail, f, options);
 	}
 	
 	/**
@@ -200,12 +200,13 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	 * @param out_index The index of the output to explain
 	 * @param tail The tail of the part
 	 * @param f The vertex factory to use to create the explanation vertices
+	 * @param options The options to pass
 	 * @return A vertex explaining the output of this node at the given index
 	 * @throws ExplanationException
 	 */
-	protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+	protected AbstractVertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
 	{
-		return new NodeLazyVertex(f, tail);
+		return new NodeLazyVertex(f, tail, options);
 	}
 	
 	@Override
@@ -216,9 +217,9 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	
 	public class NodeLazyVertex extends LazyVertex
 	{
-		public NodeLazyVertex(VertexFactory f, Part p)
+		public NodeLazyVertex(VertexFactory f, Part p, int options)
 		{
-			super(f, p);
+			super(f, p, options);
 		}
 
 		@Override

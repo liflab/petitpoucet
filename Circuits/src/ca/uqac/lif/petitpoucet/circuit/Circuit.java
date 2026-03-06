@@ -212,19 +212,22 @@ public class Circuit extends Node
 	}
 
 	@Override
-	protected AbstractVertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
+	protected AbstractVertex explain(int index, Part tail, VertexFactory f, int options) throws ExplanationException
 	{
-		return new CircuitLazyVertex(f, tail, index);
+		return new CircuitLazyVertex(f, tail, index, options);
 	}
 
 	protected class CircuitLazyVertex extends LazyVertex
 	{
 		protected final int m_index;
+		
+		protected final int m_options;
 
-		public CircuitLazyVertex(VertexFactory f, Part p, int index)
+		public CircuitLazyVertex(VertexFactory f, Part p, int index, int options)
 		{
-			super(f, p);
+			super(f, p, options);
 			m_index = index;
+			m_options = options;
 		}
 
 		@Override

@@ -30,6 +30,7 @@ import static ca.uqac.lif.petitpoucet.Vertex.tree;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
@@ -79,6 +80,18 @@ public class BooleansTest
 	}
 	
 	@Test
+	public void testAnd4() throws ExplanationException
+	{
+		VertexFactory factory = new VertexFactory();
+		Booleans.And f = new Booleans.And(2);
+		Connectable.connect(new Constant(false), 0, f, 0);
+		Connectable.connect(new Constant(false), 0, f, 1);
+		f.compute();
+		AbstractVertex e = f.explain(new Connectable.OutputPart(0), Explainable.CUT);
+		assertEqualGraphs(e, factory.getPart(new Connectable.InputPart(0), f));
+	}
+	
+	@Test
 	public void testOr1()
 	{
 		VertexFactory factory = new VertexFactory();
@@ -112,5 +125,17 @@ public class BooleansTest
 		assertEqualGraphs(e, or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(1), f)));
+	}
+	
+	@Test
+	public void testOr4() throws ExplanationException
+	{
+		VertexFactory factory = new VertexFactory();
+		Booleans.Or f = new Booleans.Or(2);
+		Connectable.connect(new Constant(true), 0, f, 0);
+		Connectable.connect(new Constant(true), 0, f, 1);
+		f.compute();
+		AbstractVertex e = f.explain(new Connectable.OutputPart(0), Explainable.CUT);
+		assertEqualGraphs(e, factory.getPart(new Connectable.InputPart(0), f));
 	}
 }

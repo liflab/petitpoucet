@@ -64,13 +64,13 @@ public class IfThenElse extends Node
 	}
 	
 	@Override
-	protected Vertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
+	protected Vertex explain(int index, Part tail, VertexFactory f, int options) throws ExplanationException
 	{
 		if (m_condition == null)
 		{
 			throw new ExplanationException("Condition not computed");
 		}
-		Vertex.OrVertex v = f.getOr();
+		Vertex.AndVertex v = f.getAnd();
 		v.addChild(f.getPart(new Connectable.InputPart(0), this));
 		int in_index = m_condition ? 1 : 2;
 		Part in_part = CompositePart.compose(tail, new Connectable.InputPart(in_index));

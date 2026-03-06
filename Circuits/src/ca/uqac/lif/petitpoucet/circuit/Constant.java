@@ -50,7 +50,7 @@ public class Constant extends Node
 	}
 
 	@Override
-	protected Vertex explain(int out_index, Part p, VertexFactory f)
+	protected Vertex explain(int out_index, Part p, VertexFactory f, int options)
 	{
 		return f.getPart(new ConstantValue(), m_value);
 	}

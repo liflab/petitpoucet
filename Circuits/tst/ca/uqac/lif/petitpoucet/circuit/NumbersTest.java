@@ -31,6 +31,7 @@ import static ca.uqac.lif.petitpoucet.Vertex.tree;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
@@ -51,18 +52,24 @@ public class NumbersTest
 		float v = (Float) f.compute(0);
 		assertEquals(9, v, 0.01);
 	}
-	
+
 	@Test
-	public void testMultiplication1()
+	public void testMultiplication1() throws ExplanationException
 	{
+		VertexFactory factory = new VertexFactory();
 		Numbers.Multiplication f = new Numbers.Multiplication(3);
 		Connectable.connect(new Constant(2), 0, f, 0);
 		Connectable.connect(new Constant(3), 0, f, 1);
 		Connectable.connect(new Constant(4), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(24, v, 0.01);
+		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
+		assertEqualGraphs(e, and(
+				factory.getPart(new Connectable.InputPart(0), f),
+				factory.getPart(new Connectable.InputPart(1), f),
+				factory.getPart(new Connectable.InputPart(2), f)));
 	}
-	
+
 	@Test
 	public void testMultiplication2() throws ExplanationException
 	{
@@ -76,7 +83,7 @@ public class NumbersTest
 		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, tree(factory.getPart(new Connectable.InputPart(1), f)));
 	}
-	
+
 	@Test
 	public void testMultiplication3() throws ExplanationException
 	{
@@ -92,5 +99,20 @@ public class NumbersTest
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(2), f)
 				)));
+	}
+	
+	@Test
+	public void testMultiplication4() throws ExplanationException
+	{
+		VertexFactory factory = new VertexFactory();
+		Numbers.Multiplication f = new Numbers.Multiplication(3);
+		Connectable.connect(new Constant(0), 0, f, 0);
+		Connectable.connect(new Constant(0), 0, f, 1);
+		Connectable.connect(new Constant(0), 0, f, 2);
+		float v = (Float) f.compute(0);
+		assertEquals(0, v, 0.01);
+		AbstractVertex e = f.explain(new Connectable.OutputPart(0), Explainable.CUT);
+		assertEqualGraphs(e, 
+				factory.getPart(new Connectable.InputPart(0), f));
 	}
 }

@@ -19,7 +19,7 @@
 package ca.uqac.lif.petitpoucet;
 
 import java.io.PrintStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +85,15 @@ public class Subgraph extends Vertex
 	@Override
 	public List<Vertex> getChildren()
 	{
-		return Arrays.asList(m_outputConnections);
+		List<Vertex> children = new ArrayList<>();
+		for (Vertex v : m_outputConnections)
+		{
+			if (v != null)
+			{
+				children.add(v);
+			}
+		}
+		return children;
 	}
 
 	@Override

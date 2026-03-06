@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
@@ -147,14 +148,14 @@ public abstract class Numbers extends Node
 		}
 
 		@Override
-		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
+		public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException
 		{
 			checkHead(p);
 			if (m_zeros == null)
-				return super.explain(p, f);
+				return super.explain(p, f, options);
 			Integer[] zeros = new Integer[m_zeros.size()];
 			m_zeros.toArray(zeros);
-			return new MultiplicationNullLazyVertex(zeros, f, p);
+			return new MultiplicationNullLazyVertex(zeros, f, p, options);
 		}
 
 		@Override
@@ -180,16 +181,16 @@ public abstract class Numbers extends Node
 		{
 			protected final Integer[] m_zeros;
 
-			public MultiplicationNullLazyVertex(Integer[] zeros, VertexFactory f, Part p)
+			public MultiplicationNullLazyVertex(Integer[] zeros, VertexFactory f, Part p, int options)
 			{
-				super(f, p);
+				super(f, p, options);
 				m_zeros = zeros;
 			}
 
 			@Override
 			public Vertex concretize(Part part)
 			{
-				if (m_zeros.length == 1)
+				if (m_zeros.length == 1 || Explainable.shouldCut(m_options))
 				{
 					return m_factory.getPart(new InputPart(m_zeros[0]), Multiplication.this);
 				}

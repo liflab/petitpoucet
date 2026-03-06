@@ -26,6 +26,23 @@ package ca.uqac.lif.petitpoucet;
 public interface Explainable
 {
 	/**
+	 * An option indicating that a full lineage graph is to be produced.
+	 */
+	public static final int FULL = 0;
+	
+	/**
+	 * An option indicating that only one of each "or" branch must be
+	 * developed.
+	 */
+	public static final int CUT = 1;
+	
+	/**
+	 * An option indicating that only the Boolean vertices and leaves
+	 * should be kept.
+	 */
+	public static final int COLLAPSE = 2;
+	
+	/**
 	 * Explains a part of the output of the object, by returning a vertex that
 	 * can be used to trace back the origin of the part. The default implementation
 	 * of this method uses a {@link VertexFactory} to create the vertex, but
@@ -51,9 +68,62 @@ public interface Explainable
 	 * @throws ExplanationException If an error occurs during the calculation
 	 * of the explanation
 	 */
-	public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException;
+	public default AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
+	{
+		return explain(p, f, FULL);
+	}
+	
+	/**
+	 * Explains a part of the output of the object, by returning a vertex that
+	 * can be used to trace back the origin of the part.
+	 * @param p The part to explain
+	 * @param options The flags specifying the options to apply when calculating
+	 * the explanation
+	 * @return A vertex that can be used to trace back the origin of the part
+	 * @throws ExplanationException If an error occurs during the calculation
+	 * of the explanation
+	 */
+	public default AbstractVertex explain(Part p, int options) throws ExplanationException
+	{
+		return explain(p, new VertexFactory(), options);
+	}
+	
+	/**
+	 * Explains a part of the output of the object, by returning a vertex that
+	 * can be used to trace back the origin of the part. The method uses a
+	 * {@link VertexFactory} provided as an argument to create the vertex, which
+	 * can be used to create custom vertices.
+	 * @param p The part to explain
+	 * @param f The factory to use to create the vertex
+	 * @param options The flags specifying the options to apply when calculating
+	 * the explanation
+	 * @return A vertex that can be used to trace back the origin of the part
+	 * @throws ExplanationException If an error occurs during the calculation
+	 * of the explanation
+	 */
+	public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException;
 	
 	public void hint(Part p);
+	
+	/**
+	 * Determines if the {@link CUT} option is enabled. 
+	 * @param options The options integer
+	 * @return {@code true} if the option is enabled, {@code false} otherwise
+	 */
+	public static boolean shouldCut(int options)
+	{
+		return ((options >> 0) & 1) == 1;
+	}
+	
+	/**
+	 * Determines if the {@link COLLAPSE} option is enabled. 
+	 * @param options The options integer
+	 * @return {@code true} if the option is enabled, {@code false} otherwise
+	 */
+	public static boolean shouldCollapse(int options)
+	{
+		return ((options >> 1) & 1) == 1;
+	}
 	
 	/**
 	 * Exception raised when an error occurs in the calculation of the
