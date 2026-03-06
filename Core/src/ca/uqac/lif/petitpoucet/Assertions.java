@@ -18,6 +18,7 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 
 /**
@@ -36,6 +37,8 @@ public abstract class Assertions
 	public static void assertEqualGraphs(AbstractVertex a1, AbstractVertex a2)
 	{
 		Vertex v1, v2;
+		try
+		{
 		if (a1 instanceof LazyVertex)
 		{
 			v1 = ((LazyVertex) a1).concretize();
@@ -51,6 +54,11 @@ public abstract class Assertions
 		else
 		{
 			v2 = (Vertex) a2;
+		}
+		}
+		catch (ExplanationException e)
+		{
+			throw new AssertionError(e);
 		}
 		if (v1 instanceof PartVertex && v2 instanceof PartVertex && !v1.equals(v2))
 		{

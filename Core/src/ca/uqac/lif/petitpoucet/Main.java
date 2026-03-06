@@ -18,42 +18,17 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-
 /**
- * A {@link Vertex} that delays the calculation of an explanation until
- * a call to {@link #concretize()}.
+ * A dummy main class, which simply displays the name of the
+ * library.
  * @author Sylvain Hallé
  */
-public abstract class LazyVertex implements AbstractVertex
+public class Main
 {
-	/**
-	 * The factory that will be used to create nodes.
-	 */
-	protected final VertexFactory m_factory;
-	
-	/**
-	 * The part to be explained.
-	 */
-	protected final Part m_part;
-	
-	/**
-	 * Creates a new lazy vertex.
-	 * @param f The factory that will be used to create nodes
-	 * @param p The part to be explained
-	 */
-	public LazyVertex(VertexFactory f, Part p)
+	public static void main(String[] args)
 	{
-		super();
-		m_factory = f;
-		m_part = p;
+		System.out.println("Petit Poucet v3.0 - (C) Laboratoire d'informatique formelle");
+		System.out.println("Université du Québec à Chicoutimi, Canada");
 	}
-	
-	/**
-	 * Calculates the explanation.
-	 * @return The root of the lineage graph.
-	 * @throws ExplanationException Thrown if an error occurs in the calculation
-	 * of the explanation
-	 */
-	public abstract Vertex concretize() throws ExplanationException;
+
 }

@@ -29,6 +29,7 @@ import java.util.Set;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Renderer;
@@ -118,13 +119,20 @@ public class LineageDotRenderer implements Renderer
 		m_roots = new ArrayList<>(roots.size());
 		for (AbstractVertex a : roots)
 		{
-			if (a instanceof LazyVertex)
+			try
 			{
-				m_roots.add(((LazyVertex) a).concretize());
+				if (a instanceof LazyVertex)
+				{
+					m_roots.add(((LazyVertex) a).concretize());
+				}
+				else
+				{
+					m_roots.add((Vertex) a);
+				}
 			}
-			else
+			catch (ExplanationException e)
 			{
-				m_roots.add((Vertex) a);
+				throw new IllegalArgumentException(e);
 			}
 		}
 		m_nodeIds = new HashMap<>();
