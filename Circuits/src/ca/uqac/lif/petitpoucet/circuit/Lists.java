@@ -26,11 +26,10 @@ import static ca.uqac.lif.petitpoucet.CompositePart.head;
 import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.LazyVertex;
+import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.circuit.Lists.NthElement;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
@@ -91,25 +90,15 @@ public abstract class Lists
 	/**
 	 * Applies a function to every element of a list.
 	 */
-	public static class Apply extends Node
+	public static class Apply extends ParameterizedNode
 	{
-		/**
-		 * The function to apply.
-		 */
-		/*@ non_null @*/ protected final Node m_f;
-
-		/**
-		 * The explanations for each element of the list.
-		 */
-		/*@ non_null @*/ protected final List<AbstractVertex> m_explanations;
-
 		/**
 		 * Creates a new instance of the function.
 		 * @param f The function to apply to each element of the list
 		 */
 		public Apply(/*@ non_null @*/ Node f)
 		{
-			super(1, 1);
+			super(1, 1, f);
 			if (f.getInputArity() != 1)
 			{
 				throw new IllegalArgumentException("Function must have an arity of 1");
@@ -118,8 +107,6 @@ public abstract class Lists
 			{
 				throw new IllegalArgumentException("Function must have an arity of 1");
 			}
-			m_f = f;
-			m_explanations = new ArrayList<>();
 		}
 
 		@Override
@@ -166,13 +153,19 @@ public abstract class Lists
 			return "\u03b1";
 		}
 
-		protected class ApplyLazyVertex extends LazyVertex
+		protected class ApplyLazyVertex extends ParameterLazyVertex
 		{
 			public ApplyLazyVertex(VertexFactory f, Part p, int options)
 			{
 				super(f, p, options);
 			}
-
+			
+			@Override
+			public Node getInstance()
+			{
+				return Apply.this;
+			}
+			
 			@Override
 			public Vertex concretize(Part p) throws ExplanationException
 			{
@@ -181,128 +174,7 @@ public abstract class Lists
 				{
 					return explainElement(((NthElement) t_head).getIndex(), tail(p));
 				}
-				return AbstractVertex.get(Apply.super.explain(0, p, m_factory, m_options));
-			}
-
-			/**
-			 * Computes the explanation for a specific element of the output list.
-			 * @param index The position of the element in the list
-			 * @param tail The tail part of the explanation
-			 * @param f The factory used to create vertices for this explanation
-			 * @return The root vertex of the explanation graph
-			 * @throws ExplanationException Thrown if an error occurred during the
-			 * calculation of the explanation
-			 */
-			/*@ non_null @*/ protected Vertex explainElement(int index, Part new_p) throws ExplanationException
-			{
-				Vertex inner;
-				AbstractVertex in_e = m_explanations.get(index);
-				if (in_e instanceof LazyVertex)
-				{
-					((LazyVertex) in_e).concretize(new_p);
-					inner = ((LazyVertex) in_e).subgraph();
-				}
-				else
-				{
-					inner = (Vertex) in_e;
-				}
-				List<Vertex> children;
-				Subgraph add_to = null;
-				if (inner instanceof Subgraph)
-				{
-					children = ((Subgraph) inner).findLeaves();
-					add_to = (Subgraph) inner;
-				}
-				else
-				{
-					children = inner.getChildren();
-				}
-				for (int i = 0; i < children.size(); i++)
-				{
-					Vertex child = children.get(i);
-					if (!(child instanceof PartVertex))
-					{
-						continue;
-					}
-					PartVertex pv = (PartVertex) child;
-					Part p = pv.getPart();
-					Part p_head = head(p);
-					if (!(p_head instanceof InputPart))
-					{
-						continue;
-					}
-					InputPart op = (InputPart) p_head;
-					if (op.getIndex() != 0)
-					{
-						throw new ExplanationException("Expected input 0");
-					}
-					Part new_part = compose(tail(p), new NthElement(index), new InputPart(0));
-					if (add_to == null)
-					{
-						child.addChild(m_factory.getPart(new_part, Apply.this));
-					}
-					else
-					{
-						add_to.addChild(m_factory.getPart(new_part, Apply.this), i);
-					}
-				}
-				Vertex root = m_factory.getPart(compose(new_p, new OutputPart(0)), m_f);
-				if (inner instanceof Subgraph)
-				{
-					((Subgraph) inner).pushRoot(root);
-					return inner;
-				}
-				root.addChild(inner);
-				return root;
-			}
-		}
-
-		public Application getApplication(int index)
-		{
-			return new Application(index);
-		}
-
-		public class Application
-		{
-			protected final int m_index;
-
-			protected Application(int index)
-			{
-				super();
-				m_index = index;
-			}
-
-			public Node getNode()
-			{
-				return Apply.this;
-			}
-
-			public int getIndex()
-			{
-				return m_index;
-			}
-
-			@Override
-			public int hashCode()
-			{
-				return m_index + Apply.this.hashCode();
-			}
-
-			@Override
-			public boolean equals(Object o)
-			{
-				if (!(o instanceof Application))
-				{
-					return false;
-				}
-				Application a = (Application) o;
-				return a.getIndex() == m_index && a.getNode() == getNode();
-			}
-
-			@Override
-			public String toString()
-			{
-				return Application.this.toString() + "@" + m_index;
+				return AbstractVertex.get(getInstance().explain(0, p, m_factory, m_options));
 			}
 		}
 	}
