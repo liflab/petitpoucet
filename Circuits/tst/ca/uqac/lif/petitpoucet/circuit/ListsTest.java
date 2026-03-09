@@ -57,7 +57,7 @@ public class ListsTest
 		Object o = f.compute();
 		assertEquals("a", o);
 	}
-	
+
 	@Test
 	public void testElementAt2() throws ExplanationException
 	{
@@ -68,23 +68,25 @@ public class ListsTest
 		AbstractVertex e = f.explain(OutputPart.FIRST);
 		assertEqualGraphs(e, tree(factory.getPart(new CompositePart(new NthElement(0), InputPart.FIRST), f)));
 	}
-	
+
 	@Test
 	public void testApply1()
 	{
 		Numbers.Double d = new Numbers.Double();
-		Apply f = new Apply(d);
+		Circuit c = getCircuit(d);
+		Apply f = new Apply(c);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		Object o = f.compute();
 		assertEquals(Arrays.asList(2f, 4f, 6f), o);
 	}
-	
+
 	@Test
 	public void testApplyExplain1() throws ExplanationException
 	{
 		VertexFactory factory = new VertexFactory();
 		Numbers.Double d = new Numbers.Double();
-		Apply f = new Apply(d);
+		Circuit c = getCircuit(d, "CDouble");
+		Apply f = new Apply(c);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
 		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
@@ -93,68 +95,91 @@ public class ListsTest
 		System.out.println("Received:");
 		c_e.render(System.out);
 		factory.clear();
-		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
-				subf.getPart(InputPart.FIRST, d));
-		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
-		Vertex expected = tree(factory.getPart(OutputPart.FIRST, f), sg);
+		Vertex expected = factory.getPart(CompositePart.compose(new NthElement(1), OutputPart.FIRST), f);
+		{
+			VertexFactory subf = factory.subfactory(f);
+			Vertex v1 = subf.getPart(OutputPart.FIRST, d);
+			Vertex v2 = subf.getPart(InputPart.FIRST, d);
+			v1.addChild(v2);
+			Subgraph sg = subf.subgraph();
+			Vertex c_in = factory.getPart(OutputPart.FIRST, c);
+			expected.addChild(c_in);
+			c_in.addChild(sg);
+			sg.addChild(tree(
+					factory.getPart(InputPart.FIRST, c), 
+					factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f)),
+					v1);
+		}
 		System.out.println("Expected:");
-		Vertex expected_root = tree(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), expected);
-		expected_root.render(System.out);
-		assertEqualGraphs(expected_root, c_e);
+		expected.render(System.out);
+		assertEqualGraphs(expected, c_e);
 	}
-	
+
 	@Test
 	public void testApplyExplain2() throws ExplanationException
 	{
 		VertexFactory factory = new VertexFactory();
 		Numbers.Double d = new Numbers.Double();
-		Apply f = new Apply(d);
+		Circuit c = getCircuit(d);
+		Apply f = new Apply(c);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
 		AbstractVertex e = f.explain(OutputPart.FIRST);
 		Vertex c_e = AbstractVertex.get(e);
 		factory.clear();
-		assertEqualGraphs(c_e, Vertex.tree(factory.getPart(InputPart.FIRST, f)));
+		assertEqualGraphs(c_e, Vertex.tree(
+				factory.getPart(OutputPart.FIRST, f),
+				factory.getPart(InputPart.FIRST, f)));
 	}
-	
+
 	@Test
 	public void testApplyExplain3() throws ExplanationException
 	{
 		VertexFactory factory = new VertexFactory();
 		Numbers.Double d = new Numbers.Double();
-		Apply f = new Apply(d);
+		Circuit c = getCircuit(d);
+		Apply f = new Apply(c);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
 		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(10), new NthElement(1), OutputPart.FIRST));
 		Vertex c_e = AbstractVertex.get(e);
+		c_e.render(System.out);
 		factory.clear();
-		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), d),
-				subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
-		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(10), new NthElement(1), InputPart.FIRST), f),
-				subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
-		assertEqualGraphs(c_e, sg);
+		Vertex expected = factory.getPart(CompositePart.compose(new NthElement(10), new NthElement(1), OutputPart.FIRST), f);
+		{
+			Vertex root = factory.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), c);
+			expected.addChild(root);
+			VertexFactory subf = factory.subfactory(f);
+					Vertex.tree(subf.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), d),
+							subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
+			Subgraph sg = subf.subgraph();
+			root.addChild(sg);
+			sg.addChild(tree(
+					factory.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), c),
+					subf.getPart(CompositePart.compose(new NthElement(10), new NthElement(1), InputPart.FIRST), f)), subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
+		}
+		expected.render(System.out);
+		assertEqualGraphs(c_e, expected);
 	}
-	
+
 	@Test
 	public void testWindow1()
 	{
 		Numbers.Multiplication mul = new Numbers.Multiplication(3);
-		Window f = new Window(3, mul);
+		Circuit c = getCircuit(mul);
+		Window f = new Window(3, c);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		List<?> out = (List<?>) f.compute();
 		assertEquals(Arrays.asList(6f), out);
 	}
-	
+
 	@Test
 	public void testWindowExplain1() throws ExplanationException
 	{
 		VertexFactory factory = new VertexFactory();
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
-		Window f = new Window(3, d);
+		Circuit c = getCircuit(d);
+		Window f = new Window(3, c);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3, 4)), 0, f, 0);
 		f.compute();
 		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
@@ -174,13 +199,14 @@ public class ListsTest
 		sg.render(System.out);
 		assertEqualGraphs(c_e, sg);
 	}
-	
+
 	@Test
 	public void testWindowExplain2() throws ExplanationException
 	{
 		VertexFactory factory = new VertexFactory();
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
-		Window f = new Window(3, d);
+		Circuit c = getCircuit(d);
+		Window f = new Window(3, c);
 		Connectable.connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
 		f.compute();
 		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
@@ -198,13 +224,14 @@ public class ListsTest
 		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(3), InputPart.FIRST), f), subf.getPart(InputPart.THIRD, d));
 		assertEqualGraphs(c_e, sg);
 	}
-	
+
 	@Test
 	public void testWindowExplainCut1() throws ExplanationException
 	{
 		VertexFactory factory = new VertexFactory();
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
-		Window f = new Window(3, d);
+		Circuit c = getCircuit(d);
+		Window f = new Window(3, c);
 		Connectable.connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
 		f.compute();
 		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST), Explainable.CUT);
@@ -212,10 +239,30 @@ public class ListsTest
 		factory.clear();
 		VertexFactory subf = factory.subfactory(f);
 		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
-						subf.getPart(InputPart.FIRST, d));
+				subf.getPart(InputPart.FIRST, d));
 		Subgraph sg = subf.subgraph();
 		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
 		assertEqualGraphs(c_e, sg);
 	}
-	
+
+	protected static Circuit getCircuit(Node n)
+	{
+		return getCircuit(n, null);
+	}
+
+	protected static Circuit getCircuit(Node n, String name)
+	{
+		Circuit c = new Circuit(n.getInputArity(), n.getOutputArity(), name);
+		c.add(n);
+		for (int i = 0; i < n.getInputArity(); i++)
+		{
+			c.associateInput(i, n, i);
+		}
+		for (int i = 0; i < n.getOutputArity(); i++)
+		{
+			c.associateOutput(i, n, i);
+		}
+		return c;
+	}
+
 }

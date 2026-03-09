@@ -321,7 +321,9 @@ public abstract class Vertex implements AbstractVertex, Renderer
 			{
 				return false;
 			}
-			return ((PartVertex) o).m_part.equals(m_part) && ((PartVertex) o).m_subject.equals(m_subject);
+			if (!((PartVertex) o).m_part.equals(m_part))
+				return false;
+			return ((PartVertex) o).m_subject.equals(m_subject);
 		}
 
 		@Override

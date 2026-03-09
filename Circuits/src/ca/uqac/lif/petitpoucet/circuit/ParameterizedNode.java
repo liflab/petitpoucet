@@ -36,7 +36,7 @@ import ca.uqac.lif.petitpoucet.VertexFactory;
  */
 public abstract class ParameterizedNode extends Node
 {
-	/*@ non_null @*/ protected final Node m_f;
+	/*@ non_null @*/ protected final Circuit m_f;
 
 	/**
 	 * The explanations for each invocation of the node.
@@ -49,7 +49,7 @@ public abstract class ParameterizedNode extends Node
 	 * @param out_arity The output arity of the node
 	 * @param parameter The parameter {@link Node}
 	 */
-	public ParameterizedNode(int in_arity, int out_arity, Node parameter)
+	public ParameterizedNode(int in_arity, int out_arity, Circuit parameter)
 	{
 		super(in_arity, out_arity);
 		m_f = parameter;
@@ -114,7 +114,6 @@ public abstract class ParameterizedNode extends Node
 			if (in_e instanceof LazyVertex)
 			{
 				exp = ((LazyVertex) in_e).concretize(new_p, m_options);
-				//exp = ((LazyVertex) in_e).subgraph();
 			}
 			else
 			{
@@ -122,11 +121,8 @@ public abstract class ParameterizedNode extends Node
 			}
 			if (!(exp instanceof Subgraph))
 			{
-				// Enclose in a subgraph
 				extendLeaves(new_p, index, exp.findLeaves(), null);
-				Vertex root = m_factory.getPart(CompositePart.compose(new_p, OutputPart.FIRST), m_f);
-				root.addChild(exp);
-				return root;
+				return exp;
 			}
 			else
 			{

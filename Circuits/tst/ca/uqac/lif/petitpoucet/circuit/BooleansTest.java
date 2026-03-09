@@ -74,7 +74,10 @@ public class BooleansTest
 		Connectable.connect(new Constant(true), 0, f, 0);
 		Connectable.connect(new Constant(true), 0, f, 1);
 		f.compute();
-		AbstractVertex e = f.explain(OutputPart.FIRST);
+		AbstractVertex ae = f.explain(OutputPart.FIRST);
+		factory.clear();
+		Vertex e = AbstractVertex.get(ae);
+		e.render(System.out);
 		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f),
 				and(
 						factory.getPart(new Connectable.InputPart(0), f),

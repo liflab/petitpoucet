@@ -117,6 +117,31 @@ public class Subgraph extends Vertex
 	{
 		return m_leaves;
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return m_root.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (!(o instanceof Subgraph))
+		{
+			return false;
+		}
+		Subgraph s = (Subgraph) o;
+		try
+		{
+			Assertions.assertEqualGraphs(m_root, s.m_root);
+		}
+		catch (AssertionError e)
+		{
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	protected void findLeaves(List<Vertex> leaves)

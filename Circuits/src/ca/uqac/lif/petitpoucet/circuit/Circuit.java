@@ -298,7 +298,6 @@ public class Circuit extends Node
 			{
 				throw new ExplanationException("Expected an output part");
 			}
-			
 			Vertex explanation = AbstractVertex.get(n.explain(p, f));
 			Vertex root = explanation;
 			List<Vertex> leaves = explanation.findLeaves();

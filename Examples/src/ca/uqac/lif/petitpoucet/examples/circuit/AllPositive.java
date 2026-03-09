@@ -70,7 +70,14 @@ public class AllPositive
 	{
 		Circuit all_positive = new Circuit(1, 1, "all");
 		{
-			Node w = new Window(2, new Numbers.Addition(2));
+			Circuit add = new Circuit(2, 1);
+			{
+				Numbers.Addition a = new Numbers.Addition(2);
+				add.add(a);
+				add.associateInput(0, a, 0);
+				add.associateOutput(0, a, 0);
+			}
+			Node w = new Window(2, add);
 			Circuit gt_0 = new Circuit(1, 1, ">0");
 			{
 				Node g = new Numbers.IsGreaterThan();

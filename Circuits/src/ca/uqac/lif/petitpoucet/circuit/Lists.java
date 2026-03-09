@@ -187,7 +187,7 @@ public abstract class Lists
 		 * @param width The width of the window
 		 * @param f The function to apply on each window
 		 */
-		public Window(int width, Node f)
+		public Window(int width, Circuit f)
 		{
 			super(1, 1, f);
 			m_width = width;
@@ -272,11 +272,16 @@ public abstract class Lists
 						continue;
 					}
 					Part new_part = compose(tail(p), new NthElement(index + i), InputPart.FIRST);
-					inner.addChild(m_factory.getPart(new_part, getInstance()), child);
+					if (inner == null)
+					{
+						child.addChild(m_factory.getPart(new_part, getInstance()));
+					}
+					else
+					{
+						inner.addChild(m_factory.getPart(new_part, getInstance()), child);
+					}
 				}
-				Vertex root = m_factory.getPart(compose(new_p, OutputPart.FIRST), m_f);
-				root.addChild(inner);
-				return root;
+				return inner;
 			}
 		}
 	}
@@ -290,7 +295,7 @@ public abstract class Lists
 		 * Creates a new instance of the function.
 		 * @param f The function to apply to each element of the list
 		 */
-		public Apply(/*@ non_null @*/ Node f)
+		public Apply(/*@ non_null @*/ Circuit f)
 		{
 			super(1, 1, f);
 			if (f.getInputArity() != 1)

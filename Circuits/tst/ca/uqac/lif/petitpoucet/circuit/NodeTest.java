@@ -58,9 +58,11 @@ public class NodeTest
 		DummyNode dn = new DummyNode();
 		VertexFactory factory = new VertexFactory();
 		assertEquals("a", dn.compute(0));
-		AbstractVertex v = dn.explain(new Connectable.OutputPart(0));
+		AbstractVertex av = dn.explain(new Connectable.OutputPart(0));
+		Vertex v = AbstractVertex.get(av);
 		factory.clear();
-		assertEqualGraphs(v, tree(factory.getPart(Connectable.OutputPart.FIRST, dn), factory.getPart(Connectable.InputPart.FIRST, dn)));
+		v.render(System.out);
+		assertEqualGraphs(v, tree(factory.getPart(Connectable.OutputPart.FIRST, dn)));
 	}
 	
 	@Test(expected = ExplanationException.class)

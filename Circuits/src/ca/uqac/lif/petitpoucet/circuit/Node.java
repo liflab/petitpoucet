@@ -234,10 +234,15 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		@Override
 		public Vertex concretize(Part part, int options)
 		{
+			if (getInputArity() == 0)
+			{
+				Vertex root = m_factory.getPart(compose(tail(part), OutputPart.FIRST), Node.this);
+				return root;
+			}
 			Vertex inside;
 			if (getInputArity() == 1)
 			{
-				Vertex root = m_factory.getPart(compose(tail(part), OutputPart.FIRST), Node.this);
+				Vertex root = m_factory.getPart(compose(part, OutputPart.FIRST), Node.this);
 				Part in_p = compose(part, InputPart.FIRST);
 				Vertex child = m_factory.getPart(in_p, Node.this);
 				root.addChild(child);
@@ -252,7 +257,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 					inside.addChild(m_factory.getPart(in_p, Node.this));
 				}
 			}
-			Vertex root = m_factory.getPart(CompositePart.compose(part, InputPart.FIRST), Node.this);
+			Vertex root = m_factory.getPart(CompositePart.compose(part, OutputPart.FIRST), Node.this);
 			root.addChild(inside);
 			return root;
 		}
