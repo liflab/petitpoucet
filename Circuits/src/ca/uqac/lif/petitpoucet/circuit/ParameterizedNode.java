@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
@@ -36,12 +37,12 @@ import ca.uqac.lif.petitpoucet.VertexFactory;
 public abstract class ParameterizedNode extends Node
 {
 	/*@ non_null @*/ protected final Node m_f;
-	
+
 	/**
 	 * The explanations for each invocation of the node.
 	 */
 	/*@ non_null @*/ protected final List<AbstractVertex> m_explanations;
-	
+
 	/**
 	 * Creates a new instance of the node.
 	 * @param in_arity The input arity of the node
@@ -54,7 +55,7 @@ public abstract class ParameterizedNode extends Node
 		m_f = parameter;
 		m_explanations = new ArrayList<>();
 	}
-	
+
 	protected void register(Object[] outputs, Object[] inputs)
 	{
 		m_f.reset();
@@ -65,7 +66,7 @@ public abstract class ParameterizedNode extends Node
 		m_f.evaluate(inputs, outputs);
 		try
 		{
-			m_explanations.add(m_f.explain(new OutputPart(0)));
+			m_explanations.add(m_f.explain(OutputPart.FIRST));
 		}
 		catch (ExplanationException e)
 		{
@@ -73,7 +74,7 @@ public abstract class ParameterizedNode extends Node
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * A {@link LazyVertex} that is linked to one specific evaluation of the
 	 * node's parameter.
@@ -90,7 +91,7 @@ public abstract class ParameterizedNode extends Node
 		{
 			super(f, p, options);
 		}
-				
+
 		/**
 		 * Gets the node to which this vertex is associated.
 		 * @return The node
@@ -108,32 +109,35 @@ public abstract class ParameterizedNode extends Node
 		 */
 		/*@ non_null @*/ protected Vertex explainElement(int index, Part new_p) throws ExplanationException
 		{
-			Vertex inner;
+			Vertex exp;
 			AbstractVertex in_e = m_explanations.get(index);
 			if (in_e instanceof LazyVertex)
 			{
-				((LazyVertex) in_e).concretize(new_p, m_options);
-				inner = ((LazyVertex) in_e).subgraph();
+				exp = ((LazyVertex) in_e).concretize(new_p, m_options);
+				//exp = ((LazyVertex) in_e).subgraph();
 			}
 			else
 			{
-				inner = (Vertex) in_e;
+				exp = (Vertex) in_e;
 			}
-			List<Vertex> children;
-			Subgraph add_to = null;
-			if (inner instanceof Subgraph)
+			if (!(exp instanceof Subgraph))
 			{
-				children = ((Subgraph) inner).findLeaves();
-				add_to = (Subgraph) inner;
+				// Enclose in a subgraph
+				extendLeaves(new_p, index, exp.findLeaves(), null);
+				Vertex root = m_factory.getPart(CompositePart.compose(new_p, OutputPart.FIRST), m_f);
+				root.addChild(exp);
+				return root;
 			}
 			else
 			{
-				children = inner.getChildren();
+				Subgraph inner = (Subgraph) exp;
+				extendLeaves(new_p, index, inner.innerLeaves(), inner);
+				Vertex root = m_factory.getPart(CompositePart.compose(new_p, OutputPart.FIRST), m_f);
+				root.addChild(inner);
+				return root;
 			}
-			Vertex root = extendLeaves(new_p, index, children, add_to, inner);
-			return root;
 		}
-		
-		protected abstract Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph add_to, Vertex inner);
+
+		protected abstract Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner);
 	}
 }

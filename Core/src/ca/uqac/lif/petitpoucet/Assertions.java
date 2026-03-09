@@ -46,6 +46,14 @@ public abstract class Assertions
 		{
 			throw new AssertionError(e);
 		}
+		if (v1 == null)
+		{
+			throw new AssertionError("Left operand is null");
+		}
+		if (v2 == null)
+		{
+			throw new AssertionError("Right operand is null");
+		}
 		if (v1 instanceof PartVertex && v2 instanceof PartVertex && !v1.equals(v2))
 		{
 			throw new AssertionError(v1 + " != " + v2);
@@ -62,7 +70,7 @@ public abstract class Assertions
 		{
 			Subgraph s1 = (Subgraph) v1;
 			Subgraph s2 = (Subgraph) v2;
-			assertEqualGraphs(s1.findRoot(), s2.findRoot());
+			assertEqualGraphs(s1.innerRoot(), s2.innerRoot());
 		}
 		for (int i = 0; i < v1.childCount(); i++)
 		{

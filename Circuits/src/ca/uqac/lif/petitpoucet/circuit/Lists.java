@@ -29,10 +29,14 @@ import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.Connectable.InputPart;
+import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.LazyVertex;
 
 /**
  * Utility class providing basic operations on lists.
@@ -40,6 +44,34 @@ import ca.uqac.lif.petitpoucet.Connectable;
  */
 public abstract class Lists
 {
+	protected static abstract class LazyAllElementsVertex extends LazyVertex
+	{
+		public LazyAllElementsVertex(VertexFactory f, Part p, int options)
+		{
+			super(f, p, options);
+		}
+
+		@Override
+		public Vertex concretize(Part p, int options) throws ExplanationException
+		{
+			if (getArity() == 1)
+			{
+				return m_factory.getPart(compose(new NthElement(0), InputPart.FIRST), getInstance());
+			}
+			AndVertex a = m_factory.getAnd();
+			for (int i = 0; i < getArity(); i++)
+			{
+				a.addChild(m_factory.getPart(compose(new NthElement(i), InputPart.FIRST), getInstance()));
+			}
+			return a;
+		}
+
+		protected abstract Node getInstance();
+
+		protected abstract int getArity();
+
+	}
+
 	/**
 	 * Extracts an element at a given index from a list.
 	 */
@@ -86,14 +118,70 @@ public abstract class Lists
 			return "\u2208@(" + m_index + ")";
 		}
 	}
-	
+
+	public static class SumAll extends Node
+	{
+		public SumAll()
+		{
+			super(1, 1);
+		}
+
+		@Override
+		public SumAll duplicate(boolean with_state)
+		{
+			return new SumAll();
+		}
+
+		@Override
+		public AbstractVertex explain(int index, Part p, VertexFactory f, int options)
+		{
+			return new LazySumAllVertex(f, p, options);
+		}
+
+		protected class LazySumAllVertex extends LazyAllElementsVertex
+		{
+			public LazySumAllVertex(VertexFactory f, Part p, int options)
+			{
+				super(f, p, options);
+			}
+
+			@Override
+			protected Node getInstance()
+			{
+				return SumAll.this;
+			}
+
+			@Override
+			protected int getArity()
+			{
+				return getInputArity();
+			}
+		}
+
+		@Override
+		protected void evaluate(Object[] input, Object[] output)
+		{
+			List<?> ins = (List<?>) input[0];
+			float t = 0;
+			for (Object o : ins)
+			{
+				if (!(o instanceof Number))
+				{
+					throw new IllegalArgumentException("Expected a number");
+				}
+				t += ((Number) o).floatValue();
+			}
+			output[0] = t;
+		}
+	}
+
 	public static class Window extends ParameterizedNode
 	{
 		/**
 		 * The width on which to apply the window
 		 */
 		protected final int m_width;
-		
+
 		/**
 		 * Creates a new instance of the function.
 		 * @param width The width of the window
@@ -129,7 +217,7 @@ public abstract class Lists
 			}
 			output[0] = out_list;
 		}
-		
+
 		@Override
 		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
 		{
@@ -141,20 +229,20 @@ public abstract class Lists
 		{
 			return "\u03c9";
 		}
-		
+
 		protected class WindowLazyVertex extends ParameterLazyVertex
-		{
+		{ 
 			public WindowLazyVertex(VertexFactory f, Part p, int options)
 			{
 				super(f, p, options);
 			}
-			
+
 			@Override
 			public Node getInstance()
 			{
 				return Window.this;
 			}
-			
+
 			@Override
 			public Vertex concretize(Part p, int options) throws ExplanationException
 			{
@@ -165,9 +253,9 @@ public abstract class Lists
 				}
 				return AbstractVertex.get(Window.super.explain(0, p, m_factory, options));
 			}
-			
+
 			@Override
-			protected Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph add_to, Vertex inner)
+			protected Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner)
 			{
 				for (int i = 0; i < children.size(); i++)
 				{
@@ -183,22 +271,10 @@ public abstract class Lists
 					{
 						continue;
 					}
-					Part new_part = compose(tail(p), new NthElement(index + i), new InputPart(0));
-					if (add_to == null)
-					{
-						child.addChild(m_factory.getPart(new_part, getInstance()));
-					}
-					else
-					{
-						add_to.addChild(m_factory.getPart(new_part, getInstance()), i);
-					}
+					Part new_part = compose(tail(p), new NthElement(index + i), InputPart.FIRST);
+					inner.addChild(m_factory.getPart(new_part, getInstance()), child);
 				}
-				Vertex root = m_factory.getPart(compose(new_p, new OutputPart(0)), m_f);
-				if (inner instanceof Subgraph)
-				{
-					((Subgraph) inner).pushRoot(root);
-					return inner;
-				}
+				Vertex root = m_factory.getPart(compose(new_p, OutputPart.FIRST), m_f);
 				root.addChild(inner);
 				return root;
 			}
@@ -265,26 +341,29 @@ public abstract class Lists
 			{
 				super(f, p, options);
 			}
-			
+
 			@Override
 			public Node getInstance()
 			{
 				return Apply.this;
 			}
-			
+
 			@Override
 			public Vertex concretize(Part p, int options) throws ExplanationException
 			{
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
 				{
-					return explainElement(((NthElement) t_head).getIndex(), tail(p));
+					Vertex root = m_factory.getPart(CompositePart.compose(p, OutputPart.FIRST), Apply.this);
+					Vertex child = explainElement(((NthElement) t_head).getIndex(), tail(p));
+					root.addChild(child);
+					return root;
 				}
 				return AbstractVertex.get(Apply.super.explain(0, p, m_factory, options));
 			}
 
 			@Override
-			protected Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph add_to, Vertex inner)
+			protected Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner)
 			{
 				for (int i = 0; i < children.size(); i++)
 				{
@@ -300,24 +379,17 @@ public abstract class Lists
 					{
 						continue;
 					}
-					Part new_part = compose(tail(p), new NthElement(index), new InputPart(0));
-					if (add_to == null)
+					Part new_part = compose(tail(p), new NthElement(index), InputPart.FIRST);
+					if (inner == null)
 					{
-						child.addChild(m_factory.getPart(new_part, getInstance()));
+						child.addChild(m_factory.getPart(new_part, Apply.this));
 					}
 					else
 					{
-						add_to.addChild(m_factory.getPart(new_part, getInstance()), i);
+						inner.addChild(m_factory.getPart(new_part, Apply.this), child);
 					}
 				}
-				Vertex root = m_factory.getPart(compose(new_p, new OutputPart(0)), m_f);
-				if (inner instanceof Subgraph)
-				{
-					((Subgraph) inner).pushRoot(root);
-					return inner;
-				}
-				root.addChild(inner);
-				return root;
+				return inner;
 			}
 		}
 	}

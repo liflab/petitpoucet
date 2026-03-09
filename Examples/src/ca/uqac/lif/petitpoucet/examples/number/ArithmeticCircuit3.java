@@ -74,7 +74,7 @@ public class ArithmeticCircuit3
 		c.associateOutput(0, m, 0);
 		Number result = (Number) c.evaluate(2, -2, 0);
 		System.out.println(result);
-		AbstractVertex full_graph = c.explain(new OutputPart(0));
+		AbstractVertex full_graph = c.explain(OutputPart.FIRST);
 		display(full_graph);
 	}
 

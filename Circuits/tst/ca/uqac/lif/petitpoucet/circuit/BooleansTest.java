@@ -30,6 +30,7 @@ import static ca.uqac.lif.petitpoucet.Vertex.tree;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Vertex;
@@ -53,7 +54,7 @@ public class BooleansTest
 		Object o = f.compute();
 		assertEquals(false, o);
 	}
-	
+
 	@Test
 	public void testAnd2()
 	{
@@ -64,7 +65,7 @@ public class BooleansTest
 		Object o = f.compute();
 		assertEquals(true, o);
 	}
-	
+
 	@Test
 	public void testAnd3() throws ExplanationException
 	{
@@ -73,12 +74,14 @@ public class BooleansTest
 		Connectable.connect(new Constant(true), 0, f, 0);
 		Connectable.connect(new Constant(true), 0, f, 1);
 		f.compute();
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, and(
-				factory.getPart(new Connectable.InputPart(0), f),
-				factory.getPart(new Connectable.InputPart(1), f)));
+		AbstractVertex e = f.explain(OutputPart.FIRST);
+		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f),
+				and(
+						factory.getPart(new Connectable.InputPart(0), f),
+						factory.getPart(new Connectable.InputPart(1), f)))
+				);
 	}
-	
+
 	@Test
 	public void testAnd4() throws ExplanationException
 	{
@@ -90,7 +93,7 @@ public class BooleansTest
 		AbstractVertex e = f.explain(new Connectable.OutputPart(0), Explainable.CUT);
 		assertEqualGraphs(e, factory.getPart(new Connectable.InputPart(0), f));
 	}
-	
+
 	@Test
 	public void testOr1()
 	{
@@ -101,7 +104,7 @@ public class BooleansTest
 		Object o = f.compute();
 		assertEquals(true, o);
 	}
-	
+
 	@Test
 	public void testOr2()
 	{
@@ -112,7 +115,7 @@ public class BooleansTest
 		Object o = f.compute();
 		assertEquals(false, o);
 	}
-	
+
 	@Test
 	public void testOr3() throws ExplanationException
 	{
@@ -126,7 +129,7 @@ public class BooleansTest
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(1), f)));
 	}
-	
+
 	@Test
 	public void testOr4() throws ExplanationException
 	{

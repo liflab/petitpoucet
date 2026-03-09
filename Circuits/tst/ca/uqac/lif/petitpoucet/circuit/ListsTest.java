@@ -65,8 +65,8 @@ public class ListsTest
 		ElementAt f = new ElementAt(0);
 		Connectable.connect(new Constant(Arrays.asList("a", "b", "c")), 0, f, 0);
 		f.compute();
-		AbstractVertex e = f.explain(new OutputPart(0));
-		assertEqualGraphs(e, tree(factory.getPart(new CompositePart(new NthElement(0), new InputPart(0)), f)));
+		AbstractVertex e = f.explain(OutputPart.FIRST);
+		assertEqualGraphs(e, tree(factory.getPart(new CompositePart(new NthElement(0), InputPart.FIRST), f)));
 	}
 	
 	@Test
@@ -87,15 +87,22 @@ public class ListsTest
 		Apply f = new Apply(d);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
-		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), new OutputPart(0)));
+		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
 		Vertex c_e = AbstractVertex.get(e);
+		assertNotNull(c_e);
+		System.out.println("Received:");
+		c_e.render(System.out);
 		factory.clear();
 		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(new OutputPart(0), d),
-				subf.getPart(new InputPart(0), d));
+		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
+				subf.getPart(InputPart.FIRST, d));
 		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), new InputPart(0)), f), 0);
-		assertEqualGraphs(c_e, sg);
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
+		Vertex expected = tree(factory.getPart(OutputPart.FIRST, f), sg);
+		System.out.println("Expected:");
+		Vertex expected_root = tree(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), expected);
+		expected_root.render(System.out);
+		assertEqualGraphs(expected_root, c_e);
 	}
 	
 	@Test
@@ -106,10 +113,10 @@ public class ListsTest
 		Apply f = new Apply(d);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
-		AbstractVertex e = f.explain(new OutputPart(0));
+		AbstractVertex e = f.explain(OutputPart.FIRST);
 		Vertex c_e = AbstractVertex.get(e);
 		factory.clear();
-		assertEqualGraphs(c_e, Vertex.tree(factory.getPart(new InputPart(0), f)));
+		assertEqualGraphs(c_e, Vertex.tree(factory.getPart(InputPart.FIRST, f)));
 	}
 	
 	@Test
@@ -120,14 +127,15 @@ public class ListsTest
 		Apply f = new Apply(d);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
-		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(10), new NthElement(1), new OutputPart(0)));
+		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(10), new NthElement(1), OutputPart.FIRST));
 		Vertex c_e = AbstractVertex.get(e);
 		factory.clear();
 		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(CompositePart.compose(new NthElement(10), new OutputPart(0)), d),
-				subf.getPart(CompositePart.compose(new NthElement(10), new InputPart(0)), d));
+		Vertex.tree(subf.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), d),
+				subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
 		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(10), new NthElement(1), new InputPart(0)), f), 0);
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(10), new NthElement(1), InputPart.FIRST), f),
+				subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
 		assertEqualGraphs(c_e, sg);
 	}
 	
@@ -149,20 +157,20 @@ public class ListsTest
 		Window f = new Window(3, d);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3, 4)), 0, f, 0);
 		f.compute();
-		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), new OutputPart(0)));
+		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
 		Vertex c_e = AbstractVertex.get(e);
 		c_e.render(System.out);
 		factory.clear();
 		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(new OutputPart(0), d),
+		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
 				Vertex.and(
-						subf.getPart(new InputPart(0), d),
-						subf.getPart(new InputPart(1), d),
-						subf.getPart(new InputPart(2), d)));
+						subf.getPart(InputPart.FIRST, d),
+						subf.getPart(InputPart.SECOND, d),
+						subf.getPart(InputPart.THIRD, d)));
 		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), new InputPart(0)), f), 0);
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(2), new InputPart(0)), f), 1);
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(3), new InputPart(0)), f), 2);
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(2), InputPart.FIRST), f), subf.getPart(InputPart.SECOND, d));
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(3), InputPart.FIRST), f), subf.getPart(InputPart.THIRD, d));
 		sg.render(System.out);
 		assertEqualGraphs(c_e, sg);
 	}
@@ -175,19 +183,19 @@ public class ListsTest
 		Window f = new Window(3, d);
 		Connectable.connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
 		f.compute();
-		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), new OutputPart(0)));
+		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
 		Vertex c_e = AbstractVertex.get(e);
 		factory.clear();
 		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(new OutputPart(0), d),
+		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
 				Vertex.or(
-						subf.getPart(new InputPart(0), d),
-						subf.getPart(new InputPart(1), d),
-						subf.getPart(new InputPart(2), d)));
+						subf.getPart(InputPart.FIRST, d),
+						subf.getPart(InputPart.SECOND, d),
+						subf.getPart(InputPart.THIRD, d)));
 		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), new InputPart(0)), f), 0);
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(2), new InputPart(0)), f), 1);
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(3), new InputPart(0)), f), 2);
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(2), InputPart.FIRST), f), subf.getPart(InputPart.SECOND, d));
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(3), InputPart.FIRST), f), subf.getPart(InputPart.THIRD, d));
 		assertEqualGraphs(c_e, sg);
 	}
 	
@@ -199,14 +207,14 @@ public class ListsTest
 		Window f = new Window(3, d);
 		Connectable.connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
 		f.compute();
-		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), new OutputPart(0)), Explainable.CUT);
+		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST), Explainable.CUT);
 		Vertex c_e = AbstractVertex.get(e);
 		factory.clear();
 		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(new OutputPart(0), d),
-						subf.getPart(new InputPart(0), d));
+		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
+						subf.getPart(InputPart.FIRST, d));
 		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), new InputPart(0)), f), 0);
+		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
 		assertEqualGraphs(c_e, sg);
 	}
 	

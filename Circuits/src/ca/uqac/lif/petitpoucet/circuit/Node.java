@@ -23,13 +23,13 @@ import static ca.uqac.lif.petitpoucet.CompositePart.head;
 import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
 import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Duplicable;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 
 /**
@@ -47,19 +47,19 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	 * arity of the node.
 	 */
 	/*@ non_null @*/ protected final UpstreamConnection[] m_ins;
-	
+
 	/**
 	 * The connections to the downstream nodes. The length of this array is the output
 	 * arity of the node.
 	 */
 	/*@ non_null @*/ protected final DownstreamConnection[] m_outs;
-	
+
 	/**
 	 * The cached output values. This is set to null when the node is reset, and
 	 * recomputed when the node is computed again.
 	 */
 	/*@ null @*/ protected Object[] m_outputArguments;
-	
+
 	/**
 	 * Creates a new node with the given input and output arities.
 	 * @param in_arity The input arity of the node
@@ -72,7 +72,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		m_outs = new DownstreamConnection[out_arity];
 		m_outputArguments = null;
 	}
-	
+
 	@Override
 	public Object compute(int index)
 	{
@@ -89,25 +89,25 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 		return m_outputArguments[index];
 	}
-	
+
 	public Object evaluate(Object ... inputs)
 	{
 		for (int i = 0; i < inputs.length; i++)
 		{
-			Connectable.connect(new Constant(inputs[i]), 0, this, i);
+			Connectable.connect(new Argument(inputs[i], i), 0, this, i);
 		}
 		return compute();
 	}
-	
+
 	@Override
 	public Node duplicate()
 	{
 		return duplicate(false);
 	}
-	
+
 	@Override
 	public abstract Node duplicate(boolean with_state);
-	
+
 	/**
 	 * Evaluates the node's output values from its input values. This method is called
 	 * when the node is computed for the first time after a reset. The input values are
@@ -118,13 +118,13 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	 * This array is pre-allocated and must be filled by this method.
 	 */
 	protected abstract void evaluate(/*@ non_null @*/ Object[] input, /*@ non_null @*/ Object[] output);
-	
+
 	@Override
 	public void reset()
 	{
 		m_outputArguments = null;
 	}
-	
+
 	@Override
 	public int getInputArity()
 	{
@@ -168,7 +168,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 		m_outs[i] = new DownstreamConnection((Node) c, j);
 	}
-	
+
 	@Override
 	public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException
 	{
@@ -176,7 +176,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		int index = checkHead(p);
 		return explain(index, p_tail, f, options);
 	}
-	
+
 	/**
 	 * Checks that the head of the part is an output part with a valid index,
 	 * and returns the index of the output part.
@@ -199,7 +199,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 		return op.getIndex();
 	}
-	
+
 	/**
 	 * Explains the output of this node at the given index, given the tail of
 	 * the part. The default implementation is to create an AND vertex with one
@@ -217,13 +217,13 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	{
 		return new NodeLazyVertex(f, tail, options);
 	}
-	
+
 	@Override
 	public void hint(Part p)
 	{
 		// By default, do nothing
 	}
-	
+
 	public class NodeLazyVertex extends LazyVertex
 	{
 		public NodeLazyVertex(VertexFactory f, Part p, int options)
@@ -234,21 +234,65 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		@Override
 		public Vertex concretize(Part part, int options)
 		{
+			Vertex inside;
 			if (getInputArity() == 1)
 			{
-				Part in_p = compose(part, new InputPart(0));
-				return m_factory.getPart(in_p, Node.this);
+				Vertex root = m_factory.getPart(compose(tail(part), OutputPart.FIRST), Node.this);
+				Part in_p = compose(part, InputPart.FIRST);
+				Vertex child = m_factory.getPart(in_p, Node.this);
+				root.addChild(child);
+				return root;
 			}
-			AndVertex a = m_factory.getAnd();
-			for (int i = 0; i < getInputArity(); i++)
+			else
 			{
-				Part in_p = compose(part, new InputPart(i));
-				a.addChild(m_factory.getPart(in_p, Node.this));
+				inside = m_factory.getAnd();
+				for (int i = 0; i < getInputArity(); i++)
+				{
+					Part in_p = compose(part, new InputPart(i));
+					inside.addChild(m_factory.getPart(in_p, Node.this));
+				}
 			}
-			return a;
+			Vertex root = m_factory.getPart(CompositePart.compose(part, InputPart.FIRST), Node.this);
+			root.addChild(inside);
+			return root;
 		}
 	}
-	
+
+	public static class Argument extends Constant
+	{
+		protected final int m_index;
+
+		public Argument(Object o, int index)
+		{
+			super(o);
+			m_index = index;
+		}
+
+		/*@ pure @*/ public int getIndex()
+		{
+			return m_index;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return m_value.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			return o instanceof Argument && ((Argument) o).m_value.equals(m_value);
+		}
+
+		@Override
+		public String toString()
+		{
+			return "'" + m_value.toString();
+		}
+
+	}
+
 	/**
 	 * A connection to an upstream node.
 	 */
@@ -263,19 +307,19 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		{
 			super(c, i);
 		}
-		
+
 		@Override
 		public Node getObject()
 		{
 			return (Node) m_connectable;
 		}
-		
+
 		@Override
 		public int hashCode()
 		{
 			return m_index;
 		}
-		
+
 		@Override
 		public boolean equals(Object o)
 		{
@@ -283,8 +327,14 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 					((UpstreamConnection) o).m_connectable.equals(m_connectable) &&
 					((UpstreamConnection) o).m_index == m_index;
 		}
+
+		@Override
+		public String toString()
+		{
+			return "\u2192" + m_index + m_connectable.toString();
+		}
 	}
-	
+
 	/**
 	 * A connection to an downstream node.
 	 */
@@ -299,25 +349,31 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		{
 			super(c, i);
 		}
-		
+
 		@Override
 		public Node getObject()
 		{
 			return (Node) m_connectable;
 		}
-		
+
 		@Override
 		public int hashCode()
 		{
 			return m_index;
 		}
-		
+
 		@Override
 		public boolean equals(Object o)
 		{
 			return o instanceof DownstreamConnection &&
 					((DownstreamConnection) o).m_connectable.equals(m_connectable) &&
 					((DownstreamConnection) o).m_index == m_index;
+		}
+
+		@Override
+		public String toString()
+		{
+			return m_connectable.toString() + m_index + "\u2192";
 		}
 	}
 }

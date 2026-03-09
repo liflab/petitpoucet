@@ -138,6 +138,21 @@ public interface Connectable
 	public static class InputPart implements Part
 	{
 		/**
+		 * An instance of the input part with index 0.
+		 */
+		public static final InputPart FIRST = new InputPart(0);
+		
+		/**
+		 * An instance of the input part with index 1.
+		 */
+		public static final InputPart SECOND  = new InputPart(1);
+		
+		/**
+		 * An instance of the input part with index 2.
+		 */
+		public static final InputPart THIRD = new InputPart(2);
+		
+		/**
 		 * The index of the input port.
 		 */
 		protected final int m_index;
@@ -180,7 +195,7 @@ public interface Connectable
 		@Override
 		public String toString()
 		{
-			return "i" + m_index;
+			return "?" + m_index;
 		}
 		
 		@Override
@@ -196,6 +211,21 @@ public interface Connectable
 	 */
 	public static class OutputPart implements Part
 	{
+		/**
+		 * An instance of the output part with index 0.
+		 */
+		public static final OutputPart FIRST = new OutputPart(0);
+		
+		/**
+		 * An instance of the output part with index 1.
+		 */
+		public static final OutputPart SECOND  = new OutputPart(1);
+		
+		/**
+		 * An instance of the output part with index 2.
+		 */
+		public static final OutputPart THIRD = new OutputPart(2);
+		
 		/**
 		 * The index of the output port.
 		 */
@@ -239,7 +269,7 @@ public interface Connectable
 		@Override
 		public String toString()
 		{
-			return "o" + m_index;
+			return "!" + m_index;
 		}
 		
 		@Override

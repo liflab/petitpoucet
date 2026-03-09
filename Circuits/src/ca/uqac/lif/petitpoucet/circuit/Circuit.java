@@ -83,7 +83,7 @@ public class Circuit extends Node
 	 */
 	public Circuit(int in_arity, int out_arity)
 	{
-		this(in_arity, out_arity, "Circuit");
+		this(in_arity, out_arity, null);
 	}
 
 	/**
@@ -140,6 +140,20 @@ public class Circuit extends Node
 		{
 			m_nodes.add(n);
 		}
+	}
+
+	public int getInputIndex(Object target, int index)
+	{
+		for (int i = 0; i < m_inputAssociations.length; i++)
+		{
+			UpstreamConnection c = m_inputAssociations[i];
+			Node n = c.getObject();
+			if (n.equals(target) && c.getIndex() == index)
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	@Override
@@ -200,7 +214,7 @@ public class Circuit extends Node
 		{
 			UpstreamConnection c = m_inputAssociations[i]; 
 			Node n = c.getObject();
-			Connectable.connect(new Constant(input[i]), 0, n, c.getIndex());
+			Connectable.connect(new Argument(input[i], i), 0, n, c.getIndex());
 		}
 		// Step 2: trigger evaluation and fetch outputs
 		for (int i = 0; i < output.length; i++)
@@ -220,7 +234,7 @@ public class Circuit extends Node
 	protected class CircuitLazyVertex extends LazyVertex
 	{
 		protected final int m_index;
-		
+
 		protected final int m_options;
 
 		public CircuitLazyVertex(VertexFactory f, Part p, int index, int options)
@@ -231,105 +245,94 @@ public class Circuit extends Node
 		}
 
 		@Override
-		public Vertex concretize(Part part, int options)
+		public Vertex concretize(Part part, int options) throws ExplanationException
 		{
 			VertexFactory subf = m_factory.subfactory(this);
 			DownstreamConnection c = m_outputAssociations[m_index];
 			Node n = c.getObject();
 			int n_index = c.getIndex();
 			Part start = CompositePart.compose(part, new OutputPart(n_index));
-			try
-			{
-				propagateExplanation(n, start, subf);
-			}
-			catch (ExplanationException e)
-			{
-				return null;
-			}
+			propagateExplanation(n, start, subf);
 			Subgraph sg = subf.subgraph();
-			extendLeaves(sg, m_factory);
+			extendLeaves(sg);
 			Vertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
 			root.addChild(sg);
 			return root;
 		}
-	}
 
-	protected void extendLeaves(Subgraph v, VertexFactory f)
-	{
-		List<Vertex> leaves = v.findLeaves();
-		for (int j = 0; j < leaves.size(); j++)
+		protected void extendLeaves(Subgraph sg) throws ExplanationException
 		{
-			Vertex leaf = leaves.get(j);
-			if (!(leaf instanceof PartVertex))
+			for (Vertex leaf : sg.innerLeaves())
 			{
-				continue;
+				Part p = isLeafToExtend(leaf);
+				if (p == null)
+					continue;
+				int i = getInputIndex(((PartVertex) leaf).getSubject(), ((InputPart) head(p)).getIndex());
+				if (i < 0)
+				{
+					throw new ExplanationException("Leaf not found");
+				}
+				PartVertex pv = m_factory.getPart(CompositePart.compose(tail(p), new InputPart(i)), Circuit.this);
+				sg.addChild(pv, leaf);
 			}
-			PartVertex pv = (PartVertex) leaf;
+		}
+
+		protected static Part isLeafToExtend(Vertex v)
+		{
+			if (!(v instanceof PartVertex))
+			{
+				return null;
+			}
+			PartVertex pv = (PartVertex) v;
 			Part head = head(pv.getPart());
 			if (!(head instanceof InputPart))
 			{
-				continue;
+				return null;
 			}
-			InputPart ip = (InputPart) head;
-			Object o = pv.getSubject();
-			if (!m_nodes.contains(o))
+			return pv.getPart();
+		}
+
+		protected Vertex propagateExplanation(Node n, Part p, VertexFactory f) throws ExplanationException
+		{
+			if (!(head(p) instanceof OutputPart))
 			{
-				continue;
+				throw new ExplanationException("Expected an output part");
 			}
-			Node subject = (Node) o;
-			for (int i = 0; i < m_inputAssociations.length; i++)
+			
+			Vertex explanation = AbstractVertex.get(n.explain(p, f));
+			Vertex root = explanation;
+			List<Vertex> leaves = explanation.findLeaves();
+			for (Vertex leaf : leaves)
 			{
-				UpstreamConnection conn = m_inputAssociations[i];
-				if (conn.getObject() == subject && conn.getIndex() == ip.getIndex())
+				if (!(leaf instanceof PartVertex))
 				{
-					Part out_part = CompositePart.compose(tail(pv.getPart()), new InputPart(i));
-					v.addChild(f.getPart(out_part, this), j);
+					continue;
+				}
+				PartVertex pv = (PartVertex) leaf;
+				Part n_p = head(pv.getPart());
+				if (!(n_p instanceof InputPart))
+				{
+					continue;
+				}
+				InputPart ip = (InputPart) n_p;
+				UpstreamConnection c = n.getUpstream(ip.getIndex());
+				Part out_part = CompositePart.compose(tail(pv.getPart()), new OutputPart(c.getIndex()));
+				Node c_o = c.getObject();
+				if (f.contains(out_part, c_o))
+				{
+					Vertex to_attach = f.getPart(out_part, c.getObject());
+					leaf.addChild(to_attach);
+					continue;
+				}
+				else if (m_nodes.contains(c_o))
+				{
+					Vertex to_attach = propagateExplanation(c_o, out_part, f);
+					leaf.addChild(to_attach);
 				}
 			}
+			return root;
 		}
 	}
-
-	protected Vertex propagateExplanation(Node n, Part p, VertexFactory f) throws ExplanationException
-	{
-		if (!(head(p) instanceof OutputPart))
-		{
-			throw new ExplanationException("Expected an output part");
-		}
-		Vertex root = f.getPart(p, n);
-		Vertex explanation = AbstractVertex.get(n.explain(p, f));
-		root.addChild(explanation);
-		List<Vertex> leaves = explanation.findLeaves();
-		for (Vertex leaf : leaves)
-		{
-			if (!(leaf instanceof PartVertex))
-			{
-				continue;
-			}
-			PartVertex pv = (PartVertex) leaf;
-			Part n_p = head(pv.getPart());
-			if (!(n_p instanceof InputPart))
-			{
-				continue;
-			}
-			InputPart ip = (InputPart) n_p;
-			UpstreamConnection c = n.getUpstream(ip.getIndex());
-			Part out_part = CompositePart.compose(tail(pv.getPart()), new OutputPart(c.getIndex()));
-			if (f.contains(out_part, c.getObject()))
-			{
-				Vertex to_attach = f.getPart(out_part, c.getObject());
-				leaf.addChild(to_attach);
-				continue;
-			}
-			else if (m_nodes.contains(c.getObject()))
-			{
-				Vertex to_attach = propagateExplanation(c.getObject(), out_part, f);
-				leaf.addChild(to_attach);
-			}
-		}
-		return root;
-
-	}
-
 	@Override
 	public void reset()
 	{
@@ -343,6 +346,6 @@ public class Circuit extends Node
 	@Override
 	/*@ pure non_null @*/ public String toString()
 	{
-		return m_name;
-	}
+		return m_name == null ? "Circuit" : m_name;
+	}	
 }

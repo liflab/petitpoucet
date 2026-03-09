@@ -32,7 +32,7 @@ import ca.uqac.lif.petitpoucet.VertexFactory;
  * Utility class providing basic arithmetic operations.
  * @author Sylvain Hallé
  */
-public abstract class Numbers extends Node
+public abstract class Numbers<T> extends Node
 {
 	/**
 	 * Creates a new instance of the class.
@@ -56,7 +56,7 @@ public abstract class Numbers extends Node
 			}
 			operands[i] = ((Number) o).floatValue();
 		}
-		float v = evaluate(operands);
+		T v = evaluate(operands);
 		output[0] = v;
 	}
 
@@ -66,12 +66,38 @@ public abstract class Numbers extends Node
 	 * @param operands The operands
 	 * @return The return value
 	 */
-	protected abstract float evaluate(float[] operands);
+	protected abstract T evaluate(float[] operands);
+	
+	public static class IsGreaterThan extends Numbers<Boolean>
+	{
+		public IsGreaterThan()
+		{
+			super(2);
+		}
+
+		@Override
+		protected Boolean evaluate(float[] operands)
+		{
+			return operands[0] > operands[1];
+		}
+
+		@Override
+		public IsGreaterThan duplicate(boolean with_state)
+		{
+			return new IsGreaterThan();
+		}
+		
+		@Override
+		public String toString()
+		{
+			return ">";
+		}
+	}
 
 	/**
 	 * Implementation of addition on floating point numbers.
 	 */
-	public static class Addition extends Numbers
+	public static class Addition extends Numbers<Float>
 	{
 		/**
 		 * Creates a new instance of the function.
@@ -83,7 +109,7 @@ public abstract class Numbers extends Node
 		}
 
 		@Override
-		protected float evaluate(float[] operands)
+		protected Float evaluate(float[] operands)
 		{
 			float t = 0;
 			for (float x : operands)
@@ -109,7 +135,7 @@ public abstract class Numbers extends Node
 	/**
 	 * Implementation of multiplication on floating point numbers.
 	 */
-	public static class Multiplication extends Numbers
+	public static class Multiplication extends Numbers<Float>
 	{
 		/**
 		 * The list of indices in the arguments where the value is 0.
@@ -128,7 +154,7 @@ public abstract class Numbers extends Node
 		}
 
 		@Override
-		protected float evaluate(float[] operands)
+		protected Float evaluate(float[] operands)
 		{
 			float t = 1;
 			for (int i = 0; i < operands.length; i++)
@@ -190,21 +216,25 @@ public abstract class Numbers extends Node
 			@Override
 			public Vertex concretize(Part part, int options)
 			{
+				Vertex root = m_factory.getPart(OutputPart.FIRST, Multiplication.this);
 				if (m_zeros.length == 1 || Explainable.shouldCut(options))
 				{
-					return m_factory.getPart(new InputPart(m_zeros[0]), Multiplication.this);
+					Vertex child = m_factory.getPart(new InputPart(m_zeros[0]), Multiplication.this);
+					root.addChild(child);
+					return root;
 				}
 				Vertex o = m_factory.getOr();
 				for (int z : m_zeros)
 				{
 					o.addChild(m_factory.getPart(new InputPart(z), Multiplication.this));
 				}
-				return o;
+				root.addChild(o);
+				return root;
 			}
 		}
 	}
 	
-	public static class Double extends Numbers
+	public static class Double extends Numbers<Float>
 	{
 		public Double()
 		{
@@ -218,7 +248,7 @@ public abstract class Numbers extends Node
 		}
 
 		@Override
-		protected float evaluate(float[] operands)
+		protected Float evaluate(float[] operands)
 		{
 			return operands[0] * 2;
 		}

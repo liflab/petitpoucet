@@ -34,6 +34,7 @@ import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 
 /**
@@ -64,10 +65,10 @@ public class NumbersTest
 		float v = (Float) f.compute(0);
 		assertEquals(24, v, 0.01);
 		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, and(
+		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f), and(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(1), f),
-				factory.getPart(new Connectable.InputPart(2), f)));
+				factory.getPart(new Connectable.InputPart(2), f))));
 	}
 
 	@Test
@@ -81,7 +82,7 @@ public class NumbersTest
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
 		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, tree(factory.getPart(new Connectable.InputPart(1), f)));
+		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f), tree(factory.getPart(new Connectable.InputPart(1), f))));
 	}
 
 	@Test
@@ -95,10 +96,10 @@ public class NumbersTest
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
 		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, tree(or(
+		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f), tree(or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(2), f)
-				)));
+				))));
 	}
 	
 	@Test
@@ -113,6 +114,6 @@ public class NumbersTest
 		assertEquals(0, v, 0.01);
 		AbstractVertex e = f.explain(new Connectable.OutputPart(0), Explainable.CUT);
 		assertEqualGraphs(e, 
-				factory.getPart(new Connectable.InputPart(0), f));
+				tree(factory.getPart(OutputPart.FIRST, f), factory.getPart(new Connectable.InputPart(0), f)));
 	}
 }

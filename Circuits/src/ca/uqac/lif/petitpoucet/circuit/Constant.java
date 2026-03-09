@@ -61,6 +61,18 @@ public class Constant extends Node
 		return new Constant(m_value);
 	}
 	
+	@Override
+	public int hashCode()
+	{
+		return m_value.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		return o instanceof Constant && ((Constant) o).m_value.equals(m_value);
+	}
+	
 	/**
 	 * A part that represents the value of a constant node.
 	 */

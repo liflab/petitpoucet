@@ -125,6 +125,25 @@ public class CircuitTest
 		float v = (Float) circ2.compute(0);
 		assertEquals(25, v, 0.1);
 	}
+	
+	@Test
+	public void test4() throws ExplanationException
+	{
+		Circuit in = new Circuit(1, 1, "in");
+		Numbers.Double d = new Numbers.Double();
+		in.add(d);
+		in.associateInput(0, d, 0);
+		in.associateOutput(0, d, 0);
+		Circuit out = new Circuit(1, 1, "out");
+		out.add(in);
+		out.associateInput(0, in, 0);
+		out.associateOutput(0, in, 0);
+		Object o = out.evaluate(2);
+		assertEquals(4f, o);
+		AbstractVertex e = out.explain(OutputPart.FIRST);
+		Vertex e_c = AbstractVertex.get(e);
+		e_c.render(System.out);
+	}
 
 	@Test
 	public void testExplain1() throws ExplanationException
@@ -141,19 +160,24 @@ public class CircuitTest
 		Object o = circ.compute();
 		assertEquals(5f, o);
 		AbstractVertex e = circ.explain(new Connectable.OutputPart(0));
+		factory.clear();
 		Vertex expected_inside = 
-				tree(factory.getPart(new OutputPart(0), add),
+				tree(factory.getPart(OutputPart.FIRST, add),
 						tree(factory.getAnd(),
-								factory.getPart(new InputPart(0), add),	
-								factory.getPart(new InputPart(1), add)	
+								factory.getPart(InputPart.FIRST, add),	
+								factory.getPart(InputPart.SECOND, add)
 								));
 		Subgraph sg = factory.subgraph();
-		Vertex root = factory.getPart(new OutputPart(0), circ);
+		Vertex root = factory.getPart(OutputPart.FIRST, circ);
 		root.addChild(sg);
-		sg.addChild(factory.getPart(new InputPart(0), circ), 0);
-		sg.addChild(factory.getPart(new InputPart(1), circ), 1);
+		
+		sg.addChild(factory.getPart(InputPart.FIRST, circ), factory.getPart(InputPart.FIRST, add));
+		sg.addChild(factory.getPart(InputPart.SECOND, circ), factory.getPart(InputPart.SECOND, add));
 		root.render(System.out);
-		assertEqualGraphs(e, root);
+		Vertex e_c = AbstractVertex.get(e);
+		assertNotNull(e_c);
+		e_c.render(System.out);
+		assertEqualGraphs(e_c, root);
 	}
 
 	@Test
@@ -161,24 +185,26 @@ public class CircuitTest
 	{
 		VertexFactory factory = new VertexFactory(); 
 		Circuit circ = new Circuit(2, 1);
-		Numbers.Multiplication add = new Numbers.Multiplication(2);
-		circ.add(add);
-		circ.associateInput(0, add, 0);
-		circ.associateInput(1, add, 1);
-		circ.associateOutput(0, add, 0);
+		Numbers.Multiplication mul = new Numbers.Multiplication(2);
+		circ.add(mul);
+		circ.associateInput(0, mul, 0);
+		circ.associateInput(1, mul, 1);
+		circ.associateOutput(0, mul, 0);
 		Connectable.connect(new Constant(0), 0, circ, 0);
 		Connectable.connect(new Constant(3), 0, circ, 1);
 		Object o = circ.compute();
 		assertEquals(0f, o);
 		AbstractVertex e = circ.explain(new Connectable.OutputPart(0));
-		//e.print(System.out);
-		Vertex expected = tree(factory.getPart(new OutputPart(0), add),
-				factory.getPart(new InputPart(0), add));
+		Vertex e_c = AbstractVertex.get(e);
+		e_c.render(System.out);
+		factory.clear();
+		Vertex expected = tree(factory.getPart(OutputPart.FIRST, mul),
+				factory.getPart(InputPart.FIRST, mul));
 		Subgraph sg = factory.subgraph();
-		Vertex root = factory.getPart(new OutputPart(0), circ);
+		Vertex root = factory.getPart(OutputPart.FIRST, circ);
 		root.addChild(sg);
-		sg.addChild(factory.getPart(new InputPart(0), circ), 0);
-		assertEqualGraphs(e, root);
+		sg.addChild(factory.getPart(InputPart.FIRST, circ), factory.getPart(InputPart.FIRST, mul));
+		assertEqualGraphs(root, e_c);
 	}
 
 	@Test
@@ -199,22 +225,22 @@ public class CircuitTest
 		Connectable.connect(new Constant(4), 0, circ, 2);
 		Object o = circ.compute();
 		assertEquals(20f, o);
-		AbstractVertex e = circ.explain(new OutputPart(0));
+		AbstractVertex e = circ.explain(OutputPart.FIRST);
 		//e.print(System.out);
-		Vertex expected = tree(factory.getPart(new OutputPart(0), mul),
+		Vertex expected = tree(factory.getPart(OutputPart.FIRST, mul),
 				tree(factory.getAnd(),
-						tree(factory.getPart(new InputPart(0), mul),
-								tree(factory.getPart(new OutputPart(0), add),
+						tree(factory.getPart(InputPart.FIRST, mul),
+								tree(factory.getPart(OutputPart.FIRST, add),
 										tree(factory.getAnd(), 
-												tree(factory.getPart(new InputPart(0), add)),
-												tree(factory.getPart(new InputPart(1), add))))),	
-						factory.getPart(new InputPart(1), mul)));
+												tree(factory.getPart(InputPart.FIRST, add)),
+												tree(factory.getPart(InputPart.SECOND, add))))),	
+						factory.getPart(InputPart.SECOND, mul)));
 		Subgraph sg = factory.subgraph();
-		Vertex root = factory.getPart(new OutputPart(0), circ);
+		Vertex root = factory.getPart(OutputPart.FIRST, circ);
 		root.addChild(sg);
-		sg.addChild(factory.getPart(new InputPart(0), circ), 0);
-		sg.addChild(factory.getPart(new InputPart(1), circ), 1);
-		sg.addChild(factory.getPart(new InputPart(2), circ), 2);
+		sg.addChild(factory.getPart(InputPart.FIRST, circ), factory.getPart(InputPart.FIRST, add));
+		sg.addChild(factory.getPart(InputPart.SECOND, circ), factory.getPart(InputPart.SECOND, add));
+		sg.addChild(factory.getPart(InputPart.THIRD, circ), factory.getPart(InputPart.SECOND, mul));
 		root.render(System.out);
 		assertEqualGraphs(e, root);
 

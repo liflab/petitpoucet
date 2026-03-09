@@ -19,11 +19,14 @@
 package ca.uqac.lif.petitpoucet;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import ca.uqac.lif.petitpoucet.Connectable.Connection;
 
 public class Subgraph extends Vertex
 {
@@ -40,9 +43,11 @@ public class Subgraph extends Vertex
 	/**
 	 * The set of all leaves contained in this subgraph.
 	 */
-	/*@ non_null @*/ protected final List<Vertex> m_leaves; 
+	/*@ non_null @*/ protected final List<Vertex> m_leaves;
+	
+	protected Connection m_inputConnection;
 
-	/*@ non_null @*/ protected final Vertex[] m_outputConnections;
+	/*@ non_null @*/ protected final Map<Vertex,Vertex> m_outputConnections;
 
 	/**
 	 * Creates a new subgraph.
@@ -56,7 +61,8 @@ public class Subgraph extends Vertex
 		m_vertices = new HashSet<>(vertices.size());
 		m_vertices.addAll(vertices);
 		m_leaves = m_root.findLeaves();
-		m_outputConnections = new Vertex[m_leaves.size()];
+		m_inputConnection = null;
+		m_outputConnections = new HashMap<>();
 	}
 
 	public void pushRoot(Vertex v)
@@ -76,52 +82,48 @@ public class Subgraph extends Vertex
 		}
 		ps.println();
 		m_root.render(ps, indent + "  ", nesting + 1);
-		for (Vertex v : m_outputConnections)
+		for (Map.Entry<Vertex,Vertex> e : m_outputConnections.entrySet())
 		{
-			v.render(ps, indent + "  ", nesting);
-		}
-	}
-
-	@Override
-	public List<Vertex> getChildren()
-	{
-		List<Vertex> children = new ArrayList<>();
-		for (Vertex v : m_outputConnections)
-		{
+			Vertex v = e.getValue();
 			if (v != null)
 			{
-				children.add(v);
+				v.render(ps, indent + "  ", nesting);
 			}
 		}
-		return children;
 	}
-
+		
 	@Override
-	public int childCount()
+	public void addChild(Vertex v)
 	{
-		return m_outputConnections.length;
+		throw new UnsupportedOperationException("Must specify how to attach");
 	}
-
-	@Override
-	/*@ pure non_null @*/ public List<Vertex> findLeaves()
+	
+	public void addChild(Vertex v, Vertex inner_leaf)
+	{
+		super.addChild(v);
+		if (!m_vertices.contains(inner_leaf))
+		{
+			throw new IllegalArgumentException("Second argument must be an inner vertex");
+		}
+		m_outputConnections.put(inner_leaf, v);
+	}
+	
+	public Vertex innerRoot()
+	{
+		return m_root;
+	}
+	
+	public List<Vertex> innerLeaves()
 	{
 		return m_leaves;
 	}
 
 	@Override
-	public void addChild(Vertex v)
+	protected void findLeaves(List<Vertex> leaves)
 	{
-		throw new UnsupportedOperationException("A leaf must be specified");
-	}
-
-	public void addChild(Vertex v, int j)
-	{
-		m_outputConnections[j] = v;
-	}
-
-	@Override
-	public Vertex findRoot()
-	{
-		return m_root;
+		for (Vertex v : m_children)
+		{
+			v.findLeaves(leaves);
+		}
 	}
 }

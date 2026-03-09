@@ -223,6 +223,10 @@ public abstract class Vertex implements AbstractVertex, Renderer
 	 */
 	public void addChild(Vertex v)
 	{
+		if (v == this)
+		{
+			throw new IllegalArgumentException("Attempting to connect a vertex to itself");
+		}
 		v.getParents().add(this);
 		m_children.add(v);
 	}
