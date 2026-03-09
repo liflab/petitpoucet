@@ -150,8 +150,8 @@ public class ListsTest
 			Vertex root = factory.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), c);
 			expected.addChild(root);
 			VertexFactory subf = factory.subfactory(f);
-					Vertex.tree(subf.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), d),
-							subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
+			Vertex.tree(subf.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), d),
+					subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
 			Subgraph sg = subf.subgraph();
 			root.addChild(sg);
 			sg.addChild(tree(
@@ -178,7 +178,7 @@ public class ListsTest
 	{
 		VertexFactory factory = new VertexFactory();
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
-		Circuit c = getCircuit(d);
+		Circuit c = getCircuit(d, "InWin");
 		Window f = new Window(3, c);
 		Connectable.connect(new Constant(Arrays.asList(1, 2, 3, 4)), 0, f, 0);
 		f.compute();
@@ -186,18 +186,36 @@ public class ListsTest
 		Vertex c_e = AbstractVertex.get(e);
 		c_e.render(System.out);
 		factory.clear();
-		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
-				Vertex.and(
-						subf.getPart(InputPart.FIRST, d),
-						subf.getPart(InputPart.SECOND, d),
-						subf.getPart(InputPart.THIRD, d)));
-		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(2), InputPart.FIRST), f), subf.getPart(InputPart.SECOND, d));
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(3), InputPart.FIRST), f), subf.getPart(InputPart.THIRD, d));
-		sg.render(System.out);
-		assertEqualGraphs(c_e, sg);
+		Vertex root = factory.getPart(CompositePart.compose(new NthElement(1), OutputPart.FIRST), f);
+		{
+			Vertex c_root = factory.getPart(OutputPart.FIRST, c);
+			root.addChild(c_root);
+			VertexFactory subf = factory.subfactory(c);
+			{
+				VertexFactory subsubf = subf.subfactory(d);
+				{
+					Vertex mul_root = subsubf.getPart(OutputPart.FIRST, d);
+					Vertex and = subsubf.getAnd();
+					mul_root.addChild(and);
+					and.addChild(subsubf.getPart(InputPart.FIRST, d));
+					and.addChild(subsubf.getPart(InputPart.SECOND, d));
+					and.addChild(subsubf.getPart(InputPart.THIRD, d));
+				}
+				Subgraph sg1 = subsubf.subgraph();
+				Vertex c1 = subf.getPart(InputPart.FIRST, c);
+				Vertex c2 = subf.getPart(InputPart.SECOND, c);
+				Vertex c3 = subf.getPart(InputPart.THIRD, c);
+				sg1.addChild(c1, subsubf.getPart(InputPart.FIRST, d));
+				sg1.addChild(c2, subsubf.getPart(InputPart.SECOND, d));
+				sg1.addChild(c3, subsubf.getPart(InputPart.THIRD, d));
+				c1.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f));
+				c2.addChild(factory.getPart(CompositePart.compose(new NthElement(2), InputPart.FIRST), f));
+				c3.addChild(factory.getPart(CompositePart.compose(new NthElement(3), InputPart.FIRST), f));
+				c_root.addChild(sg1);
+			}
+		}
+		root.render(System.out);
+		assertEqualGraphs(root, c_e);
 	}
 
 	@Test
@@ -212,17 +230,35 @@ public class ListsTest
 		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
 		Vertex c_e = AbstractVertex.get(e);
 		factory.clear();
-		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
-				Vertex.or(
-						subf.getPart(InputPart.FIRST, d),
-						subf.getPart(InputPart.SECOND, d),
-						subf.getPart(InputPart.THIRD, d)));
-		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(2), InputPart.FIRST), f), subf.getPart(InputPart.SECOND, d));
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(3), InputPart.FIRST), f), subf.getPart(InputPart.THIRD, d));
-		assertEqualGraphs(c_e, sg);
+		Vertex root = factory.getPart(CompositePart.compose(new NthElement(1), OutputPart.FIRST), f);
+		{
+			Vertex c_root = factory.getPart(OutputPart.FIRST, c);
+			root.addChild(c_root);
+			VertexFactory subf = factory.subfactory(c);
+			{
+				VertexFactory subsubf = subf.subfactory(d);
+				{
+					Vertex mul_root = subsubf.getPart(OutputPart.FIRST, d);
+					Vertex and = subsubf.getOr();
+					mul_root.addChild(and);
+					and.addChild(subsubf.getPart(InputPart.FIRST, d));
+					and.addChild(subsubf.getPart(InputPart.SECOND, d));
+					and.addChild(subsubf.getPart(InputPart.THIRD, d));
+				}
+				Subgraph sg1 = subsubf.subgraph();
+				Vertex c1 = subf.getPart(InputPart.FIRST, c);
+				Vertex c2 = subf.getPart(InputPart.SECOND, c);
+				Vertex c3 = subf.getPart(InputPart.THIRD, c);
+				sg1.addChild(c1, subsubf.getPart(InputPart.FIRST, d));
+				sg1.addChild(c2, subsubf.getPart(InputPart.SECOND, d));
+				sg1.addChild(c3, subsubf.getPart(InputPart.THIRD, d));
+				c1.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f));
+				c2.addChild(factory.getPart(CompositePart.compose(new NthElement(2), InputPart.FIRST), f));
+				c3.addChild(factory.getPart(CompositePart.compose(new NthElement(3), InputPart.FIRST), f));
+				c_root.addChild(sg1);
+			}
+		}
+		assertEqualGraphs(root, c_e);
 	}
 
 	@Test
@@ -237,12 +273,26 @@ public class ListsTest
 		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST), Explainable.CUT);
 		Vertex c_e = AbstractVertex.get(e);
 		factory.clear();
-		VertexFactory subf = factory.subfactory(f);
-		Vertex.tree(subf.getPart(OutputPart.FIRST, d),
-				subf.getPart(InputPart.FIRST, d));
-		Subgraph sg = subf.subgraph();
-		sg.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f), subf.getPart(InputPart.FIRST, d));
-		assertEqualGraphs(c_e, sg);
+		Vertex root = factory.getPart(CompositePart.compose(new NthElement(1), OutputPart.FIRST), f);
+		{
+			Vertex c_root = factory.getPart(OutputPart.FIRST, c);
+			root.addChild(c_root);
+			VertexFactory subf = factory.subfactory(c);
+			{
+				VertexFactory subsubf = subf.subfactory(d);
+				{
+					Vertex mul_root = subsubf.getPart(OutputPart.FIRST, d);
+					mul_root.addChild(subsubf.getPart(InputPart.FIRST, d));
+				}
+				Subgraph sg1 = subsubf.subgraph();
+				Vertex c1 = subf.getPart(InputPart.FIRST, c);
+				sg1.addChild(c1, subsubf.getPart(InputPart.FIRST, d));
+				c1.addChild(factory.getPart(CompositePart.compose(new NthElement(1), InputPart.FIRST), f));
+				c_root.addChild(sg1);
+			}
+		}
+		c_e.render(System.out);
+		assertEqualGraphs(root, c_e);
 	}
 
 	protected static Circuit getCircuit(Node n)

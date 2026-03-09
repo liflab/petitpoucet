@@ -370,7 +370,7 @@ public class LineageDotRenderer implements Renderer
 		else
 		{
 			String message = d.toString() + " of " + o.toString();
-			ps.println(m_indent + n_id + " [height=0.25,label=<" + message + ">,fillcolor=\"" + color + "\"];");
+			ps.println(m_indent + n_id + " [height=0.25,label=<" + escape(message) + ">,fillcolor=\"" + color + "\"];");
 		}
 	}
 
@@ -403,6 +403,14 @@ public class LineageDotRenderer implements Renderer
 	protected LineageDotRenderer getSubRenderer(AbstractVertex inner_start, String new_prefix, int nesting_level, boolean captions)
 	{
 		return new LineageDotRenderer(inner_start, new_prefix, nesting_level, captions);
+	}
+	
+	protected static String escape(String s)
+	{
+		s = s.replaceAll("&", "&amp;");
+		s = s.replaceAll(">", "&gt;");
+		s = s.replaceAll("<", "&lt;");
+		return s;
 	}
 
 	/**

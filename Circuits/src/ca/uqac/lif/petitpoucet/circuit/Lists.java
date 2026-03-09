@@ -249,7 +249,10 @@ public abstract class Lists
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
 				{
-					return explainElement(((NthElement) t_head).getIndex(), tail(p));
+					Vertex root = m_factory.getPart(CompositePart.compose(p, OutputPart.FIRST), Window.this);
+					Vertex child = explainElement(((NthElement) t_head).getIndex(), tail(p));
+					root.addChild(child);
+					return root;
 				}
 				return AbstractVertex.get(Window.super.explain(0, p, m_factory, options));
 			}

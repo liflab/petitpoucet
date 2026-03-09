@@ -114,6 +114,7 @@ public abstract class ParameterizedNode extends Node
 			if (in_e instanceof LazyVertex)
 			{
 				exp = ((LazyVertex) in_e).concretize(new_p, m_options);
+
 			}
 			else
 			{

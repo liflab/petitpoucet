@@ -252,7 +252,7 @@ public class Circuit extends Node
 			Node n = c.getObject();
 			int n_index = c.getIndex();
 			Part start = CompositePart.compose(part, new OutputPart(n_index));
-			propagateExplanation(n, start, subf);
+			propagateExplanation(n, start, subf, options);
 			Subgraph sg = subf.subgraph();
 			extendLeaves(sg);
 			Vertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
@@ -292,13 +292,13 @@ public class Circuit extends Node
 			return pv.getPart();
 		}
 
-		protected Vertex propagateExplanation(Node n, Part p, VertexFactory f) throws ExplanationException
+		protected Vertex propagateExplanation(Node n, Part p, VertexFactory f, int options) throws ExplanationException
 		{
 			if (!(head(p) instanceof OutputPart))
 			{
 				throw new ExplanationException("Expected an output part");
 			}
-			Vertex explanation = AbstractVertex.get(n.explain(p, f));
+			Vertex explanation = AbstractVertex.get(n.explain(p, f, options));
 			Vertex root = explanation;
 			List<Vertex> leaves = explanation.findLeaves();
 			for (Vertex leaf : leaves)
@@ -325,7 +325,7 @@ public class Circuit extends Node
 				}
 				else if (m_nodes.contains(c_o))
 				{
-					Vertex to_attach = propagateExplanation(c_o, out_part, f);
+					Vertex to_attach = propagateExplanation(c_o, out_part, f, options);
 					leaf.addChild(to_attach);
 				}
 			}
