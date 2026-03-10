@@ -180,6 +180,11 @@ public class LineageDotRenderer implements Renderer
 		this(roots, "", 0, false);
 	}
 
+	public String idFor(Vertex v)
+	{
+		return m_nodeIds.get(v);
+	}
+
 	/**
 	 * Sets whether to hide captions of non-leaf nodes.
 	 * @param b Set to {@code true} to hide captions, {@code false} otherwise
@@ -259,11 +264,26 @@ public class LineageDotRenderer implements Renderer
 		}
 		renderNode(ps, current);
 		m_expanded.add(current);
-		for (int i = 0; i < current.childCount(); i++)
+		if (current instanceof Subgraph)
 		{
-			Vertex target = current.getChildren().get(i);
-			render(ps, target);
-			renderTransition(ps, current, i, target);
+			Subgraph sg = (Subgraph) current;
+			
+			for (int i = 0; i < current.childCount(); i++)
+			{
+				Vertex target = current.getChildren().get(i);
+				render(ps, target);
+				Vertex inner_current = sg.findInnerLeaf(target);
+				renderTransition(ps, this, inner_current, i, (target instanceof Subgraph) ? null : this, target);
+			}
+		}
+		else
+		{
+			for (int i = 0; i < current.childCount(); i++)
+			{
+				Vertex target = current.getChildren().get(i);
+				render(ps, target);
+				renderTransition(ps, this, current, i, (target instanceof Subgraph) ? null : this, target);
+			}
 		}
 	}
 
@@ -273,29 +293,22 @@ public class LineageDotRenderer implements Renderer
 	 * @param from The source node
 	 * @param from The destination node
 	 */
-	protected void renderTransition(PrintStream ps, Vertex from, int out_index, Vertex to)
+	protected void renderTransition(PrintStream ps, LineageDotRenderer r_from, Vertex from, int out_index, LineageDotRenderer r_to, Vertex to)
 	{
 		String source_id = "";
 		String dest_id = "";
-		if (from instanceof Subgraph)
+		if (from == to)
 		{
-			Subgraph nn_from = (Subgraph) from;
-			AbstractVertex inner_node = nn_from.findLeaves().get(out_index);
-			source_id = m_nodeIds.get(inner_node);
+			throw new IllegalArgumentException("Connecting a vertex to itself");
+		}
+		source_id = r_from.idFor(from);
+		if (r_to == null)
+		{
+			dest_id = idFor(((Subgraph) to).innerRoot());
 		}
 		else
 		{
-			source_id = m_nodeIds.get(from);
-		}
-		if (to instanceof Subgraph)
-		{
-			Subgraph nn_to = (Subgraph) to;
-			AbstractVertex inner_node = nn_to.findRoot();
-			dest_id = m_nodeIds.get(inner_node);
-		}
-		else
-		{
-			dest_id = m_nodeIds.get(to);
+			dest_id = r_to.idFor(to);
 		}
 		ps.println(m_indent + source_id + " -> " + dest_id + ";");
 	}
@@ -384,7 +397,7 @@ public class LineageDotRenderer implements Renderer
 	 */
 	protected String renderNestedNode(PrintStream ps, Subgraph current, String n_id)
 	{
-		AbstractVertex inner_start = current.findRoot();
+		Vertex inner_start = current.innerRoot();
 		String new_prefix = "";
 		if (m_prefix.isEmpty())
 		{
@@ -404,7 +417,7 @@ public class LineageDotRenderer implements Renderer
 	{
 		return new LineageDotRenderer(inner_start, new_prefix, nesting_level, captions);
 	}
-	
+
 	protected static String escape(String s)
 	{
 		s = s.replaceAll("&", "&amp;");

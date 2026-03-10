@@ -118,6 +118,18 @@ public class Subgraph extends Vertex
 		return m_leaves;
 	}
 	
+	public Vertex findInnerLeaf(Vertex v)
+	{
+		for (Map.Entry<Vertex,Vertex> e : m_outputConnections.entrySet())
+		{
+			if (e.getValue().equals(v))
+			{
+				return e.getKey();
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public int hashCode()
 	{

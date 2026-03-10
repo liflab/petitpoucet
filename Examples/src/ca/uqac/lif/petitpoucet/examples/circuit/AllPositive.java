@@ -70,11 +70,12 @@ public class AllPositive
 	{
 		Circuit all_positive = new Circuit(1, 1, "all");
 		{
-			Circuit add = new Circuit(2, 1);
+			Circuit add = new Circuit(2, 1, "add");
 			{
 				Numbers.Addition a = new Numbers.Addition(2);
 				add.add(a);
 				add.associateInput(0, a, 0);
+				add.associateInput(1, a, 1);
 				add.associateOutput(0, a, 0);
 			}
 			Node w = new Window(2, add);
@@ -97,7 +98,6 @@ public class AllPositive
 		System.out.println(result);
 		AbstractVertex full_graph = all_positive.explain(CompositePart.compose(new Lists.NthElement(0), OutputPart.FIRST));
 		Vertex v_e = AbstractVertex.get(full_graph);
-		//AbstractVertex.get(v_e).render(System.out);
 		display(v_e);
 	}
 
