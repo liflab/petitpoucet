@@ -94,14 +94,12 @@ public interface Explainable
 	 * {@link VertexFactory} provided as an argument to create the vertex, which
 	 * can be used to create custom vertices.
 	 * @param p The part to explain
-	 * @param f The factory to use to create the vertex
-	 * @param options The flags specifying the options to apply when calculating
-	 * the explanation
+	 * @param v The visitor to use to create the vertex
 	 * @return A vertex that can be used to trace back the origin of the part
 	 * @throws ExplanationException If an error occurs during the calculation
 	 * of the explanation
 	 */
-	public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException;
+	public AbstractVertex explain(Part p, VertexFactory v) throws ExplanationException;
 	
 	public void hint(Part p);
 	
