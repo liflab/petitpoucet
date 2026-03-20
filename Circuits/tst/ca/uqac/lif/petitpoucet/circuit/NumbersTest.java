@@ -18,6 +18,7 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
+import static ca.uqac.lif.petitpoucet.circuit.Utils.connect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
 
@@ -116,12 +117,5 @@ public class NumbersTest
 		Vertex e = f.explain(new Connectable.OutputPart(0), new CutVertexFactory(new IdentityVertexFactory()));
 		assertEqualGraphs(e, 
 				factory.tree(factory.getPart(OutputPart.FIRST, f), factory.getPart(new Connectable.InputPart(0), f)));
-	}
-	
-	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
-	{
-		UpstreamConnection uc = new UpstreamConnection(c1, i1);
-		DownstreamConnection dc = new DownstreamConnection(c2, i2);
-		Connectable.connect(uc, i1, dc, i2);
 	}
 }

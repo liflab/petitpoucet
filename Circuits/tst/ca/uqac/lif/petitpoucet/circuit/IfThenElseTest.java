@@ -18,6 +18,7 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
+import static ca.uqac.lif.petitpoucet.circuit.Utils.connect;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -93,12 +94,5 @@ public class IfThenElseTest
 		assertEqualGraphs(e, factory.or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(2), f)));
-	}
-	
-	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
-	{
-		UpstreamConnection uc = new UpstreamConnection(c1, i1);
-		DownstreamConnection dc = new DownstreamConnection(c2, i2);
-		Connectable.connect(uc, i1, dc, i2);
 	}
 }

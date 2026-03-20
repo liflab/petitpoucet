@@ -61,8 +61,8 @@ public abstract class ParameterizedNode extends Node
 		m_f.reset();
 		for (int i = 0; i < inputs.length; i++)
 		{
-			UpstreamConnection uc = new UpstreamConnection(new Constant(inputs[i]), 0);
-			DownstreamConnection dc = new DownstreamConnection(m_f, i);
+			UpstreamConnection uc = getUpstreamConnection(new Constant(inputs[i]), 0);
+			DownstreamConnection dc = getDownstreamConnection(m_f, i);
 			Connectable.connect(uc, 0, dc, i);
 		}
 		m_f.evaluate(inputs, outputs);

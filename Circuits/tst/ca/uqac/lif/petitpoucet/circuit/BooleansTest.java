@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
+import static ca.uqac.lif.petitpoucet.circuit.Utils.connect;
 
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
@@ -149,12 +150,5 @@ public class BooleansTest
 		ce.render(System.out);
 		factory.clear();
 		assertEqualGraphs(ce, factory.getPart(new Connectable.InputPart(0), f));
-	}
-	
-	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
-	{
-		UpstreamConnection uc = new UpstreamConnection(c1, i1);
-		DownstreamConnection dc = new DownstreamConnection(c2, i2);
-		Connectable.connect(uc, i1, dc, i2);
 	}
 }

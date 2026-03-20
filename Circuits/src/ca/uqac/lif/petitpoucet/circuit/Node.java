@@ -83,7 +83,12 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 			for (int i = 0; i < m_ins.length; i++)
 			{
 				UpstreamConnection c = m_ins[i];
-				arguments[i] = c.getObject().compute(c.getIndex());
+				Connectable o = c.getObject();
+				if (!(o instanceof Computable))
+				{
+					throw new IllegalStateException("Expected node to be computable");
+				}
+				arguments[i] = ((Computable) o).compute(c.getIndex());
 			}
 			evaluate(arguments, m_outputArguments);
 		}
@@ -94,8 +99,8 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	{
 		for (int i = 0; i < inputs.length; i++)
 		{
-			UpstreamConnection uc = new UpstreamConnection(new Argument(inputs[i], i), 0);
-			DownstreamConnection dc = new DownstreamConnection(this, i);
+			UpstreamConnection uc = new NodeUpstreamConnection(new Argument(inputs[i], i), 0);
+			DownstreamConnection dc = new NodeDownstreamConnection(this, i);
 			Connectable.connect(uc, 0, dc, i);
 		}
 		return compute();
@@ -163,7 +168,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		{
 			throw new IllegalArgumentException("Connectable must be a node");
 		}
-		m_ins[i] = new UpstreamConnection((Node) uc.getObject(), uc.getIndex());
+		m_ins[i] = getUpstreamConnection((Node) uc.getObject(), uc.getIndex());
 	}
 
 	@Override
@@ -178,7 +183,17 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		{
 			throw new IllegalArgumentException("Connectable must be a node");
 		}
-		m_outs[i] = new DownstreamConnection((Node) uc.getObject(), uc.getIndex());
+		m_outs[i] = getDownstreamConnection((Node) uc.getObject(), uc.getIndex());
+	}
+	
+	protected UpstreamConnection getUpstreamConnection(Connectable object, int index)
+	{
+		return new NodeUpstreamConnection(object, index);
+	}
+	
+	protected DownstreamConnection getDownstreamConnection(Connectable object, int index)
+	{
+		return new NodeDownstreamConnection(object, index);
 	}
 
 	@Override
@@ -309,18 +324,30 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 
 	}
+	
+	public static interface UpstreamConnection extends Connection
+	{
+		@Override
+		public Connectable getObject();
+	}
+	
+	public static interface DownstreamConnection extends Connection
+	{
+		@Override
+		public Connectable getObject();
+	}
 
 	/**
 	 * A connection to an upstream node.
 	 */
-	public static class UpstreamConnection extends ConcreteConnection
+	public static class NodeUpstreamConnection extends ConcreteConnection implements UpstreamConnection
 	{
 		/**
 		 * Creates a new upstream connection to the given node and index.
 		 * @param c The node to connect to
 		 * @param i The index of the output of the node to connect to
 		 */
-		public UpstreamConnection(Connectable c, int i)
+		public NodeUpstreamConnection(Connectable c, int i)
 		{
 			super(c, i);
 		}
@@ -341,8 +368,8 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		public boolean equals(Object o)
 		{
 			return o instanceof UpstreamConnection &&
-					((UpstreamConnection) o).m_connectable.equals(m_connectable) &&
-					((UpstreamConnection) o).m_index == m_index;
+					((UpstreamConnection) o).getObject().equals(m_connectable) &&
+					((UpstreamConnection) o).getIndex() == m_index;
 		}
 
 		@Override
@@ -401,14 +428,14 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	/**
 	 * A connection to an downstream node.
 	 */
-	public static class DownstreamConnection extends ConcreteConnection
+	public static class NodeDownstreamConnection extends ConcreteConnection implements DownstreamConnection
 	{
 		/**
 		 * Creates a new downstream connection to the given node and index.
 		 * @param c The node to connect to
 		 * @param i The index of the input of the node to connect to
 		 */
-		public DownstreamConnection(Connectable c, int i)
+		public NodeDownstreamConnection(Connectable c, int i)
 		{
 			super(c, i);
 		}
@@ -429,8 +456,8 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		public boolean equals(Object o)
 		{
 			return o instanceof DownstreamConnection &&
-					((DownstreamConnection) o).m_connectable.equals(m_connectable) &&
-					((DownstreamConnection) o).m_index == m_index;
+					((DownstreamConnection) o).getObject().equals(m_connectable) &&
+					((DownstreamConnection) o).getIndex() == m_index;
 		}
 
 		@Override

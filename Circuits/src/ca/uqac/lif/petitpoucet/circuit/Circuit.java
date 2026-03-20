@@ -31,6 +31,7 @@ import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
@@ -111,7 +112,12 @@ public class Circuit extends Node
 	 */
 	public void associateInput(int i, /*@ non_null @*/ Node n, int j)
 	{
-		m_inputAssociations[i] = new UpstreamConnection(n, j);
+		m_inputAssociations[i] = getUpstreamConnection(n, j);
+	}
+	
+	protected UpstreamConnection getInputAssociation(Node n, int i)
+	{
+		return new NodeUpstreamConnection(n, i);
 	}
 
 	/**
@@ -124,7 +130,12 @@ public class Circuit extends Node
 	 */
 	public void associateOutput(int i, /*@ non_null @*/ Node n, int j)
 	{
-		m_outputAssociations[i] = new DownstreamConnection(n, j);
+		m_outputAssociations[i] = getDownstreamConnection(n, j);
+	}
+	
+	protected DownstreamConnection getOutputAssociation(Node n, int i)
+	{
+		return new NodeDownstreamConnection(n, i);
 	}
 
 	/**
@@ -146,7 +157,7 @@ public class Circuit extends Node
 		for (int i = 0; i < m_inputAssociations.length; i++)
 		{
 			UpstreamConnection c = m_inputAssociations[i];
-			Node n = c.getObject();
+			Connectable n = c.getObject();
 			if (n.equals(target) && c.getIndex() == index)
 			{
 				return i;
@@ -177,8 +188,8 @@ public class Circuit extends Node
 				if (c != null)
 				{
 					Node target = fromto.get(c.getObject());
-					UpstreamConnection uc = new UpstreamConnection(target, c.getIndex());
-					DownstreamConnection dc = new DownstreamConnection(n, i);
+					UpstreamConnection uc = getUpstreamConnection(target, c.getIndex());
+					DownstreamConnection dc = getDownstreamConnection(n, i);
 					Connectable.connect(uc, c.getIndex(), dc, i);
 				}
 			}
@@ -188,8 +199,8 @@ public class Circuit extends Node
 				if (c != null)
 				{
 					Node target = fromto.get(c.getObject());
-					UpstreamConnection uc = new UpstreamConnection(n, i);
-					DownstreamConnection dc = new DownstreamConnection(target, c.getIndex());
+					UpstreamConnection uc = getUpstreamConnection(n, i);
+					DownstreamConnection dc = getDownstreamConnection(target, c.getIndex());
 					Connectable.connect(uc, i, dc, c.getIndex());
 				}
 			}
@@ -216,17 +227,20 @@ public class Circuit extends Node
 		for (int i = 0; i < input.length; i++)
 		{
 			UpstreamConnection c = m_inputAssociations[i];
-			UpstreamConnection arg = new UpstreamConnection(new Argument(input[i], i), 0);
-			Node n = c.getObject();
-			DownstreamConnection dc = new DownstreamConnection(n, c.getIndex());
+			UpstreamConnection arg = getUpstreamConnection(new Argument(input[i], i), 0);
+			Connectable n = c.getObject();
+			DownstreamConnection dc = getDownstreamConnection(n, c.getIndex());
 			Connectable.connect(arg, 0, dc, c.getIndex());
 		}
 		// Step 2: trigger evaluation and fetch outputs
 		for (int i = 0; i < output.length; i++)
 		{
 			DownstreamConnection c = m_outputAssociations[i]; 
-			Node n = c.getObject();
-			output[i] = n.compute(c.getIndex());
+			Connectable n = c.getObject();
+			if (n instanceof Computable)
+			{
+				output[i] = ((Computable) n).compute(c.getIndex());
+			}
 		}
 	}
 
@@ -251,10 +265,14 @@ public class Circuit extends Node
 		{
 			VertexFactory subf = m_factory.subfactory(this);
 			DownstreamConnection c = m_outputAssociations[m_index];
-			Node n = c.getObject();
+			Connectable n = c.getObject();
 			int n_index = c.getIndex();
 			Part start = CompositePart.compose(part, new OutputPart(n_index));
-			propagateExplanation(n, start, subf);
+			if (n instanceof Explainable)
+			{
+				propagateExplanation((Explainable) n, start, subf);
+			}
+			
 			Subgraph sg = subf.subgraph();
 			extendLeaves(sg, m_factory);
 			ConcreteVertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
@@ -279,7 +297,7 @@ public class Circuit extends Node
 			}
 		}
 
-		protected static Part isLeafToExtend(Vertex v)
+		protected Part isLeafToExtend(Vertex v)
 		{
 			if (!(v instanceof PartVertex))
 			{
@@ -294,7 +312,7 @@ public class Circuit extends Node
 			return pv.getPart();
 		}
 
-		protected ConcreteVertex propagateExplanation(Node n, Part p, VertexFactory f) throws ExplanationException
+		protected ConcreteVertex propagateExplanation(Explainable n, Part p, VertexFactory f) throws ExplanationException
 		{
 			if (!(head(p) instanceof OutputPart))
 			{
@@ -316,9 +334,13 @@ public class Circuit extends Node
 					continue;
 				}
 				InputPart ip = (InputPart) n_p;
-				UpstreamConnection c = n.getUpstream(ip.getIndex());
+				if (!(n instanceof Connectable))
+				{
+					throw new ExplanationException("Expected a connectable node");
+				}
+				Connection c = ((Connectable) n).getUpstream(ip.getIndex());
 				Part out_part = CompositePart.compose(tail(pv.getPart()), new OutputPart(c.getIndex()));
-				Node c_o = c.getObject();
+				Connectable c_o = c.getObject();
 				if (f.contains(out_part, c_o))
 				{
 					ConcreteVertex to_attach = f.getPart(out_part, c.getObject());
@@ -327,7 +349,11 @@ public class Circuit extends Node
 				}
 				else if (m_nodes.contains(c_o))
 				{
-					ConcreteVertex to_attach = propagateExplanation(c_o, out_part, f);
+					if (!(c_o instanceof Explainable))
+					{
+						throw new ExplanationException("Expected an explainable node");
+					}
+					ConcreteVertex to_attach = propagateExplanation((Explainable) c_o, out_part, f);
 					leaf.addChild(to_attach);
 				}
 			}

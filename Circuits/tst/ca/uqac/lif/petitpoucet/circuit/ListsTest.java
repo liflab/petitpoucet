@@ -18,6 +18,7 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
+import static ca.uqac.lif.petitpoucet.circuit.Utils.connect;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
@@ -31,7 +32,6 @@ import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
-import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.CutVertexFactory;
 import ca.uqac.lif.petitpoucet.Connectable.InputPart;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
@@ -44,8 +44,6 @@ import ca.uqac.lif.petitpoucet.circuit.Lists.Apply;
 import ca.uqac.lif.petitpoucet.circuit.Lists.ElementAt;
 import ca.uqac.lif.petitpoucet.circuit.Lists.NthElement;
 import ca.uqac.lif.petitpoucet.circuit.Lists.Window;
-import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
-import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
 
 /**
  * Unit tests for the classes in the {@link Lists} class.
@@ -320,13 +318,6 @@ public class ListsTest
 			c.associateOutput(i, n, i);
 		}
 		return c;
-	}
-	
-	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
-	{
-		UpstreamConnection uc = new UpstreamConnection(c1, i1);
-		DownstreamConnection dc = new DownstreamConnection(c2, i2);
-		Connectable.connect(uc, i1, dc, i2);
 	}
 
 }
