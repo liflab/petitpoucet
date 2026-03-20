@@ -20,7 +20,7 @@ package ca.uqac.lif.petitpoucet.examples.number;
 
 import static ca.uqac.lif.petitpoucet.examples.GraphViewer.display;
 
-import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
@@ -74,7 +74,7 @@ public class ArithmeticCircuit3
 		c.associateOutput(0, m, 0);
 		Number result = (Number) c.evaluate(2, -2, 0);
 		System.out.println(result);
-		AbstractVertex full_graph = c.explain(OutputPart.FIRST);
+		Vertex full_graph = c.explain(OutputPart.FIRST);
 		display(full_graph);
 	}
 

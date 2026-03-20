@@ -22,8 +22,8 @@ import static ca.uqac.lif.petitpoucet.examples.GraphViewer.display;
 
 import java.util.Arrays;
 
-import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
@@ -96,8 +96,8 @@ public class AllPositive
 		}
 		Object result = all_positive.evaluate(Arrays.asList(1, -10, 30, -5, 3));
 		System.out.println(result);
-		AbstractVertex full_graph = all_positive.explain(CompositePart.compose(new Lists.NthElement(0), OutputPart.FIRST));
-		Vertex v_e = AbstractVertex.get(full_graph);
+		Vertex full_graph = all_positive.explain(CompositePart.compose(new Lists.NthElement(0), OutputPart.FIRST));
+		ConcreteVertex v_e = Vertex.get(full_graph);
 		display(v_e);
 	}
 

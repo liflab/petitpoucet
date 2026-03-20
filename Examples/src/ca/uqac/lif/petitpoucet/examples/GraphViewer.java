@@ -35,7 +35,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.render.LineageDotRenderer;
 
@@ -58,7 +57,7 @@ public class GraphViewer
 	 * @param roots The roots of the graph to display
 	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 */
-	public static void display(List<? extends AbstractVertex> roots, boolean no_captions)
+	public static void display(List<? extends Vertex> roots, boolean no_captions)
 	{
 		BitmapJFrame window = new BitmapJFrame(getGraph(roots, no_captions));
 		window.setVisible(true);
@@ -69,7 +68,7 @@ public class GraphViewer
 	 * primitive image viewer, used to display the result of the examples.
 	 * @param roots The roots of the graph to display
 	 */
-	public static void display(List<AbstractVertex> roots)
+	public static void display(List<Vertex> roots)
 	{
 		display(roots, false);
 	}
@@ -79,7 +78,7 @@ public class GraphViewer
 	 * primitive image viewer, used to display the result of the examples.
 	 * @param root The root of the graph to display
 	 */
-	public static void display(AbstractVertex root)
+	public static void display(Vertex root)
 	{
 		display(Arrays.asList(root), false);
 	}
@@ -91,7 +90,7 @@ public class GraphViewer
 	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 * @throws IOException If the file operation did not succeed
 	 */
-	public static void save(List<? extends AbstractVertex> roots, String filename, boolean no_captions) throws IOException
+	public static void save(List<? extends Vertex> roots, String filename, boolean no_captions) throws IOException
 	{
 		File outputFile = new File(filename);
 		FileOutputStream outputStream = null;
@@ -140,7 +139,7 @@ public class GraphViewer
 	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 * @return A string with the contents of the DOT file
 	 */
-	public static String toDot(List<? extends AbstractVertex> roots, boolean no_captions)
+	public static String toDot(List<? extends Vertex> roots, boolean no_captions)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream ps = new PrintStream(baos);
@@ -157,7 +156,7 @@ public class GraphViewer
 	 * @param no_captions Set to {@code true} to hide non-leaf captions
 	 * @return An array of bytes containing the image to display
 	 */
-	protected static byte[] getGraph(List<? extends AbstractVertex> roots, boolean no_captions)
+	protected static byte[] getGraph(List<? extends Vertex> roots, boolean no_captions)
 	{
 		String graph = toDot(roots, no_captions);
 		CommandRunner runner = new CommandRunner(new String[] {"dot", "-Tpng"}, graph);
