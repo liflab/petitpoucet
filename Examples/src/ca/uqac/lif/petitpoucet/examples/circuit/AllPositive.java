@@ -32,6 +32,8 @@ import ca.uqac.lif.petitpoucet.circuit.Circuit;
 import ca.uqac.lif.petitpoucet.circuit.Constant;
 import ca.uqac.lif.petitpoucet.circuit.Lists;
 import ca.uqac.lif.petitpoucet.circuit.Lists.Window;
+import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
+import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
 import ca.uqac.lif.petitpoucet.circuit.Node;
 import ca.uqac.lif.petitpoucet.circuit.Numbers;
 
@@ -83,13 +85,13 @@ public class AllPositive
 			{
 				Node g = new Numbers.IsGreaterThan();
 				Node z = new Constant(0);
-				Connectable.connect(z, 0, g, 1);
+				connect(z, 0, g, 1);
 				gt_0.add(g, z);
 				gt_0.associateInput(0, g, 0);
 				gt_0.associateOutput(0, g, 0);
 			}
 			Node a = new Lists.Apply(gt_0);
-			Connectable.connect(w, 0, a, 0);
+			connect(w, 0, a, 0);
 			all_positive.add(w, a);
 			all_positive.associateInput(0, w, 0);
 			all_positive.associateOutput(0, a, 0);
@@ -99,6 +101,13 @@ public class AllPositive
 		Vertex full_graph = all_positive.explain(CompositePart.compose(new Lists.NthElement(0), OutputPart.FIRST));
 		ConcreteVertex v_e = Vertex.get(full_graph);
 		display(v_e);
+	}
+	
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		UpstreamConnection uc = new UpstreamConnection(c1, i1);
+		DownstreamConnection dc = new DownstreamConnection(c2, i2);
+		Connectable.connect(uc, i1, dc, i2);
 	}
 
 }

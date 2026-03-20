@@ -26,6 +26,8 @@ import org.junit.Test;
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
+import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Explainable;
@@ -46,9 +48,9 @@ public class NumbersTest
 	public void testAddition1()
 	{
 		Numbers.Addition f = new Numbers.Addition(3);
-		Connectable.connect(new Constant(2), 0, f, 0);
-		Connectable.connect(new Constant(3), 0, f, 1);
-		Connectable.connect(new Constant(4), 0, f, 2);
+		connect(new Constant(2), 0, f, 0);
+		connect(new Constant(3), 0, f, 1);
+		connect(new Constant(4), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(9, v, 0.01);
 	}
@@ -58,9 +60,9 @@ public class NumbersTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Multiplication f = new Numbers.Multiplication(3);
-		Connectable.connect(new Constant(2), 0, f, 0);
-		Connectable.connect(new Constant(3), 0, f, 1);
-		Connectable.connect(new Constant(4), 0, f, 2);
+		connect(new Constant(2), 0, f, 0);
+		connect(new Constant(3), 0, f, 1);
+		connect(new Constant(4), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(24, v, 0.01);
 		Vertex e = f.explain(new Connectable.OutputPart(0));
@@ -75,9 +77,9 @@ public class NumbersTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Multiplication f = new Numbers.Multiplication(3);
-		Connectable.connect(new Constant(2), 0, f, 0);
-		Connectable.connect(new Constant(0), 0, f, 1);
-		Connectable.connect(new Constant(4), 0, f, 2);
+		connect(new Constant(2), 0, f, 0);
+		connect(new Constant(0), 0, f, 1);
+		connect(new Constant(4), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
 		Vertex e = f.explain(new Connectable.OutputPart(0));
@@ -89,9 +91,9 @@ public class NumbersTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Multiplication f = new Numbers.Multiplication(3);
-		Connectable.connect(new Constant(0), 0, f, 0);
-		Connectable.connect(new Constant(6), 0, f, 1);
-		Connectable.connect(new Constant(0), 0, f, 2);
+		connect(new Constant(0), 0, f, 0);
+		connect(new Constant(6), 0, f, 1);
+		connect(new Constant(0), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
 		Vertex e = f.explain(new Connectable.OutputPart(0));
@@ -106,13 +108,20 @@ public class NumbersTest
 	{
 		VertexFactory factory = new CutVertexFactory(new IdentityVertexFactory());
 		Numbers.Multiplication f = new Numbers.Multiplication(3);
-		Connectable.connect(new Constant(0), 0, f, 0);
-		Connectable.connect(new Constant(0), 0, f, 1);
-		Connectable.connect(new Constant(0), 0, f, 2);
+		connect(new Constant(0), 0, f, 0);
+		connect(new Constant(0), 0, f, 1);
+		connect(new Constant(0), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
 		Vertex e = f.explain(new Connectable.OutputPart(0), new CutVertexFactory(new IdentityVertexFactory()));
 		assertEqualGraphs(e, 
 				factory.tree(factory.getPart(OutputPart.FIRST, f), factory.getPart(new Connectable.InputPart(0), f)));
+	}
+	
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		UpstreamConnection uc = new UpstreamConnection(c1, i1);
+		DownstreamConnection dc = new DownstreamConnection(c2, i2);
+		Connectable.connect(uc, i1, dc, i2);
 	}
 }

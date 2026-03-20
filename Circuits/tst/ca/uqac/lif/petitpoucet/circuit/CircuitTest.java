@@ -25,6 +25,8 @@ import org.junit.Test;
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
+import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Connectable;
@@ -50,8 +52,8 @@ public class CircuitTest
 			circ.associateInput(1, add, 1);
 			circ.associateOutput(0, add, 0);
 		}
-		Connectable.connect(new Constant(2), 0, circ, 0);
-		Connectable.connect(new Constant(3), 0, circ, 1);
+		connect(new Constant(2), 0, circ, 0);
+		connect(new Constant(3), 0, circ, 1);
 		float v = (Float) circ.compute(0);
 		assertEquals(5, v, 0.1);
 	}
@@ -69,13 +71,13 @@ public class CircuitTest
 		{
 			Numbers.Multiplication mul = new Numbers.Multiplication(2);
 			circ.add(mul);
-			Connectable.connect(add, 0, mul, 0);
+			connect(add, 0, mul, 0);
 			circ.associateInput(2, mul, 1);
 			circ.associateOutput(0, mul, 0);
 		}
-		Connectable.connect(new Constant(2), 0, circ, 0);
-		Connectable.connect(new Constant(3), 0, circ, 1);
-		Connectable.connect(new Constant(5), 0, circ, 2);
+		connect(new Constant(2), 0, circ, 0);
+		connect(new Constant(3), 0, circ, 1);
+		connect(new Constant(5), 0, circ, 2);
 		float v = (Float) circ.compute(0);
 		assertEquals(25, v, 0.1);
 	}
@@ -92,8 +94,8 @@ public class CircuitTest
 			circ.associateOutput(0, add, 0);
 		}
 		Circuit c2 = circ.duplicate(false);
-		Connectable.connect(new Constant(2), 0, c2, 0);
-		Connectable.connect(new Constant(3), 0, c2, 1);
+		connect(new Constant(2), 0, c2, 0);
+		connect(new Constant(3), 0, c2, 1);
 		float v = (Float) c2.compute(0);
 		assertEquals(5, v, 0.1);
 	}
@@ -111,14 +113,14 @@ public class CircuitTest
 		{
 			Numbers.Multiplication mul = new Numbers.Multiplication(2);
 			circ.add(mul);
-			Connectable.connect(add, 0, mul, 0);
+			connect(add, 0, mul, 0);
 			circ.associateInput(2, mul, 1);
 			circ.associateOutput(0, mul, 0);
 		}
 		Circuit circ2 = circ.duplicate(false);
-		Connectable.connect(new Constant(2), 0, circ2, 0);
-		Connectable.connect(new Constant(3), 0, circ2, 1);
-		Connectable.connect(new Constant(5), 0, circ2, 2);
+		connect(new Constant(2), 0, circ2, 0);
+		connect(new Constant(3), 0, circ2, 1);
+		connect(new Constant(5), 0, circ2, 2);
 		float v = (Float) circ2.compute(0);
 		assertEquals(25, v, 0.1);
 	}
@@ -152,8 +154,8 @@ public class CircuitTest
 		circ.associateInput(0, add, 0);
 		circ.associateInput(1, add, 1);
 		circ.associateOutput(0, add, 0);
-		Connectable.connect(new Constant(2), 0, circ, 0);
-		Connectable.connect(new Constant(3), 0, circ, 1);
+		connect(new Constant(2), 0, circ, 0);
+		connect(new Constant(3), 0, circ, 1);
 		Object o = circ.compute();
 		assertEquals(5f, o);
 		Vertex e = circ.explain(new Connectable.OutputPart(0));
@@ -187,8 +189,8 @@ public class CircuitTest
 		circ.associateInput(0, mul, 0);
 		circ.associateInput(1, mul, 1);
 		circ.associateOutput(0, mul, 0);
-		Connectable.connect(new Constant(0), 0, circ, 0);
-		Connectable.connect(new Constant(3), 0, circ, 1);
+		connect(new Constant(0), 0, circ, 0);
+		connect(new Constant(3), 0, circ, 1);
 		Object o = circ.compute();
 		assertEquals(0f, o);
 		Vertex e = circ.explain(new Connectable.OutputPart(0));
@@ -213,13 +215,13 @@ public class CircuitTest
 		circ.associateInput(0, add, 0);
 		circ.associateInput(1, add, 1);
 		Numbers.Multiplication mul = new Numbers.Multiplication(2);
-		Connectable.connect(add, 0, mul, 0);
+		connect(add, 0, mul, 0);
 		circ.associateInput(2,  mul, 1);
 		circ.associateOutput(0, mul, 0);
 		circ.add(add, mul);
-		Connectable.connect(new Constant(2), 0, circ, 0);
-		Connectable.connect(new Constant(3), 0, circ, 1);
-		Connectable.connect(new Constant(4), 0, circ, 2);
+		connect(new Constant(2), 0, circ, 0);
+		connect(new Constant(3), 0, circ, 1);
+		connect(new Constant(4), 0, circ, 2);
 		Object o = circ.compute();
 		assertEquals(20f, o);
 		Vertex e = circ.explain(OutputPart.FIRST);
@@ -241,6 +243,13 @@ public class CircuitTest
 		root.render(System.out);
 		assertEqualGraphs(e, root);
 
+	}
+	
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		UpstreamConnection uc = new UpstreamConnection(c1, i1);
+		DownstreamConnection dc = new DownstreamConnection(c2, i2);
+		Connectable.connect(uc, i1, dc, i2);
 	}
 
 }

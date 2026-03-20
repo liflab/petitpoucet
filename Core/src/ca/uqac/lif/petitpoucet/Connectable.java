@@ -62,7 +62,15 @@ public interface Connectable
 	 * @param c The component to connect
 	 * @param j The index of that component's output port
 	 */
-	public void assignInput(int i, Connectable c, int j);
+	/*public void assignInput(int i, Connectable c, int j);*/
+	
+	/**
+	 * Connects an output port of a component to an input port of the current
+	 * object. 
+	 * @param i The index of the input port
+	 * @param c The connection
+	 */
+	public void assignInput(int i, Connection c);
 	
 	/**
 	 * Connects an input port of a component to an output port of the current
@@ -71,7 +79,7 @@ public interface Connectable
 	 * @param c The component to connect
 	 * @param j The index of that component's input port
 	 */
-	public void assignOutput(int i, Connectable c, int j);
+	public void assignOutput(int i, Connection c);
 	
 	public static interface Connection
 	{
@@ -90,15 +98,15 @@ public interface Connectable
 	
 	/**
 	 * Connects an "upstream" component to a "downstream" component.
-	 * @param c1 The upstream component
+	 * @param c1 The upstream connection
 	 * @param i1 The index of that component's output port
-	 * @param c2 The downstream component
+	 * @param c2 The downstream connection
 	 * @param i2 The index of that component's input port
 	 */
-	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	public static void connect(Connection c1, int i1, Connection c2, int i2)
 	{
-		c1.assignOutput(i1, c2, i2);
-		c2.assignInput(i2, c1, i1);
+		c1.getObject().assignOutput(i1, c2);
+		c2.getObject().assignInput(i2, c1);
 	}
 	
 	/**

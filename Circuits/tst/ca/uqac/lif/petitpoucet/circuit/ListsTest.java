@@ -44,6 +44,8 @@ import ca.uqac.lif.petitpoucet.circuit.Lists.Apply;
 import ca.uqac.lif.petitpoucet.circuit.Lists.ElementAt;
 import ca.uqac.lif.petitpoucet.circuit.Lists.NthElement;
 import ca.uqac.lif.petitpoucet.circuit.Lists.Window;
+import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
+import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
 
 /**
  * Unit tests for the classes in the {@link Lists} class.
@@ -55,7 +57,7 @@ public class ListsTest
 	public void testElementAt1()
 	{
 		ElementAt f = new ElementAt(0);
-		Connectable.connect(new Constant(Arrays.asList("a", "b", "c")), 0, f, 0);
+		connect(new Constant(Arrays.asList("a", "b", "c")), 0, f, 0);
 		Object o = f.compute();
 		assertEquals("a", o);
 	}
@@ -65,7 +67,7 @@ public class ListsTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		ElementAt f = new ElementAt(0);
-		Connectable.connect(new Constant(Arrays.asList("a", "b", "c")), 0, f, 0);
+		connect(new Constant(Arrays.asList("a", "b", "c")), 0, f, 0);
 		f.compute();
 		Vertex e = f.explain(OutputPart.FIRST);
 		assertEqualGraphs(e, factory.tree(factory.getPart(new CompositePart(new NthElement(0), InputPart.FIRST), f)));
@@ -77,7 +79,7 @@ public class ListsTest
 		Numbers.Double d = new Numbers.Double();
 		Circuit c = getCircuit(d);
 		Apply f = new Apply(c);
-		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
+		connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		Object o = f.compute();
 		assertEquals(Arrays.asList(2f, 4f, 6f), o);
 	}
@@ -89,7 +91,7 @@ public class ListsTest
 		Numbers.Double d = new Numbers.Double();
 		Circuit c = getCircuit(d, "CDouble");
 		Apply f = new Apply(c);
-		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
+		connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
 		Vertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
 		ConcreteVertex c_e = Vertex.get(e);
@@ -124,7 +126,7 @@ public class ListsTest
 		Numbers.Double d = new Numbers.Double();
 		Circuit c = getCircuit(d);
 		Apply f = new Apply(c);
-		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
+		connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
 		Vertex e = f.explain(OutputPart.FIRST);
 		ConcreteVertex c_e = Vertex.get(e);
@@ -141,7 +143,7 @@ public class ListsTest
 		Numbers.Double d = new Numbers.Double();
 		Circuit c = getCircuit(d);
 		Apply f = new Apply(c);
-		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
+		connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		f.compute();
 		Vertex e = f.explain(CompositePart.compose(new NthElement(10), new NthElement(1), OutputPart.FIRST));
 		ConcreteVertex c_e = Vertex.get(e);
@@ -170,7 +172,7 @@ public class ListsTest
 		Numbers.Multiplication mul = new Numbers.Multiplication(3);
 		Circuit c = getCircuit(mul);
 		Window f = new Window(3, c);
-		Connectable.connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
+		connect(new Constant(Arrays.asList(1, 2, 3)), 0, f, 0);
 		List<?> out = (List<?>) f.compute();
 		assertEquals(Arrays.asList(6f), out);
 	}
@@ -182,7 +184,7 @@ public class ListsTest
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
 		Circuit c = getCircuit(d, "InWin");
 		Window f = new Window(3, c);
-		Connectable.connect(new Constant(Arrays.asList(1, 2, 3, 4)), 0, f, 0);
+		connect(new Constant(Arrays.asList(1, 2, 3, 4)), 0, f, 0);
 		f.compute();
 		Vertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
 		ConcreteVertex c_e = Vertex.get(e);
@@ -227,7 +229,7 @@ public class ListsTest
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
 		Circuit c = getCircuit(d);
 		Window f = new Window(3, c);
-		Connectable.connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
+		connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
 		f.compute();
 		Vertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST));
 		ConcreteVertex c_e = Vertex.get(e);
@@ -270,7 +272,7 @@ public class ListsTest
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
 		Circuit c = getCircuit(d);
 		Window f = new Window(3, c);
-		Connectable.connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
+		connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
 		f.compute();
 		Vertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST), factory);
 		ConcreteVertex c_e = Vertex.get(e);
@@ -318,6 +320,13 @@ public class ListsTest
 			c.associateOutput(i, n, i);
 		}
 		return c;
+	}
+	
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		UpstreamConnection uc = new UpstreamConnection(c1, i1);
+		DownstreamConnection dc = new DownstreamConnection(c2, i2);
+		Connectable.connect(uc, i1, dc, i2);
 	}
 
 }

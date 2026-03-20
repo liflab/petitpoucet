@@ -177,7 +177,9 @@ public class Circuit extends Node
 				if (c != null)
 				{
 					Node target = fromto.get(c.getObject());
-					Connectable.connect(target, c.getIndex(), n, i);
+					UpstreamConnection uc = new UpstreamConnection(target, c.getIndex());
+					DownstreamConnection dc = new DownstreamConnection(n, i);
+					Connectable.connect(uc, c.getIndex(), dc, i);
 				}
 			}
 			for (int i = 0; i < n_orig.getOutputArity(); i++)
@@ -186,7 +188,9 @@ public class Circuit extends Node
 				if (c != null)
 				{
 					Node target = fromto.get(c.getObject());
-					Connectable.connect(n, i, target, c.getIndex());
+					UpstreamConnection uc = new UpstreamConnection(n, i);
+					DownstreamConnection dc = new DownstreamConnection(target, c.getIndex());
+					Connectable.connect(uc, i, dc, c.getIndex());
 				}
 			}
 		}
@@ -211,9 +215,11 @@ public class Circuit extends Node
 		// Step 1: connect inputs with constant
 		for (int i = 0; i < input.length; i++)
 		{
-			UpstreamConnection c = m_inputAssociations[i]; 
+			UpstreamConnection c = m_inputAssociations[i];
+			UpstreamConnection arg = new UpstreamConnection(new Argument(input[i], i), 0);
 			Node n = c.getObject();
-			Connectable.connect(new Argument(input[i], i), 0, n, c.getIndex());
+			DownstreamConnection dc = new DownstreamConnection(n, c.getIndex());
+			Connectable.connect(arg, 0, dc, c.getIndex());
 		}
 		// Step 2: trigger evaluation and fetch outputs
 		for (int i = 0; i < output.length; i++)

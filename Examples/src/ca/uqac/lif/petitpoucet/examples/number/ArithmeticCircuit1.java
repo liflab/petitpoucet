@@ -26,6 +26,8 @@ import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.circuit.Circuit;
 import ca.uqac.lif.petitpoucet.circuit.Numbers;
+import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
+import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
 
 /**
  * Evaluates a circuit corresponding to the function (x+y)×z. Graphically, this
@@ -68,12 +70,19 @@ public class ArithmeticCircuit1
 		c.associateInput(0, a, 0);
 		c.associateInput(1, a, 1);
 		c.associateInput(2, m, 1);
-		Connectable.connect(a, 0, m, 0);
+		connect(a, 0, m, 0);
 		c.associateOutput(0, m, 0);
 		Number result = (Number) c.evaluate(2, 3, 4);
 		System.out.println(result);
 		Vertex full_graph = c.explain(OutputPart.FIRST);
 		display(full_graph);
+	}
+	
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		UpstreamConnection uc = new UpstreamConnection(c1, i1);
+		DownstreamConnection dc = new DownstreamConnection(c2, i2);
+		Connectable.connect(uc, i1, dc, i2);
 	}
 
 }

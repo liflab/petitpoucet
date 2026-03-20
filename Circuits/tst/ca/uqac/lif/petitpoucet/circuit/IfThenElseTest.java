@@ -28,6 +28,8 @@ import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
+import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
 import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
@@ -44,9 +46,9 @@ public class IfThenElseTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		IfThenElse f = new IfThenElse();
-		Connectable.connect(new Constant(false), 0, f, 0);
-		Connectable.connect(new Constant("a"), 0, f, 1);
-		Connectable.connect(new Constant("b"), 0, f, 2);
+		connect(new Constant(false), 0, f, 0);
+		connect(new Constant("a"), 0, f, 1);
+		connect(new Constant("b"), 0, f, 2);
 		Object o = f.compute();
 		assertEquals("b", o);
 	}
@@ -56,9 +58,9 @@ public class IfThenElseTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		IfThenElse f = new IfThenElse();
-		Connectable.connect(new Constant(true), 0, f, 0);
-		Connectable.connect(new Constant("a"), 0, f, 1);
-		Connectable.connect(new Constant("b"), 0, f, 2);
+		connect(new Constant(true), 0, f, 0);
+		connect(new Constant("a"), 0, f, 1);
+		connect(new Constant("b"), 0, f, 2);
 		Object o = f.compute();
 		assertEquals("a", o);
 	}
@@ -68,9 +70,9 @@ public class IfThenElseTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		IfThenElse f = new IfThenElse();
-		Connectable.connect(new Constant(true), 0, f, 0);
-		Connectable.connect(new Constant("a"), 0, f, 1);
-		Connectable.connect(new Constant("b"), 0, f, 2);
+		connect(new Constant(true), 0, f, 0);
+		connect(new Constant("a"), 0, f, 1);
+		connect(new Constant("b"), 0, f, 2);
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, factory.or(
@@ -83,13 +85,20 @@ public class IfThenElseTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		IfThenElse f = new IfThenElse();
-		Connectable.connect(new Constant(false), 0, f, 0);
-		Connectable.connect(new Constant("a"), 0, f, 1);
-		Connectable.connect(new Constant("b"), 0, f, 2);
+		connect(new Constant(false), 0, f, 0);
+		connect(new Constant("a"), 0, f, 1);
+		connect(new Constant("b"), 0, f, 2);
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, factory.or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(2), f)));
+	}
+	
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		UpstreamConnection uc = new UpstreamConnection(c1, i1);
+		DownstreamConnection dc = new DownstreamConnection(c2, i2);
+		Connectable.connect(uc, i1, dc, i2);
 	}
 }

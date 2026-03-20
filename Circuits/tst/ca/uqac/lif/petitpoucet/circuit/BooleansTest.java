@@ -33,6 +33,8 @@ import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
+import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
 import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 
@@ -48,8 +50,8 @@ public class BooleansTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Booleans.And f = new Booleans.And(2);
-		Connectable.connect(new Constant(false), 0, f, 0);
-		Connectable.connect(new Constant(true), 0, f, 1);
+		connect(new Constant(false), 0, f, 0);
+		connect(new Constant(true), 0, f, 1);
 		Object o = f.compute();
 		assertEquals(false, o);
 	}
@@ -59,8 +61,8 @@ public class BooleansTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Booleans.And f = new Booleans.And(2);
-		Connectable.connect(new Constant(true), 0, f, 0);
-		Connectable.connect(new Constant(true), 0, f, 1);
+		connect(new Constant(true), 0, f, 0);
+		connect(new Constant(true), 0, f, 1);
 		Object o = f.compute();
 		assertEquals(true, o);
 	}
@@ -70,8 +72,8 @@ public class BooleansTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Booleans.And f = new Booleans.And(2);
-		Connectable.connect(new Constant(true), 0, f, 0);
-		Connectable.connect(new Constant(true), 0, f, 1);
+		connect(new Constant(true), 0, f, 0);
+		connect(new Constant(true), 0, f, 1);
 		f.compute();
 		Vertex ae = f.explain(OutputPart.FIRST);
 		factory.clear();
@@ -89,8 +91,8 @@ public class BooleansTest
 	{
 		VertexFactory factory = new CutVertexFactory(new IdentityVertexFactory());
 		Booleans.And f = new Booleans.And(2);
-		Connectable.connect(new Constant(false), 0, f, 0);
-		Connectable.connect(new Constant(false), 0, f, 1);
+		connect(new Constant(false), 0, f, 0);
+		connect(new Constant(false), 0, f, 1);
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0), factory);
 		ConcreteVertex ce = Vertex.get(e);
@@ -103,8 +105,8 @@ public class BooleansTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Booleans.Or f = new Booleans.Or(2);
-		Connectable.connect(new Constant(false), 0, f, 0);
-		Connectable.connect(new Constant(true), 0, f, 1);
+		connect(new Constant(false), 0, f, 0);
+		connect(new Constant(true), 0, f, 1);
 		Object o = f.compute();
 		assertEquals(true, o);
 	}
@@ -114,8 +116,8 @@ public class BooleansTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Booleans.Or f = new Booleans.Or(2);
-		Connectable.connect(new Constant(false), 0, f, 0);
-		Connectable.connect(new Constant(false), 0, f, 1);
+		connect(new Constant(false), 0, f, 0);
+		connect(new Constant(false), 0, f, 1);
 		Object o = f.compute();
 		assertEquals(false, o);
 	}
@@ -125,8 +127,8 @@ public class BooleansTest
 	{
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Booleans.Or f = new Booleans.Or(2);
-		Connectable.connect(new Constant(true), 0, f, 0);
-		Connectable.connect(new Constant(true), 0, f, 1);
+		connect(new Constant(true), 0, f, 0);
+		connect(new Constant(true), 0, f, 1);
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, factory.or(
@@ -139,13 +141,20 @@ public class BooleansTest
 	{
 		VertexFactory factory = new CutVertexFactory(new IdentityVertexFactory());
 		Booleans.Or f = new Booleans.Or(2);
-		Connectable.connect(new Constant(true), 0, f, 0);
-		Connectable.connect(new Constant(true), 0, f, 1);
+		connect(new Constant(true), 0, f, 0);
+		connect(new Constant(true), 0, f, 1);
 		f.compute();
 		Vertex e = f.explain(new Connectable.OutputPart(0), factory);
 		ConcreteVertex ce = Vertex.get(e);
 		ce.render(System.out);
 		factory.clear();
 		assertEqualGraphs(ce, factory.getPart(new Connectable.InputPart(0), f));
+	}
+	
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		UpstreamConnection uc = new UpstreamConnection(c1, i1);
+		DownstreamConnection dc = new DownstreamConnection(c2, i2);
+		Connectable.connect(uc, i1, dc, i2);
 	}
 }

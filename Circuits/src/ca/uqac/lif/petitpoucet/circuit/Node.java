@@ -94,7 +94,9 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	{
 		for (int i = 0; i < inputs.length; i++)
 		{
-			Connectable.connect(new Argument(inputs[i], i), 0, this, i);
+			UpstreamConnection uc = new UpstreamConnection(new Argument(inputs[i], i), 0);
+			DownstreamConnection dc = new DownstreamConnection(this, i);
+			Connectable.connect(uc, 0, dc, i);
 		}
 		return compute();
 	}
@@ -150,23 +152,33 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	}
 
 	@Override
-	public void assignInput(int i, Connectable c, int j)
+	public void assignInput(int i, Connection o)
 	{
-		if (!(c instanceof Node))
+		if (!(o instanceof UpstreamConnection))
 		{
 			throw new IllegalArgumentException("Connectable must be a node");
 		}
-		m_ins[i] = new UpstreamConnection((Node) c, j);
+		UpstreamConnection uc = (UpstreamConnection) o;
+		if (!(uc.getObject() instanceof Node))
+		{
+			throw new IllegalArgumentException("Connectable must be a node");
+		}
+		m_ins[i] = new UpstreamConnection((Node) uc.getObject(), uc.getIndex());
 	}
 
 	@Override
-	public void assignOutput(int i, Connectable c, int j)
+	public void assignOutput(int i, Connection o)
 	{
-		if (!(c instanceof Node))
+		if (!(o instanceof DownstreamConnection))
 		{
 			throw new IllegalArgumentException("Connectable must be a node");
 		}
-		m_outs[i] = new DownstreamConnection((Node) c, j);
+		DownstreamConnection uc = (DownstreamConnection) o;
+		if (!(uc.getObject() instanceof Node))
+		{
+			throw new IllegalArgumentException("Connectable must be a node");
+		}
+		m_outs[i] = new DownstreamConnection((Node) uc.getObject(), uc.getIndex());
 	}
 
 	@Override
