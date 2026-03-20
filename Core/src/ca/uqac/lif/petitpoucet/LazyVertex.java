@@ -38,21 +38,15 @@ public abstract class LazyVertex implements AbstractVertex
 	private final Part m_part;
 	
 	/**
-	 * The options to use when generating the explanation.
-	 */
-	protected final int m_options;
-	
-	/**
 	 * Creates a new lazy vertex.
 	 * @param f The factory that will be used to create nodes
 	 * @param p The part to be explained
 	 */
-	public LazyVertex(VertexFactory f, Part p, int options)
+	public LazyVertex(VertexFactory f, Part p)
 	{
 		super();
 		m_factory = f;
 		m_part = p;
-		m_options = options;
 	}
 	
 	/**
@@ -71,20 +65,7 @@ public abstract class LazyVertex implements AbstractVertex
 	 * @throws ExplanationException Thrown if an error occurs in the calculation
 	 * of the explanation
 	 */
-	public Vertex concretize(Part p) throws ExplanationException
-	{
-		return concretize(p, m_options);
-	}
-	
-	/**
-	 * Calculates the explanation for a given part.
-	 * @param p The part to explain
-	 * @param options
-	 * @return The root of the lineage graph.
-	 * @throws ExplanationException Thrown if an error occurs in the calculation
-	 * of the explanation
-	 */
-	public abstract Vertex concretize(Part p, int options) throws ExplanationException;
+	public abstract Vertex concretize(Part p) throws ExplanationException;
 	
 	/**
 	 * Calculates the explanation.

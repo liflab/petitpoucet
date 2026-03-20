@@ -44,54 +44,21 @@ public interface Explainable
 	
 	/**
 	 * Explains a part of the output of the object, by returning a vertex that
-	 * can be used to trace back the origin of the part. The default implementation
-	 * of this method uses a {@link VertexFactory} to create the vertex, but
-	 * subclasses can override this method to use a custom factory.
+	 * can be used to trace back the origin of the part.
 	 * @param p The part to explain
 	 * @return A vertex that can be used to trace back the origin of the part
-	 * @throws ExplanationException If an error occurs during the calculation of
-	 * the explanation
+	 * @throws ExplanationException If an error occurs during the calculation
+	 * of the explanation
 	 */
 	public default AbstractVertex explain(Part p) throws ExplanationException
 	{
-		return explain(p, new VertexFactory());
+		return explain(p, new IdentityVertexFactory());
 	}
 	
 	/**
 	 * Explains a part of the output of the object, by returning a vertex that
 	 * can be used to trace back the origin of the part. The method uses a
-	 * {@link VertexFactory} provided as an argument to create the vertex, which
-	 * can be used to create custom vertices.
-	 * @param p The part to explain
-	 * @param f The factory to use to create the vertex
-	 * @return A vertex that can be used to trace back the origin of the part
-	 * @throws ExplanationException If an error occurs during the calculation
-	 * of the explanation
-	 */
-	public default AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
-	{
-		return explain(p, f, FULL);
-	}
-	
-	/**
-	 * Explains a part of the output of the object, by returning a vertex that
-	 * can be used to trace back the origin of the part.
-	 * @param p The part to explain
-	 * @param options The flags specifying the options to apply when calculating
-	 * the explanation
-	 * @return A vertex that can be used to trace back the origin of the part
-	 * @throws ExplanationException If an error occurs during the calculation
-	 * of the explanation
-	 */
-	public default AbstractVertex explain(Part p, int options) throws ExplanationException
-	{
-		return explain(p, new VertexFactory(), options);
-	}
-	
-	/**
-	 * Explains a part of the output of the object, by returning a vertex that
-	 * can be used to trace back the origin of the part. The method uses a
-	 * {@link VertexFactory} provided as an argument to create the vertex, which
+	 * {@link IdentityVertexFactory} provided as an argument to create the vertex, which
 	 * can be used to create custom vertices.
 	 * @param p The part to explain
 	 * @param v The visitor to use to create the vertex

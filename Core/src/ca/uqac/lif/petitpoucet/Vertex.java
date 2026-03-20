@@ -240,7 +240,7 @@ public abstract class Vertex implements AbstractVertex, Renderer
 		 * Creates a new AND vertex with no children and no parents.
 		 * The constructor is package-private to prevent external code from
 		 * creating AND vertices directly, as they should be created through
-		 * the {@link VertexFactory} class.
+		 * the {@link IdentityVertexFactory} class.
 		 */
 		/* package */ AndVertex()
 		{
@@ -263,7 +263,7 @@ public abstract class Vertex implements AbstractVertex, Renderer
 		 * Creates a new OR vertex with no children and no parents.
 		 * The constructor is package-private to prevent external code from
 		 * creating OR vertices directly, as they should be created through
-		 * the {@link VertexFactory} class.
+		 * the {@link IdentityVertexFactory} class.
 		 */
 		/* package */ OrVertex()
 		{
@@ -297,7 +297,7 @@ public abstract class Vertex implements AbstractVertex, Renderer
 		 * Creates a new part vertex with the given part and source.
 		 * The constructor is package-private to prevent external code from
 		 * creating part vertices directly, as they should be created through
-		 * the {@link VertexFactory} class.
+		 * the {@link IdentityVertexFactory} class.
 		 * @param p The part represented by this vertex. This parameter cannot be null.
 		 * @param s The source of the part represented by this vertex. This parameter can be null.
 		 */

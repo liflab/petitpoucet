@@ -33,11 +33,10 @@ import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Connectable.InputPart;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
-import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 import ca.uqac.lif.petitpoucet.circuit.Lists.Apply;
 import ca.uqac.lif.petitpoucet.circuit.Lists.ElementAt;
 import ca.uqac.lif.petitpoucet.circuit.Lists.NthElement;
@@ -61,7 +60,7 @@ public class ListsTest
 	@Test
 	public void testElementAt2() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		ElementAt f = new ElementAt(0);
 		Connectable.connect(new Constant(Arrays.asList("a", "b", "c")), 0, f, 0);
 		f.compute();
@@ -83,7 +82,7 @@ public class ListsTest
 	@Test
 	public void testApplyExplain1() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Double d = new Numbers.Double();
 		Circuit c = getCircuit(d, "CDouble");
 		Apply f = new Apply(c);
@@ -97,7 +96,7 @@ public class ListsTest
 		factory.clear();
 		Vertex expected = factory.getPart(CompositePart.compose(new NthElement(1), OutputPart.FIRST), f);
 		{
-			VertexFactory subf = factory.subfactory(f);
+			IdentityVertexFactory subf = factory.subfactory(f);
 			Vertex v1 = subf.getPart(OutputPart.FIRST, d);
 			Vertex v2 = subf.getPart(InputPart.FIRST, d);
 			v1.addChild(v2);
@@ -118,7 +117,7 @@ public class ListsTest
 	@Test
 	public void testApplyExplain2() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Double d = new Numbers.Double();
 		Circuit c = getCircuit(d);
 		Apply f = new Apply(c);
@@ -135,7 +134,7 @@ public class ListsTest
 	@Test
 	public void testApplyExplain3() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Double d = new Numbers.Double();
 		Circuit c = getCircuit(d);
 		Apply f = new Apply(c);
@@ -149,7 +148,7 @@ public class ListsTest
 		{
 			Vertex root = factory.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), c);
 			expected.addChild(root);
-			VertexFactory subf = factory.subfactory(f);
+			IdentityVertexFactory subf = factory.subfactory(f);
 			Vertex.tree(subf.getPart(CompositePart.compose(new NthElement(10), OutputPart.FIRST), d),
 					subf.getPart(CompositePart.compose(new NthElement(10), InputPart.FIRST), d));
 			Subgraph sg = subf.subgraph();
@@ -176,7 +175,7 @@ public class ListsTest
 	@Test
 	public void testWindowExplain1() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
 		Circuit c = getCircuit(d, "InWin");
 		Window f = new Window(3, c);
@@ -190,9 +189,9 @@ public class ListsTest
 		{
 			Vertex c_root = factory.getPart(OutputPart.FIRST, c);
 			root.addChild(c_root);
-			VertexFactory subf = factory.subfactory(c);
+			IdentityVertexFactory subf = factory.subfactory(c);
 			{
-				VertexFactory subsubf = subf.subfactory(d);
+				IdentityVertexFactory subsubf = subf.subfactory(d);
 				{
 					Vertex mul_root = subsubf.getPart(OutputPart.FIRST, d);
 					Vertex and = subsubf.getAnd();
@@ -221,7 +220,7 @@ public class ListsTest
 	@Test
 	public void testWindowExplain2() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
 		Circuit c = getCircuit(d);
 		Window f = new Window(3, c);
@@ -234,9 +233,9 @@ public class ListsTest
 		{
 			Vertex c_root = factory.getPart(OutputPart.FIRST, c);
 			root.addChild(c_root);
-			VertexFactory subf = factory.subfactory(c);
+			IdentityVertexFactory subf = factory.subfactory(c);
 			{
-				VertexFactory subsubf = subf.subfactory(d);
+				IdentityVertexFactory subsubf = subf.subfactory(d);
 				{
 					Vertex mul_root = subsubf.getPart(OutputPart.FIRST, d);
 					Vertex and = subsubf.getOr();
@@ -264,22 +263,22 @@ public class ListsTest
 	@Test
 	public void testWindowExplainCut1() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		Numbers.Multiplication d = new Numbers.Multiplication(3);
 		Circuit c = getCircuit(d);
 		Window f = new Window(3, c);
 		Connectable.connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
 		f.compute();
-		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST), Explainable.CUT);
+		AbstractVertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST) /*, Explainable.CUT*/);
 		Vertex c_e = AbstractVertex.get(e);
 		factory.clear();
 		Vertex root = factory.getPart(CompositePart.compose(new NthElement(1), OutputPart.FIRST), f);
 		{
 			Vertex c_root = factory.getPart(OutputPart.FIRST, c);
 			root.addChild(c_root);
-			VertexFactory subf = factory.subfactory(c);
+			IdentityVertexFactory subf = factory.subfactory(c);
 			{
-				VertexFactory subsubf = subf.subfactory(d);
+				IdentityVertexFactory subsubf = subf.subfactory(d);
 				{
 					Vertex mul_root = subsubf.getPart(OutputPart.FIRST, d);
 					mul_root.addChild(subsubf.getPart(InputPart.FIRST, d));

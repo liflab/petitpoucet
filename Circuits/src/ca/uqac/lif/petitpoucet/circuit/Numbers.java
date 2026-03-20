@@ -22,11 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.AbstractVertex;
-import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex;
 
 /**
  * Utility class providing basic arithmetic operations.
@@ -174,14 +173,14 @@ public abstract class Numbers<T> extends Node
 		}
 
 		@Override
-		public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException
+		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
 		{
 			checkHead(p);
 			if (m_zeros == null)
-				return super.explain(p, f, options);
+				return super.explain(p, f);
 			Integer[] zeros = new Integer[m_zeros.size()];
 			m_zeros.toArray(zeros);
-			return new MultiplicationNullLazyVertex(zeros, f, p, options);
+			return new MultiplicationNullLazyVertex(zeros, f, p);
 		}
 
 		@Override
@@ -207,17 +206,17 @@ public abstract class Numbers<T> extends Node
 		{
 			protected final Integer[] m_zeros;
 
-			public MultiplicationNullLazyVertex(Integer[] zeros, VertexFactory f, Part p, int options)
+			public MultiplicationNullLazyVertex(Integer[] zeros, VertexFactory f, Part p)
 			{
-				super(f, p, options);
+				super(f, p);
 				m_zeros = zeros;
 			}
 
 			@Override
-			public Vertex concretize(Part part, int options)
+			public Vertex concretize(Part part)
 			{
 				Vertex root = m_factory.getPart(OutputPart.FIRST, Multiplication.this);
-				if (m_zeros.length == 1 || Explainable.shouldCut(options))
+				if (m_zeros.length == 1 || m_factory.shouldCut())
 				{
 					Vertex child = m_factory.getPart(new InputPart(m_zeros[0]), Multiplication.this);
 					root.addChild(child);

@@ -22,11 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.lif.petitpoucet.AbstractVertex;
-import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex;
 
 /**
  * Utility class providing basic logical operations.
@@ -65,9 +64,9 @@ public abstract class Booleans extends Node
 	{
 		/*@ non_null @*/ protected final int[] m_indices;
 		
-		public IndexLazyVertex(VertexFactory f, Part p, List<Integer> indices, int options)
+		public IndexLazyVertex(VertexFactory f, Part p, List<Integer> indices)
 		{
-			super(f, p, options);
+			super(f, p);
 			m_indices = new int[indices.size()];
 			for (int i = 0; i < indices.size(); i++)
 			{
@@ -121,14 +120,14 @@ public abstract class Booleans extends Node
 		}
 		
 		@Override
-		public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException
+		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
 		{
 			checkHead(p);
 			if (m_falseInputs != null)
 			{
-				return new AndFalseLazyVertex(f, p, m_falseInputs, options);
+				return new AndFalseLazyVertex(f, p, m_falseInputs);
 			}
-			return super.explain(p, f, options);
+			return super.explain(p, f);
 		}
 		
 		@Override
@@ -146,15 +145,15 @@ public abstract class Booleans extends Node
 		
 		protected class AndFalseLazyVertex extends IndexLazyVertex
 		{
-			public AndFalseLazyVertex(VertexFactory f, Part p, List<Integer> indices, int options)
+			public AndFalseLazyVertex(VertexFactory f, Part p, List<Integer> indices)
 			{
-				super(f, p, indices, options);
+				super(f, p, indices);
 			}
 
 			@Override
-			public Vertex concretize(Part p, int options) throws ExplanationException
+			public Vertex concretize(Part p) throws ExplanationException
 			{
-				if (m_indices.length == 1 || Explainable.shouldCut(options))
+				if (m_indices.length == 1 || m_factory.shouldCut())
 				{
 					return m_factory.getPart(new InputPart(m_indices[0]), And.this);
 				}
@@ -213,14 +212,14 @@ public abstract class Booleans extends Node
 		}
 		
 		@Override
-		public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException
+		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
 		{
 			checkHead(p);
 			if (m_trueInputs != null)
 			{
-				return new OrTrueLazyVertex(f, p, m_trueInputs, options);
+				return new OrTrueLazyVertex(f, p, m_trueInputs);
 			}
-			return super.explain(p, f, options);
+			return super.explain(p, f);
 		}
 		
 		@Override
@@ -238,15 +237,15 @@ public abstract class Booleans extends Node
 		
 		protected class OrTrueLazyVertex extends IndexLazyVertex
 		{
-			public OrTrueLazyVertex(VertexFactory f, Part p, List<Integer> indices, int options)
+			public OrTrueLazyVertex(VertexFactory f, Part p, List<Integer> indices)
 			{
-				super(f, p, indices, options);
+				super(f, p, indices);
 			}
 
 			@Override
-			public Vertex concretize(Part p, int options) throws ExplanationException
+			public Vertex concretize(Part p) throws ExplanationException
 			{
-				if (m_indices.length == 1 || Explainable.shouldCut(options))
+				if (m_indices.length == 1 || m_factory.shouldCut())
 				{
 					return m_factory.getPart(new InputPart(m_indices[0]), Or.this);
 				}

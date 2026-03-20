@@ -32,7 +32,7 @@ import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 import ca.uqac.lif.petitpoucet.Connectable.InputPart;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 
@@ -148,7 +148,7 @@ public class CircuitTest
 	@Test
 	public void testExplain1() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory(); 
+		IdentityVertexFactory factory = new IdentityVertexFactory(); 
 		Circuit circ = new Circuit(2, 1);
 		Numbers.Addition add = new Numbers.Addition(2);
 		circ.add(add);
@@ -183,7 +183,7 @@ public class CircuitTest
 	@Test
 	public void testExplain2() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory(); 
+		IdentityVertexFactory factory = new IdentityVertexFactory(); 
 		Circuit circ = new Circuit(2, 1);
 		Numbers.Multiplication mul = new Numbers.Multiplication(2);
 		circ.add(mul);
@@ -210,7 +210,7 @@ public class CircuitTest
 	@Test
 	public void testExplain3() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory(); 
+		IdentityVertexFactory factory = new IdentityVertexFactory(); 
 		Circuit circ = new Circuit(3, 1);
 		Numbers.Addition add = new Numbers.Addition(2);
 		circ.associateInput(0, add, 0);

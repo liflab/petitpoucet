@@ -21,8 +21,8 @@ package ca.uqac.lif.petitpoucet.circuit;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex;
 
 public class IfThenElse extends Node
 {
@@ -64,13 +64,13 @@ public class IfThenElse extends Node
 	}
 	
 	@Override
-	protected Vertex explain(int index, Part tail, VertexFactory f, int options) throws ExplanationException
+	protected Vertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
 	{
 		if (m_condition == null)
 		{
 			throw new ExplanationException("Condition not computed");
 		}
-		Vertex.AndVertex v = f.getAnd();
+		Vertex v = f.getAnd();
 		v.addChild(f.getPart(new Connectable.InputPart(0), this));
 		int in_index = m_condition ? 1 : 2;
 		Part in_part = CompositePart.compose(tail, new Connectable.InputPart(in_index));

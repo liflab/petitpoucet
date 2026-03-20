@@ -27,7 +27,7 @@ public class VertexFactoryTest
 	@Test
 	public void test1()
 	{
-		VertexFactory f = new VertexFactory();
+		IdentityVertexFactory f = new IdentityVertexFactory();
 		Vertex v1 = f.getAnd();
 		Vertex v2 = f.getAnd();
 		assertNotSame(v1, v2);
@@ -36,7 +36,7 @@ public class VertexFactoryTest
 	@Test
 	public void test2()
 	{
-		VertexFactory f = new VertexFactory();
+		IdentityVertexFactory f = new IdentityVertexFactory();
 		Vertex v1 = f.getOr();
 		Vertex v2 = f.getOr();
 		assertNotSame(v1, v2);
@@ -46,7 +46,7 @@ public class VertexFactoryTest
 	public void test3()
 	{
 		Object o = new Object();
-		VertexFactory f = new VertexFactory();
+		IdentityVertexFactory f = new IdentityVertexFactory();
 		Vertex v1 = f.getPart(new CompositePartTest.DummyPart("a"), o);
 		Vertex v2 = f.getPart(new CompositePartTest.DummyPart("a"), o);
 		assertSame(v1, v2);
@@ -56,7 +56,7 @@ public class VertexFactoryTest
 	public void test4()
 	{
 		Object o = new Object();
-		VertexFactory f = new VertexFactory();
+		IdentityVertexFactory f = new IdentityVertexFactory();
 		Vertex v1 = f.getPart(new CompositePartTest.DummyPart("a"), o);
 		Vertex v2 = f.getPart(new CompositePartTest.DummyPart("b"), o);
 		assertNotSame(v1, v2);

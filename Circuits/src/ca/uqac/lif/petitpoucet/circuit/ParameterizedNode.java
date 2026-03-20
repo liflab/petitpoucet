@@ -27,8 +27,8 @@ import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
-import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex;
 
 /**
  * A node that takes another one as a parameter.
@@ -87,9 +87,9 @@ public abstract class ParameterizedNode extends Node
 		 * @param p The part to explain
 		 * @param options The options to be passed when generating the graph
 		 */
-		public ParameterLazyVertex(VertexFactory f, Part p, int options)
+		public ParameterLazyVertex(VertexFactory f, Part p)
 		{
-			super(f, p, options);
+			super(f, p);
 		}
 
 		/**
@@ -113,7 +113,7 @@ public abstract class ParameterizedNode extends Node
 			AbstractVertex in_e = m_explanations.get(index);
 			if (in_e instanceof LazyVertex)
 			{
-				exp = ((LazyVertex) in_e).concretize(new_p, m_options);
+				exp = ((LazyVertex) in_e).concretize(new_p);
 
 			}
 			else

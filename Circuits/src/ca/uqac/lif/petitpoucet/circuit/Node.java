@@ -29,8 +29,8 @@ import ca.uqac.lif.petitpoucet.Duplicable;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
-import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex;
 
 /**
  * A node in a circuit. A node has a fixed number of inputs and outputs, and
@@ -170,11 +170,11 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	}
 
 	@Override
-	public AbstractVertex explain(Part p, VertexFactory f, int options) throws ExplanationException
+	public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
 	{
 		Part p_tail = tail(p);
 		int index = checkHead(p);
-		return explain(index, p_tail, f, options);
+		return explain(index, p_tail, f);
 	}
 
 	/**
@@ -213,9 +213,9 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	 * @return A vertex explaining the output of this node at the given index
 	 * @throws ExplanationException
 	 */
-	protected AbstractVertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
+	protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 	{
-		return new NodeLazyVertex(f, tail, options);
+		return new NodeLazyVertex(f, tail);
 	}
 
 	@Override
@@ -226,13 +226,13 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 
 	public class NodeLazyVertex extends LazyVertex
 	{
-		public NodeLazyVertex(VertexFactory f, Part p, int options)
+		public NodeLazyVertex(VertexFactory f, Part p)
 		{
-			super(f, p, options);
+			super(f, p);
 		}
 
 		@Override
-		public Vertex concretize(Part part, int options)
+		public Vertex concretize(Part part)
 		{
 			if (getInputArity() == 0)
 			{

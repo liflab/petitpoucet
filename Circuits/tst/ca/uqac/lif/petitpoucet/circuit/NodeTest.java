@@ -31,7 +31,7 @@ import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 
 /**
  * Unit tests for {@link Node}.
@@ -56,7 +56,7 @@ public class NodeTest
 	public void test2() throws ExplanationException
 	{
 		DummyNode dn = new DummyNode();
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		assertEquals("a", dn.compute(0));
 		AbstractVertex av = dn.explain(new Connectable.OutputPart(0));
 		Vertex v = AbstractVertex.get(av);

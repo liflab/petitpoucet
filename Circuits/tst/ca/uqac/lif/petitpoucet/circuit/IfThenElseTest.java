@@ -33,7 +33,7 @@ import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
-import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 
 /**
  * Unit tests for {@link IfThenElse}.
@@ -45,7 +45,7 @@ public class IfThenElseTest
 	@Test
 	public void test1()
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		IfThenElse f = new IfThenElse();
 		Connectable.connect(new Constant(false), 0, f, 0);
 		Connectable.connect(new Constant("a"), 0, f, 1);
@@ -57,7 +57,7 @@ public class IfThenElseTest
 	@Test
 	public void test2()
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		IfThenElse f = new IfThenElse();
 		Connectable.connect(new Constant(true), 0, f, 0);
 		Connectable.connect(new Constant("a"), 0, f, 1);
@@ -69,7 +69,7 @@ public class IfThenElseTest
 	@Test
 	public void test3() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		IfThenElse f = new IfThenElse();
 		Connectable.connect(new Constant(true), 0, f, 0);
 		Connectable.connect(new Constant("a"), 0, f, 1);
@@ -84,7 +84,7 @@ public class IfThenElseTest
 	@Test
 	public void test4() throws ExplanationException
 	{
-		VertexFactory factory = new VertexFactory();
+		IdentityVertexFactory factory = new IdentityVertexFactory();
 		IfThenElse f = new IfThenElse();
 		Connectable.connect(new Constant(false), 0, f, 0);
 		Connectable.connect(new Constant("a"), 0, f, 1);

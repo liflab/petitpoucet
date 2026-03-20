@@ -27,9 +27,8 @@ import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
-import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
@@ -46,19 +45,19 @@ public abstract class Lists
 {
 	protected static abstract class LazyAllElementsVertex extends LazyVertex
 	{
-		public LazyAllElementsVertex(VertexFactory f, Part p, int options)
+		public LazyAllElementsVertex(VertexFactory f, Part p)
 		{
-			super(f, p, options);
+			super(f, p);
 		}
 
 		@Override
-		public Vertex concretize(Part p, int options) throws ExplanationException
+		public Vertex concretize(Part p) throws ExplanationException
 		{
 			if (getArity() == 1)
 			{
 				return m_factory.getPart(compose(new NthElement(0), InputPart.FIRST), getInstance());
 			}
-			AndVertex a = m_factory.getAnd();
+			Vertex a = m_factory.getAnd();
 			for (int i = 0; i < getArity(); i++)
 			{
 				a.addChild(m_factory.getPart(compose(new NthElement(i), InputPart.FIRST), getInstance()));
@@ -106,7 +105,7 @@ public abstract class Lists
 		}
 
 		@Override
-		protected Vertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
+		protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 		{
 			Part p = compose(tail, new CompositePart(new NthElement(m_index), new Connectable.InputPart(0)));
 			return f.getPart(p, this);
@@ -133,16 +132,16 @@ public abstract class Lists
 		}
 
 		@Override
-		public AbstractVertex explain(int index, Part p, VertexFactory f, int options)
+		public AbstractVertex explain(int index, Part p, VertexFactory f)
 		{
-			return new LazySumAllVertex(f, p, options);
+			return new LazySumAllVertex(f, p);
 		}
 
 		protected class LazySumAllVertex extends LazyAllElementsVertex
 		{
-			public LazySumAllVertex(VertexFactory f, Part p, int options)
+			public LazySumAllVertex(VertexFactory f, Part p)
 			{
-				super(f, p, options);
+				super(f, p);
 			}
 
 			@Override
@@ -219,9 +218,9 @@ public abstract class Lists
 		}
 
 		@Override
-		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
+		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 		{
-			return new WindowLazyVertex(f, tail, options);
+			return new WindowLazyVertex(f, tail);
 		}
 
 		@Override
@@ -232,9 +231,9 @@ public abstract class Lists
 
 		protected class WindowLazyVertex extends ParameterLazyVertex
 		{ 
-			public WindowLazyVertex(VertexFactory f, Part p, int options)
+			public WindowLazyVertex(VertexFactory f, Part p)
 			{
-				super(f, p, options);
+				super(f, p);
 			}
 
 			@Override
@@ -244,7 +243,7 @@ public abstract class Lists
 			}
 
 			@Override
-			public Vertex concretize(Part p, int options) throws ExplanationException
+			public Vertex concretize(Part p) throws ExplanationException
 			{
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
@@ -254,7 +253,7 @@ public abstract class Lists
 					root.addChild(child);
 					return root;
 				}
-				return AbstractVertex.get(Window.super.explain(0, p, m_factory, options));
+				return AbstractVertex.get(Window.super.explain(0, p, m_factory));
 			}
 
 			@Override
@@ -332,9 +331,9 @@ public abstract class Lists
 		}
 
 		@Override
-		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f, int options) throws ExplanationException
+		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 		{
-			return new ApplyLazyVertex(f, tail, options);
+			return new ApplyLazyVertex(f, tail);
 		}
 
 		@Override
@@ -345,9 +344,9 @@ public abstract class Lists
 
 		protected class ApplyLazyVertex extends ParameterLazyVertex
 		{
-			public ApplyLazyVertex(VertexFactory f, Part p, int options)
+			public ApplyLazyVertex(VertexFactory f, Part p)
 			{
-				super(f, p, options);
+				super(f, p);
 			}
 
 			@Override
@@ -357,7 +356,7 @@ public abstract class Lists
 			}
 
 			@Override
-			public Vertex concretize(Part p, int options) throws ExplanationException
+			public Vertex concretize(Part p) throws ExplanationException
 			{
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
@@ -367,7 +366,7 @@ public abstract class Lists
 					root.addChild(child);
 					return root;
 				}
-				return AbstractVertex.get(Apply.super.explain(0, p, m_factory, options));
+				return AbstractVertex.get(Apply.super.explain(0, p, m_factory));
 			}
 
 			@Override

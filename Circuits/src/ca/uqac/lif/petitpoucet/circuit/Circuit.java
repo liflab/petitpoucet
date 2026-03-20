@@ -34,8 +34,8 @@ import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 
 /**
  * A circuit is a node that contains other nodes. It has a fixed number of
@@ -226,33 +226,30 @@ public class Circuit extends Node
 	}
 
 	@Override
-	protected AbstractVertex explain(int index, Part tail, VertexFactory f, int options) throws ExplanationException
+	protected AbstractVertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
 	{
-		return new CircuitLazyVertex(f, tail, index, options);
+		return new CircuitLazyVertex(f, tail, index);
 	}
 
 	protected class CircuitLazyVertex extends LazyVertex
 	{
 		protected final int m_index;
 
-		protected final int m_options;
-
-		public CircuitLazyVertex(VertexFactory f, Part p, int index, int options)
+		public CircuitLazyVertex(VertexFactory f, Part p, int index)
 		{
-			super(f, p, options);
+			super(f, p);
 			m_index = index;
-			m_options = options;
 		}
 
 		@Override
-		public Vertex concretize(Part part, int options) throws ExplanationException
+		public Vertex concretize(Part part) throws ExplanationException
 		{
 			VertexFactory subf = m_factory.subfactory(this);
 			DownstreamConnection c = m_outputAssociations[m_index];
 			Node n = c.getObject();
 			int n_index = c.getIndex();
 			Part start = CompositePart.compose(part, new OutputPart(n_index));
-			propagateExplanation(n, start, subf, options);
+			propagateExplanation(n, start, subf);
 			Subgraph sg = subf.subgraph();
 			extendLeaves(sg);
 			Vertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
@@ -292,13 +289,13 @@ public class Circuit extends Node
 			return pv.getPart();
 		}
 
-		protected Vertex propagateExplanation(Node n, Part p, VertexFactory f, int options) throws ExplanationException
+		protected Vertex propagateExplanation(Node n, Part p, VertexFactory f) throws ExplanationException
 		{
 			if (!(head(p) instanceof OutputPart))
 			{
 				throw new ExplanationException("Expected an output part");
 			}
-			Vertex explanation = AbstractVertex.get(n.explain(p, f, options));
+			Vertex explanation = AbstractVertex.get(n.explain(p, f));
 			Vertex root = explanation;
 			List<Vertex> leaves = explanation.findLeaves();
 			for (Vertex leaf : leaves)
@@ -325,7 +322,7 @@ public class Circuit extends Node
 				}
 				else if (m_nodes.contains(c_o))
 				{
-					Vertex to_attach = propagateExplanation(c_o, out_part, f, options);
+					Vertex to_attach = propagateExplanation(c_o, out_part, f);
 					leaf.addChild(to_attach);
 				}
 			}

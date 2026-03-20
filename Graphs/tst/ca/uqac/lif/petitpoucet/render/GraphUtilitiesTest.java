@@ -31,14 +31,14 @@ import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
-import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 
 /**
  * Unit tests for {@link GraphUtilities}.
  */
 public class GraphUtilitiesTest
 {
-	protected static final VertexFactory s_factory = new VertexFactory();
+	protected static final IdentityVertexFactory s_factory = new IdentityVertexFactory();
 	
 	@Before
 	public void setup()

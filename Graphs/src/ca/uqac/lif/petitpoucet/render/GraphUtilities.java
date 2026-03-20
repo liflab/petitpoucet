@@ -25,7 +25,7 @@ import java.util.Set;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
-import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Subgraph;
 
@@ -49,7 +49,7 @@ public class GraphUtilities
 	 * @param f A factory to create new copies of vertices
 	 * @return
 	 */
-	public static Vertex duplicate(Vertex root, VertexFactory f)
+	public static Vertex duplicate(Vertex root, IdentityVertexFactory f)
 	{
 		Vertex new_root = copyVertex(root, f);
 		if (new_root == null)
@@ -70,10 +70,10 @@ public class GraphUtilities
 	 * @param v The vertex to copy
 	 * @param f A factory to create new copies of vertices
 	 * @return A copy of the vertex, or {@code null} if the vertex already
-	 * exists in the factory. This is used by {@link #duplicate(Vertex, VertexFactory)}
+	 * exists in the factory. This is used by {@link #duplicate(Vertex, IdentityVertexFactory)}
 	 * to indicate that this vertex has already been processed.
 	 */
-	protected static Vertex copyVertex(Vertex v, VertexFactory f)
+	protected static Vertex copyVertex(Vertex v, IdentityVertexFactory f)
 	{
 		if (f.contains(v))
 		{
