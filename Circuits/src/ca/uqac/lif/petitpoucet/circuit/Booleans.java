@@ -151,7 +151,7 @@ public abstract class Booleans extends Node
 			}
 
 			@Override
-			public ConcreteVertex concretize(Part p) throws ExplanationException
+			public ConcreteVertex concretize(Part p, VertexFactory m_factory) throws ExplanationException
 			{
 				if (m_indices.length == 1)
 				{
@@ -243,7 +243,7 @@ public abstract class Booleans extends Node
 			}
 
 			@Override
-			public ConcreteVertex concretize(Part p) throws ExplanationException
+			public ConcreteVertex concretize(Part p, VertexFactory m_factory) throws ExplanationException
 			{
 				if (m_indices.length == 1)
 				{

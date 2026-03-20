@@ -272,8 +272,10 @@ public class ListsTest
 		Window f = new Window(3, c);
 		Connectable.connect(new Constant(Arrays.asList(1, 0, 0, 0)), 0, f, 0);
 		f.compute();
-		Vertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST) /*, Explainable.CUT*/);
+		Vertex e = f.explain(CompositePart.compose(new NthElement(1), OutputPart.FIRST), factory);
 		ConcreteVertex c_e = Vertex.get(e);
+		System.out.println("Received:");
+		c_e.render(System.out);
 		factory.clear();
 		ConcreteVertex root = factory.getPart(CompositePart.compose(new NthElement(1), OutputPart.FIRST), f);
 		{
@@ -293,7 +295,8 @@ public class ListsTest
 				c_root.addChild(sg1);
 			}
 		}
-		c_e.render(System.out);
+		System.out.println("Expected:");
+		root.render(System.out);
 		assertEqualGraphs(root, c_e);
 	}
 

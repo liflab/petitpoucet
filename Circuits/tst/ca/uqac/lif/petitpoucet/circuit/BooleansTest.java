@@ -92,8 +92,10 @@ public class BooleansTest
 		Connectable.connect(new Constant(false), 0, f, 0);
 		Connectable.connect(new Constant(false), 0, f, 1);
 		f.compute();
-		Vertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, factory.getPart(new Connectable.InputPart(0), f));
+		Vertex e = f.explain(new Connectable.OutputPart(0), factory);
+		ConcreteVertex ce = Vertex.get(e);
+		factory.clear();
+		assertEqualGraphs(ce, factory.getPart(new Connectable.InputPart(0), f));
 	}
 
 	@Test
@@ -140,7 +142,10 @@ public class BooleansTest
 		Connectable.connect(new Constant(true), 0, f, 0);
 		Connectable.connect(new Constant(true), 0, f, 1);
 		f.compute();
-		Vertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, factory.getPart(new Connectable.InputPart(0), f));
+		Vertex e = f.explain(new Connectable.OutputPart(0), factory);
+		ConcreteVertex ce = Vertex.get(e);
+		ce.render(System.out);
+		factory.clear();
+		assertEqualGraphs(ce, factory.getPart(new Connectable.InputPart(0), f));
 	}
 }

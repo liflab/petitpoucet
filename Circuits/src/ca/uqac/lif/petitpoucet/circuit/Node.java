@@ -232,7 +232,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 
 		@Override
-		public ConcreteVertex concretize(Part part)
+		public ConcreteVertex concretize(Part part, VertexFactory m_factory) throws ExplanationException
 		{
 			if (getInputArity() == 0)
 			{

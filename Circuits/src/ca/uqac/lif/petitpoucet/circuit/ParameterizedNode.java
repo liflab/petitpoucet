@@ -107,13 +107,13 @@ public abstract class ParameterizedNode extends Node
 		 * @throws ExplanationException Thrown if an error occurred during the
 		 * calculation of the explanation
 		 */
-		/*@ non_null @*/ protected ConcreteVertex explainElement(int index, Part new_p) throws ExplanationException
+		/*@ non_null @*/ protected ConcreteVertex explainElement(int index, Part new_p, VertexFactory m_factory) throws ExplanationException
 		{
 			ConcreteVertex exp;
 			Vertex in_e = m_explanations.get(index);
 			if (in_e instanceof LazyVertex)
 			{
-				exp = ((LazyVertex) in_e).concretize(new_p);
+				exp = ((LazyVertex) in_e).concretize(new_p, m_factory);
 
 			}
 			else
@@ -122,19 +122,19 @@ public abstract class ParameterizedNode extends Node
 			}
 			if (!(exp instanceof Subgraph))
 			{
-				extendLeaves(new_p, index, exp.findLeaves(), null);
+				extendLeaves(new_p, index, exp.findLeaves(), null, m_factory);
 				return exp;
 			}
 			else
 			{
 				Subgraph inner = (Subgraph) exp;
-				extendLeaves(new_p, index, inner.innerLeaves(), inner);
+				extendLeaves(new_p, index, inner.innerLeaves(), inner, m_factory);
 				ConcreteVertex root = m_factory.getPart(CompositePart.compose(new_p, OutputPart.FIRST), m_f);
 				root.addChild(inner);
 				return root;
 			}
 		}
 
-		protected abstract ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner);
+		protected abstract ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner, VertexFactory m_factory);
 	}
 }

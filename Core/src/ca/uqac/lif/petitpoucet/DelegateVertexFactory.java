@@ -20,6 +20,10 @@ package ca.uqac.lif.petitpoucet;
 
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 
 /**
@@ -27,8 +31,28 @@ import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
  * class is useful to create factories with different settings, using
  * the <em>Decorator</em> design pattern.
  */
-public class DelegateVertexFactory implements VertexFactory
+public abstract class DelegateVertexFactory implements VertexFactory
 {
+	/**
+	 * The parent factory, if any. If this factory is a sub-factory, it shares the
+	 * same vertices as the parent factory, but can create new vertices without
+	 * disturbing the parent factory. If this factory is not a sub-factory,
+	 * this field is null.
+	 */
+	/*@ null @*/ protected final VertexFactory m_parent;
+
+	/**
+	 * The sub-factories created from this factory. This map is used to keep
+	 * track of the sub-factories created from this factory, so that they can be properly
+	 * disposed of when this factory is disposed of. This list is never null, but can be empty.
+	 */
+	/*@ non_null @*/ protected final Map<Object,VertexFactory> m_children;
+	
+	public DelegateVertexFactory(VertexFactory factory)
+	{
+		this(factory, null);
+	}
+	
 	@Override
 	public AndVertex and(Vertex... vertices)
 	{
@@ -55,10 +79,14 @@ public class DelegateVertexFactory implements VertexFactory
 	/**
 	 * Creates a new delegate factory.
 	 * @param factory The factory to which all calls will be delegated
+	 * @param parent The parent factory, if any.
 	 */
-	public DelegateVertexFactory(/*@ non_null @*/ VertexFactory factory)
+	public DelegateVertexFactory(/*@ non_null @*/ VertexFactory factory, VertexFactory parent)
 	{
+		super();
 		m_factory = factory;
+		m_parent = parent;
+		m_children = new HashMap<>();
 	}
 
 	@Override
@@ -83,12 +111,6 @@ public class DelegateVertexFactory implements VertexFactory
 	public ConcreteVertex getPart(PartVertex v)
 	{
 		return m_factory.getPart(v);
-	}
-
-	@Override
-	public VertexFactory subfactory(Object o)
-	{
-		return new DelegateVertexFactory(m_factory.subfactory(o));
 	}
 
 	@Override

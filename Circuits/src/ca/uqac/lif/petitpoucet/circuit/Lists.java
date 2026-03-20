@@ -50,7 +50,7 @@ public abstract class Lists
 		}
 
 		@Override
-		public ConcreteVertex concretize(Part p) throws ExplanationException
+		public ConcreteVertex concretize(Part p, VertexFactory m_factory) throws ExplanationException
 		{
 			if (getArity() == 1)
 			{
@@ -242,13 +242,13 @@ public abstract class Lists
 			}
 
 			@Override
-			public ConcreteVertex concretize(Part p) throws ExplanationException
+			public ConcreteVertex concretize(Part p, VertexFactory m_factory) throws ExplanationException
 			{
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
 				{
 					ConcreteVertex root = m_factory.getPart(CompositePart.compose(p, OutputPart.FIRST), Window.this);
-					ConcreteVertex child = explainElement(((NthElement) t_head).getIndex(), tail(p));
+					ConcreteVertex child = explainElement(((NthElement) t_head).getIndex(), tail(p), m_factory);
 					root.addChild(child);
 					return root;
 				}
@@ -256,7 +256,7 @@ public abstract class Lists
 			}
 
 			@Override
-			protected ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner)
+			protected ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner, VertexFactory m_factory)
 			{
 				for (int i = 0; i < children.size(); i++)
 				{
@@ -355,13 +355,13 @@ public abstract class Lists
 			}
 
 			@Override
-			public ConcreteVertex concretize(Part p) throws ExplanationException
+			public ConcreteVertex concretize(Part p, VertexFactory m_factory) throws ExplanationException
 			{
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
 				{
 					ConcreteVertex root = m_factory.getPart(CompositePart.compose(p, OutputPart.FIRST), Apply.this);
-					ConcreteVertex child = explainElement(((NthElement) t_head).getIndex(), tail(p));
+					ConcreteVertex child = explainElement(((NthElement) t_head).getIndex(), tail(p), m_factory);
 					root.addChild(child);
 					return root;
 				}
@@ -369,7 +369,7 @@ public abstract class Lists
 			}
 
 			@Override
-			protected ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner)
+			protected ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner, VertexFactory m_factory)
 			{
 				for (int i = 0; i < children.size(); i++)
 				{

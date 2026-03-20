@@ -213,7 +213,7 @@ public abstract class Numbers<T> extends Node
 			}
 
 			@Override
-			public ConcreteVertex concretize(Part part)
+			public ConcreteVertex concretize(Part part, VertexFactory m_factory)
 			{
 				ConcreteVertex root = m_factory.getPart(OutputPart.FIRST, Multiplication.this);
 				if (m_zeros.length == 1)

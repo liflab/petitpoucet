@@ -30,7 +30,7 @@ public abstract class LazyVertex extends ConcreteVertex
 	/**
 	 * The factory that will be used to create nodes.
 	 */
-	protected final VertexFactory m_factory;
+	private final VertexFactory m_factory;
 	
 	/**
 	 * The part to be explained.
@@ -61,11 +61,24 @@ public abstract class LazyVertex extends ConcreteVertex
 	/**
 	 * Calculates the explanation for a given part.
 	 * @param p The part to explain
+	 * @param f The factory to use to create nodes
 	 * @return The root of the lineage graph.
 	 * @throws ExplanationException Thrown if an error occurs in the calculation
 	 * of the explanation
 	 */
-	public abstract ConcreteVertex concretize(Part p) throws ExplanationException;
+	public abstract ConcreteVertex concretize(Part p, VertexFactory f) throws ExplanationException;
+	
+	/**
+	 * Calculates the explanation for the part associated to this vertex.
+	 * @param p The part to explain
+	 * @return The root of the lineage graph.
+	 * @throws ExplanationException Thrown if an error occurs in the calculation
+	 * of the explanation
+	 */
+	public ConcreteVertex concretize(Part p) throws ExplanationException
+	{
+		return concretize(p, m_factory);
+	}
 	
 	/**
 	 * Calculates the explanation.

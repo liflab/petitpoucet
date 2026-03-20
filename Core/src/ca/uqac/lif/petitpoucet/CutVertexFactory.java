@@ -18,6 +18,7 @@
  */
 package ca.uqac.lif.petitpoucet;
 
+import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 
 /**
@@ -36,24 +37,45 @@ public class CutVertexFactory extends DelegateVertexFactory
 		super(factory);
 	}
 	
+	/**
+	 * Creates a new cut vertex factory.
+	 * @param factory The factory to which all calls will be delegated
+	 * @param parent The parent factory, if this factory is a sub-factory. This parameter can be null.
+	 */
+	public CutVertexFactory(VertexFactory factory, VertexFactory parent)
+	{
+		super(factory, parent);
+	}
+	
 	@Override
 	public OrVertex getOr()
 	{
-		return new CutOrVertex();
+		return new CutOrVertex(null);
+	}
+	
+	public VertexFactory subfactory(Object key)
+	{
+		if (m_children.containsKey(key))
+		{
+			return m_children.get(this);
+		}
+		CutVertexFactory f = new CutVertexFactory(m_factory.subfactory(key), this);
+		m_children.put(key, f);
+		return f;
 	}
 	
 	/**
 	 * An OR vertex that accepts only one child. Any attempt to add more
 	 * than one child will be ignored.
 	 */
-	public static class CutOrVertex extends ConcreteVertex implements OrVertex
+	public class CutOrVertex extends LazyVertex implements OrVertex
 	{
 		/**
 		 * Creates a new cut OR vertex.
 		 */
-		public CutOrVertex()
+		public CutOrVertex(Part p)
 		{
-			super();
+			super(CutVertexFactory.this, p);
 		}
 		
 		@Override
@@ -61,7 +83,7 @@ public class CutVertexFactory extends DelegateVertexFactory
 		{
 			if (m_children.isEmpty())
 			{
-				super.addChild(v);
+				m_children.add(v);
 			}
 		}
 		
@@ -84,6 +106,12 @@ public class CutVertexFactory extends DelegateVertexFactory
 			}
 			CutOrVertex v = (CutOrVertex) o;
 			return m_children.equals(v.m_children);
+		}
+		
+		@Override
+		public ConcreteVertex concretize(Part p, VertexFactory m_factory) throws ExplanationException
+		{
+			return m_children.isEmpty() ? null : Vertex.get(m_children.get(0));
 		}
 	}
 }

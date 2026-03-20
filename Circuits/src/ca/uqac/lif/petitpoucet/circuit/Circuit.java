@@ -241,7 +241,7 @@ public class Circuit extends Node
 		}
 
 		@Override
-		public ConcreteVertex concretize(Part part) throws ExplanationException
+		public ConcreteVertex concretize(Part part, VertexFactory m_factory) throws ExplanationException
 		{
 			VertexFactory subf = m_factory.subfactory(this);
 			DownstreamConnection c = m_outputAssociations[m_index];
@@ -250,13 +250,13 @@ public class Circuit extends Node
 			Part start = CompositePart.compose(part, new OutputPart(n_index));
 			propagateExplanation(n, start, subf);
 			Subgraph sg = subf.subgraph();
-			extendLeaves(sg);
+			extendLeaves(sg, m_factory);
 			ConcreteVertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
 			root.addChild(sg);
 			return root;
 		}
 
-		protected void extendLeaves(Subgraph sg) throws ExplanationException
+		protected void extendLeaves(Subgraph sg, VertexFactory m_factory) throws ExplanationException
 		{
 			for (Vertex leaf : sg.innerLeaves())
 			{
