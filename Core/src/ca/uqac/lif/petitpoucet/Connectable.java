@@ -73,50 +73,19 @@ public interface Connectable
 	 */
 	public void assignOutput(int i, Connectable c, int j);
 	
-	/**
-	 * Represents a specific port of some component. 
-	 */
-	public static abstract class Connection
+	public static interface Connection
 	{
-		/**
-		 * The component designated by this connection.
-		 */
-		protected final Connectable m_connectable;
-		
-		/**
-		 * The index of the port on that component.
-		 */
-		protected final int m_index;
-		
-		/**
-		 * Creates a new connection object.
-		 * @param c The component designated by this connection
-		 * @param i The index of the port on that component
-		 */
-		public Connection(Connectable c, int i)
-		{
-			super();
-			m_connectable = c;
-			m_index = i;
-		}
-		
 		/**
 		 * Gets the component designated by this connection.
 		 * @return The component
 		 */
-		public Connectable getObject()
-		{
-			return m_connectable;
-		}
+		public Connectable getObject();
 		
 		/**
 		 * Gets the index of the port on the component.
 		 * @return The index
 		 */
-		public int getIndex()
-		{
-			return m_index;
-		}
+		public int getIndex();
 	}
 	
 	/**

@@ -301,7 +301,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	/**
 	 * A connection to an upstream node.
 	 */
-	public static class UpstreamConnection extends Connection
+	public static class UpstreamConnection extends ConcreteConnection
 	{
 		/**
 		 * Creates a new upstream connection to the given node and index.
@@ -339,11 +339,57 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 			return "\u2192" + m_index + m_connectable.toString();
 		}
 	}
+	
+	/**
+	 * Represents a specific port of some component. 
+	 */
+	public static abstract class ConcreteConnection implements Connection
+	{
+		/**
+		 * The component designated by this connection.
+		 */
+		protected final Connectable m_connectable;
+		
+		/**
+		 * The index of the port on that component.
+		 */
+		protected final int m_index;
+		
+		/**
+		 * Creates a new connection object.
+		 * @param c The component designated by this connection
+		 * @param i The index of the port on that component
+		 */
+		public ConcreteConnection(Connectable c, int i)
+		{
+			super();
+			m_connectable = c;
+			m_index = i;
+		}
+		
+		/**
+		 * Gets the component designated by this connection.
+		 * @return The component
+		 */
+		public Connectable getObject()
+		{
+			return m_connectable;
+		}
+		
+		/**
+		 * Gets the index of the port on the component.
+		 * @return The index
+		 */
+		public int getIndex()
+		{
+			return m_index;
+		}
+	}
 
 	/**
 	 * A connection to an downstream node.
 	 */
-	public static class DownstreamConnection extends Connection
+	public static class DownstreamConnection extends ConcreteConnection
 	{
 		/**
 		 * Creates a new downstream connection to the given node and index.
