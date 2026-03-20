@@ -22,7 +22,7 @@ import static ca.uqac.lif.petitpoucet.CompositePart.compose;
 import static ca.uqac.lif.petitpoucet.CompositePart.head;
 import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
-import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Duplicable;
@@ -30,7 +30,7 @@ import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 
 /**
  * A node in a circuit. A node has a fixed number of inputs and outputs, and
@@ -170,7 +170,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	}
 
 	@Override
-	public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
+	public Vertex explain(Part p, VertexFactory f) throws ExplanationException
 	{
 		Part p_tail = tail(p);
 		int index = checkHead(p);
@@ -213,7 +213,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	 * @return A vertex explaining the output of this node at the given index
 	 * @throws ExplanationException
 	 */
-	protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+	protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 	{
 		return new NodeLazyVertex(f, tail);
 	}
@@ -232,19 +232,19 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		}
 
 		@Override
-		public Vertex concretize(Part part)
+		public ConcreteVertex concretize(Part part)
 		{
 			if (getInputArity() == 0)
 			{
-				Vertex root = m_factory.getPart(compose(tail(part), OutputPart.FIRST), Node.this);
+				ConcreteVertex root = m_factory.getPart(compose(tail(part), OutputPart.FIRST), Node.this);
 				return root;
 			}
 			Vertex inside;
 			if (getInputArity() == 1)
 			{
-				Vertex root = m_factory.getPart(compose(part, OutputPart.FIRST), Node.this);
+				ConcreteVertex root = m_factory.getPart(compose(part, OutputPart.FIRST), Node.this);
 				Part in_p = compose(part, InputPart.FIRST);
-				Vertex child = m_factory.getPart(in_p, Node.this);
+				ConcreteVertex child = m_factory.getPart(in_p, Node.this);
 				root.addChild(child);
 				return root;
 			}
@@ -257,7 +257,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 					inside.addChild(m_factory.getPart(in_p, Node.this));
 				}
 			}
-			Vertex root = m_factory.getPart(CompositePart.compose(part, OutputPart.FIRST), Node.this);
+			ConcreteVertex root = m_factory.getPart(CompositePart.compose(part, OutputPart.FIRST), Node.this);
 			root.addChild(inside);
 			return root;
 		}

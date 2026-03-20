@@ -27,15 +27,14 @@ import java.util.Set;
 import static ca.uqac.lif.petitpoucet.CompositePart.head;
 import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 
 /**
  * A circuit is a node that contains other nodes. It has a fixed number of
@@ -226,7 +225,7 @@ public class Circuit extends Node
 	}
 
 	@Override
-	protected AbstractVertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
+	protected Vertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
 	{
 		return new CircuitLazyVertex(f, tail, index);
 	}
@@ -242,7 +241,7 @@ public class Circuit extends Node
 		}
 
 		@Override
-		public Vertex concretize(Part part) throws ExplanationException
+		public ConcreteVertex concretize(Part part) throws ExplanationException
 		{
 			VertexFactory subf = m_factory.subfactory(this);
 			DownstreamConnection c = m_outputAssociations[m_index];
@@ -252,7 +251,7 @@ public class Circuit extends Node
 			propagateExplanation(n, start, subf);
 			Subgraph sg = subf.subgraph();
 			extendLeaves(sg);
-			Vertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
+			ConcreteVertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
 			root.addChild(sg);
 			return root;
 		}
@@ -289,14 +288,14 @@ public class Circuit extends Node
 			return pv.getPart();
 		}
 
-		protected Vertex propagateExplanation(Node n, Part p, VertexFactory f) throws ExplanationException
+		protected ConcreteVertex propagateExplanation(Node n, Part p, VertexFactory f) throws ExplanationException
 		{
 			if (!(head(p) instanceof OutputPart))
 			{
 				throw new ExplanationException("Expected an output part");
 			}
-			Vertex explanation = AbstractVertex.get(n.explain(p, f));
-			Vertex root = explanation;
+			ConcreteVertex explanation = Vertex.get(n.explain(p, f));
+			ConcreteVertex root = explanation;
 			List<Vertex> leaves = explanation.findLeaves();
 			for (Vertex leaf : leaves)
 			{
@@ -316,13 +315,13 @@ public class Circuit extends Node
 				Node c_o = c.getObject();
 				if (f.contains(out_part, c_o))
 				{
-					Vertex to_attach = f.getPart(out_part, c.getObject());
+					ConcreteVertex to_attach = f.getPart(out_part, c.getObject());
 					leaf.addChild(to_attach);
 					continue;
 				}
 				else if (m_nodes.contains(c_o))
 				{
-					Vertex to_attach = propagateExplanation(c_o, out_part, f);
+					ConcreteVertex to_attach = propagateExplanation(c_o, out_part, f);
 					leaf.addChild(to_attach);
 				}
 			}

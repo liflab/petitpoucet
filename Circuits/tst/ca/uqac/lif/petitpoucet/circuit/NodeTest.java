@@ -23,20 +23,16 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
-import static ca.uqac.lif.petitpoucet.Vertex.and;
-import static ca.uqac.lif.petitpoucet.Vertex.or;
-import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-import ca.uqac.lif.petitpoucet.AbstractVertex;
-import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 
 /**
  * Unit tests for {@link Node}.
  */
-@SuppressWarnings("unused")
 public class NodeTest
 {
 	@Test
@@ -58,11 +54,11 @@ public class NodeTest
 		DummyNode dn = new DummyNode();
 		IdentityVertexFactory factory = new IdentityVertexFactory();
 		assertEquals("a", dn.compute(0));
-		AbstractVertex av = dn.explain(new Connectable.OutputPart(0));
-		Vertex v = AbstractVertex.get(av);
+		Vertex av = dn.explain(new Connectable.OutputPart(0));
+		ConcreteVertex v = Vertex.get(av);
 		factory.clear();
 		v.render(System.out);
-		assertEqualGraphs(v, tree(factory.getPart(Connectable.OutputPart.FIRST, dn)));
+		assertEqualGraphs(v, factory.tree(factory.getPart(Connectable.OutputPart.FIRST, dn)));
 	}
 	
 	@Test(expected = ExplanationException.class)

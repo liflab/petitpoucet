@@ -24,18 +24,17 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
-import static ca.uqac.lif.petitpoucet.Vertex.and;
-import static ca.uqac.lif.petitpoucet.Vertex.or;
-import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Explainable;
-import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
+import ca.uqac.lif.petitpoucet.VertexFactory;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.CutVertexFactory;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 
 /**
  * Unit tests for the functions defined in {@link Numbers}.
@@ -64,8 +63,8 @@ public class NumbersTest
 		Connectable.connect(new Constant(4), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(24, v, 0.01);
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f), and(
+		Vertex e = f.explain(new Connectable.OutputPart(0));
+		assertEqualGraphs(e, factory.tree(factory.getPart(OutputPart.FIRST, f), factory.and(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(1), f),
 				factory.getPart(new Connectable.InputPart(2), f))));
@@ -81,8 +80,8 @@ public class NumbersTest
 		Connectable.connect(new Constant(4), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f), tree(factory.getPart(new Connectable.InputPart(1), f))));
+		Vertex e = f.explain(new Connectable.OutputPart(0));
+		assertEqualGraphs(e, factory.tree(factory.getPart(OutputPart.FIRST, f), factory.tree(factory.getPart(new Connectable.InputPart(1), f))));
 	}
 
 	@Test
@@ -95,8 +94,8 @@ public class NumbersTest
 		Connectable.connect(new Constant(0), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f), tree(or(
+		Vertex e = f.explain(new Connectable.OutputPart(0));
+		assertEqualGraphs(e, factory.tree(factory.getPart(OutputPart.FIRST, f), factory.tree(factory.or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(2), f)
 				))));
@@ -105,15 +104,15 @@ public class NumbersTest
 	@Test
 	public void testMultiplication4() throws ExplanationException
 	{
-		IdentityVertexFactory factory = new IdentityVertexFactory();
+		VertexFactory factory = new CutVertexFactory(new IdentityVertexFactory());
 		Numbers.Multiplication f = new Numbers.Multiplication(3);
 		Connectable.connect(new Constant(0), 0, f, 0);
 		Connectable.connect(new Constant(0), 0, f, 1);
 		Connectable.connect(new Constant(0), 0, f, 2);
 		float v = (Float) f.compute(0);
 		assertEquals(0, v, 0.01);
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0) /*, Explainable.CUT*/);
+		Vertex e = f.explain(new Connectable.OutputPart(0), new CutVertexFactory(new IdentityVertexFactory()));
 		assertEqualGraphs(e, 
-				tree(factory.getPart(OutputPart.FIRST, f), factory.getPart(new Connectable.InputPart(0), f)));
+				factory.tree(factory.getPart(OutputPart.FIRST, f), factory.getPart(new Connectable.InputPart(0), f)));
 	}
 }

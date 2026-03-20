@@ -22,14 +22,17 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
+import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
+
 public class VertexFactoryTest
 {
 	@Test
 	public void test1()
 	{
 		IdentityVertexFactory f = new IdentityVertexFactory();
-		Vertex v1 = f.getAnd();
-		Vertex v2 = f.getAnd();
+		AndVertex v1 = f.getAnd();
+		AndVertex v2 = f.getAnd();
 		assertNotSame(v1, v2);
 	}
 	
@@ -37,8 +40,8 @@ public class VertexFactoryTest
 	public void test2()
 	{
 		IdentityVertexFactory f = new IdentityVertexFactory();
-		Vertex v1 = f.getOr();
-		Vertex v2 = f.getOr();
+		OrVertex v1 = f.getOr();
+		OrVertex v2 = f.getOr();
 		assertNotSame(v1, v2);
 	}
 	
@@ -47,8 +50,8 @@ public class VertexFactoryTest
 	{
 		Object o = new Object();
 		IdentityVertexFactory f = new IdentityVertexFactory();
-		Vertex v1 = f.getPart(new CompositePartTest.DummyPart("a"), o);
-		Vertex v2 = f.getPart(new CompositePartTest.DummyPart("a"), o);
+		ConcreteVertex v1 = f.getPart(new CompositePartTest.DummyPart("a"), o);
+		ConcreteVertex v2 = f.getPart(new CompositePartTest.DummyPart("a"), o);
 		assertSame(v1, v2);
 	}
 	
@@ -57,8 +60,8 @@ public class VertexFactoryTest
 	{
 		Object o = new Object();
 		IdentityVertexFactory f = new IdentityVertexFactory();
-		Vertex v1 = f.getPart(new CompositePartTest.DummyPart("a"), o);
-		Vertex v2 = f.getPart(new CompositePartTest.DummyPart("b"), o);
+		ConcreteVertex v1 = f.getPart(new CompositePartTest.DummyPart("a"), o);
+		ConcreteVertex v2 = f.getPart(new CompositePartTest.DummyPart("b"), o);
 		assertNotSame(v1, v2);
 	}
 }

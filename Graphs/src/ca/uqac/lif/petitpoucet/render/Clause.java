@@ -26,7 +26,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 
 /**
  * A collection of part nodes designating parts of one or more objects. A

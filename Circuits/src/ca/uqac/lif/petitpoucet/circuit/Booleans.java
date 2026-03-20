@@ -21,11 +21,11 @@ package ca.uqac.lif.petitpoucet.circuit;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 
 /**
  * Utility class providing basic logical operations.
@@ -120,7 +120,7 @@ public abstract class Booleans extends Node
 		}
 		
 		@Override
-		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
+		public Vertex explain(Part p, VertexFactory f) throws ExplanationException
 		{
 			checkHead(p);
 			if (m_falseInputs != null)
@@ -151,18 +151,18 @@ public abstract class Booleans extends Node
 			}
 
 			@Override
-			public Vertex concretize(Part p) throws ExplanationException
+			public ConcreteVertex concretize(Part p) throws ExplanationException
 			{
-				if (m_indices.length == 1 || m_factory.shouldCut())
+				if (m_indices.length == 1)
 				{
 					return m_factory.getPart(new InputPart(m_indices[0]), And.this);
 				}
-				Vertex o = m_factory.getOr();
+				OrVertex o = m_factory.getOr();
 				for (int z : m_indices)
 				{
 					o.addChild(m_factory.getPart(new InputPart(z), And.this));
 				}
-				return o;
+				return (ConcreteVertex) o;
 			}
 		}
 	}
@@ -212,7 +212,7 @@ public abstract class Booleans extends Node
 		}
 		
 		@Override
-		public AbstractVertex explain(Part p, VertexFactory f) throws ExplanationException
+		public Vertex explain(Part p, VertexFactory f) throws ExplanationException
 		{
 			checkHead(p);
 			if (m_trueInputs != null)
@@ -243,18 +243,18 @@ public abstract class Booleans extends Node
 			}
 
 			@Override
-			public Vertex concretize(Part p) throws ExplanationException
+			public ConcreteVertex concretize(Part p) throws ExplanationException
 			{
-				if (m_indices.length == 1 || m_factory.shouldCut())
+				if (m_indices.length == 1)
 				{
 					return m_factory.getPart(new InputPart(m_indices[0]), Or.this);
 				}
-				Vertex o = m_factory.getOr();
+				OrVertex o = m_factory.getOr();
 				for (int z : m_indices)
 				{
 					o.addChild(m_factory.getPart(new InputPart(z), Or.this));
 				}
-				return o;
+				return (ConcreteVertex) o;
 			}
 		}
 	}

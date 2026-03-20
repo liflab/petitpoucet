@@ -18,7 +18,72 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-public class CutVertexFactory
-{
+import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 
+/**
+ * A vertex factory that generates OR vertices accepting only one child.
+ * All attempts to add more than one child to an OR vertex will be
+ * ignored.
+ */
+public class CutVertexFactory extends DelegateVertexFactory
+{
+	/**
+	 * Creates a new cut vertex factory.
+	 * @param factory The factory to which all calls will be delegated
+	 */
+	public CutVertexFactory(VertexFactory factory)
+	{
+		super(factory);
+	}
+	
+	@Override
+	public OrVertex getOr()
+	{
+		return new CutOrVertex();
+	}
+	
+	/**
+	 * An OR vertex that accepts only one child. Any attempt to add more
+	 * than one child will be ignored.
+	 */
+	public static class CutOrVertex extends ConcreteVertex implements OrVertex
+	{
+		/**
+		 * Creates a new cut OR vertex.
+		 */
+		public CutOrVertex()
+		{
+			super();
+		}
+		
+		@Override
+		public void addChild(Vertex v)
+		{
+			if (m_children.isEmpty())
+			{
+				super.addChild(v);
+			}
+		}
+		
+		@Override
+		public int hashCode()
+		{
+			return 31 * super.hashCode() + 1;
+		}
+		
+		@Override
+		public boolean equals(Object o)
+		{
+			if (o == this)
+			{
+				return true;
+			}
+			if (o == null || getClass() != o.getClass())
+			{
+				return false;
+			}
+			CutOrVertex v = (CutOrVertex) o;
+			return m_children.equals(v.m_children);
+		}
+	}
 }

@@ -20,6 +20,7 @@ package ca.uqac.lif.petitpoucet;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
@@ -27,13 +28,20 @@ import static ca.uqac.lif.petitpoucet.Assertions.assertNotEqualGraphs;
 import ca.uqac.lif.petitpoucet.CompositePartTest.DummyPart;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 
 /**
- * Unit tests for {@link Vertex}.
+ * Unit tests for {@link ConcreteVertex}.
  */
 public class VertexTest
 {
+	protected static final VertexFactory FACTORY = new IdentityVertexFactory();
+	
+	@Before
+	public void before()
+	{
+		FACTORY.clear();
+	}
 	@Test
 	public void test1()
 	{
@@ -118,11 +126,11 @@ public class VertexTest
 	
 	protected static AndVertex and()
 	{
-		return new AndVertex();
+		return FACTORY.getAnd();
 	}
 	
 	protected static OrVertex or()
 	{
-		return new OrVertex();
+		return FACTORY.getOr();
 	}
 }

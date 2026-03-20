@@ -18,7 +18,9 @@
  */
 package ca.uqac.lif.petitpoucet;
 
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
+import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 
 /**
  * Factory for creating vertices.
@@ -32,7 +34,7 @@ public interface VertexFactory
 	 * the graph.
 	 * @return An OR vertex
 	 */
-	/*@ non_null @*/ public Vertex getOr();
+	/*@ non_null @*/ public OrVertex getOr();
 	
 	/**
 	 * Gets an AND vertex. This method always returns a new vertex, as AND
@@ -40,7 +42,7 @@ public interface VertexFactory
 	 * the graph.
 	 * @return An AND vertex
 	 */
-	/*@ non_null @*/ public Vertex getAnd();
+	/*@ non_null @*/ public AndVertex getAnd();
 	
 	/**
 	 * Gets a part vertex for the given part and source. If a vertex with the same part and source
@@ -58,7 +60,7 @@ public interface VertexFactory
 	 * @param v The part vertex for which to get the vertex. This parameter cannot be null.
 	 * @return A part vertex for the given part vertex.
 	 */
-	/*@ non_null @*/ public Vertex getPart(PartVertex v);
+	/*@ non_null @*/ public ConcreteVertex getPart(PartVertex v);
 	
 	/**
 	 * Creates a new sub-factory associated to a given object.
@@ -96,8 +98,33 @@ public interface VertexFactory
 	 */
 	public Subgraph subgraph();
 	
-	public default boolean shouldCut()
-	{
-		return false;
-	}
+	/**
+	 * Gets an AND vertex with the given vertices as children.
+	 * This method is a shortcut for creating an AND vertex and
+	 * adding the given vertices as children.
+	 * @param vertices The vertices to add as children of the
+	 * AND vertex. This parameter can be null or empty.
+	 * @return An AND vertex with the given vertices as children
+	 */
+	public AndVertex and(Vertex... vertices);
+	
+	/**
+	 * Gets an OR vertex with the given vertices as children.
+	 * This method is a shortcut for creating an OR vertex and
+	 * adding the given vertices as children.
+	 * @param vertices The vertices to add as children of the
+	 * OR vertex. This parameter can be null or empty.
+	 * @return An OR vertex with the given vertices as children
+	 */
+	public OrVertex or(Vertex... vertices);
+	
+	/**
+	 * Gets a tree vertex with the given root and children. This method is a shortcut for
+	 * creating a tree vertex and adding the given vertices as children.
+	 * @param root The root of the tree. This parameter cannot be null.
+	 * @param vertices The vertices to add as children of the
+	 * root vertex. This parameter can be null or empty.
+	 * @return A tree vertex with the given root and children
+	 */
+	public Vertex tree(Vertex root, Vertex... vertices);
 }

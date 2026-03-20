@@ -21,14 +21,14 @@ package ca.uqac.lif.petitpoucet.circuit;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 
 /**
  * A node that takes another one as a parameter.
@@ -41,7 +41,7 @@ public abstract class ParameterizedNode extends Node
 	/**
 	 * The explanations for each invocation of the node.
 	 */
-	/*@ non_null @*/ protected final List<AbstractVertex> m_explanations;
+	/*@ non_null @*/ protected final List<Vertex> m_explanations;
 
 	/**
 	 * Creates a new instance of the node.
@@ -107,10 +107,10 @@ public abstract class ParameterizedNode extends Node
 		 * @throws ExplanationException Thrown if an error occurred during the
 		 * calculation of the explanation
 		 */
-		/*@ non_null @*/ protected Vertex explainElement(int index, Part new_p) throws ExplanationException
+		/*@ non_null @*/ protected ConcreteVertex explainElement(int index, Part new_p) throws ExplanationException
 		{
-			Vertex exp;
-			AbstractVertex in_e = m_explanations.get(index);
+			ConcreteVertex exp;
+			Vertex in_e = m_explanations.get(index);
 			if (in_e instanceof LazyVertex)
 			{
 				exp = ((LazyVertex) in_e).concretize(new_p);
@@ -118,7 +118,7 @@ public abstract class ParameterizedNode extends Node
 			}
 			else
 			{
-				exp = (Vertex) in_e;
+				exp = (ConcreteVertex) in_e;
 			}
 			if (!(exp instanceof Subgraph))
 			{
@@ -129,12 +129,12 @@ public abstract class ParameterizedNode extends Node
 			{
 				Subgraph inner = (Subgraph) exp;
 				extendLeaves(new_p, index, inner.innerLeaves(), inner);
-				Vertex root = m_factory.getPart(CompositePart.compose(new_p, OutputPart.FIRST), m_f);
+				ConcreteVertex root = m_factory.getPart(CompositePart.compose(new_p, OutputPart.FIRST), m_f);
 				root.addChild(inner);
 				return root;
 			}
 		}
 
-		protected abstract Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner);
+		protected abstract ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner);
 	}
 }

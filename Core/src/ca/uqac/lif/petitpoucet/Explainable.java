@@ -50,7 +50,7 @@ public interface Explainable
 	 * @throws ExplanationException If an error occurs during the calculation
 	 * of the explanation
 	 */
-	public default AbstractVertex explain(Part p) throws ExplanationException
+	public default Vertex explain(Part p) throws ExplanationException
 	{
 		return explain(p, new IdentityVertexFactory());
 	}
@@ -66,7 +66,7 @@ public interface Explainable
 	 * @throws ExplanationException If an error occurs during the calculation
 	 * of the explanation
 	 */
-	public AbstractVertex explain(Part p, VertexFactory v) throws ExplanationException;
+	public Vertex explain(Part p, VertexFactory v) throws ExplanationException;
 	
 	public void hint(Part p);
 	

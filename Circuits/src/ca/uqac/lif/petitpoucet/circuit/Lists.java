@@ -28,9 +28,8 @@ import static ca.uqac.lif.petitpoucet.CompositePart.tail;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
-import ca.uqac.lif.petitpoucet.AbstractVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Connectable.InputPart;
@@ -51,18 +50,18 @@ public abstract class Lists
 		}
 
 		@Override
-		public Vertex concretize(Part p) throws ExplanationException
+		public ConcreteVertex concretize(Part p) throws ExplanationException
 		{
 			if (getArity() == 1)
 			{
 				return m_factory.getPart(compose(new NthElement(0), InputPart.FIRST), getInstance());
 			}
-			Vertex a = m_factory.getAnd();
+			AndVertex a = m_factory.getAnd();
 			for (int i = 0; i < getArity(); i++)
 			{
 				a.addChild(m_factory.getPart(compose(new NthElement(i), InputPart.FIRST), getInstance()));
 			}
-			return a;
+			return (ConcreteVertex) a;
 		}
 
 		protected abstract Node getInstance();
@@ -105,7 +104,7 @@ public abstract class Lists
 		}
 
 		@Override
-		protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+		protected ConcreteVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 		{
 			Part p = compose(tail, new CompositePart(new NthElement(m_index), new Connectable.InputPart(0)));
 			return f.getPart(p, this);
@@ -132,7 +131,7 @@ public abstract class Lists
 		}
 
 		@Override
-		public AbstractVertex explain(int index, Part p, VertexFactory f)
+		public Vertex explain(int index, Part p, VertexFactory f)
 		{
 			return new LazySumAllVertex(f, p);
 		}
@@ -218,7 +217,7 @@ public abstract class Lists
 		}
 
 		@Override
-		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+		protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 		{
 			return new WindowLazyVertex(f, tail);
 		}
@@ -243,21 +242,21 @@ public abstract class Lists
 			}
 
 			@Override
-			public Vertex concretize(Part p) throws ExplanationException
+			public ConcreteVertex concretize(Part p) throws ExplanationException
 			{
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
 				{
-					Vertex root = m_factory.getPart(CompositePart.compose(p, OutputPart.FIRST), Window.this);
-					Vertex child = explainElement(((NthElement) t_head).getIndex(), tail(p));
+					ConcreteVertex root = m_factory.getPart(CompositePart.compose(p, OutputPart.FIRST), Window.this);
+					ConcreteVertex child = explainElement(((NthElement) t_head).getIndex(), tail(p));
 					root.addChild(child);
 					return root;
 				}
-				return AbstractVertex.get(Window.super.explain(0, p, m_factory));
+				return Vertex.get(Window.super.explain(0, p, m_factory));
 			}
 
 			@Override
-			protected Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner)
+			protected ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner)
 			{
 				for (int i = 0; i < children.size(); i++)
 				{
@@ -331,7 +330,7 @@ public abstract class Lists
 		}
 
 		@Override
-		protected AbstractVertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
+		protected Vertex explain(int out_index, Part tail, VertexFactory f) throws ExplanationException
 		{
 			return new ApplyLazyVertex(f, tail);
 		}
@@ -356,21 +355,21 @@ public abstract class Lists
 			}
 
 			@Override
-			public Vertex concretize(Part p) throws ExplanationException
+			public ConcreteVertex concretize(Part p) throws ExplanationException
 			{
 				Part t_head = head(p);
 				if (t_head instanceof NthElement)
 				{
-					Vertex root = m_factory.getPart(CompositePart.compose(p, OutputPart.FIRST), Apply.this);
-					Vertex child = explainElement(((NthElement) t_head).getIndex(), tail(p));
+					ConcreteVertex root = m_factory.getPart(CompositePart.compose(p, OutputPart.FIRST), Apply.this);
+					ConcreteVertex child = explainElement(((NthElement) t_head).getIndex(), tail(p));
 					root.addChild(child);
 					return root;
 				}
-				return AbstractVertex.get(Apply.super.explain(0, p, m_factory));
+				return Vertex.get(Apply.super.explain(0, p, m_factory));
 			}
 
 			@Override
-			protected Vertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner)
+			protected ConcreteVertex extendLeaves(Part new_p, int index, List<Vertex> children, Subgraph inner)
 			{
 				for (int i = 0; i < children.size(); i++)
 				{

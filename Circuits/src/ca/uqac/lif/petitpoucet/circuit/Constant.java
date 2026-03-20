@@ -20,7 +20,7 @@ package ca.uqac.lif.petitpoucet.circuit;
 
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 
 /**
  * A node that always outputs the same value.
@@ -50,7 +50,7 @@ public class Constant extends Node
 	}
 
 	@Override
-	protected Vertex explain(int out_index, Part p, VertexFactory f)
+	protected ConcreteVertex explain(int out_index, Part p, VertexFactory f)
 	{
 		return f.getPart(new ConstantValue(), m_value);
 	}

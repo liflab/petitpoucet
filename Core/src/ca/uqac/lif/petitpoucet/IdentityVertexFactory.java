@@ -25,7 +25,7 @@ import java.util.Map;
 
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 
 /**
  * Factory for creating vertices. This factory is used to ensure that the same
@@ -42,27 +42,27 @@ public class IdentityVertexFactory implements VertexFactory
 	 * disturbing the parent factory. If this factory is not a sub-factory,
 	 * this field is null.
 	 */
-	/*@ null @*/ protected final IdentityVertexFactory m_parent;
-	
+	/*@ null @*/ protected final VertexFactory m_parent;
+
 	/**
 	 * The sub-factories created from this factory. This map is used to keep
 	 * track of the sub-factories created from this factory, so that they can be properly
 	 * disposed of when this factory is disposed of. This list is never null, but can be empty.
 	 */
-	/*@ non_null @*/ protected final Map<Object,IdentityVertexFactory> m_children;
-	
+	/*@ non_null @*/ protected final Map<Object,VertexFactory> m_children;
+
 	/**
 	 * The list of vertices created by this factory. This list is used to keep track of the
 	 * vertices created by this factory, so that they can be properly disposed of when this
 	 * factory is disposed of. This list is never null, but can be empty.
 	 */
 	/*@ non_null @*/ protected final List<Vertex> m_vertices;
-	
+
 	/**
 	 * Indicates whether the factory should cut the graph when creating vertices. 
 	 */
 	protected final boolean m_shouldCut;
-	
+
 	/**
 	 * Creates a new vertex factory. This constructor is used to create the root factory, which
 	 * has no parent factory.
@@ -71,7 +71,7 @@ public class IdentityVertexFactory implements VertexFactory
 	{
 		this(false);
 	}
-	
+
 	/**
 	 * Creates a new vertex factory. This constructor is used to create the root factory, which
 	 * has no parent factory.
@@ -82,7 +82,7 @@ public class IdentityVertexFactory implements VertexFactory
 	{
 		this(null, should_cut);
 	}
-	
+
 	/**
 	 * Creates a new vertex factory. This constructor is used to create a
 	 * sub-factory, which has a parent factory.
@@ -99,13 +99,13 @@ public class IdentityVertexFactory implements VertexFactory
 		m_vertices = new ArrayList<>();
 		m_shouldCut = should_cut;
 	}
-	
+
 	@Override
 	public PartVertex getPart(/*@ non_null @*/Part p, /*@ null @*/ Object s)
 	{
 		return getPart(new PartVertex(p, s));
 	}
-	
+
 	@Override
 	public PartVertex getPart(/*@ non_null @*/ PartVertex v)
 	{
@@ -117,21 +117,21 @@ public class IdentityVertexFactory implements VertexFactory
 		}
 		return (PartVertex) m_vertices.get(i);
 	}
-	
+
 	@Override
 	public AndVertex getAnd()
 	{
-		return new AndVertex();
+		return new IdentityAndVertex();
 	}
-	
+
 	@Override
 	public OrVertex getOr()
 	{
-		return new OrVertex();
+		return new IdentityOrVertex();
 	}
-	
+
 	@Override
-	public IdentityVertexFactory subfactory(Object key)
+	public VertexFactory subfactory(Object key)
 	{
 		if (m_children.containsKey(key))
 		{
@@ -141,29 +141,129 @@ public class IdentityVertexFactory implements VertexFactory
 		m_children.put(key, vf);
 		return vf;
 	}
-	
+
 	@Override
 	public Subgraph subgraph()
 	{
 		return new Subgraph(m_vertices.get(0).findRoot(), m_vertices);
 	}
-	
+
 	@Override
 	/*@ pure @*/ public boolean contains(Part p, Object o)
 	{
 		return m_vertices.contains(new PartVertex(p, o));
 	}
-	
+
 	@Override
 	public boolean contains(Vertex v)
 	{
 		return m_vertices.contains(v);
 	}
-	
+
 	@Override
 	public void clear()
 	{
 		m_children.clear();
 		m_vertices.clear();
+	}
+
+	/**
+	 * An AND vertex. This vertex represents a conjunction of its children, and is identified
+	 * by the fact that it is an AND vertex. Two AND vertices are considered equal if they are
+	 * the same object, or if they are both AND vertices and have the same children.
+	 */
+	protected static class IdentityAndVertex extends ConcreteVertex implements AndVertex
+	{
+		@Override
+		public String toString()
+		{
+			return "\u2227";
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return 31 * super.hashCode() + 1;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			if (o == this)
+			{
+				return true;
+			}
+			if (o == null || getClass() != o.getClass())
+			{
+				return false;
+			}
+			return true;
+		}
+	}
+
+	/**
+	 * An OR vertex. This vertex represents a disjunction of its children, and is identified
+	 * by the fact that it is an OR vertex. Two OR vertices are considered equal if they are
+	 * the same object, or if they are both OR vertices and have the same children.
+	 */
+	protected static class IdentityOrVertex extends ConcreteVertex implements OrVertex
+	{
+		@Override
+		public String toString()
+		{
+			return "\u2228";
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return 31 * super.hashCode() + 1;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			if (o == this)
+			{
+				return true;
+			}
+			if (o == null || getClass() != o.getClass())
+			{
+				return false;
+			}
+			return true;
+		}
+	}
+
+	@Override
+	public AndVertex and(Vertex... vertices)
+	{
+		IdentityAndVertex v = new IdentityAndVertex();
+		for (Vertex child : vertices)
+		{
+			v.addChild(child);
+		}
+		return v;
+	}
+
+	@Override
+	public OrVertex or(Vertex... vertices)
+	{
+		IdentityOrVertex v = new IdentityOrVertex();
+		for (Vertex child : vertices)
+		{
+			v.addChild(child);
+		}
+		return v;
+	}
+
+	@Override
+	public Vertex tree(Vertex root, Vertex... vertices)
+	{
+		for (Vertex child : vertices)
+		{
+			root.addChild(child);
+		}
+		return root;
 	}
 }

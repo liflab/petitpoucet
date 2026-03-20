@@ -18,11 +18,12 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
+import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.VertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex;
 
 public class IfThenElse extends Node
 {
@@ -70,7 +71,7 @@ public class IfThenElse extends Node
 		{
 			throw new ExplanationException("Condition not computed");
 		}
-		Vertex v = f.getAnd();
+		AndVertex v = f.getAnd();
 		v.addChild(f.getPart(new Connectable.InputPart(0), this));
 		int in_index = m_condition ? 1 : 2;
 		Part in_part = CompositePart.compose(tail, new Connectable.InputPart(in_index));

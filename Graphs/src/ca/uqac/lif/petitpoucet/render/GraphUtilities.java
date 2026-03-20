@@ -22,11 +22,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
+import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
-import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.Subgraph;
 
 /**
@@ -49,7 +51,7 @@ public class GraphUtilities
 	 * @param f A factory to create new copies of vertices
 	 * @return
 	 */
-	public static Vertex duplicate(Vertex root, IdentityVertexFactory f)
+	public static Vertex duplicate(Vertex root, VertexFactory f)
 	{
 		Vertex new_root = copyVertex(root, f);
 		if (new_root == null)
@@ -70,10 +72,10 @@ public class GraphUtilities
 	 * @param v The vertex to copy
 	 * @param f A factory to create new copies of vertices
 	 * @return A copy of the vertex, or {@code null} if the vertex already
-	 * exists in the factory. This is used by {@link #duplicate(Vertex, IdentityVertexFactory)}
+	 * exists in the factory. This is used by {@link #duplicate(ConcreteVertex, IdentityVertexFactory)}
 	 * to indicate that this vertex has already been processed.
 	 */
-	protected static Vertex copyVertex(Vertex v, IdentityVertexFactory f)
+	protected static Vertex copyVertex(Vertex v, VertexFactory f)
 	{
 		if (f.contains(v))
 		{
@@ -137,7 +139,7 @@ public class GraphUtilities
 	/**
 	 * Recursively simplifies a graph by removing all Boolean vertices that have
 	 * only one child, or that have the same type as their parent. This method is
-	 * called by {@link #simplify(Vertex)}, and should not be called directly.
+	 * called by {@link #simplify(ConcreteVertex)}, and should not be called directly.
 	 * @param current The vertex to simplify; the method will simplify the subgraph
 	 * rooted in this vertex
 	 * @param parent The parent of the current vertex; this parameter is used to
@@ -248,7 +250,7 @@ public class GraphUtilities
 	 * @param roots The root of the original graph
 	 * @return The list of roots of the simplified graphs
 	 */
-	/*@ non_null @*/ public static List<Vertex> flatten(/*@ non_null @*/ List<Vertex> roots)
+	/*@ non_null @*/ public static List<ConcreteVertex> flatten(/*@ non_null @*/ List<ConcreteVertex> roots)
 	{
 		// TODO
 		return null;
@@ -257,11 +259,11 @@ public class GraphUtilities
 	/**
 	 * Simplifies a set of lineage graphs.
 	 * @param roots The roots of the original graph
-	 * @see #simplify(Vertex)
+	 * @see #simplify(ConcreteVertex)
 	 */
-	/*@ non_null @*/ public static void simplify(/*@ non_null @*/ List<Vertex> roots)
+	/*@ non_null @*/ public static void simplify(/*@ non_null @*/ List<ConcreteVertex> roots)
 	{
-		for (Vertex root : roots)
+		for (ConcreteVertex root : roots)
 		{
 			simplify(root);
 		}

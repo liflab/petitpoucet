@@ -23,16 +23,13 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
-import static ca.uqac.lif.petitpoucet.Vertex.and;
-import static ca.uqac.lif.petitpoucet.Vertex.or;
-import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
-import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 
 /**
@@ -75,8 +72,8 @@ public class IfThenElseTest
 		Connectable.connect(new Constant("a"), 0, f, 1);
 		Connectable.connect(new Constant("b"), 0, f, 2);
 		f.compute();
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, or(
+		Vertex e = f.explain(new Connectable.OutputPart(0));
+		assertEqualGraphs(e, factory.or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(1), f)));
 	}
@@ -90,8 +87,8 @@ public class IfThenElseTest
 		Connectable.connect(new Constant("a"), 0, f, 1);
 		Connectable.connect(new Constant("b"), 0, f, 2);
 		f.compute();
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, or(
+		Vertex e = f.explain(new Connectable.OutputPart(0));
+		assertEqualGraphs(e, factory.or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(2), f)));
 	}

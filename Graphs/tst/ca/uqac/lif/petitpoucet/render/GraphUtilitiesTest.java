@@ -19,7 +19,6 @@
 package ca.uqac.lif.petitpoucet.render;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
-import static ca.uqac.lif.petitpoucet.Vertex.tree;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
@@ -27,10 +26,10 @@ import org.junit.Test;
 
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 
 /**
@@ -51,16 +50,16 @@ public class GraphUtilitiesTest
 	{
 		AndVertex a = and();
 		Object o = new Object();
-		Vertex t1 = tree(part("a", o),
-				tree(a, 
-						tree(part("b", o)),
-						tree(part("c", o))
+		Vertex t1 = s_factory.tree(part("a", o),
+				s_factory.tree(a, 
+						s_factory.tree(part("b", o)),
+						s_factory.tree(part("c", o))
 						));
 		GraphUtilities.squish(a);
 		s_factory.clear();
-		assertEqualGraphs(t1, tree(part("a", o),
-						tree(part("b", o)),
-						tree(part("c", o))
+		assertEqualGraphs(t1, s_factory.tree(part("a", o),
+						s_factory.tree(part("b", o)),
+						s_factory.tree(part("c", o))
 						));
 	}
 	
@@ -70,10 +69,10 @@ public class GraphUtilitiesTest
 		Object o = new Object();
 		AndVertex a = and();
 		PartVertex b = part("b", o);
-		tree(part("a", o),
-				tree(a, 
-						tree(b),
-						tree(part("c", o))
+		s_factory.tree(part("a", o),
+				s_factory.tree(a, 
+						s_factory.tree(b),
+						s_factory.tree(part("c", o))
 						));
 		GraphUtilities.squish(b);
 	}
@@ -85,10 +84,10 @@ public class GraphUtilitiesTest
 		AndVertex a = and();
 		PartVertex pa = part("a", o);
 		PartVertex b = part("b", o);
-		tree(pa,
-				tree(a, 
-						tree(b),
-						tree(part("c", o))
+		s_factory.tree(pa,
+				s_factory.tree(a, 
+						s_factory.tree(b),
+						s_factory.tree(part("c", o))
 						));
 		GraphUtilities.squish(pa);
 	}
@@ -98,14 +97,14 @@ public class GraphUtilitiesTest
 	{
 		Object o = new Object();
 		PartVertex b = part("b", o);
-		Vertex t = tree(part("a", o),
-				tree(b, 
-						tree(part("c", o))
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(b, 
+						s_factory.tree(part("c", o))
 						),
 				part("d", o));
 		GraphUtilities.squish(b);
 		s_factory.clear();
-		assertEqualGraphs(t, tree(part("a", o),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
 										part("c", o),
 				part("d", o)));
 	}
@@ -114,20 +113,20 @@ public class GraphUtilitiesTest
 	public void testSimplify1()
 	{
 		Object o = new Object();
-		Vertex t = tree(part("a", o),
-				tree(and(),
-						tree(and(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(and(),
+						s_factory.tree(and(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		GraphUtilities.simplify(t);
-		assertEqualGraphs(t, tree(part("a", o),
-				tree(and(),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
+				s_factory.tree(and(),
 								part("b", o),
 								part("c", o),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						)));
 	}
 	
@@ -135,22 +134,22 @@ public class GraphUtilitiesTest
 	public void testSimplifySubgraph1()
 	{
 		Object o = new Object();
-		tree(part("a", o),
-				tree(and(),
-						tree(and(),
+		s_factory.tree(part("a", o),
+				s_factory.tree(and(),
+						s_factory.tree(and(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		Subgraph sg = s_factory.subgraph();
 		GraphUtilities.simplify(sg);
 		s_factory.clear();
-		Vertex expected = tree(part("a", o),
-				tree(and(),
+		Vertex expected = s_factory.tree(part("a", o),
+				s_factory.tree(and(),
 						part("b", o),
 						part("c", o),
-				tree(part("d", o))
+				s_factory.tree(part("d", o))
 				));
 		//sg.render(System.out);
 		//expected.render(System.out);
@@ -161,12 +160,12 @@ public class GraphUtilitiesTest
 	public void testSimplify2()
 	{
 		Object o = new Object();
-		Vertex t = tree(part("a", o),
-				tree(and(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(and(),
 								part("b", o)));
 		GraphUtilities.simplify(t);
 		s_factory.clear();
-		assertEqualGraphs(t, tree(part("a", o),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
 								part("b", o)));
 	}
 	
@@ -174,23 +173,23 @@ public class GraphUtilitiesTest
 	public void testSimplify3()
 	{
 		Object o = new Object();
-		Vertex t = tree(part("a", o),
-				tree(and(),
-						tree(or(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(and(),
+						s_factory.tree(or(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		GraphUtilities.simplify(t);
 		s_factory.clear();
-		assertEqualGraphs(t, tree(part("a", o),
-				tree(and(),
-						tree(or(),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
+				s_factory.tree(and(),
+						s_factory.tree(or(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						)));
 	}
 	
@@ -198,21 +197,21 @@ public class GraphUtilitiesTest
 	public void testSimplify4()
 	{
 		Object o = new Object();
-		Vertex t = tree(part("a", o),
-				tree(or(),
-						tree(or(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(or(),
+						s_factory.tree(or(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		GraphUtilities.simplify(t);
 		s_factory.clear();
-		assertEqualGraphs(t, tree(part("a", o),
-				tree(or(),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
+				s_factory.tree(or(),
 								part("b", o),
 								part("c", o),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						)));
 	}
 	
@@ -220,12 +219,12 @@ public class GraphUtilitiesTest
 	public void testSimplify5()
 	{
 		Object o = new Object();
-		Vertex t = tree(part("a", o),
-				tree(or(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(or(),
 								part("b", o)));
 		GraphUtilities.simplify(t);
 		s_factory.clear();
-		assertEqualGraphs(t, tree(part("a", o),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
 								part("b", o)));
 	}
 	
@@ -233,23 +232,23 @@ public class GraphUtilitiesTest
 	public void testSimplify6()
 	{
 		Object o = new Object();
-		Vertex t = tree(part("a", o),
-				tree(or(),
-						tree(and(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(or(),
+						s_factory.tree(and(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		GraphUtilities.simplify(t);
 		s_factory.clear();
-		assertEqualGraphs(t, tree(part("a", o),
-				tree(or(),
-						tree(and(),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
+				s_factory.tree(or(),
+						s_factory.tree(and(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						)));
 	}
 	
@@ -257,23 +256,23 @@ public class GraphUtilitiesTest
 	public void collapseTest1()
 	{
 		Object o = new DummyObject("o");
-		Vertex t = tree(part("a", o),
-				tree(or(),
-						tree(and(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(or(),
+						s_factory.tree(and(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		GraphUtilities.collapse(t);
 		s_factory.clear();
-		assertEqualGraphs(t, tree(part("a", o),
-				tree(or(),
-						tree(and(),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
+				s_factory.tree(or(),
+						s_factory.tree(and(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						)));
 	}
 	
@@ -281,23 +280,23 @@ public class GraphUtilitiesTest
 	public void collapseTest2()
 	{
 		Object o = new DummyObject("o");
-		Vertex t = tree(part("a", o),
-				tree(or(),
-						tree(and(),
-								tree(part("b", o), part("e", o)),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(or(),
+						s_factory.tree(and(),
+								s_factory.tree(part("b", o), part("e", o)),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		GraphUtilities.collapse(t);
 		s_factory.clear();
-		assertEqualGraphs(t, tree(part("a", o),
-				tree(or(),
-						tree(and(),
+		assertEqualGraphs(t, s_factory.tree(part("a", o),
+				s_factory.tree(or(),
+						s_factory.tree(and(),
 								part("e", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						)));
 	}
 	
@@ -305,13 +304,13 @@ public class GraphUtilitiesTest
 	public void testDnf1()
 	{
 		Object o = new DummyObject("o");
-		Vertex t = tree(part("a", o),
-				tree(or(),
-						tree(and(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(or(),
+						s_factory.tree(and(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		MathSet<Clause> dnf = GraphUtilities.asDnf(t);
 		MathSet<Clause> expected = new MathSet<>();
@@ -324,13 +323,13 @@ public class GraphUtilitiesTest
 	public void testDnf2()
 	{
 		Object o = new DummyObject("o");
-		Vertex t = tree(part("a", o),
-				tree(and(),
-						tree(or(),
+		Vertex t = s_factory.tree(part("a", o),
+				s_factory.tree(and(),
+						s_factory.tree(or(),
 								part("b", o),
 								part("c", o)
 								),
-						tree(part("d", o))
+						s_factory.tree(part("d", o))
 						));
 		MathSet<Clause> dnf = GraphUtilities.asDnf(t);
 		MathSet<Clause> expected = new MathSet<>();

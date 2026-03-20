@@ -23,15 +23,12 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
-import static ca.uqac.lif.petitpoucet.Vertex.and;
-import static ca.uqac.lif.petitpoucet.Vertex.or;
-import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.Subgraph;
-import ca.uqac.lif.petitpoucet.AbstractVertex;
-import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Vertex;
+import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 import ca.uqac.lif.petitpoucet.Connectable.InputPart;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
@@ -140,8 +137,8 @@ public class CircuitTest
 		out.associateOutput(0, in, 0);
 		Object o = out.evaluate(2);
 		assertEquals(4f, o);
-		AbstractVertex e = out.explain(OutputPart.FIRST);
-		Vertex e_c = AbstractVertex.get(e);
+		Vertex e = out.explain(OutputPart.FIRST);
+		ConcreteVertex e_c = Vertex.get(e);
 		e_c.render(System.out);
 	}
 
@@ -159,22 +156,22 @@ public class CircuitTest
 		Connectable.connect(new Constant(3), 0, circ, 1);
 		Object o = circ.compute();
 		assertEquals(5f, o);
-		AbstractVertex e = circ.explain(new Connectable.OutputPart(0));
+		Vertex e = circ.explain(new Connectable.OutputPart(0));
 		factory.clear();
 		Vertex expected_inside = 
-				tree(factory.getPart(OutputPart.FIRST, add),
-						tree(factory.getAnd(),
+				factory.tree(factory.getPart(OutputPart.FIRST, add),
+						factory.tree(factory.getAnd(),
 								factory.getPart(InputPart.FIRST, add),	
 								factory.getPart(InputPart.SECOND, add)
 								));
 		Subgraph sg = factory.subgraph();
-		Vertex root = factory.getPart(OutputPart.FIRST, circ);
+		ConcreteVertex root = factory.getPart(OutputPart.FIRST, circ);
 		root.addChild(sg);
 		
 		sg.addChild(factory.getPart(InputPart.FIRST, circ), factory.getPart(InputPart.FIRST, add));
 		sg.addChild(factory.getPart(InputPart.SECOND, circ), factory.getPart(InputPart.SECOND, add));
 		root.render(System.out);
-		Vertex e_c = AbstractVertex.get(e);
+		ConcreteVertex e_c = Vertex.get(e);
 		assertNotNull(e_c);
 		e_c.render(System.out);
 		assertEqualGraphs(e_c, root);
@@ -194,14 +191,14 @@ public class CircuitTest
 		Connectable.connect(new Constant(3), 0, circ, 1);
 		Object o = circ.compute();
 		assertEquals(0f, o);
-		AbstractVertex e = circ.explain(new Connectable.OutputPart(0));
-		Vertex e_c = AbstractVertex.get(e);
+		Vertex e = circ.explain(new Connectable.OutputPart(0));
+		ConcreteVertex e_c = Vertex.get(e);
 		e_c.render(System.out);
 		factory.clear();
-		Vertex expected = tree(factory.getPart(OutputPart.FIRST, mul),
+		Vertex expected = factory.tree(factory.getPart(OutputPart.FIRST, mul),
 				factory.getPart(InputPart.FIRST, mul));
 		Subgraph sg = factory.subgraph();
-		Vertex root = factory.getPart(OutputPart.FIRST, circ);
+		ConcreteVertex root = factory.getPart(OutputPart.FIRST, circ);
 		root.addChild(sg);
 		sg.addChild(factory.getPart(InputPart.FIRST, circ), factory.getPart(InputPart.FIRST, mul));
 		assertEqualGraphs(root, e_c);
@@ -225,18 +222,18 @@ public class CircuitTest
 		Connectable.connect(new Constant(4), 0, circ, 2);
 		Object o = circ.compute();
 		assertEquals(20f, o);
-		AbstractVertex e = circ.explain(OutputPart.FIRST);
+		Vertex e = circ.explain(OutputPart.FIRST);
 		//e.print(System.out);
-		Vertex expected = tree(factory.getPart(OutputPart.FIRST, mul),
-				tree(factory.getAnd(),
-						tree(factory.getPart(InputPart.FIRST, mul),
-								tree(factory.getPart(OutputPart.FIRST, add),
-										tree(factory.getAnd(), 
-												tree(factory.getPart(InputPart.FIRST, add)),
-												tree(factory.getPart(InputPart.SECOND, add))))),	
+		Vertex expected = factory.tree(factory.getPart(OutputPart.FIRST, mul),
+				factory.tree(factory.getAnd(),
+						factory.tree(factory.getPart(InputPart.FIRST, mul),
+								factory.tree(factory.getPart(OutputPart.FIRST, add),
+										factory.tree(factory.getAnd(), 
+												factory.tree(factory.getPart(InputPart.FIRST, add)),
+												factory.tree(factory.getPart(InputPart.SECOND, add))))),	
 						factory.getPart(InputPart.SECOND, mul)));
 		Subgraph sg = factory.subgraph();
-		Vertex root = factory.getPart(OutputPart.FIRST, circ);
+		ConcreteVertex root = factory.getPart(OutputPart.FIRST, circ);
 		root.addChild(sg);
 		sg.addChild(factory.getPart(InputPart.FIRST, circ), factory.getPart(InputPart.FIRST, add));
 		sg.addChild(factory.getPart(InputPart.SECOND, circ), factory.getPart(InputPart.SECOND, add));

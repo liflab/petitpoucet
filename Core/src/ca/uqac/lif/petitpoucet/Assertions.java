@@ -19,7 +19,7 @@
 package ca.uqac.lif.petitpoucet;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 
 /**
  * JUnit assertions specific to the manipulation of lineage graphs.
@@ -34,13 +34,13 @@ public abstract class Assertions
 	 * @param v2 The second root
 	 * otherwise
 	 */
-	public static void assertEqualGraphs(AbstractVertex a1, AbstractVertex a2)
+	public static void assertEqualGraphs(Vertex a1, Vertex a2)
 	{
-		Vertex v1, v2;
+		ConcreteVertex v1, v2;
 		try
 		{
-			v1 = AbstractVertex.get(a1);
-			v2 = AbstractVertex.get(a2);
+			v1 = Vertex.get(a1);
+			v2 = Vertex.get(a2);
 		}
 		catch (ExplanationException e)
 		{
@@ -85,7 +85,7 @@ public abstract class Assertions
 	 * @param v1 The first root
 	 * @param v2 The second root
 	 */
-	public static void assertNotEqualGraphs(Vertex v1, Vertex v2)
+	public static void assertNotEqualGraphs(ConcreteVertex v1, ConcreteVertex v2)
 	{
 		try
 		{

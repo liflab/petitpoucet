@@ -21,11 +21,11 @@ package ca.uqac.lif.petitpoucet;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 
 /**
- * A {@link Vertex} that delays the calculation of an explanation until
+ * A {@link ConcreteVertex} that delays the calculation of an explanation until
  * a call to {@link #concretize()}.
  * @author Sylvain Hallé
  */
-public abstract class LazyVertex implements AbstractVertex
+public abstract class LazyVertex extends ConcreteVertex
 {
 	/**
 	 * The factory that will be used to create nodes.
@@ -65,7 +65,7 @@ public abstract class LazyVertex implements AbstractVertex
 	 * @throws ExplanationException Thrown if an error occurs in the calculation
 	 * of the explanation
 	 */
-	public abstract Vertex concretize(Part p) throws ExplanationException;
+	public abstract ConcreteVertex concretize(Part p) throws ExplanationException;
 	
 	/**
 	 * Calculates the explanation.
@@ -73,8 +73,14 @@ public abstract class LazyVertex implements AbstractVertex
 	 * @throws ExplanationException Thrown if an error occurs in the calculation
 	 * of the explanation
 	 */
-	public Vertex concretize() throws ExplanationException
+	public ConcreteVertex concretize() throws ExplanationException
 	{
 		return concretize(m_part);
+	}
+	
+	@Override
+	public void addChild(Vertex v)
+	{
+		throw new UnsupportedOperationException("Cannot add a child to a lazy vertex");
 	}
 }

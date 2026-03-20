@@ -28,7 +28,12 @@ import java.util.Set;
 
 import ca.uqac.lif.petitpoucet.Connectable.Connection;
 
-public class Subgraph extends Vertex
+/**
+ * A vertex that contains a whole subgraph. This is used to represent
+ * subgraphs as single vertices, for instance when they are used as
+ * children of other vertices.
+ */
+public class Subgraph extends ConcreteVertex
 {
 	/**
 	 * The root of the subgraph.
@@ -65,7 +70,7 @@ public class Subgraph extends Vertex
 		m_outputConnections = new HashMap<>();
 	}
 
-	public void pushRoot(Vertex v)
+	public void pushRoot(ConcreteVertex v)
 	{
 		v.addChild(m_root);
 		m_root = v;
@@ -81,13 +86,16 @@ public class Subgraph extends Vertex
 			ps.print("*");
 		}
 		ps.println();
-		m_root.render(ps, indent + "  ", nesting + 1);
+		if (m_root instanceof ConcreteVertex)
+		{
+			((ConcreteVertex) m_root).render(ps, indent + "  ", nesting + 1);	
+		}
 		for (Map.Entry<Vertex,Vertex> e : m_outputConnections.entrySet())
 		{
 			Vertex v = e.getValue();
-			if (v != null)
+			if (v != null && v instanceof ConcreteVertex)
 			{
-				v.render(ps, indent + "  ", nesting);
+				((ConcreteVertex) v).render(ps, indent + "  ", nesting);
 			}
 		}
 	}
@@ -160,7 +168,10 @@ public class Subgraph extends Vertex
 	{
 		for (Vertex v : m_children)
 		{
-			v.findLeaves(leaves);
+			if (v instanceof ConcreteVertex)
+			{
+				((ConcreteVertex) v).findLeaves(leaves);
+			}
 		}
 	}
 }

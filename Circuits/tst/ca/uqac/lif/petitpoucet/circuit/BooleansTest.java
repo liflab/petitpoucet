@@ -23,18 +23,17 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
-import static ca.uqac.lif.petitpoucet.Vertex.and;
-import static ca.uqac.lif.petitpoucet.Vertex.or;
-import static ca.uqac.lif.petitpoucet.Vertex.tree;
 
-import ca.uqac.lif.petitpoucet.AbstractVertex;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.CutVertexFactory;
 import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.Vertex.PartVertex;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
+import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 import ca.uqac.lif.petitpoucet.IdentityVertexFactory;
 
 /**
@@ -74,12 +73,12 @@ public class BooleansTest
 		Connectable.connect(new Constant(true), 0, f, 0);
 		Connectable.connect(new Constant(true), 0, f, 1);
 		f.compute();
-		AbstractVertex ae = f.explain(OutputPart.FIRST);
+		Vertex ae = f.explain(OutputPart.FIRST);
 		factory.clear();
-		Vertex e = AbstractVertex.get(ae);
+		ConcreteVertex e = Vertex.get(ae);
 		e.render(System.out);
-		assertEqualGraphs(e, tree(factory.getPart(OutputPart.FIRST, f),
-				and(
+		assertEqualGraphs(e, factory.tree(factory.getPart(OutputPart.FIRST, f),
+				factory.and(
 						factory.getPart(new Connectable.InputPart(0), f),
 						factory.getPart(new Connectable.InputPart(1), f)))
 				);
@@ -88,12 +87,12 @@ public class BooleansTest
 	@Test
 	public void testAnd4() throws ExplanationException
 	{
-		IdentityVertexFactory factory = new IdentityVertexFactory();
+		VertexFactory factory = new CutVertexFactory(new IdentityVertexFactory());
 		Booleans.And f = new Booleans.And(2);
 		Connectable.connect(new Constant(false), 0, f, 0);
 		Connectable.connect(new Constant(false), 0, f, 1);
 		f.compute();
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
+		Vertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, factory.getPart(new Connectable.InputPart(0), f));
 	}
 
@@ -127,8 +126,8 @@ public class BooleansTest
 		Connectable.connect(new Constant(true), 0, f, 0);
 		Connectable.connect(new Constant(true), 0, f, 1);
 		f.compute();
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
-		assertEqualGraphs(e, or(
+		Vertex e = f.explain(new Connectable.OutputPart(0));
+		assertEqualGraphs(e, factory.or(
 				factory.getPart(new Connectable.InputPart(0), f),
 				factory.getPart(new Connectable.InputPart(1), f)));
 	}
@@ -136,12 +135,12 @@ public class BooleansTest
 	@Test
 	public void testOr4() throws ExplanationException
 	{
-		IdentityVertexFactory factory = new IdentityVertexFactory();
+		VertexFactory factory = new CutVertexFactory(new IdentityVertexFactory());
 		Booleans.Or f = new Booleans.Or(2);
 		Connectable.connect(new Constant(true), 0, f, 0);
 		Connectable.connect(new Constant(true), 0, f, 1);
 		f.compute();
-		AbstractVertex e = f.explain(new Connectable.OutputPart(0));
+		Vertex e = f.explain(new Connectable.OutputPart(0));
 		assertEqualGraphs(e, factory.getPart(new Connectable.InputPart(0), f));
 	}
 }
