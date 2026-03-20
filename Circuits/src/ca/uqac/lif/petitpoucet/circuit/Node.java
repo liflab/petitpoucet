@@ -30,6 +30,7 @@ import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.VertexFactory;
+import ca.uqac.lif.petitpoucet.Connectable.Connection;
 import ca.uqac.lif.petitpoucet.ConcreteVertex;
 
 /**
@@ -52,7 +53,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	 * The connections to the downstream nodes. The length of this array is the output
 	 * arity of the node.
 	 */
-	/*@ non_null @*/ protected final DownstreamConnection[] m_outs;
+	/*@ non_null @*/ protected DownstreamConnection[] m_outs;
 
 	/**
 	 * The cached output values. This is set to null when the node is reset, and
@@ -99,9 +100,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 	{
 		for (int i = 0; i < inputs.length; i++)
 		{
-			UpstreamConnection uc = new NodeUpstreamConnection(new Argument(inputs[i], i), 0);
-			DownstreamConnection dc = new NodeDownstreamConnection(this, i);
-			Connectable.connect(uc, 0, dc, i);
+			Connectable.connect(new Argument(inputs[i], i), 0, this, i);
 		}
 		return compute();
 	}
@@ -168,7 +167,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		{
 			throw new IllegalArgumentException("Connectable must be a node");
 		}
-		m_ins[i] = getUpstreamConnection((Node) uc.getObject(), uc.getIndex());
+		m_ins[i] = uc;
 	}
 
 	@Override
@@ -183,17 +182,7 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		{
 			throw new IllegalArgumentException("Connectable must be a node");
 		}
-		m_outs[i] = getDownstreamConnection((Node) uc.getObject(), uc.getIndex());
-	}
-	
-	protected UpstreamConnection getUpstreamConnection(Connectable object, int index)
-	{
-		return new NodeUpstreamConnection(object, index);
-	}
-	
-	protected DownstreamConnection getDownstreamConnection(Connectable object, int index)
-	{
-		return new NodeDownstreamConnection(object, index);
+		m_outs[i] = uc;
 	}
 
 	@Override
@@ -465,5 +454,17 @@ public abstract class Node implements Connectable, Computable, Duplicable, Expla
 		{
 			return m_connectable.toString() + m_index + "\u2192";
 		}
+	}
+	
+	@Override
+	public Connection getInputConnection(int index)
+	{
+		return new NodeDownstreamConnection(this, index);
+	}
+
+	@Override
+	public Connection getOutputConnection(int index)
+	{
+		return new NodeUpstreamConnection(this, index);
 	}
 }

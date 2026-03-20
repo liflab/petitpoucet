@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import static ca.uqac.lif.petitpoucet.Assertions.assertEqualGraphs;
-import static ca.uqac.lif.petitpoucet.circuit.Utils.connect;
+import static ca.uqac.lif.petitpoucet.Connectable.connect;
 
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;

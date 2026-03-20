@@ -112,7 +112,7 @@ public class Circuit extends Node
 	 */
 	public void associateInput(int i, /*@ non_null @*/ Node n, int j)
 	{
-		m_inputAssociations[i] = getUpstreamConnection(n, j);
+		m_inputAssociations[i] = new NodeUpstreamConnection(n, j);
 	}
 	
 	protected UpstreamConnection getInputAssociation(Node n, int i)
@@ -130,7 +130,7 @@ public class Circuit extends Node
 	 */
 	public void associateOutput(int i, /*@ non_null @*/ Node n, int j)
 	{
-		m_outputAssociations[i] = getDownstreamConnection(n, j);
+		m_outputAssociations[i] = new NodeDownstreamConnection(n, j);
 	}
 	
 	protected DownstreamConnection getOutputAssociation(Node n, int i)
@@ -188,9 +188,7 @@ public class Circuit extends Node
 				if (c != null)
 				{
 					Node target = fromto.get(c.getObject());
-					UpstreamConnection uc = getUpstreamConnection(target, c.getIndex());
-					DownstreamConnection dc = getDownstreamConnection(n, i);
-					Connectable.connect(uc, c.getIndex(), dc, i);
+					Connectable.connect(target, c.getIndex(), n, i);
 				}
 			}
 			for (int i = 0; i < n_orig.getOutputArity(); i++)
@@ -199,9 +197,7 @@ public class Circuit extends Node
 				if (c != null)
 				{
 					Node target = fromto.get(c.getObject());
-					UpstreamConnection uc = getUpstreamConnection(n, i);
-					DownstreamConnection dc = getDownstreamConnection(target, c.getIndex());
-					Connectable.connect(uc, i, dc, c.getIndex());
+					Connectable.connect(n, i, target, c.getIndex());
 				}
 			}
 		}
@@ -227,10 +223,8 @@ public class Circuit extends Node
 		for (int i = 0; i < input.length; i++)
 		{
 			UpstreamConnection c = m_inputAssociations[i];
-			UpstreamConnection arg = getUpstreamConnection(new Argument(input[i], i), 0);
 			Connectable n = c.getObject();
-			DownstreamConnection dc = getDownstreamConnection(n, c.getIndex());
-			Connectable.connect(arg, 0, dc, c.getIndex());
+			Connectable.connect(new Argument(input[i], i), 0, n, c.getIndex());
 		}
 		// Step 2: trigger evaluation and fetch outputs
 		for (int i = 0; i < output.length; i++)

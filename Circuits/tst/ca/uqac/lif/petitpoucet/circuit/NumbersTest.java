@@ -18,7 +18,7 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
-import static ca.uqac.lif.petitpoucet.circuit.Utils.connect;
+import static ca.uqac.lif.petitpoucet.Connectable.connect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
 

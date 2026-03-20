@@ -47,6 +47,10 @@ public interface Connectable
 	 */
 	public Connection getUpstream(int index);
 	
+	public Connection getInputConnection(int index);
+	
+	public Connection getOutputConnection(int index);
+	
 	/**
 	 * Retrieves the component connected to a given output port of the object.
 	 * @param index The index of the output port
@@ -103,10 +107,10 @@ public interface Connectable
 	 * @param c2 The downstream connection
 	 * @param i2 The index of that component's input port
 	 */
-	public static void connect(Connection c1, int i1, Connection c2, int i2)
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
 	{
-		c1.getObject().assignOutput(i1, c2);
-		c2.getObject().assignInput(i2, c1);
+		c1.assignOutput(i1, c2.getInputConnection(i2));
+		c2.assignInput(i2, c1.getOutputConnection(i1));
 	}
 	
 	/**
