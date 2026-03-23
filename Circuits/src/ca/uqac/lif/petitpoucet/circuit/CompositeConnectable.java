@@ -119,7 +119,7 @@ public abstract class CompositeConnectable<C extends Connectable> extends Abstra
 	 */
 	public void associateInput(int i, /*@ non_null @*/ C n, int j)
 	{
-		m_inputAssociations.add(i, newInputAssociation(n, j));
+		m_inputAssociations.set(i, newInputAssociation(n, j));
 	}
 
 	/**
@@ -132,7 +132,7 @@ public abstract class CompositeConnectable<C extends Connectable> extends Abstra
 	 */
 	public void associateOutput(int i, /*@ non_null @*/ C n, int j)
 	{
-		m_outputAssociations.add(i, newOutputAssociation(n, j));
+		m_outputAssociations.set(i, newOutputAssociation(n, j));
 	}
 
 	/**
