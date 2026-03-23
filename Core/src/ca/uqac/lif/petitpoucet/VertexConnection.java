@@ -16,32 +16,9 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.circuit;
+package ca.uqac.lif.petitpoucet;
 
-/**
- * Interface implemented by objects that can compute a result.
- * @author Sylvain Hallé
- */
-public interface Computable
+public class VertexConnection
 {
-	/**
-	 * Calculates the result for a given output port of the object.
-	 * @param index The index of the output port
-	 * @return The result
-	 */
-	public Object compute(int index);
-	
-	/**
-	 * Calculates the result for output port 0 of the object.
-	 * @return The result
-	 */
-	public default Object compute()
-	{
-		return compute(0);
-	}
-	
-	/**
-	 * Resets the internal state of the object.
-	 */
-	public void reset();
+
 }

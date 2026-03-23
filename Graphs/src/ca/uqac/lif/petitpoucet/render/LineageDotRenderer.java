@@ -30,7 +30,6 @@ import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Vertex.AndVertex;
 import ca.uqac.lif.petitpoucet.Vertex.OrVertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
-import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
@@ -38,6 +37,7 @@ import ca.uqac.lif.petitpoucet.Renderer;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
+import ca.uqac.lif.petitpoucet.circuit.Connectable;
 
 /**
  * Renders a graph produced by a call to

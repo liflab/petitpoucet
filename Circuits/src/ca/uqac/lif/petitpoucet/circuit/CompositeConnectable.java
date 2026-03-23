@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2026 Laboratoire d'informatique formelle
+    Copyright (Connectable) 2016-2026 Laboratoire d'informatique formelle
     Université du Québec à Chicoutimi, Canada
 
     This program is free software: you can redistribute it and/or modify
@@ -18,23 +18,24 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
+import static ca.uqac.lif.petitpoucet.CompositePart.head;
+import static ca.uqac.lif.petitpoucet.CompositePart.tail;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static ca.uqac.lif.petitpoucet.CompositePart.head;
-import static ca.uqac.lif.petitpoucet.CompositePart.tail;
-
-import ca.uqac.lif.petitpoucet.ConcreteVertex;
-import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
-import ca.uqac.lif.petitpoucet.Connectable;
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
+import ca.uqac.lif.petitpoucet.Duplicable;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
+import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.VertexFactory;
 
 /**
@@ -43,8 +44,7 @@ import ca.uqac.lif.petitpoucet.VertexFactory;
  * evaluates by connecting its inputs to the nodes it contains, triggering their
  * evaluation, and fetching the outputs from the nodes it contains. The circuit
  * can be duplicated, which creates a new circuit with the same structure but
- * different nodes. The circuit can also be reset, which resets all the nodes it
- * contains.
+ * different nodes.
  * <p>
  * The circuit also takes care of most of the heavy lifting of the explanation
  * process. When an explanation is requested for an output of the circuit, it
@@ -53,38 +53,27 @@ import ca.uqac.lif.petitpoucet.VertexFactory;
  * circuit, and the outputs of the node to the outputs of the circuit.
  * @author Sylvain Hallé
  */
-public class Circuit extends Node
+public abstract class CompositeConnectable<C extends Connectable> extends AbstractConnectable
 {
 	/**
 	 * The nodes contained in this circuit.
 	 */
-	/*@ non_null @*/ protected final Set<Node> m_nodes;
-
+	/*@ non_null @*/ protected final Set<C> m_nodes;
+	
 	/** 
 	 * The associations between the circuit's inputs and the nodes it contains.
 	 */
-	/*@ non_null @*/ protected final UpstreamConnection[] m_inputAssociations;
+	/*@ non_null @*/ protected final List<UpstreamConnection> m_inputAssociations;
 
 	/** 
 	 * The associations between the circuit's outputs and the nodes it contains.
 	 */
-	/*@ non_null @*/ protected final DownstreamConnection[] m_outputAssociations;
+	/*@ non_null @*/ protected final List<DownstreamConnection> m_outputAssociations;
 
 	/**
 	 * An optional name given to the circuit.
 	 */
 	/*@ non_null @*/ protected final String m_name;
-
-	/**
-	 * Creates a new circuit with the given input and output arities, and a
-	 * default name.
-	 * @param in_arity The input arity of the circuit
-	 * @param out_arity The output arity of the circuit
-	 */
-	public Circuit(int in_arity, int out_arity)
-	{
-		this(in_arity, out_arity, null);
-	}
 
 	/**
 	 * Creates a new circuit with the given input and output arities, and an
@@ -93,13 +82,32 @@ public class Circuit extends Node
 	 * @param out_arity The output arity of the circuit
 	 * @param name An optional name for the circuit
 	 */
-	public Circuit(int in_arity, int out_arity, String name)
+	public CompositeConnectable(int in_arity, int out_arity, String name)
 	{
 		super(in_arity, out_arity);
 		m_nodes = new HashSet<>();
-		m_inputAssociations = new UpstreamConnection[in_arity];
-		m_outputAssociations = new DownstreamConnection[out_arity];
+		m_inputAssociations = new ArrayList<>(in_arity);
+		m_outputAssociations = new ArrayList<>(out_arity);
+		for (int i = 0; i < in_arity; i++)
+		{
+			m_inputAssociations.add(null);
+		}
+		for (int i = 0; i < out_arity; i++)
+		{
+			m_outputAssociations.add(null);
+		}
 		m_name = name;
+	}
+
+	/**
+	 * Creates a new circuit with the given input and output arities, and a
+	 * default name.
+	 * @param in_arity The input arity of the circuit
+	 * @param out_arity The output arity of the circuit
+	 */
+	public CompositeConnectable(int in_arity, int out_arity)
+	{
+		this(in_arity, out_arity, null);
 	}
 
 	/**
@@ -108,16 +116,10 @@ public class Circuit extends Node
 	 * input will be connected to the input of the node.
 	 * @param i the index of the input of the circuit
 	 * @param n the node contained in the circuit
-	 * @param j the index of the input of the node
 	 */
-	public void associateInput(int i, /*@ non_null @*/ Node n, int j)
+	public void associateInput(int i, /*@ non_null @*/ C n, int j)
 	{
-		m_inputAssociations[i] = new NodeUpstreamConnection(n, j);
-	}
-	
-	protected UpstreamConnection getInputAssociation(Node n, int i)
-	{
-		return new NodeUpstreamConnection(n, i);
+		m_inputAssociations.add(i, newInputAssociation(n, j));
 	}
 
 	/**
@@ -128,14 +130,9 @@ public class Circuit extends Node
 	 * @param n the node contained in the circuit
 	 * @param j the index of the output of the node
 	 */
-	public void associateOutput(int i, /*@ non_null @*/ Node n, int j)
+	public void associateOutput(int i, /*@ non_null @*/ C n, int j)
 	{
-		m_outputAssociations[i] = new NodeDownstreamConnection(n, j);
-	}
-	
-	protected DownstreamConnection getOutputAssociation(Node n, int i)
-	{
-		return new NodeDownstreamConnection(n, i);
+		m_outputAssociations.add(i, newOutputAssociation(n, j));
 	}
 
 	/**
@@ -144,19 +141,20 @@ public class Circuit extends Node
 	 * {@link #associateOutput(int, Node, int)} methods.
 	 * @param nodes The nodes to add to the circuit
 	 */
-	public void add(Node ... nodes)
+	@SuppressWarnings("unchecked")
+	public void add(C ... nodes)
 	{
-		for (Node n : nodes)
+		for (C n : nodes)
 		{
 			m_nodes.add(n);
 		}
 	}
-
+	
 	public int getInputIndex(Object target, int index)
 	{
-		for (int i = 0; i < m_inputAssociations.length; i++)
+		for (int i = 0; i < m_inputAssociations.size(); i++)
 		{
-			UpstreamConnection c = m_inputAssociations[i];
+			UpstreamConnection c = m_inputAssociations.get(i);
 			Connectable n = c.getObject();
 			if (n.equals(target) && c.getIndex() == index)
 			{
@@ -167,88 +165,16 @@ public class Circuit extends Node
 	}
 
 	@Override
-	/*@ non_null @*/ public Circuit duplicate(boolean with_state)
-	{
-		Circuit g = new Circuit(getInputArity(), getOutputArity());
-		Map<Node,Node> fromto = new HashMap<>();
-		Map<Node,Node> tofrom = new HashMap<>();
-		for (Node n : m_nodes)
-		{
-			Node n_dup = n.duplicate(with_state);
-			fromto.put(n, n_dup);
-			tofrom.put(n_dup, n);
-			g.add(n_dup);
-		}
-		for (Node n : fromto.values())
-		{
-			Node n_orig = tofrom.get(n);
-			for (int i = 0; i < n_orig.getInputArity(); i++)
-			{
-				UpstreamConnection c = n_orig.getUpstream(i);
-				if (c != null)
-				{
-					Node target = fromto.get(c.getObject());
-					Connectable.connect(target, c.getIndex(), n, i);
-				}
-			}
-			for (int i = 0; i < n_orig.getOutputArity(); i++)
-			{
-				DownstreamConnection c = n_orig.getDownstream(i);
-				if (c != null)
-				{
-					Node target = fromto.get(c.getObject());
-					Connectable.connect(n, i, target, c.getIndex());
-				}
-			}
-		}
-		for (int i = 0; i <  m_inputAssociations.length; i++)
-		{
-			UpstreamConnection c = m_inputAssociations[i];
-			Node target = fromto.get(c.getObject());
-			g.associateInput(i, target, c.getIndex());
-		}
-		for (int i = 0; i <  m_outputAssociations.length; i++)
-		{
-			DownstreamConnection c = m_outputAssociations[i];
-			Node target = fromto.get(c.getObject());
-			g.associateOutput(i, target, c.getIndex());
-		}
-		return g;
-	}
-
-	@Override
-	protected void evaluate(Object[] input, Object[] output)
-	{
-		// Step 1: connect inputs with constant
-		for (int i = 0; i < input.length; i++)
-		{
-			UpstreamConnection c = m_inputAssociations[i];
-			Connectable n = c.getObject();
-			Connectable.connect(new Argument(input[i], i), 0, n, c.getIndex());
-		}
-		// Step 2: trigger evaluation and fetch outputs
-		for (int i = 0; i < output.length; i++)
-		{
-			DownstreamConnection c = m_outputAssociations[i]; 
-			Connectable n = c.getObject();
-			if (n instanceof Computable)
-			{
-				output[i] = ((Computable) n).compute(c.getIndex());
-			}
-		}
-	}
-
-	@Override
 	protected Vertex explain(int index, Part tail, VertexFactory f) throws ExplanationException
 	{
-		return new CircuitLazyVertex(f, tail, index);
+		return new CompositeConnectableVertex(f, tail, index);
 	}
 
-	protected class CircuitLazyVertex extends LazyVertex
+	protected class CompositeConnectableVertex extends LazyVertex
 	{
 		protected final int m_index;
 
-		public CircuitLazyVertex(VertexFactory f, Part p, int index)
+		public CompositeConnectableVertex(VertexFactory f, Part p, int index)
 		{
 			super(f, p);
 			m_index = index;
@@ -258,7 +184,7 @@ public class Circuit extends Node
 		public ConcreteVertex concretize(Part part, VertexFactory m_factory) throws ExplanationException
 		{
 			VertexFactory subf = m_factory.subfactory(this);
-			DownstreamConnection c = m_outputAssociations[m_index];
+			DownstreamConnection c = m_outputAssociations.get(m_index);
 			Connectable n = c.getObject();
 			int n_index = c.getIndex();
 			Part start = CompositePart.compose(part, new OutputPart(n_index));
@@ -266,10 +192,10 @@ public class Circuit extends Node
 			{
 				propagateExplanation((Explainable) n, start, subf);
 			}
-			
+
 			Subgraph sg = subf.subgraph();
 			extendLeaves(sg, m_factory);
-			ConcreteVertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), Circuit.this);
+			ConcreteVertex root = m_factory.getPart(CompositePart.compose(part, new OutputPart(m_index)), CompositeConnectable.this);
 			root.addChild(sg);
 			return root;
 		}
@@ -286,7 +212,7 @@ public class Circuit extends Node
 				{
 					throw new ExplanationException("Leaf not found");
 				}
-				PartVertex pv = m_factory.getPart(CompositePart.compose(tail(p), new InputPart(i)), Circuit.this);
+				PartVertex pv = m_factory.getPart(CompositePart.compose(tail(p), new InputPart(i)), CompositeConnectable.this);
 				sg.addChild(pv, leaf);
 			}
 		}
@@ -332,7 +258,7 @@ public class Circuit extends Node
 				{
 					throw new ExplanationException("Expected a connectable node");
 				}
-				Connection c = ((Connectable) n).getUpstream(ip.getIndex());
+				Connection c = ((Connectable) n).getAssignedInput(ip.getIndex());
 				Part out_part = CompositePart.compose(tail(pv.getPart()), new OutputPart(c.getIndex()));
 				Connectable c_o = c.getObject();
 				if (f.contains(out_part, c_o))
@@ -354,13 +280,58 @@ public class Circuit extends Node
 			return root;
 		}
 	}
-	@Override
-	public void reset()
+	
+	public abstract CompositeConnectable<C> duplicate(boolean with_state);
+
+	@SuppressWarnings("unchecked")
+	protected void duplicate(CompositeConnectable<C> g, boolean with_state)
 	{
-		super.reset();
-		for (Node n : m_nodes)
+		Map<C,C> fromto = new HashMap<>();
+		Map<C,C> tofrom = new HashMap<>();
+		for (C n : m_nodes)
 		{
-			n.reset();
+			if (!(n instanceof Duplicable))
+			{
+				throw new UnsupportedOperationException("Cannot duplicate " + n);
+			}
+			C n_dup = (C) ((Duplicable) n).duplicate(with_state);
+			fromto.put(n, n_dup);
+			tofrom.put(n_dup, n);
+			g.add(n_dup);
+		}
+		for (C n : fromto.values())
+		{
+			C n_orig = tofrom.get(n);
+			for (int i = 0; i < n_orig.getInputArity(); i++)
+			{
+				UpstreamConnection c = n_orig.getAssignedInput(i);
+				if (c != null)
+				{
+					Connectable target = fromto.get(c.getObject());
+					getConnector().connectElements(target, c.getIndex(), n, i);
+				}
+			}
+			for (int i = 0; i < n_orig.getOutputArity(); i++)
+			{
+				DownstreamConnection c = n_orig.getAssignedOutput(i);
+				if (c != null)
+				{
+					C target = fromto.get(c.getObject());
+					getConnector().connectElements(n, i, target, c.getIndex());
+				}
+			}
+		}
+		for (int i = 0; i <  m_inputAssociations.size(); i++)
+		{
+			UpstreamConnection c = m_inputAssociations.get(i);
+			C target = fromto.get(c.getObject());
+			g.associateInput(i, target, c.getIndex());
+		}
+		for (int i = 0; i <  m_outputAssociations.size(); i++)
+		{
+			DownstreamConnection c = m_outputAssociations.get(i);
+			C target = fromto.get(c.getObject());
+			g.associateOutput(i, target, c.getIndex());
 		}
 	}
 
@@ -369,4 +340,9 @@ public class Circuit extends Node
 	{
 		return m_name == null ? "Circuit" : m_name;
 	}	
+
+	protected abstract UpstreamConnection newInputAssociation(C n, int i);
+
+	protected abstract DownstreamConnection newOutputAssociation(C n, int i);
+
 }

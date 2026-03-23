@@ -19,16 +19,13 @@
 package ca.uqac.lif.petitpoucet.examples.number;
 
 import static ca.uqac.lif.petitpoucet.examples.GraphViewer.display;
+import static ca.uqac.lif.petitpoucet.function.ComputableConnector.connect;
 
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.Connectable;
-import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
-import ca.uqac.lif.petitpoucet.circuit.Circuit;
-import ca.uqac.lif.petitpoucet.circuit.Numbers;
-import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
-import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
-
+import ca.uqac.lif.petitpoucet.circuit.Connectable.OutputPart;
+import ca.uqac.lif.petitpoucet.function.CompositeFunction;
+import ca.uqac.lif.petitpoucet.function.Numbers;
 
 /**
  * Evaluates a circuit corresponding to the function (x+y)×z. Graphically, this
@@ -65,7 +62,7 @@ public class ArithmeticCircuit3
 {
 	public static void main(String[] args) throws ExplanationException
 	{
-		Circuit c = new Circuit(3, 1, "(x+y)×z");
+		CompositeFunction c = new CompositeFunction(3, 1, "(x+y)×z");
 		Numbers.Addition a = new Numbers.Addition(2);
 		Numbers.Multiplication m = new Numbers.Multiplication(2);
 		c.add(a, m);
@@ -78,12 +75,5 @@ public class ArithmeticCircuit3
 		System.out.println(result);
 		Vertex full_graph = c.explain(OutputPart.FIRST);
 		display(full_graph);
-	}
-
-	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
-	{
-		UpstreamConnection uc = new UpstreamConnection(c1, i1);
-		DownstreamConnection dc = new DownstreamConnection(c2, i2);
-		Connectable.connect(uc, i1, dc, i2);
 	}
 }

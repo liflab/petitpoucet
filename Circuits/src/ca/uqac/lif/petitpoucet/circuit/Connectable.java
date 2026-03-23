@@ -16,7 +16,9 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet;
+package ca.uqac.lif.petitpoucet.circuit;
+
+import ca.uqac.lif.petitpoucet.Part;
 
 /**
  * Interface implemented by objects having input and output "ports" that
@@ -45,11 +47,13 @@ public interface Connectable
 	 * @return A {@link Connection} object, or {@code null} if the port is
 	 * not connected
 	 */
-	public Connection getUpstream(int index);
+	public UpstreamConnection getAssignedInput(int index);
 	
-	public Connection getInputConnection(int index);
+	public DownstreamConnection getInputEndpoint(int index);
 	
-	public Connection getOutputConnection(int index);
+	public UpstreamConnection getOutputEndpoint(int index);
+	
+	public Connector getConnector();
 	
 	/**
 	 * Retrieves the component connected to a given output port of the object.
@@ -57,7 +61,7 @@ public interface Connectable
 	 * @return A {@link Connection} object, or {@code null} if the port is
 	 * not connected
 	 */
-	public Connection getDownstream(int index);
+	public DownstreamConnection getAssignedOutput(int index);
 	
 	/**
 	 * Connects an output port of a component to an input port of the current
@@ -74,7 +78,7 @@ public interface Connectable
 	 * @param i The index of the input port
 	 * @param c The connection
 	 */
-	public void assignInput(int i, Connection c);
+	public void assignInput(int i, UpstreamConnection c);
 	
 	/**
 	 * Connects an input port of a component to an output port of the current
@@ -83,7 +87,7 @@ public interface Connectable
 	 * @param c The component to connect
 	 * @param j The index of that component's input port
 	 */
-	public void assignOutput(int i, Connection c);
+	public void assignOutput(int i, DownstreamConnection c);
 	
 	public static interface Connection
 	{
@@ -100,17 +104,14 @@ public interface Connectable
 		public int getIndex();
 	}
 	
-	/**
-	 * Connects an "upstream" component to a "downstream" component.
-	 * @param c1 The upstream connection
-	 * @param i1 The index of that component's output port
-	 * @param c2 The downstream connection
-	 * @param i2 The index of that component's input port
-	 */
-	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	public static interface UpstreamConnection extends Connection
 	{
-		c1.assignOutput(i1, c2.getInputConnection(i2));
-		c2.assignInput(i2, c1.getOutputConnection(i1));
+		// Nothing to add
+	}
+	
+	public static interface DownstreamConnection extends Connection
+	{
+		// Nothing to add
 	}
 	
 	/**

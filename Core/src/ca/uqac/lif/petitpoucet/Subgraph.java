@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ca.uqac.lif.petitpoucet.Connectable.Connection;
-
 /**
  * A vertex that contains a whole subgraph. This is used to represent
  * subgraphs as single vertices, for instance when they are used as
@@ -50,7 +48,7 @@ public class Subgraph extends ConcreteVertex
 	 */
 	/*@ non_null @*/ protected final List<Vertex> m_leaves;
 	
-	protected Connection m_inputConnection;
+	protected VertexConnection m_inputConnection;
 
 	/*@ non_null @*/ protected final Map<Vertex,Vertex> m_outputConnections;
 

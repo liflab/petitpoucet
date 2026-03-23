@@ -1,6 +1,6 @@
 /*
     Petit Poucet, a library for tracking links between objects.
-    Copyright (C) 2016-2026 Laboratoire d'informatique formelle
+    Copyright (Connectable) 2016-2026 Laboratoire d'informatique formelle
     Université du Québec à Chicoutimi, Canada
 
     This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@ import java.util.List;
 
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.CompositePart;
-import ca.uqac.lif.petitpoucet.Connectable;
 import ca.uqac.lif.petitpoucet.LazyVertex;
 import ca.uqac.lif.petitpoucet.Part;
 import ca.uqac.lif.petitpoucet.Subgraph;
@@ -34,9 +33,9 @@ import ca.uqac.lif.petitpoucet.ConcreteVertex;
  * A node that takes another one as a parameter.
  * @author Sylvain Hallé
  */
-public abstract class ParameterizedNode extends Node
+public abstract class ParameterizedConnectable<C extends Connectable> extends AbstractConnectable
 {
-	/*@ non_null @*/ protected final Circuit m_f;
+	/*@ non_null @*/ protected final C m_f;
 
 	/**
 	 * The explanations for each invocation of the node.
@@ -47,32 +46,18 @@ public abstract class ParameterizedNode extends Node
 	 * Creates a new instance of the node.
 	 * @param in_arity The input arity of the node
 	 * @param out_arity The output arity of the node
-	 * @param parameter The parameter {@link Node}
+	 * @param parameter The parameter {@link SingleFunction}
 	 */
-	public ParameterizedNode(int in_arity, int out_arity, Circuit parameter)
+	public ParameterizedConnectable(int in_arity, int out_arity, C parameter)
 	{
 		super(in_arity, out_arity);
 		m_f = parameter;
 		m_explanations = new ArrayList<>();
 	}
-
-	protected void register(Object[] outputs, Object[] inputs)
+	
+	protected void duplicate(ParameterizedConnectable<C> p, boolean with_state)
 	{
-		m_f.reset();
-		for (int i = 0; i < inputs.length; i++)
-		{
-			Connectable.connect(new Constant(inputs[i]), 0, m_f, i);
-		}
-		m_f.evaluate(inputs, outputs);
-		try
-		{
-			m_explanations.add(m_f.explain(OutputPart.FIRST));
-		}
-		catch (ExplanationException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// Do nothing
 	}
 
 	/**
@@ -96,7 +81,7 @@ public abstract class ParameterizedNode extends Node
 		 * Gets the node to which this vertex is associated.
 		 * @return The node
 		 */
-		/*@ non_null @*/ protected abstract Node getInstance();
+		/*@ non_null @*/ protected abstract ParameterizedConnectable<C> getInstance();
 
 		/**
 		 * Computes the explanation for a specific element of the output list.

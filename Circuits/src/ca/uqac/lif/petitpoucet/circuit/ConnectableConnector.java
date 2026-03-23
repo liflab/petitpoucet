@@ -18,10 +18,25 @@
  */
 package ca.uqac.lif.petitpoucet.circuit;
 
-/**
- * Unit tests for {@link Constant}.
- */
-public class ConstantTest
+public class ConnectableConnector implements Connector
 {
+	public static final ConnectableConnector instance = new ConnectableConnector();
 
+	protected ConnectableConnector()
+	{
+		super();
+	}
+
+	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		c1.assignOutput(i1, c2.getInputEndpoint(i2));
+		c2.assignInput(i2, c1.getOutputEndpoint(i1));
+	}
+
+	@Override
+	public void connectElements(Connectable c1, int i1, Connectable c2, int i2)
+	{
+		c1.assignOutput(i1, c2.getInputEndpoint(i2));
+		c2.assignInput(i2, c1.getOutputEndpoint(i1));
+	}
 }

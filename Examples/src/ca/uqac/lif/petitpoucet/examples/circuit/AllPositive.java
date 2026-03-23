@@ -22,20 +22,20 @@ import static ca.uqac.lif.petitpoucet.examples.GraphViewer.display;
 
 import java.util.Arrays;
 
+import static ca.uqac.lif.petitpoucet.function.ComputableConnector.connect;
+
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.ConcreteVertex;
-import ca.uqac.lif.petitpoucet.Connectable;
-import ca.uqac.lif.petitpoucet.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+import ca.uqac.lif.petitpoucet.circuit.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.circuit.Circuit;
-import ca.uqac.lif.petitpoucet.circuit.Constant;
-import ca.uqac.lif.petitpoucet.circuit.Lists;
-import ca.uqac.lif.petitpoucet.circuit.Lists.Window;
-import ca.uqac.lif.petitpoucet.circuit.Node.DownstreamConnection;
-import ca.uqac.lif.petitpoucet.circuit.Node.UpstreamConnection;
-import ca.uqac.lif.petitpoucet.circuit.Node;
-import ca.uqac.lif.petitpoucet.circuit.Numbers;
+import ca.uqac.lif.petitpoucet.function.CompositeFunction;
+import ca.uqac.lif.petitpoucet.function.Constant;
+import ca.uqac.lif.petitpoucet.function.Lists;
+import ca.uqac.lif.petitpoucet.function.Numbers;
+import ca.uqac.lif.petitpoucet.function.AtomicFunction;
+import ca.uqac.lif.petitpoucet.function.ParameterizedFunction;
+import ca.uqac.lif.petitpoucet.function.Lists.Window;
 
 /**
  * From a vector of numbers, evaluates if the sum of any two successive
@@ -70,9 +70,9 @@ public class AllPositive
 {
 	public static void main(String[] args) throws ExplanationException
 	{
-		Circuit all_positive = new Circuit(1, 1, "all");
+		CompositeFunction all_positive = new CompositeFunction(1, 1, "all");
 		{
-			Circuit add = new Circuit(2, 1, "add");
+			CompositeFunction add = new CompositeFunction(2, 1, "add");
 			{
 				Numbers.Addition a = new Numbers.Addition(2);
 				add.add(a);
@@ -80,17 +80,17 @@ public class AllPositive
 				add.associateInput(1, a, 1);
 				add.associateOutput(0, a, 0);
 			}
-			Node w = new Window(2, add);
-			Circuit gt_0 = new Circuit(1, 1, ">0");
+			ParameterizedFunction w = new Window(2, add);
+			CompositeFunction gt_0 = new CompositeFunction(1, 1, ">0");
 			{
-				Node g = new Numbers.IsGreaterThan();
-				Node z = new Constant(0);
+				AtomicFunction g = new Numbers.IsGreaterThan();
+				AtomicFunction z = new Constant(0);
 				connect(z, 0, g, 1);
 				gt_0.add(g, z);
 				gt_0.associateInput(0, g, 0);
 				gt_0.associateOutput(0, g, 0);
 			}
-			Node a = new Lists.Apply(gt_0);
+			ParameterizedFunction a = new Lists.Apply(gt_0);
 			connect(w, 0, a, 0);
 			all_positive.add(w, a);
 			all_positive.associateInput(0, w, 0);
@@ -101,13 +101,6 @@ public class AllPositive
 		Vertex full_graph = all_positive.explain(CompositePart.compose(new Lists.NthElement(0), OutputPart.FIRST));
 		ConcreteVertex v_e = Vertex.get(full_graph);
 		display(v_e);
-	}
-	
-	public static void connect(Connectable c1, int i1, Connectable c2, int i2)
-	{
-		UpstreamConnection uc = new UpstreamConnection(c1, i1);
-		DownstreamConnection dc = new DownstreamConnection(c2, i2);
-		Connectable.connect(uc, i1, dc, i2);
 	}
 
 }
