@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 	A build script for a super-project containing multiple sub-projects
-    Copyright (C) 2019-2025  Sylvain Hallé
+    Copyright (C) 2019-2026  Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
   <property name="build.name" value="SuperProject"/>
   
   <!-- The author -->
-  <property name="build.author" value="Sylvain Hallé"/>
+  <property name="build.author" value="Fred Flintstone"/>
 
   <!-- The folder containing lib files for this super-script -->
   <property name="build.libdir" value="lib"/>
@@ -129,6 +129,36 @@
     <fail message="Task @{task} failed in folder ${build.whofailed}" if="build.onefailed"/>
     </sequential>
   </macrodef>
+	
+	<!-- Target: pull
+	     Pulls the current repository -->
+	<target name="pull" depends="init" description="Pulls the current repository">
+	  <subtask task="pull">
+	    <dirs>
+          <dirset dir="." includes="*"/>
+        </dirs>
+      </subtask>
+	</target>
+	
+	<!-- Target: push
+	     Pushes the current repository -->
+	<target name="push" depends="init" description="Pushes the current repository">
+	  <subtask task="push">
+	    <dirs>
+          <dirset dir="." includes="*"/>
+        </dirs>
+      </subtask>
+	</target>
+  
+  <!-- Target: copy
+       Copy a local version of BeepBeep in each palette. It is assumed that
+       the JAR files are in a "sibling" folder to the current one, called
+       `core`. -->
+  <target name="copy" depends="init" description="Copy a local version of BeepBeep in each palette">
+    <copy todir="lib" preservelastmodified="true" overwrite="true">
+      <fileset dir="../core" includes="beepbeep-*.jar"/>
+    </copy>
+  </target>
 
   <!-- Target: phase1-jar
        Build all projects that have a build.xml, excluding those tagged for
