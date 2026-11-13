@@ -19,6 +19,10 @@
 package ca.uqac.lif.petitpoucet;
 
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 
 /**
@@ -72,9 +76,30 @@ public abstract class Assertions
 			Subgraph s2 = (Subgraph) v2;
 			assertEqualGraphs(s1.innerRoot(), s2.innerRoot());
 		}
+		Set<Integer> indices = new HashSet<>();
 		for (int i = 0; i < v1.childCount(); i++)
 		{
-			assertEqualGraphs(v1.getChildren().get(i), v2.getChildren().get(i));
+			for (int j = 0; j < v2.childCount(); j++)
+			{
+				if (indices.contains(j))
+				{
+					continue;
+				}
+				try
+				{
+					assertEqualGraphs(v1.getChildren().get(i), v2.getChildren().get(j));
+					indices.add(j);
+					break;
+				}
+				catch (AssertionError e)
+				{
+					// Do nothing
+				}
+			}
+		}
+		if (indices.size() != v1.childCount())
+		{
+			throw new AssertionError("Graphs are not equal");
 		}
 	}
 

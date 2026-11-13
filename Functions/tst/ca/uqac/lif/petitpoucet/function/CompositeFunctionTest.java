@@ -31,6 +31,7 @@ import ca.uqac.lif.petitpoucet.circuit.Connectable.InputPart;
 import ca.uqac.lif.petitpoucet.circuit.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.function.ComputableConnection.ComputableDownstreamConnection;
 import ca.uqac.lif.petitpoucet.function.ComputableConnection.ComputableUpstreamConnection;
+import ca.uqac.lif.petitpoucet.render.LineageDotRenderer;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.ConcreteVertex;
@@ -240,9 +241,11 @@ public class CompositeFunctionTest
 		ConcreteVertex root = factory.getPart(OutputPart.FIRST, circ);
 		root.addChild(sg);
 		sg.addChild(factory.getPart(InputPart.FIRST, circ), factory.getPart(InputPart.FIRST, add));
-		sg.addChild(factory.getPart(InputPart.SECOND, circ), factory.getPart(InputPart.SECOND, add));
 		sg.addChild(factory.getPart(InputPart.THIRD, circ), factory.getPart(InputPart.SECOND, mul));
-		root.render(System.out);
+		sg.addChild(factory.getPart(InputPart.SECOND, circ), factory.getPart(InputPart.SECOND, add));		
+		//LineageDotRenderer renderer = new LineageDotRenderer(e);
+		//renderer.render(System.out);
+		//root.render(System.out);
 		assertEqualGraphs(e, root);
 
 	}

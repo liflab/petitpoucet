@@ -19,6 +19,7 @@
 package ca.uqac.lif.petitpoucet;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -127,7 +128,15 @@ public class Subgraph extends ConcreteVertex
 	
 	public List<Vertex> innerLeaves()
 	{
-		return m_leaves;
+		List<Vertex> leaves = new ArrayList<>();
+		for (Vertex v : m_vertices)
+		{
+			if (v.childCount() == 0)
+			{
+				leaves.add(v);
+			}
+		}
+		return leaves;
 	}
 	
 	public Vertex findInnerLeaf(Vertex v)
