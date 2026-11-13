@@ -74,6 +74,12 @@ public class Subgraph extends ConcreteVertex
 		m_root = v;
 		m_vertices.add(v);
 	}
+	
+	@Override
+	public Vertex findRoot()
+	{
+		return m_root;
+	}
 
 	@Override
 	public void render(PrintStream ps, String indent, int nesting)

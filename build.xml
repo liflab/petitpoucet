@@ -254,13 +254,15 @@
   
   <target name="junit-report" description="Generates the report from JUnit tests">
     <!-- For the junit-report task, it is sufficient to call the task of a single sub-project -->
-    <ant dir="Apache" usenativebasedir="true" target="junit-report" inheritAll="false" />
+    <ant dir="Core" usenativebasedir="true" target="junit-report" inheritAll="false" />
   </target>
   
   <target name="jacoco-report" depends="init,jacoco" description="Generates the code coverage report">
     <!-- Call the jacoco-report task on children -->
     <subtask task="test" usenativebasedir="true">
-      <dirset dir="." includes="*"/>
+      <dirs>
+        <dirset dir="." includes="*"/>
+      </dirs>
     </subtask>
     <!-- Load JaCoCo -->
     <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
