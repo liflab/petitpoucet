@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -38,6 +39,36 @@ import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
  */
 public class Clause implements Set<PartVertex>
 {
+	/**
+	 * Evaluates a set of clauses, assuming that each clause is a conjunction of its
+	 * parts, and that the set of clauses is a disjunction of the clauses.
+	 * @param condition The set of clauses to evaluate
+	 * @param valuation A valuation of the parts in the clauses
+	 * @return The result of the evaluation
+	 */
+	public static boolean evaluateDnf(MathSet<Clause> condition, Map<PartVertex,Boolean> valuation)
+	{
+		for (Clause c : condition)
+		{
+			boolean clause_value = true;
+			for (PartVertex p : c)
+			{
+				Boolean b = valuation.get(p);
+				if (b == null)
+				{
+					clause_value = false;
+					break;
+				}
+				clause_value &= b.booleanValue();
+			}
+			if (clause_value)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * The parts.
 	 */
@@ -127,6 +158,16 @@ public class Clause implements Set<PartVertex>
 			objects.add(pn.getSubject());
 		}
 		return objects;
+	}
+	
+	/**
+	 * Returns the set of all parts contained in
+	 * this clause.
+	 * @return The set of parts
+	 */
+	/*@ pure non_null @*/ public Set<PartVertex> mentionedParts()
+	{
+		return m_parts;
 	}
 	
 	@Override

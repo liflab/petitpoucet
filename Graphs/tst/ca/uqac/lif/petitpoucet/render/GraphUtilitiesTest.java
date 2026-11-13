@@ -143,7 +143,6 @@ public class GraphUtilitiesTest
 						s_factory.tree(part("d", o))
 						));
 		Subgraph sg = s_factory.subgraph();
-		sg.render(System.out);
 		GraphUtilities.simplify(sg);
 		s_factory.clear();
 		Vertex expected = s_factory.tree(part("a", o),
@@ -152,7 +151,6 @@ public class GraphUtilitiesTest
 						part("c", o),
 				s_factory.tree(part("d", o))
 				));
-		//expected.render(System.out);
 		assertEqualGraphs(sg.findRoot(), expected);
 	}
 	
