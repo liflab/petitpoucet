@@ -23,7 +23,7 @@
        script's default values -->
 
   <!-- The project's name -->
-  <name>Apache</name>
+  <name>Petit Poucet</name>
   
   <!-- The project's version number -->
   <version>3.0</version>
@@ -68,6 +68,5 @@
     Write JAR dependencies here.
   -->
   <dependencies>
-    <project>Petit Poucet</project>
   </dependencies>
 </build>

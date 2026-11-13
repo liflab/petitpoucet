@@ -13,9 +13,13 @@
   <!-- The author of the bundle being compiled -->
   <author>Sylvain Hallé</author>
   
-  <!-- A comma-separated list of folders which must be compiled at the
-       second phase -->
-  <phase2>Circuits</phase2>
-  <phase2>Graphs</phase2>
+  <!-- Compilation dependencies -->
+  <order>
+    <phase>Core</phase>
+    <phase>Circuits</phase>
+    <phase>Functions</phase>
+    <phase>Graphs</phase>
+    <phase>Examples</phase>
+  </order>
 </superbuild>
 <!-- :tabWidth=2:mode=ant: -->

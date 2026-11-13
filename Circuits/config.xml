@@ -23,7 +23,7 @@
        script's default values -->
 
   <!-- The project's name -->
-  <name>Apache</name>
+  <name>Circuits</name>
   
   <!-- The project's version number -->
   <version>3.0</version>
@@ -70,12 +70,12 @@
   <dependencies>
   	<dependency>
       <!--
-      BeepBeep
+      Petit Poucet
       -->
       <name>Petit Poucet</name>
       <classname>ca.uqac.lif.petitpoucet.Part</classname>
       <files>
-      	<jar>https://github.com/liflab/petitpoucet/releases/download/v30/petitpoucet-3.0.jar</jar>
+      	<jar>https://github.com/liflab/petitpoucet/releases/download/v3/petitpoucet-3.0.jar</jar>
       </files>
       <bundle>false</bundle>
     </dependency>
