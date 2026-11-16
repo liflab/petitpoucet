@@ -1,3 +1,20 @@
+/*
+    Petit Poucet, a library for tracking links between objects.
+    Copyright (C) 2016-2026 Sylvain Hallé
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package ca.uqac.lif.petitpoucet.enumerate;
 
 import java.util.HashMap;
@@ -6,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.uqac.lif.petitpoucet.ConcreteVertex;
 import ca.uqac.lif.petitpoucet.ConcreteVertex.PartVertex;
 import ca.uqac.lif.petitpoucet.Explainable;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
@@ -32,13 +50,13 @@ public class Enumerator
 		m_dnfs = new HashSet<>();
 	}
 	
-	public void enumerate(/*@ non_null @*/ Bounded<Object[]> picker)
+	public void enumerate(/*@ non_null @*/ Bounded<? extends Object[]> all)
 	{
-		picker.reset();
-		while (!picker.isDone())
+		all.reset();
+		while (!all.isDone())
 		{
 			m_function.reset();
-			Object[] inputs = picker.pick();
+			Object[] inputs = all.pick();
 			Object[] outputs = new Object[m_function.getOutputArity()];			
 			m_function.evaluate(inputs, outputs);
 			if (m_function instanceof Explainable)
@@ -47,7 +65,8 @@ public class Enumerator
 				try
 				{
 					Vertex v = e.explain(OutputPart.FIRST);
-					MathSet<Clause> dnf = GraphUtilities.asDnf(v);
+					ConcreteVertex cv = Vertex.get(v);
+					MathSet<Clause> dnf = GraphUtilities.asDnf(cv);
 					for (MathSet<Clause> c : m_dnfs)
 					{
 						if (equivalent(dnf, c))
@@ -55,10 +74,10 @@ public class Enumerator
 							dnf = null;
 							break;
 						}
-						if (dnf == null)
-						{
-							m_dnfs.add(dnf);
-						}
+					}
+					if (dnf != null)
+					{
+						m_dnfs.add(dnf);
 					}
 				}
 				catch (ExplanationException e1)
@@ -68,6 +87,11 @@ public class Enumerator
 				}
 			}
 		}
+	}
+	
+	public int size()
+	{
+		return m_dnfs.size();
 	}
 	
 	protected static boolean equivalent(MathSet<Clause> dnf1, MathSet<Clause> dnf2)
