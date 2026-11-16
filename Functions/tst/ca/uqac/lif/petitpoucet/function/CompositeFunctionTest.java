@@ -31,7 +31,6 @@ import ca.uqac.lif.petitpoucet.circuit.Connectable.InputPart;
 import ca.uqac.lif.petitpoucet.circuit.Connectable.OutputPart;
 import ca.uqac.lif.petitpoucet.function.ComputableConnection.ComputableDownstreamConnection;
 import ca.uqac.lif.petitpoucet.function.ComputableConnection.ComputableUpstreamConnection;
-import ca.uqac.lif.petitpoucet.render.LineageDotRenderer;
 import ca.uqac.lif.petitpoucet.Subgraph;
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.ConcreteVertex;

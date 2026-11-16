@@ -16,7 +16,6 @@ import ca.uqac.lif.petitpoucet.render.Clause;
 import ca.uqac.lif.petitpoucet.render.GraphUtilities;
 import ca.uqac.lif.petitpoucet.render.MathSet;
 import ca.uqac.lif.synthia.Bounded;
-import ca.uqac.lif.synthia.Picker;
 import ca.uqac.lif.synthia.enumerative.AllPickers;
 import ca.uqac.lif.synthia.sequence.Playback;
 

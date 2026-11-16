@@ -19,7 +19,6 @@
 package ca.uqac.lif.petitpoucet.enumerate;
 
 import ca.uqac.lif.synthia.Bounded;
-import ca.uqac.lif.synthia.Picker;
 import ca.uqac.lif.synthia.enumerative.AllPickers;
 
 public class ListPicker extends AllPickers
