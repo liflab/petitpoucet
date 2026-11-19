@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.uqac.lif.petitpoucet.examples;
+package ca.uqac.lif.petitpoucet.render;
 
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import ca.uqac.lif.petitpoucet.Vertex;
-import ca.uqac.lif.petitpoucet.render.LineageDotRenderer;
 
 /**
  * Utility methods to render and display explanation graphs.

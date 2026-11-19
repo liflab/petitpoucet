@@ -134,6 +134,46 @@ public abstract class Numbers<T> extends AtomicFunction
 			return a;
 		}
 	}
+	
+	/**
+	 * Implementation of subtraction on floating point numbers.
+	 */
+	public static class Subtraction extends Numbers<Float>
+	{
+		/**
+		 * Creates a new instance of the function.
+		 * @param in_arity The input arity of this instance
+		 */
+		public Subtraction(int in_arity)
+		{
+			super(in_arity);
+		}
+
+		@Override
+		protected Float evaluate(float[] operands)
+		{
+			float t = operands[0];
+			for (int i = 1; i < operands.length; i++)
+			{
+				t -= operands[i];
+			}
+			return t;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "−";
+		}
+
+		@Override
+		public Subtraction duplicate(boolean with_state)
+		{
+			Subtraction a = new Subtraction(getInputArity());
+			duplicate(a, with_state);
+			return a;
+		}
+	}
 
 	/**
 	 * Implementation of multiplication on floating point numbers.

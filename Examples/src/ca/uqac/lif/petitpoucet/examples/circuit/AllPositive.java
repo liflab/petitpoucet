@@ -18,11 +18,10 @@
  */
 package ca.uqac.lif.petitpoucet.examples.circuit;
 
-import static ca.uqac.lif.petitpoucet.examples.GraphViewer.display;
-
 import java.util.Arrays;
 
 import static ca.uqac.lif.petitpoucet.function.ComputableConnector.connect;
+import static ca.uqac.lif.petitpoucet.render.GraphViewer.display;
 
 import ca.uqac.lif.petitpoucet.CompositePart;
 import ca.uqac.lif.petitpoucet.ConcreteVertex;

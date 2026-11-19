@@ -17,6 +17,7 @@
  */
 package ca.uqac.lif.petitpoucet.enumerate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,13 +42,16 @@ public class Enumerator
 {
 	/*@ non_null @*/ protected final Computable m_function;
 	
-	/*@ non_null @*/ protected final Set<MathSet<Clause>> m_dnfs; 
+	/*@ non_null @*/ protected final Set<MathSet<Clause>> m_dnfs;
+	
+	/*@ non_null @*/ protected final List<Vertex> m_explanations;
 	
 	public Enumerator(/*@ non_null @*/ Computable function)
 	{
 		super();
 		m_function = function;
 		m_dnfs = new HashSet<>();
+		m_explanations = new ArrayList<>();
 	}
 	
 	public void enumerate(/*@ non_null @*/ Bounded<? extends Object[]> all)
@@ -78,6 +82,7 @@ public class Enumerator
 					if (dnf != null)
 					{
 						m_dnfs.add(dnf);
+						m_explanations.add(cv);
 					}
 				}
 				catch (ExplanationException e1)
@@ -89,9 +94,14 @@ public class Enumerator
 		}
 	}
 	
-	public int size()
+	/*@ pure @*/ public int size()
 	{
 		return m_dnfs.size();
+	}
+	
+	/*@ pure non_null @*/ public List<Vertex> getExplanations()
+	{
+		return m_explanations;
 	}
 	
 	protected static boolean equivalent(MathSet<Clause> dnf1, MathSet<Clause> dnf2)

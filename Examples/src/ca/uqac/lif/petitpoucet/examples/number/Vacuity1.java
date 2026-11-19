@@ -18,9 +18,8 @@
  */
 package ca.uqac.lif.petitpoucet.examples.number;
 
-import static ca.uqac.lif.petitpoucet.examples.GraphViewer.display;
-
 import static ca.uqac.lif.petitpoucet.function.ComputableConnector.connect;
+import static ca.uqac.lif.petitpoucet.render.GraphViewer.display;
 
 import ca.uqac.lif.petitpoucet.Vertex;
 import ca.uqac.lif.petitpoucet.Explainable.ExplanationException;
