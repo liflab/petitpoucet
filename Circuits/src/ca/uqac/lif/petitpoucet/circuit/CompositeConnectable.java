@@ -248,6 +248,10 @@ public abstract class CompositeConnectable<C extends Connectable> extends Abstra
 					continue;
 				}
 				PartVertex pv = (PartVertex) leaf;
+				if (pv.getSubject() != n)
+				{
+				    continue; // leaf from a previously explained, shared subgraph
+				}
 				Part n_p = head(pv.getPart());
 				if (!(n_p instanceof InputPart))
 				{

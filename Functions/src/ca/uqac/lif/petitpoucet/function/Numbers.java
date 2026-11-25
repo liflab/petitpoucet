@@ -279,6 +279,46 @@ public abstract class Numbers<T> extends AtomicFunction
 		}
 	}
 	
+	public static class Equals extends Numbers<Boolean>
+	{
+		public Equals()
+		{
+			super(2);
+		}
+
+		@Override
+		protected Boolean evaluate(float[] operands)
+		{
+			return operands[0] == operands[1];
+		}
+
+		@Override
+		public Equals duplicate(boolean with_state)
+		{
+			return new Equals();
+		}
+	}
+	
+	public static class Negative extends Numbers<Float>
+	{
+		public Negative()
+		{
+			super(1);
+		}
+
+		@Override
+		protected Float evaluate(float[] operands)
+		{
+			 return -operands[0];
+		}
+
+		@Override
+		public Negative duplicate(boolean with_state)
+		{
+			return new Negative();
+		}
+	}
+	
 	public static class Double extends Numbers<Float>
 	{
 		public Double()
